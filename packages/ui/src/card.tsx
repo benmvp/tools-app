@@ -1,13 +1,13 @@
 export function Card({
-  className,
-  title,
   children,
+  className,
   href,
+  title,
 }: {
-  className?: string;
-  title: string;
-  children: React.ReactNode;
-  href: string;
+  children: React.ReactNode
+  className?: string
+  href: string
+  title: string
 }): JSX.Element {
   return (
     <a
@@ -21,5 +21,5 @@ export function Card({
       </h2>
       <p>{children}</p>
     </a>
-  );
+  )
 }
