@@ -11,11 +11,8 @@ module.exports = {
   ...baseConfig,
   extends: [
     ...baseConfig.extends,
-    // 'eslint:recommended',
-    // 'prettier',
     require.resolve('@vercel/style-guide/eslint/browser'),
     require.resolve('@vercel/style-guide/eslint/react'),
-    // 'turbo',
   ],
   globals: {
     React: true,
