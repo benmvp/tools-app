@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "exports": {
-    "./Link": "./src/Link.tsx"
+    "./Link": "./src/Link.tsx",
+    "./base-root-layout": "./src/base-root-layout.tsx"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
@@ -20,6 +21,9 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
+    "@mui/material": "^6.1.0",
+    "@mui/material-nextjs": "^6.1.0",
+    "next": "14.2.11",
     "react": "^18.2.0"
   }
 }

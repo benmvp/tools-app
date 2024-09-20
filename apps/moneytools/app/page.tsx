@@ -4,7 +4,7 @@ export default function Home() {
   return (
     <div>
       <Button color="primary" variant="contained">
-        Hello World
+        Money Tools
       </Button>
     </div>
   )
