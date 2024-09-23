@@ -9,8 +9,16 @@ Examples
 
 Ideas
 
-- [ ] Code formatter
-- [ ] Code minifier
+- [ ] Formatters
+  - [ ] JSON
+  - [ ] XML
+  - [ ] HTML
+  - [ ] CSS
+  - [ ] JS/TS
+- [ ] Minifier
+  - [ ] HTML
+  - [ ] CSS
+  - [ ] JS
 - Viewers
   - [ ] SVG viewer
     - https://www.svgviewer.dev/
@@ -22,6 +30,7 @@ Ideas
 - Checkers/validators (paste code or use URL)
   - [ ] XML
   - [ ] HTML
+  - [ ] JSON
   - [ ] CSS
   - [ ] Favicon
   - [ ] SEO
