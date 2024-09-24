@@ -9,13 +9,13 @@ Examples
 
 Ideas
 
-- [ ] Formatters
+- Formatters
   - [ ] JSON
   - [ ] XML
   - [ ] HTML
   - [ ] CSS
   - [ ] JS/TS
-- [ ] Minifier
+- Minifiers / Prettifiers
   - [ ] HTML
   - [ ] CSS
   - [ ] JS
@@ -27,6 +27,7 @@ Ideas
   - [ ] View page source (https://neatnik.net/view-source/)
   - [ ] Google Fonts Previewer
     - Browse and preview Google Fonts with customizable text.
+  - [ ] Diff
 - Checkers/validators (paste code or use URL)
   - [ ] XML
   - [ ] HTML
@@ -44,6 +45,7 @@ Ideas
   - [ ] Base64
   - [ ] URL
   - [ ] HTML Entity
+  - [ ] JS string (single or double quotes)
 - Colors
   - [ ] Converters (RGB / HSL / HEX)
   - [ ] Blend transparent colors
@@ -60,8 +62,14 @@ Ideas
   - [ ] Random Number
     - With customizable ranges and options for integer/decimal output.
 - Converters
-  - [ ] Timestamp (with/without timezones)
-  - [ ] Unit (px -> em, kb -> MB)
+
+  - [ ] Epoch Timestamp <-> date
+  - [ ] Unit (px <-> em, kb <-> MB)
+  - [ ] XML <-> JSON
+  - [ ] CSV <-> JSON
+  - [ ] YAML <-> JSON
+  - [ ] URL/Query string parse/format
+
 - [ ] Character / word count
 - [ ] Unicode Character Lookup
 - [ ] Date/Time Difference Calculator
