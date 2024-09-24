@@ -1,11 +1,9 @@
-import { Button } from '@mui/material'
+import { Typography } from '@mui/material'
 
 export default function Home() {
   return (
-    <div>
-      <Button color="primary" variant="contained">
-        Money Tools
-      </Button>
-    </div>
+    <>
+      <Typography variant="h1">Money Tools</Typography>
+    </>
   )
 }

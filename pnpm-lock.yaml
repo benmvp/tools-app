@@ -41,15 +41,12 @@ importers:
       '@repo/ui':
         specifier: workspace:*
         version: link:../../packages/ui
-      add:
-        specifier: ^2.0.6
-        version: 2.0.6
       next:
         specifier: 14.2.6
         version: 14.2.6(react-dom@18.3.1)(react@18.3.1)
-      pnpm:
-        specifier: ^9.10.0
-        version: 9.10.0
+      prettier:
+        specifier: ^3.2.5
+        version: 3.3.3
       react:
         specifier: 18.3.1
         version: 18.3.1
@@ -3964,7 +3961,6 @@ packages:
     resolution: {integrity: sha512-i2tDNA0O5IrMO757lfrdQZCc2jPNDVntV0m/+4whiDfWaTKfMNgR7Qz0NAeGz/nRqF4m5/6CLzbP4/liHt12Ew==}
     engines: {node: '>=14'}
     hasBin: true
-    dev: true
 
   /prop-types@15.8.1:
     resolution: {integrity: sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==}
