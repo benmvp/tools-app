@@ -1,5 +1,6 @@
 'use client'
 
+import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import {
   Button,
   Chip,
@@ -12,6 +13,10 @@ import {
   Stack,
   TextField,
   Typography,
+  IconButton,
+  Box,
+  Tooltip,
+  Snackbar,
 } from '@mui/material'
 import type { Options } from 'prettier'
 import htmlParser from 'prettier/parser-html'
@@ -20,7 +25,7 @@ import { useState } from 'react'
 
 type Indentation = 'two-spaces' | 'four-spaces' | 'tabs'
 
-export default function HtmlFormatter() {
+export default function HtmlFormatterPage() {
   const [formattedHtml, setFormattedHtml] = useState('')
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -121,8 +126,19 @@ function getPrettyHtml(rawHtml?: string, indentation?: Indentation) {
 }
 
 function FormattedCode({ code, title }: { code: string; title: string }) {
+  const [copied, setCopied] = useState(false)
+
   if (!code) {
     return null
+  }
+
+  const handleCopyClick = async () => {
+    try {
+      await navigator.clipboard.writeText(code)
+      setCopied(true)
+    } catch (err) {
+      console.error('Failed to copy code to clipboard', err)
+    }
   }
 
   return (
@@ -130,12 +146,41 @@ function FormattedCode({ code, title }: { code: string; title: string }) {
       <Divider>
         <Chip label={title} size="medium" />
       </Divider>
-      <TextField
-        autoComplete="off"
-        maxRows={15}
-        multiline
-        name="formattedCode"
-        value={code}
+
+      <Box sx={{ position: 'relative' }}>
+        <TextField
+          autoComplete="off"
+          fullWidth
+          maxRows={15}
+          multiline
+          name="formattedCode"
+          value={code}
+          variant="filled"
+        />
+        <Tooltip title="Copy formatted code">
+          <IconButton
+            aria-label="Copy formatted code"
+            onClick={() => void handleCopyClick()}
+            size="large"
+            sx={(theme) => ({
+              position: 'absolute',
+              right: theme.spacing(1),
+              top: theme.spacing(1),
+            })}
+          >
+            <ContentCopyIcon />
+          </IconButton>
+        </Tooltip>
+      </Box>
+
+      <Snackbar
+        anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
+        autoHideDuration={2000}
+        message="Formatted code copied to clipboard"
+        onClose={() => {
+          setCopied(false)
+        }}
+        open={copied}
       />
     </>
   )
