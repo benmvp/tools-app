@@ -1,6 +1,8 @@
+import type { LinkProps as MuiLinkProps } from '@mui/material'
+import { Link as MuiLink } from '@mui/material'
+import type { LinkProps as NextLinkProps } from 'next/link'
+import NextLink from 'next/link'
 import { forwardRef } from 'react'
-import NextLink, { LinkProps as NextLinkProps } from 'next/link'
-import { Link as MuiLink, LinkProps as MuiLinkProps } from '@mui/material'
 
 // `LinkProps` is the combination of the MUI `LinkProps` and the Next `LinkProps`
 // We wanna use the `href` prop from `next/link` so we omit it from MUI's.
@@ -14,18 +16,19 @@ export type LinkProps = Omit<MuiLinkProps, 'href'> &
  * @see https://next.js.org/docs/api-reference/next/link
  */
 const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(
-  { href, prefetch, replace, scroll, shallow, locale, ...muiProps },
+  { href, locale, prefetch, replace, scroll, shallow, ...muiProps },
   ref,
 ) {
   return (
     <NextLink
       href={href}
+      legacyBehavior
+      locale={locale}
+      passHref
+      prefetch={prefetch}
       replace={replace}
       scroll={scroll}
       shallow={shallow}
-      locale={locale}
-      passHref
-      legacyBehavior
     >
       <MuiLink ref={ref} {...muiProps} />
     </NextLink>

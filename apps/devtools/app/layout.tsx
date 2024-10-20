@@ -13,9 +13,6 @@ const THEME_OPTIONS: BaseRootLayoutProps['themeOptions'] = {
     primary: pink,
     secondary: blue,
   },
-  typography: {
-    fontFamily: `var(--font-roboto)`,
-  },
 }
 
 export default function RootLayout({

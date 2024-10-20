@@ -1,4 +1,4 @@
-import { green, pink, yellow } from '@mui/material/colors'
+import { green, yellow } from '@mui/material/colors'
 import type { BaseRootLayoutProps } from '@repo/ui/base-root-layout'
 import { BaseRootLayout } from '@repo/ui/base-root-layout'
 import type { Metadata } from 'next'
@@ -12,9 +12,6 @@ const THEME_OPTIONS: BaseRootLayoutProps['themeOptions'] = {
   palette: {
     primary: green,
     secondary: yellow,
-  },
-  typography: {
-    fontFamily: `var(--font-roboto)`,
   },
 }
 

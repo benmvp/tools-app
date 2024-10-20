@@ -46,9 +46,11 @@ export default function HtmlFormatterPage() {
 
   return (
     <>
-      <Typography variant="h1">HTML Formatter</Typography>
+      <Typography component="h1" variant="h6">
+        HTML Formatter
+      </Typography>
 
-      <Stack spacing={5}>
+      <Stack spacing={5} useFlexGap>
         <Typography mb={4} variant="body1">
           Description here
         </Typography>
@@ -136,8 +138,8 @@ function FormattedCode({ code, title }: { code: string; title: string }) {
     try {
       await navigator.clipboard.writeText(code)
       setCopied(true)
-    } catch (err) {
-      console.error('Failed to copy code to clipboard', err)
+    } catch {
+      // failed to copy to clipboard
     }
   }
 

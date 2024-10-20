@@ -6,6 +6,5 @@ module.exports = {
   extends: [
     ...baseConfig.extends,
     require.resolve('@vercel/style-guide/eslint/next'),
-    'next/core-web-vitals',
   ],
 }
