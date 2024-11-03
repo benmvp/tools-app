@@ -41,7 +41,8 @@ function isFormatterId(id?: string): id is FormatterId {
 }
 
 export function getFormatterIdFromQuerySlug(slug: string) {
-  const [formatterId] = slug.split('-')
+  const match = /^(?<formatterId>\w+)-formatter$/.exec(slug)
+  const formatterId = match?.groups?.formatterId
 
   return isFormatterId(formatterId) ? formatterId : null
 }

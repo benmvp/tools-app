@@ -1,4 +1,5 @@
 import { Stack, Typography } from '@mui/material'
+import { notFound } from 'next/navigation'
 import { Formatter } from './formatter'
 import {
   FORMATTERS,
@@ -25,7 +26,7 @@ export default function FormatterPage({ params }: PageProps) {
   const formatterId = getFormatterIdFromQuerySlug(params.slug)
 
   if (!formatterId) {
-    return null
+    return notFound()
   }
 
   const formatter = getFormatterById(formatterId)
