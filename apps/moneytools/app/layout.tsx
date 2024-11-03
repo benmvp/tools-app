@@ -21,6 +21,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <BaseRootLayout themeOptions={THEME_OPTIONS}>{children}</BaseRootLayout>
+    <BaseRootLayout navMenuItems={[]} themeOptions={THEME_OPTIONS}>
+      {children}
+    </BaseRootLayout>
   )
 }

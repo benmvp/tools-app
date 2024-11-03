@@ -1,6 +1,5 @@
 'use client'
 
-import CodeIcon from '@mui/icons-material/Code'
 import MenuIcon from '@mui/icons-material/Menu'
 import {
   AppBar,
@@ -17,13 +16,33 @@ import {
   useMediaQuery,
   styled,
   Paper,
+  Stack,
 } from '@mui/material'
+import type { SvgIconTypeMap } from '@mui/material'
+import type { OverridableComponent } from '@mui/material/OverridableComponent'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter'
 import { Roboto } from 'next/font/google'
 import NextLink from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useMemo, useState } from 'react'
+
+interface NavigationItem {
+  href: string
+  label: string
+}
+interface NavigationSection {
+  Icon: OverridableComponent<SvgIconTypeMap<object>>
+  href: string
+  items: NavigationItem[]
+  label: string
+}
+
+export interface BaseRootLayoutProps {
+  children: React.ReactNode
+  navMenuItems: NavigationSection[]
+  themeOptions: Parameters<typeof createTheme>[0]
+}
 
 const roboto = Roboto({
   display: 'swap',
@@ -32,13 +51,9 @@ const roboto = Roboto({
   weight: ['300', '400', '500', '700'],
 })
 
-export interface BaseRootLayoutProps {
-  children: React.ReactNode
-  themeOptions: Parameters<typeof createTheme>[0]
-}
-
 export function BaseRootLayout({
   children,
+  navMenuItems,
   themeOptions,
 }: BaseRootLayoutProps) {
   const theme = useTheme(themeOptions)
@@ -88,7 +103,7 @@ export function BaseRootLayout({
                   </Box>
                   <Footer />
                 </Container>
-                <Nav isNavOpen={isNavOpen} />
+                <Nav isNavOpen={isNavOpen} menuItems={navMenuItems} />
               </Box>
 
               <Header onNavToggle={handleNavToggle} />
@@ -159,11 +174,11 @@ function Header({ onNavToggle }: HeaderProps) {
 
 interface NavProps {
   isNavOpen: boolean
+  menuItems: NavigationSection[]
 }
 
-const StyledNav = styled(Paper)<NavProps>(({ isNavOpen, theme }) => ({
+const StyledNav = styled(Paper)(({ theme }) => ({
   background: theme.palette.background.paper,
-  display: isNavOpen ? undefined : 'none',
   height: '100%',
   left: 0,
   minWidth: 250,
@@ -179,32 +194,44 @@ const StyledNav = styled(Paper)<NavProps>(({ isNavOpen, theme }) => ({
   },
 }))
 
-function Nav({ isNavOpen }: NavProps) {
+function Nav({ isNavOpen, menuItems }: NavProps) {
   const pathname = usePathname()
 
   return (
     <StyledNav
-      isNavOpen={isNavOpen}
       square
+      sx={isNavOpen ? undefined : { display: 'none' }}
       variant={isNavOpen ? 'elevation' : 'outlined'}
     >
-      <Typography
-        component="span"
-        sx={{ alignItems: 'center', display: 'flex' }}
-        variant="subtitle2"
-      >
-        <CodeIcon fontSize="large" sx={{ pr: 1 }} />
-        Formatters
-      </Typography>
-      <List>
-        <ListItemButton
-          component={NextLink}
-          href="/html-formatter"
-          selected={pathname === '/html-formatter'}
-        >
-          <ListItemText primary="HTML Formatter" />
-        </ListItemButton>
-      </List>
+      <Stack spacing={2}>
+        {menuItems.map(
+          ({ Icon, href: sectionHref, items, label: sectionLabel }) => (
+            <Box key={sectionHref}>
+              <Typography
+                component="span"
+                sx={{ alignItems: 'center', display: 'flex' }}
+                variant="subtitle2"
+              >
+                <Icon fontSize="large" sx={{ pr: 1 }} />
+                {sectionLabel}
+              </Typography>
+              <List>
+                {items.map(({ href: itemHref, label: itemLabel }) => (
+                  <ListItemButton
+                    component={NextLink}
+                    href={itemHref}
+                    key={itemHref}
+                    selected={pathname === itemHref}
+                    sx={{ px: 1, py: 0 }}
+                  >
+                    <ListItemText primary={itemLabel} />
+                  </ListItemButton>
+                ))}
+              </List>
+            </Box>
+          ),
+        )}
+      </Stack>
     </StyledNav>
   )
 }
