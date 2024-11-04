@@ -12,6 +12,11 @@
       "persistent": true
     },
     "lint": {},
+    "start": {
+      "dependsOn": ["build"],
+      "cache": false,
+      "persistent": true
+    },
     "type-check": {}
   }
 }
