@@ -17,19 +17,25 @@
     "@mui/icons-material": "^6.1.0",
     "@mui/material": "^6.1.0",
     "@repo/ui": "workspace:*",
+    "clean-css": "^5.3.3",
+    "html-minifier-terser": "^7.2.0",
+    "minify-xml": "^4.5.2",
     "next": "14.2.6",
     "prettier": "^3.2.5",
     "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "react-dom": "18.3.1",
+    "terser": "^5.37.0"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:^",
     "@repo/typescript-config": "workspace:^",
+    "@types/clean-css": "^4.2.11",
+    "@types/html-minifier-terser": "^7.0.2",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "14.2.6",
-    "typescript": "^5"
+    "typescript": "^5.6.2"
   }
 }

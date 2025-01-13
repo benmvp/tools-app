@@ -165,7 +165,7 @@ function Header({ onNavToggle }: HeaderProps) {
           <MenuIcon />
         </MenuIconButton>
         <Typography component="span" noWrap variant="h6">
-          devtools.benmvp.com
+          Codemata - Free Developer Tools
         </Typography>
       </Toolbar>
     </AppBar>

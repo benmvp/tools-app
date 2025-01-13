@@ -15,7 +15,7 @@ export type LinkProps = Omit<MuiLinkProps, 'href'> &
  *
  * @see https://next.js.org/docs/api-reference/next/link
  */
-const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(
+export const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(
   { href, locale, prefetch, replace, scroll, shallow, ...muiProps },
   ref,
 ) {
@@ -34,5 +34,3 @@ const Link = forwardRef<HTMLAnchorElement, LinkProps>(function Link(
     </NextLink>
   )
 })
-
-export default Link
