@@ -1,83 +1,41 @@
 'use server'
 
-import type { Options as PrettierOptions } from 'prettier'
+import prettierPluginXml from '@prettier/plugin-xml'
+import type {
+  Options as PrettierOptions,
+  Plugin as PrettierPlugin,
+} from 'prettier'
 import { format as prettierFormat } from 'prettier'
 import type { Indentation } from './types'
 
-export async function formatCssAction(data: FormData) {
-  const rawCode = data.get('code')?.toString() || ''
+export const formatCssAction = getLanguageFormatAction('scss')
+export const formatGraphqlAction = getLanguageFormatAction('graphql')
+export const formatHtmlAction = getLanguageFormatAction('html')
+export const formatMarkdownAction = getLanguageFormatAction('mdx')
+export const formatJsonAction = getLanguageFormatAction('json')
+export const formatTypescriptAction = getLanguageFormatAction('typescript')
+export const formatXmlAction = getLanguageFormatAction('xml', [
+  prettierPluginXml,
+])
+export const formatYamlAction = getLanguageFormatAction('yaml')
 
-  const prettierOptions: PrettierOptions = {
-    parser: 'css',
-    ...getIndentationPrettierOptions(
-      data.get('indentation') as Indentation | null,
-    ),
+function getLanguageFormatAction(
+  parser: string,
+  plugins: PrettierPlugin[] = [],
+) {
+  return async (data: FormData) => {
+    const rawCode = data.get('code')?.toString() || ''
+
+    const prettierOptions: PrettierOptions = {
+      parser,
+      plugins,
+      ...getIndentationPrettierOptions(
+        data.get('indentation') as Indentation | null,
+      ),
+    }
+
+    return prettierFormat(rawCode, prettierOptions)
   }
-
-  return prettierFormat(rawCode, prettierOptions)
-}
-
-export async function formatHtmlAction(data: FormData) {
-  const rawCode = data.get('code')?.toString() || ''
-
-  const prettierOptions: PrettierOptions = {
-    parser: 'html',
-    ...getIndentationPrettierOptions(
-      data.get('indentation') as Indentation | null,
-    ),
-  }
-
-  return prettierFormat(rawCode, prettierOptions)
-}
-
-export async function formatMarkdownAction(data: FormData) {
-  const rawCode = data.get('code')?.toString() || ''
-
-  const prettierOptions: PrettierOptions = {
-    parser: 'markdown',
-    ...getIndentationPrettierOptions(
-      data.get('indentation') as Indentation | null,
-    ),
-  }
-
-  return prettierFormat(rawCode, prettierOptions)
-}
-
-export async function formatJsonAction(data: FormData) {
-  const rawCode = data.get('code')?.toString() || ''
-  const { tabWidth, useTabs } = getIndentationPrettierOptions(
-    data.get('indentation') as Indentation | null,
-  )
-
-  return Promise.resolve(
-    JSON.stringify(JSON.parse(rawCode), null, useTabs ? '\t' : tabWidth),
-  )
-}
-
-export async function formatTypescriptAction(data: FormData) {
-  const rawCode = data.get('code')?.toString() || ''
-
-  const prettierOptions: PrettierOptions = {
-    parser: 'typescript',
-    ...getIndentationPrettierOptions(
-      data.get('indentation') as Indentation | null,
-    ),
-  }
-
-  return prettierFormat(rawCode, prettierOptions)
-}
-
-export async function formatYamlAction(data: FormData) {
-  const rawCode = data.get('code')?.toString() || ''
-
-  const prettierOptions: PrettierOptions = {
-    parser: 'yaml',
-    ...getIndentationPrettierOptions(
-      data.get('indentation') as Indentation | null,
-    ),
-  }
-
-  return prettierFormat(rawCode, prettierOptions)
 }
 
 function getIndentationPrettierOptions(indentation: Indentation | null) {

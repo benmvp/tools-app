@@ -14,6 +14,13 @@ const CSS: FormatterContent = {
   slug: 'css',
 }
 
+const GRAPHQL: FormatterContent = {
+  displayName: 'GraphQL',
+  id: 'graphql',
+  pageTitle: 'GraphQL Formatter',
+  slug: 'graphql',
+}
+
 const HTML: FormatterContent = {
   displayName: 'HTML',
   id: 'html',
@@ -29,9 +36,9 @@ const JSON: FormatterContent = {
 }
 
 const MD: FormatterContent = {
-  displayName: 'Markdown',
+  displayName: 'Markdown/MDX',
   id: 'md',
-  pageTitle: 'Markdown Formatter',
+  pageTitle: 'Markdown/MDX Formatter',
   slug: 'markdown',
 }
 
@@ -58,6 +65,7 @@ const YAML: FormatterContent = {
 
 export const FORMATTER_CONTENTS: Record<FormatterId, FormatterContent> = {
   css: CSS,
+  graphql: GRAPHQL,
   html: HTML,
   json: JSON,
   md: MD,

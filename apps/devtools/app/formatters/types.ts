@@ -2,7 +2,15 @@
 import type { TransformerAction, TransformerConfig } from '../../types'
 import type { indentationConfig } from './formatters'
 
-export type FormatterId = 'html' | 'css' | 'ts' | 'json' | 'md' | 'xml' | 'yaml'
+export type FormatterId =
+  | 'css'
+  | 'graphql'
+  | 'html'
+  | 'json'
+  | 'md'
+  | 'ts'
+  | 'xml'
+  | 'yaml'
 export type Indentation = 'two-spaces' | 'four-spaces' | 'tabs'
 
 export interface Formatter {

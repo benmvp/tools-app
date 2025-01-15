@@ -1,10 +1,12 @@
 import type { TransformerConfig } from '../../types'
 import {
   formatCssAction,
+  formatGraphqlAction,
   formatHtmlAction,
   formatJsonAction,
   formatMarkdownAction,
   formatTypescriptAction,
+  formatXmlAction,
   formatYamlAction,
 } from './actions'
 import type { FormatterId, Indentation, Formatter } from './types'
@@ -28,23 +30,18 @@ export const indentationConfig: TransformerConfig<Indentation> = {
   ],
 }
 
-const htmlFormatter: Formatter = {
-  action: formatHtmlAction,
-  configs: [indentationConfig],
-}
-
 const cssFormatter: Formatter = {
   action: formatCssAction,
   configs: [indentationConfig],
 }
 
-const typeScriptFormatter: Formatter = {
-  action: formatTypescriptAction,
+const graphqlFormatter: Formatter = {
+  action: formatGraphqlAction,
   configs: [indentationConfig],
 }
 
-const markdownFormatter: Formatter = {
-  action: formatMarkdownAction,
+const htmlFormatter: Formatter = {
+  action: formatHtmlAction,
   configs: [indentationConfig],
 }
 
@@ -53,7 +50,20 @@ const jsonFormatter: Formatter = {
   configs: [indentationConfig],
 }
 
-const xmlFormatter: Formatter = htmlFormatter
+const markdownFormatter: Formatter = {
+  action: formatMarkdownAction,
+  configs: [indentationConfig],
+}
+
+const typeScriptFormatter: Formatter = {
+  action: formatTypescriptAction,
+  configs: [indentationConfig],
+}
+
+const xmlFormatter: Formatter = {
+  action: formatXmlAction,
+  configs: [indentationConfig],
+}
 
 const yamlFormatter: Formatter = {
   action: formatYamlAction,
@@ -62,6 +72,7 @@ const yamlFormatter: Formatter = {
 
 export const FORMATTERS: Record<FormatterId, Formatter> = {
   css: cssFormatter,
+  graphql: graphqlFormatter,
   html: htmlFormatter,
   json: jsonFormatter,
   md: markdownFormatter,

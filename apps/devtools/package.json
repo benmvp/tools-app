@@ -16,6 +16,7 @@
     "@fontsource/roboto": "^5.1.0",
     "@mui/icons-material": "^6.1.0",
     "@mui/material": "^6.1.0",
+    "@prettier/plugin-xml": "^3.4.1",
     "@repo/ui": "workspace:*",
     "clean-css": "^5.3.3",
     "html-minifier-terser": "^7.2.0",

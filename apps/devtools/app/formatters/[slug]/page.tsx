@@ -32,8 +32,8 @@ export function generateMetadata({ params }: PageProps): Metadata {
   const formatterContent = FORMATTER_CONTENTS[formatterId]
 
   return {
-    description: `Meta description for ${formatterContent.displayName} formatter here`,
-    title: `${formatterContent.pageTitle} | Free Developer Tools`,
+    description: `TODO TODO TODO: Meta description for ${formatterContent.displayName} formatter here`,
+    title: `${formatterContent.pageTitle} | Free Developer Tools | Codemata`,
   }
 }
 
