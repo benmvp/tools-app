@@ -3,6 +3,7 @@
 import CleanCss from 'clean-css'
 import { minify as minifyHtml } from 'html-minifier-terser'
 import { minify as minifyXml } from 'minify-xml'
+import { optimize as optimizeSvg } from 'svgo'
 import { minify as minifyJs } from 'terser'
 import { transpileModule, ModuleKind } from 'typescript'
 
@@ -33,6 +34,12 @@ export async function minifyJsonAction(data: FormData) {
   const rawCode = data.get('code')?.toString() || ''
 
   return Promise.resolve(JSON.stringify(JSON.parse(rawCode)))
+}
+
+export async function minifySvgAction(data: FormData) {
+  const rawCode = data.get('code')?.toString() || ''
+
+  return Promise.resolve(optimizeSvg(rawCode, { multipass: true }).data)
 }
 
 export async function minifyTypescriptAction(data: FormData) {

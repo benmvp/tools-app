@@ -8,9 +8,9 @@ export const MINIFIER_TRANSFORMED_STATE = 'Minified'
 type MinifierContent = TransformerContent<MinifierId>
 
 const CSS: MinifierContent = {
-  displayName: 'CSS/SCSS',
+  displayName: 'CSS',
   id: 'css',
-  pageTitle: 'CSS/SCSS Minifier',
+  pageTitle: 'CSS Minifier',
   slug: 'css',
 }
 
@@ -26,6 +26,13 @@ const JSON: MinifierContent = {
   id: 'json',
   pageTitle: 'JSON Minifier',
   slug: 'json',
+}
+
+const SVG: MinifierContent = {
+  displayName: 'SVG',
+  id: 'svg',
+  pageTitle: 'SVG Minifier',
+  slug: 'svg',
 }
 
 const TS: MinifierContent = {
@@ -46,6 +53,7 @@ export const MINIFIER_CONTENTS: Record<MinifierId, MinifierContent> = {
   css: CSS,
   html: HTML,
   json: JSON,
+  svg: SVG,
   ts: TS,
   xml: XML,
 }
