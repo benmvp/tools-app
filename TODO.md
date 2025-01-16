@@ -15,7 +15,7 @@ Examples
 - [x] JS/TS (`typescript` parser)
 - [x] JSON (`json`)
 - [x] Markdown/MDX (`mdx` parser)
-- [ ] XML (`@prettier/plugin-xml` plugin)
+- [x] XML (`@prettier/plugin-xml` plugin)
 - [x] YAML (`yaml` parser)
 
 ### Minifiers
@@ -25,7 +25,7 @@ Examples
 - [x] JS/TS (`terser` for JS, `typescript` for TS compilation)
 - [x] XML (`minify-xml`)
 - [x] JSON (`JSON.stringify(JSON.parse(input), null, 0)`)
-- [ ] SVG
+- [x] SVG
 
 ### Viewers
 
@@ -89,6 +89,7 @@ Examples
 - [ ] Case Converter (Implement functions for converting to uppercase, lowercase, title case, etc.)
 - [ ] Text Analyzer (Calculate word count, character count, sentence count, etc.)
 - [ ] String Reverser (Implement a function to reverse strings)
+- [ ] Line sort & deduplication
 
 ### Network
 
