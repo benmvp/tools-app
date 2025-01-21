@@ -3,8 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "exports": {
-    "./Link": "./src/Link.tsx",
-    "./base-root-layout": "./src/base-root-layout.tsx"
+    "./base-root-layout": "./src/base-root-layout.tsx",
+    "./link": "./src/link.tsx",
+    "./markdown": "./src/markdown.tsx"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
@@ -21,10 +22,13 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@mui/icons-material": "^6.1.0",
     "@mui/material": "^6.1.0",
     "@mui/material-nextjs": "^6.1.0",
-    "@mui/icons-material": "^6.1.0",
     "next": "14.2.11",
-    "react": "^18.2.0"
+    "react": "^18.2.0",
+    "react-markdown": "^9.0.3"
   }
 }

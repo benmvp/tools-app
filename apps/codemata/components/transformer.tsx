@@ -12,6 +12,8 @@ import {
 } from '@mui/material'
 import { useState } from 'react'
 import type { TransformerAction, TransformerConfig } from '../types'
+import { ContentSectionUi } from './content-section'
+import type { ContentSection } from './content-section'
 import { GeneratedCode } from './generated-code'
 
 interface TransformerProps {
@@ -19,6 +21,7 @@ interface TransformerProps {
   actionLabel: string
   configs?: TransformerConfig[]
   displayName: string
+  howToUse?: ContentSection
   stateLabel: string
 }
 
@@ -27,6 +30,7 @@ export function TransformerUi({
   actionLabel,
   configs,
   displayName,
+  howToUse,
   stateLabel,
 }: TransformerProps) {
   const [transformedCode, setTransformedCode] = useState('')
@@ -51,6 +55,9 @@ export function TransformerUi({
         name={displayName}
         onSubmit={handleSubmit}
       />
+
+      <ContentSectionUi section={howToUse} />
+
       <GeneratedCode
         code={transformedCode}
         title={`${stateLabel} ${displayName}`}
@@ -109,7 +116,6 @@ function TransformerForm({
           </RadioGroup>
         </FormControl>
       ))}
-
       <Button
         sx={{ alignSelf: 'flex-start' }}
         type="submit"

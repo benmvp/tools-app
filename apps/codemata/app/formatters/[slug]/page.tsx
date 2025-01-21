@@ -1,7 +1,9 @@
 import { Stack, Typography } from '@mui/material'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { ContentSectionUi } from '../../../components/content-section'
 import { TransformerUi } from '../../../components/transformer'
+import { getFormatterContent } from '../ai'
 import {
   FORMATTER_CONTENTS,
   FORMATTER_TRANSFORM_ACTION,
@@ -21,7 +23,9 @@ interface PageProps {
   params: { slug: string }
 }
 
-export function generateMetadata({ params }: PageProps): Metadata {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { slug } = params
   const formatterId = getFormatterIdBySlug(slug)
 
@@ -29,15 +33,22 @@ export function generateMetadata({ params }: PageProps): Metadata {
     return notFound()
   }
 
-  const formatterContent = FORMATTER_CONTENTS[formatterId]
+  const formatterContent = await getFormatterContent(formatterId)
+
+  if (!formatterContent) {
+    const { pageTitle } = FORMATTER_CONTENTS[formatterId]
+
+    return { title: pageTitle }
+  }
 
   return {
-    description: `TODO TODO TODO: Meta description for ${formatterContent.displayName} formatter here`,
-    title: `${formatterContent.pageTitle} | Free Developer Tools | Codemata`,
+    description: formatterContent.seo.description,
+    keywords: formatterContent.seo.keywords,
+    title: `${formatterContent.seo.title} | Codemata Developer Tools`,
   }
 }
 
-export default function FormatterPage({ params }: PageProps) {
+export default async function FormatterPage({ params }: PageProps) {
   const { slug } = params
   const formatterId = getFormatterIdBySlug(slug)
 
@@ -45,27 +56,36 @@ export default function FormatterPage({ params }: PageProps) {
     return notFound()
   }
 
-  const formatterContent = FORMATTER_CONTENTS[formatterId]
+  const { displayName, pageTitle } = FORMATTER_CONTENTS[formatterId]
+  const formatterContent = await getFormatterContent(formatterId)
   const formatter = FORMATTERS[formatterId]
 
   return (
     <>
-      <Typography component="h1" variant="h6">
-        {formatterContent.pageTitle}
+      <Typography component="h1" mb={2} variant="h6">
+        {pageTitle}
       </Typography>
 
       <Stack spacing={5} useFlexGap>
-        <Typography mb={4} variant="body1">
-          Description for {formatterContent.displayName} formatter here
-        </Typography>
+        {formatterContent?.intro ? (
+          <Typography variant="body1">{formatterContent.intro}</Typography>
+        ) : null}
 
         <TransformerUi
           action={formatter.action}
           actionLabel={FORMATTER_TRANSFORM_ACTION}
           configs={formatter.configs}
-          displayName={formatterContent.displayName}
+          displayName={displayName}
+          howToUse={formatterContent?.howToUse}
           stateLabel={FORMATTER_TRANSFORMED_STATE}
         />
+
+        <ContentSectionUi section={formatterContent?.features} />
+        <ContentSectionUi section={formatterContent?.rationale} />
+        <ContentSectionUi section={formatterContent?.purpose} />
+        <ContentSectionUi section={formatterContent?.integrate} />
+        <ContentSectionUi section={formatterContent?.faq} />
+        <ContentSectionUi section={formatterContent?.resources} />
       </Stack>
     </>
   )

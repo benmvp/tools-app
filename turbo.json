@@ -1,5 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "globalEnv": ["GEMINI_API_KEY", "OPENAI_API_KEY"],
   "ui": "tui",
   "tasks": {
     "build": {
@@ -9,7 +10,8 @@
     },
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "env": ["USE_TOOL_CONTENT_CACHE"]
     },
     "lint": {},
     "start": {
