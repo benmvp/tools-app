@@ -11,7 +11,7 @@
     "dev": {
       "cache": false,
       "persistent": true,
-      "env": ["USE_TOOL_CONTENT_CACHE"]
+      "env": ["NODE_ENV"]
     },
     "lint": {},
     "start": {

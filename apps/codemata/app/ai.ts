@@ -100,7 +100,7 @@ export async function getToolContent<T>(
 }
 
 export async function getCachedContent<T = string>(cacheKey: string) {
-  if (process.env.USE_TOOL_CONTENT_CACHE !== 'true') {
+  if (process.env.NODE_ENV !== 'development') {
     return undefined
   }
 
@@ -109,8 +109,6 @@ export async function getCachedContent<T = string>(cacheKey: string) {
 
     const cachedData = (await readJson(cachePath)) as T
 
-    // console.log(`Cache hit for ${cacheKey}`)
-
     return cachedData
   } catch {
     return undefined
@@ -118,7 +116,7 @@ export async function getCachedContent<T = string>(cacheKey: string) {
 }
 
 export async function saveCachedContent(cacheKey: string, content: unknown) {
-  if (process.env.USE_TOOL_CONTENT_CACHE !== 'true') {
+  if (process.env.NODE_ENV !== 'development') {
     return
   }
 
@@ -126,8 +124,6 @@ export async function saveCachedContent(cacheKey: string, content: unknown) {
 
   await ensureDir(dirname(cachePath))
   await writeJson(cachePath, content)
-
-  // console.log(`Cached ${cacheKey}`)
 }
 
 function getCachePath(cacheKey: string) {
