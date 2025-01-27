@@ -1,8 +1,9 @@
 import { Stack, Typography } from '@mui/material'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { ContentSectionUi } from '../../../components/content-section'
 import { TransformerUi } from '../../../components/transformer'
-// import { MinifierUi } from './minifier-ui'
+import { getMinifierContent } from '../ai'
 import {
   MINIFIER_CONTENTS,
   MINIFIER_TRANSFORM_ACTION,
@@ -23,7 +24,7 @@ interface PageProps {
   params: { slug: string }
 }
 
-export function generateMetadata({ params }: PageProps): Metadata {
+export async function generateMetadata({ params }: PageProps): Metadata {
   const { slug } = params
   const minifierId = getMinifierIdBySlug(slug)
 
@@ -31,15 +32,22 @@ export function generateMetadata({ params }: PageProps): Metadata {
     return notFound()
   }
 
-  const minifierContent = MINIFIER_CONTENTS[minifierId]
+  const minifierContent = await getMinifierContent(minifierId)
+
+  if (!minifierContent) {
+    const { pageTitle } = MINIFIER_CONTENTS[minifierId]
+
+    return { title: pageTitle }
+  }
 
   return {
-    description: `Meta description for ${minifierContent.displayName} minifier here`,
-    title: `${minifierContent.pageTitle} | Free Developer Tools`,
+    description: minifierContent.seo.description,
+    keywords: minifierContent.seo.keywords,
+    title: `${minifierContent.seo.title} | Codemata Developer Tools`,
   }
 }
 
-export default function MinifierPage({ params }: PageProps) {
+export default async function MinifierPage({ params }: PageProps) {
   const { slug } = params
   const minifierId = getMinifierIdBySlug(slug)
 
@@ -47,27 +55,36 @@ export default function MinifierPage({ params }: PageProps) {
     return notFound()
   }
 
+  const { displayName, pageTitle } = MINIFIER_CONTENTS[minifierId]
+  const minifierContent = await getMinifierContent(minifierId)
   const minifier = MINIFIERS[minifierId]
-  const minifierContents = MINIFIER_CONTENTS[minifierId]
 
   return (
     <>
       <Typography component="h1" variant="h6">
-        {minifierContents.pageTitle}
+        {pageTitle}
       </Typography>
 
       <Stack spacing={5} useFlexGap>
-        <Typography mb={4} variant="body1">
-          Description for {minifierContents.displayName} minifier here
-        </Typography>
+        {minifierContent?.intro ? (
+          <Typography variant="body1">{minifierContent.intro}</Typography>
+        ) : null}
 
         <TransformerUi
           action={minifier.action}
           actionLabel={MINIFIER_TRANSFORM_ACTION}
           configs={minifier.configs}
-          displayName={minifierContents.displayName}
+          displayName={displayName}
+          howToUse={minifierContent?.howToUse}
           stateLabel={MINIFIER_TRANSFORMED_STATE}
         />
+
+        <ContentSectionUi section={minifierContent?.features} />
+        <ContentSectionUi section={minifierContent?.rationale} />
+        <ContentSectionUi section={minifierContent?.purpose} />
+        <ContentSectionUi section={minifierContent?.integrate} />
+        <ContentSectionUi section={minifierContent?.faq} />
+        <ContentSectionUi section={minifierContent?.resources} />
       </Stack>
     </>
   )

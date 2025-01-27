@@ -1,57 +1,18 @@
-import { zodResponseFormat } from 'openai/helpers/zod'
-import { z } from 'zod'
-import { contentSectionSchema } from '../../components/content-section'
-import { getCachedContent, getToolContent, saveCachedContent } from '../ai'
+import type { ToolContent } from '../ai'
+import { getCachedToolContent, saveCachedContent } from '../ai'
 import { FORMATTER_CONTENTS } from './content'
 import type { FormatterId } from './types'
 
-const formatterContentSchema = z.object({
-  faq: contentSectionSchema.describe(
-    'The frequently asked questions of the tool.',
-  ),
-  features: contentSectionSchema.describe(
-    'The features and benefits of the tool.',
-  ),
-  howToUse: contentSectionSchema.describe(
-    'The instruction steps to use the tool.',
-  ),
-  integrate: contentSectionSchema.describe(
-    "How to integrate the tool into the user's workflow.",
-  ),
-  intro: z.string().describe('The introductory paragraph of the tool.'),
-  purpose: contentSectionSchema.describe(
-    'Explains the language the tool is designed.',
-  ),
-  rationale: contentSectionSchema.describe(
-    'Why using an online formatter for this language is beneficial.',
-  ),
-  resources: contentSectionSchema.describe('Links to external resources.'),
-  seo: z
-    .object({
-      description: z.string(),
-      keywords: z.string(),
-      title: z.string().describe('The title of the HTML document.'),
-    })
-    .describe('SEO meta tags.'),
-})
-
-export type FormatterContent = z.infer<typeof formatterContentSchema>
-
 export async function getFormatterContent(formatterId: FormatterId) {
   const cacheKey = `formatter-content-${formatterId}`
-  const cachedContent = await getCachedContent<FormatterContent>(cacheKey)
-
-  if (cachedContent) {
-    return cachedContent
-  }
 
   const toolName = FORMATTER_CONTENTS[formatterId].pageTitle
   const systemMessage = getSystemMessage()
 
-  const content = await getToolContent<FormatterContent>(
+  const content = await getCachedToolContent<ToolContent>(
+    cacheKey,
     systemMessage,
     `Generate the content for the following formatter tool: ${toolName}`,
-    { response_format: zodResponseFormat(formatterContentSchema, 'content') },
   )
 
   await saveCachedContent(cacheKey, content)
