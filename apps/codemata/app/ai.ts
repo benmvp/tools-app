@@ -27,6 +27,9 @@ const toolContentSchema = z.object({
   rationale: contentSectionSchema.describe(
     'Why using an online tool for this language is beneficial.',
   ),
+  recommendations: contentSectionSchema.describe(
+    'Links to other relevant tools.',
+  ),
   resources: contentSectionSchema.describe('Links to external resources.'),
   seo: z
     .object({

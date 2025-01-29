@@ -1,5 +1,5 @@
-import { FORMATTER_CONTENTS } from './content'
 import { FORMATTERS } from './formatters'
+import { FORMATTERS_INFO } from './info'
 import type { FormatterId } from './types'
 
 export function isFormatterId(id?: string): id is FormatterId {
@@ -7,7 +7,7 @@ export function isFormatterId(id?: string): id is FormatterId {
 }
 
 export function getFormatterIdBySlug(slug: string) {
-  return Object.values(FORMATTER_CONTENTS).find(
+  return Object.values(FORMATTERS_INFO).find(
     (formatter) => formatter.slug === slug,
   )?.id
 }

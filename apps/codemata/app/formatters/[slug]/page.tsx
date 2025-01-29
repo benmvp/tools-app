@@ -4,16 +4,16 @@ import { notFound } from 'next/navigation'
 import { ContentSectionUi } from '../../../components/content-section'
 import { TransformerUi } from '../../../components/transformer'
 import { getFormatterContent } from '../ai'
+import { FORMATTERS } from '../formatters'
 import {
-  FORMATTER_CONTENTS,
+  FORMATTERS_INFO,
   FORMATTER_TRANSFORM_ACTION,
   FORMATTER_TRANSFORMED_STATE,
-} from '../content'
-import { FORMATTERS } from '../formatters'
+} from '../info'
 import { getFormatterIdBySlug } from '../utils'
 
 export function generateStaticParams() {
-  return Object.values(FORMATTER_CONTENTS).map(({ slug }) => ({
+  return Object.values(FORMATTERS_INFO).map(({ slug }) => ({
     params: {
       slug,
     },
@@ -36,7 +36,7 @@ export async function generateMetadata({
   const formatterContent = await getFormatterContent(formatterId)
 
   if (!formatterContent) {
-    const { pageTitle } = FORMATTER_CONTENTS[formatterId]
+    const { pageTitle } = FORMATTERS_INFO[formatterId]
 
     return { title: pageTitle }
   }
@@ -56,7 +56,7 @@ export default async function FormatterPage({ params }: PageProps) {
     return notFound()
   }
 
-  const { displayName, pageTitle } = FORMATTER_CONTENTS[formatterId]
+  const { displayName, pageTitle } = FORMATTERS_INFO[formatterId]
   const formatterContent = await getFormatterContent(formatterId)
   const formatter = FORMATTERS[formatterId]
 
@@ -85,6 +85,7 @@ export default async function FormatterPage({ params }: PageProps) {
         <ContentSectionUi section={formatterContent?.purpose} />
         <ContentSectionUi section={formatterContent?.integrate} />
         <ContentSectionUi section={formatterContent?.faq} />
+        <ContentSectionUi section={formatterContent?.recommendations} />
         <ContentSectionUi section={formatterContent?.resources} />
       </Stack>
     </>

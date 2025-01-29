@@ -1,18 +1,26 @@
 import type { ToolContent } from '../ai'
 import { getCachedToolContent, saveCachedContent } from '../ai'
-import { FORMATTER_CONTENTS } from './content'
+import { MINIFIERS_INFO } from '../minifiers/info'
+import { FORMATTERS_INFO } from './info'
 import type { FormatterId } from './types'
 
 export async function getFormatterContent(formatterId: FormatterId) {
   const cacheKey = `formatter-content-${formatterId}`
 
-  const toolName = FORMATTER_CONTENTS[formatterId].pageTitle
+  const formatterName = FORMATTERS_INFO[formatterId].pageTitle
   const systemMessage = getSystemMessage()
+
+  const availableTools = [
+    ...Object.values(FORMATTERS_INFO),
+    ...Object.values(MINIFIERS_INFO),
+  ]
+    .map(({ displayName, url }) => `- ${displayName} - ${url}`)
+    .join('\n')
 
   const content = await getCachedToolContent<ToolContent>(
     cacheKey,
     systemMessage,
-    `Generate the content for the following formatter tool: ${toolName}`,
+    `Generate the content for the following formatter tool: ${formatterName}\n\nAll available tools:\n${availableTools}`,
   )
 
   await saveCachedContent(cacheKey, content)
@@ -117,6 +125,21 @@ You are a copywriter and SEO expert for an application called **Codemata** that 
 *   **Example:**
     *   **Heading:** "Frequently Asked Questions"
     *   **Content:** "**How do I format HTML online?**\\nSimply paste your HTML into the formatter above, choose your indentation, and the formatted code will be generated instantly.\\n\\n**What is the best indentation for HTML?**\\n2 spaces or 4 spaces are commonly used. Choose what works best for you and your team.\\n\\n**Does this formatter change my HTML code's functionality?**\\nNo, the formatter only adjusts the whitespace and formatting; it does not alter the underlying structure or functionality of your HTML.\\n\\n**Is my code secure when using this formatter?**\\nYes, we do not store or share any code entered into the formatter. All processing happens client-side in your browser.\\n\\n**Does this formatter work with HTML attributes?**\\nYes, it formats HTML attributes correctly."
+
+### Recommendations
+
+*   Suggest a relevant heading for a section that recommends other related  tools available on Codemata.
+*   Provide a list of at most 3 other tools that are most closely related to the current tool's language or functionality.
+*   Include the companion minifier if it exists for the language.
+*   Use the provided tool names and URLs for the recommendations.
+*   Format each recommendation as a Markdown link with a brief description.
+*   **Output:** Plain text for the heading. The list of recommendations in Markdown format.
+*   **Example:**
+    *   **Heading:** "Other Tools You Might Like"
+    *   **Content:**
+        *   "[CSS/SCSS Formatter](/formatters/css): Format your CSS and SCSS code for better readability and consistency."
+        *   "[HTML Minifier](/minifiers/html): Optimize your HTML by removing unnecessary whitespace."
+        *   "[JavaScript/TypeScript Formatter](/formatters/typescript):  Automatically format your JavaScript and TypeScript code to a consistent style."
 
 ### Related Resources
 

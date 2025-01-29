@@ -5,15 +5,15 @@ import { ContentSectionUi } from '../../../components/content-section'
 import { TransformerUi } from '../../../components/transformer'
 import { getMinifierContent } from '../ai'
 import {
-  MINIFIER_CONTENTS,
+  MINIFIERS_INFO,
   MINIFIER_TRANSFORM_ACTION,
   MINIFIER_TRANSFORMED_STATE,
-} from '../content'
+} from '../info'
 import { MINIFIERS } from '../minifiers'
 import { getMinifierIdBySlug } from '../utils'
 
 export function generateStaticParams() {
-  return Object.values(MINIFIER_CONTENTS).map(({ slug }) => ({
+  return Object.values(MINIFIERS_INFO).map(({ slug }) => ({
     params: {
       slug,
     },
@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: PageProps): Metadata {
   const minifierContent = await getMinifierContent(minifierId)
 
   if (!minifierContent) {
-    const { pageTitle } = MINIFIER_CONTENTS[minifierId]
+    const { pageTitle } = MINIFIERS_INFO[minifierId]
 
     return { title: pageTitle }
   }
@@ -55,7 +55,7 @@ export default async function MinifierPage({ params }: PageProps) {
     return notFound()
   }
 
-  const { displayName, pageTitle } = MINIFIER_CONTENTS[minifierId]
+  const { displayName, pageTitle } = MINIFIERS_INFO[minifierId]
   const minifierContent = await getMinifierContent(minifierId)
   const minifier = MINIFIERS[minifierId]
 
@@ -84,6 +84,7 @@ export default async function MinifierPage({ params }: PageProps) {
         <ContentSectionUi section={minifierContent?.purpose} />
         <ContentSectionUi section={minifierContent?.integrate} />
         <ContentSectionUi section={minifierContent?.faq} />
+        <ContentSectionUi section={minifierContent?.recommendations} />
         <ContentSectionUi section={minifierContent?.resources} />
       </Stack>
     </>

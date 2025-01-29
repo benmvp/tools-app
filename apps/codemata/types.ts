@@ -11,9 +11,10 @@ export interface TransformerConfig<Value extends string = string> {
 
 export type TransformerAction = (data: FormData) => Promise<string>
 
-export interface TransformerContent<Id> {
+export interface TransformerInfo<Id> {
   displayName: string
   id: Id
   pageTitle: string
   slug: string
+  url: string
 }

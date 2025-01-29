@@ -1,4 +1,4 @@
-import { MINIFIER_CONTENTS } from './content'
+import { MINIFIERS_INFO } from './info'
 import { MINIFIERS } from './minifiers'
 import type { MinifierId } from './types'
 
@@ -7,7 +7,7 @@ export function isMinifierId(id?: string): id is MinifierId {
 }
 
 export function getMinifierIdBySlug(slug: string): MinifierId | undefined {
-  return Object.values(MINIFIER_CONTENTS).find(
+  return Object.values(MINIFIERS_INFO).find(
     (minifier) => minifier.slug === slug,
   )?.id
 }

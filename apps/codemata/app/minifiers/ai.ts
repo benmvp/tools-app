@@ -1,18 +1,26 @@
 import type { ToolContent } from '../ai'
 import { getCachedToolContent, saveCachedContent } from '../ai'
-import { MINIFIER_CONTENTS } from './content'
+import { FORMATTERS_INFO } from '../formatters/info'
+import { MINIFIERS_INFO } from './info'
 import type { MinifierId } from './types'
 
 export async function getMinifierContent(minifierId: MinifierId) {
   const cacheKey = `minifier-content-${minifierId}`
 
-  const toolName = MINIFIER_CONTENTS[minifierId].pageTitle
+  const minifierName = MINIFIERS_INFO[minifierId].pageTitle
   const systemMessage = getSystemMessage()
+
+  const availableTools = [
+    ...Object.values(FORMATTERS_INFO),
+    ...Object.values(MINIFIERS_INFO),
+  ]
+    .map(({ displayName, url }) => `- ${displayName} - ${url}`)
+    .join('\n')
 
   const content = await getCachedToolContent<ToolContent>(
     cacheKey,
     systemMessage,
-    `Generate the content for the following minifier tool: ${toolName}`,
+    `Generate the content for the following minifier tool: ${minifierName}\n\nAll available tools:\n${availableTools}`,
   )
 
   await saveCachedContent(cacheKey, content)
@@ -117,6 +125,21 @@ You are a copywriter and SEO expert for an application called **Codemata** that 
 *   **Example:**
         *   **Heading:** "Frequently Asked Questions"
         *   **Content:** "**How do I minify HTML online?**\\nSimply paste your HTML into the minifier above, and the minified code will be generated instantly.\\n\\n**Does minification affect my code's functionality?**\\nNo, minification only removes unnecessary characters and optimizes the code's structure; it does not change the way your code executes.\\n\\n**Is my code secure when using this minifier?**\\nYes, we do not store or share any code entered into the minifier. All processing happens client-side in your browser.\\n\\n**Can I customize the minification process?**\\nWhile the online tool provides standard minification, you can use npm packages like \`html-minifier-terser\` to have more control over the minification options in your own projects."
+
+### Recommendations
+
+*   Suggest a relevant heading for a section that recommends other related tools available on Codemata.
+*   Provide a list of at most 3 other tools that are most closely related to the current tool's language or functionality.
+*   Include the companion formatter if it exists for the language.
+*   Use the provided tool names and URLs for the recommendations.
+*   Format each recommendation as a Markdown link with a brief description.
+*   **Output:** Plain text for the heading. The list of recommendations in Markdown format.
+*   **Example:**
+    *   **Heading:** "Other Tools You Might Like"
+    *   **Content:**
+        *   "[HTML Formatter](/formatters/html): Format your HTML code for better readability and consistency."
+        *   "[JavaScript/TypeScript Minifier](/minifiers/typescript): Minify your JavaScript and TypeScript code to improve performance."
+        *   "[JSON Minifier](/minifiers/json): Optimize your JSON data by removing unnecessary whitespace."
 
 ### Related Resources
 
