@@ -12,7 +12,9 @@ const CSS: MinifierInfo = {
   id: 'css',
   pageTitle: 'CSS Minifier',
   slug: 'css',
-  url: '/minifiers/css',
+  get url() {
+    return `/${this.slug}-minifier`
+  },
 }
 
 const HTML: MinifierInfo = {
@@ -20,7 +22,9 @@ const HTML: MinifierInfo = {
   id: 'html',
   pageTitle: 'HTML Minifier',
   slug: 'html',
-  url: '/minifiers/html',
+  get url() {
+    return `/${this.slug}-minifier`
+  },
 }
 
 const JSON: MinifierInfo = {
@@ -28,7 +32,9 @@ const JSON: MinifierInfo = {
   id: 'json',
   pageTitle: 'JSON Minifier',
   slug: 'json',
-  url: '/minifiers/json',
+  get url() {
+    return `/${this.slug}-minifier`
+  },
 }
 
 const SVG: MinifierInfo = {
@@ -36,7 +42,9 @@ const SVG: MinifierInfo = {
   id: 'svg',
   pageTitle: 'SVG Minifier',
   slug: 'svg',
-  url: '/minifiers/svg',
+  get url() {
+    return `/${this.slug}-minifier`
+  },
 }
 
 const TS: MinifierInfo = {
@@ -44,7 +52,9 @@ const TS: MinifierInfo = {
   id: 'ts',
   pageTitle: 'JavaScript & TypeScript Minifier',
   slug: 'typescript',
-  url: '/minifiers/typescript',
+  get url() {
+    return `/${this.slug}-minifier`
+  },
 }
 
 const XML: MinifierInfo = {
@@ -52,7 +62,9 @@ const XML: MinifierInfo = {
   id: 'xml',
   pageTitle: 'XML Minifier',
   slug: 'xml',
-  url: '/minifiers/xml',
+  get url() {
+    return `/${this.slug}-minifier`
+  },
 }
 
 export const MINIFIERS_INFO: Record<MinifierId, MinifierInfo> = {

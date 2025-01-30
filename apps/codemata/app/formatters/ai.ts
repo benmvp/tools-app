@@ -131,7 +131,7 @@ You are a copywriter and SEO expert for an application called **Codemata** that 
 *   Suggest a relevant heading for a section that recommends other related  tools available on Codemata.
 *   Provide a list of at most 3 other tools that are most closely related to the current tool's language or functionality.
 *   Include the companion minifier if it exists for the language.
-*   Use the provided tool names and URLs for the recommendations.
+*   Use **only** the provided tool names and URLs for the recommendations. Do not make up new tools.
 *   Format each recommendation as a Markdown link with a brief description.
 *   **Output:** Plain text for the heading. The list of recommendations in Markdown format.
 *   **Example:**

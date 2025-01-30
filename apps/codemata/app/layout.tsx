@@ -22,8 +22,8 @@ const NAV_MENU_ITEMS: BaseRootLayoutProps['navMenuItems'] = [
   {
     Icon: CodeIcon,
     href: '/formatters',
-    items: Object.values(FORMATTERS_INFO).map(({ pageTitle, slug }) => ({
-      href: `/formatters/${slug}`,
+    items: Object.values(FORMATTERS_INFO).map(({ pageTitle, url }) => ({
+      href: url,
       label: pageTitle,
     })),
     label: FORMATTER_SECTION_TITLE,
@@ -31,8 +31,8 @@ const NAV_MENU_ITEMS: BaseRootLayoutProps['navMenuItems'] = [
   {
     Icon: CodeIcon,
     href: '/minifiers',
-    items: Object.values(MINIFIERS_INFO).map(({ pageTitle, slug }) => ({
-      href: `/minifiers/${slug}`,
+    items: Object.values(MINIFIERS_INFO).map(({ pageTitle, url }) => ({
+      href: url,
       label: pageTitle,
     })),
     label: MINIFIER_SECTION_TITLE,

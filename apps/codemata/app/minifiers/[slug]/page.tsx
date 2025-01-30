@@ -24,7 +24,9 @@ interface PageProps {
   params: { slug: string }
 }
 
-export async function generateMetadata({ params }: PageProps): Metadata {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { slug } = params
   const minifierId = getMinifierIdBySlug(slug)
 

@@ -12,7 +12,9 @@ const CSS: FormatterInfo = {
   id: 'css',
   pageTitle: 'CSS/SCSS Formatter',
   slug: 'css',
-  url: '/formatters/css',
+  get url() {
+    return `/${this.slug}-formatter`
+  },
 }
 
 const GRAPHQL: FormatterInfo = {
@@ -20,7 +22,9 @@ const GRAPHQL: FormatterInfo = {
   id: 'graphql',
   pageTitle: 'GraphQL Formatter',
   slug: 'graphql',
-  url: '/formatters/graphql',
+  get url() {
+    return `/${this.slug}-formatter`
+  },
 }
 
 const HTML: FormatterInfo = {
@@ -28,7 +32,9 @@ const HTML: FormatterInfo = {
   id: 'html',
   pageTitle: 'HTML Formatter',
   slug: 'html',
-  url: '/formatters/html',
+  get url() {
+    return `/${this.slug}-formatter`
+  },
 }
 
 const JSON: FormatterInfo = {
@@ -36,7 +42,9 @@ const JSON: FormatterInfo = {
   id: 'json',
   pageTitle: 'JSON Formatter',
   slug: 'json',
-  url: '/formatters/json',
+  get url() {
+    return `/${this.slug}-formatter`
+  },
 }
 
 const MD: FormatterInfo = {
@@ -44,7 +52,9 @@ const MD: FormatterInfo = {
   id: 'md',
   pageTitle: 'Markdown/MDX Formatter',
   slug: 'markdown',
-  url: '/formatters/markdown',
+  get url() {
+    return `/${this.slug}-formatter`
+  },
 }
 
 const TS: FormatterInfo = {
@@ -52,7 +62,9 @@ const TS: FormatterInfo = {
   id: 'ts',
   pageTitle: 'JavaScript & TypeScript Formatter',
   slug: 'typescript',
-  url: '/formatters/typescript',
+  get url() {
+    return `/${this.slug}-formatter`
+  },
 }
 
 const XML: FormatterInfo = {
@@ -60,7 +72,9 @@ const XML: FormatterInfo = {
   id: 'xml',
   pageTitle: 'XML Formatter',
   slug: 'xml',
-  url: '/formatters/xml',
+  get url() {
+    return `/${this.slug}-formatter`
+  },
 }
 
 const YAML: FormatterInfo = {
@@ -68,7 +82,9 @@ const YAML: FormatterInfo = {
   id: 'yaml',
   pageTitle: 'YAML Formatter',
   slug: 'yaml',
-  url: '/formatters/yaml',
+  get url() {
+    return `/${this.slug}-formatter`
+  },
 }
 
 export const FORMATTERS_INFO: Record<FormatterId, FormatterInfo> = {
