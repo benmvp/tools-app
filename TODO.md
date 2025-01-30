@@ -7,7 +7,7 @@ Examples
 - https://www.devtoolbox.co/
 - https://www.freeformatter.com/
 
-### Formatters
+### Formatters (FormatAlignCenter icon)
 
 - [x] CSS/SCSS (`scss` parser)
 - [x] GraphQL (`graphql` parser)
@@ -18,7 +18,7 @@ Examples
 - [x] XML (`@prettier/plugin-xml` plugin)
 - [x] YAML (`yaml` parser)
 
-### Minifiers
+### Minifiers (Compress icon)
 
 - [x] HTML (`html-minifier-terser`)
 - [x] CSS/SCSS (`clean-css`)
@@ -27,7 +27,7 @@ Examples
 - [x] JSON (`JSON.stringify(JSON.parse(input), null, 0)`)
 - [x] SVG
 
-### Viewers
+### Viewers (Visibility icon)
 
 - [ ] SVG Viewer (`svgo`, potentially a dedicated SVG rendering library)
 - [ ] View Page Source (Fetch source using a Server Action, display with syntax highlighting potentially `prismjs` or `highlight.js`)
@@ -35,7 +35,7 @@ Examples
 - [ ] Diff (`diff`, `diff2html`)
 - [ ] Markdown Previewer (`marked`, `markdown-it`)
 
-### Checkers/Validators (paste code or use URL)
+### Checkers/Validators (CheckCircle icon)
 
 - [ ] XML (`xml2js`, potentially a schema validator)
 - [ ] HTML (`html-validate`)
@@ -49,7 +49,7 @@ Examples
 - [ ] .htaccess (Fetch and parse `.htaccess`, potentially offer basic validation)
 - [ ] Regex Tester (Potentially a library for visual representation of matches)
 
-### Encoders/Decoders
+### Encoders/Decoders (Shuffle icon)
 
 - [ ] JWT Decoder (`jsonwebtoken`)
 - [ ] Base64 Encoder/Decoder (Browser: `btoa()`, `atob()`. Node.js: `Buffer`)
@@ -57,7 +57,7 @@ Examples
 - [ ] HTML Entity Encoder/Decoder (`he`, `html-entities`)
 - [ ] JS String Encoder/Decoder (Custom implementation for escaping/unescaping strings)
 
-### Colors
+### Colors (Palette icon)
 
 - [ ] Color Converter (`chroma-js`, `color.js`)
 - [ ] Blend Transparent Colors (`chroma-js`, `color.js`)
@@ -65,7 +65,7 @@ Examples
 - [ ] Create Website Color Scheme (`chroma-js`, `color.js`, potentially a color scheme generation API)
 - [ ] CSS Gradient Generator (Potentially use a library to help with generating gradient strings)
 
-### Generators
+### Generators (OfflineBolt icon)
 
 - [ ] Hash (MD5, SHA) (Node.js: `crypto` module)
 - [ ] Lorem Ipsum (Use an existing npm package for generating Lorem Ipsum text)
@@ -76,7 +76,7 @@ Examples
 - [ ] QR Code Generator (`qrcode`, `node-qrcode`)
 - [ ] QR Code Reader (`jsqr`)
 
-### Converters
+### Converters (CompareArrows icon)
 
 - [ ] Epoch Timestamp <-> Date (Browser: `Date` object)
 - [ ] Unit (px <-> em, kb <-> MB, etc.) (Define supported units and conversion factors)
@@ -84,20 +84,20 @@ Examples
 - [ ] CSV <-> JSON (`papaparse`)
 - [ ] YAML <-> JSON (`js-yaml`)
 
-### Text
+### Text (TextFields icon)
 
 - [ ] Case Converter (Implement functions for converting to uppercase, lowercase, title case, etc.)
 - [ ] Text Analyzer (Calculate word count, character count, sentence count, etc.)
 - [ ] String Reverser (Implement a function to reverse strings)
 - [ ] Line sort & deduplication
 
-### Network
+### Network (Public icon)
 
 - [ ] IP Address Lookup (Use a Server Action and potentially a third-party API, e.g., `ip-api.com`)
 - [ ] Whois Lookup (Use a Server Action and potentially a third-party API)
 - [ ] DNS Lookup (Use a Server Action and potentially a third-party API)
 
-### Other
+### Other (Extension icon)
 
 - [ ] Character/Word Count (Implement basic counting logic)
 - [ ] Unicode Character Lookup (Requires a database of Unicode characters or an API)

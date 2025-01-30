@@ -1,3 +1,11 @@
+import AccountTreeIcon from '@mui/icons-material/AccountTree'
+import AutoStoriesIcon from '@mui/icons-material/AutoStories'
+import CodeIcon from '@mui/icons-material/Code'
+import DataObjectIcon from '@mui/icons-material/DataObject'
+import DensitySmallIcon from '@mui/icons-material/DensitySmall'
+import FileCopyIcon from '@mui/icons-material/FileCopy'
+import PaletteIcon from '@mui/icons-material/Palette'
+import WebIcon from '@mui/icons-material/Web'
 import type { TransformerInfo } from '../../types'
 import type { FormatterId } from './types'
 
@@ -8,6 +16,7 @@ export const FORMATTER_TRANSFORMED_STATE = 'Formatted'
 type FormatterInfo = TransformerInfo<FormatterId>
 
 const CSS: FormatterInfo = {
+  Icon: PaletteIcon,
   displayName: 'CSS/SCSS',
   id: 'css',
   pageTitle: 'CSS/SCSS Formatter',
@@ -18,6 +27,7 @@ const CSS: FormatterInfo = {
 }
 
 const GRAPHQL: FormatterInfo = {
+  Icon: AccountTreeIcon,
   displayName: 'GraphQL',
   id: 'graphql',
   pageTitle: 'GraphQL Formatter',
@@ -28,6 +38,7 @@ const GRAPHQL: FormatterInfo = {
 }
 
 const HTML: FormatterInfo = {
+  Icon: WebIcon,
   displayName: 'HTML',
   id: 'html',
   pageTitle: 'HTML Formatter',
@@ -38,6 +49,7 @@ const HTML: FormatterInfo = {
 }
 
 const JSON: FormatterInfo = {
+  Icon: DataObjectIcon,
   displayName: 'JSON',
   id: 'json',
   pageTitle: 'JSON Formatter',
@@ -48,6 +60,7 @@ const JSON: FormatterInfo = {
 }
 
 const MD: FormatterInfo = {
+  Icon: AutoStoriesIcon,
   displayName: 'Markdown/MDX',
   id: 'md',
   pageTitle: 'Markdown/MDX Formatter',
@@ -58,6 +71,7 @@ const MD: FormatterInfo = {
 }
 
 const TS: FormatterInfo = {
+  Icon: CodeIcon,
   displayName: 'JS/TS',
   id: 'ts',
   pageTitle: 'JavaScript & TypeScript Formatter',
@@ -68,6 +82,7 @@ const TS: FormatterInfo = {
 }
 
 const XML: FormatterInfo = {
+  Icon: FileCopyIcon,
   displayName: 'XML',
   id: 'xml',
   pageTitle: 'XML Formatter',
@@ -78,6 +93,7 @@ const XML: FormatterInfo = {
 }
 
 const YAML: FormatterInfo = {
+  Icon: DensitySmallIcon,
   displayName: 'YAML',
   id: 'yaml',
   pageTitle: 'YAML Formatter',

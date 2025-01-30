@@ -1,3 +1,9 @@
+import CodeIcon from '@mui/icons-material/Code'
+import DataObjectIcon from '@mui/icons-material/DataObject'
+import FileCopyIcon from '@mui/icons-material/FileCopy'
+import PaletteIcon from '@mui/icons-material/Palette'
+import PolylineIcon from '@mui/icons-material/Polyline'
+import WebIcon from '@mui/icons-material/Web'
 import type { TransformerInfo } from '../../types'
 import type { MinifierId } from './types'
 
@@ -8,6 +14,7 @@ export const MINIFIER_TRANSFORMED_STATE = 'Minified'
 type MinifierInfo = TransformerInfo<MinifierId>
 
 const CSS: MinifierInfo = {
+  Icon: PaletteIcon,
   displayName: 'CSS',
   id: 'css',
   pageTitle: 'CSS Minifier',
@@ -18,6 +25,7 @@ const CSS: MinifierInfo = {
 }
 
 const HTML: MinifierInfo = {
+  Icon: WebIcon,
   displayName: 'HTML',
   id: 'html',
   pageTitle: 'HTML Minifier',
@@ -28,6 +36,7 @@ const HTML: MinifierInfo = {
 }
 
 const JSON: MinifierInfo = {
+  Icon: DataObjectIcon,
   displayName: 'JSON',
   id: 'json',
   pageTitle: 'JSON Minifier',
@@ -38,6 +47,7 @@ const JSON: MinifierInfo = {
 }
 
 const SVG: MinifierInfo = {
+  Icon: PolylineIcon,
   displayName: 'SVG',
   id: 'svg',
   pageTitle: 'SVG Minifier',
@@ -48,6 +58,7 @@ const SVG: MinifierInfo = {
 }
 
 const TS: MinifierInfo = {
+  Icon: CodeIcon,
   displayName: 'JS/TS',
   id: 'ts',
   pageTitle: 'JavaScript & TypeScript Minifier',
@@ -58,6 +69,7 @@ const TS: MinifierInfo = {
 }
 
 const XML: MinifierInfo = {
+  Icon: FileCopyIcon,
   displayName: 'XML',
   id: 'xml',
   pageTitle: 'XML Minifier',

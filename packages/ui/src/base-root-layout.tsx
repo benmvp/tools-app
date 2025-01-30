@@ -17,6 +17,7 @@ import {
   styled,
   Paper,
   Stack,
+  ListItemIcon,
 } from '@mui/material'
 import type { SvgIconTypeMap } from '@mui/material'
 import type { OverridableComponent } from '@mui/material/OverridableComponent'
@@ -27,13 +28,15 @@ import NextLink from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useMemo, useState } from 'react'
 
+type MuiIcon = OverridableComponent<SvgIconTypeMap<object>>
+
 interface NavigationItem {
+  Icon?: MuiIcon
   href: string
   label: string
 }
 interface NavigationSection {
-  Icon: OverridableComponent<SvgIconTypeMap<object>>
-  href: string
+  Icon: MuiIcon
   items: NavigationItem[]
   label: string
 }
@@ -216,17 +219,24 @@ function Nav({ isNavOpen, menuItems }: NavProps) {
                 {sectionLabel}
               </Typography>
               <List>
-                {items.map(({ href: itemHref, label: itemLabel }) => (
-                  <ListItemButton
-                    component={NextLink}
-                    href={itemHref}
-                    key={itemHref}
-                    selected={pathname === itemHref}
-                    sx={{ px: 1, py: 0 }}
-                  >
-                    <ListItemText primary={itemLabel} />
-                  </ListItemButton>
-                ))}
+                {items.map(
+                  ({ Icon: ItemIcon, href: itemHref, label: itemLabel }) => (
+                    <ListItemButton
+                      component={NextLink}
+                      href={itemHref}
+                      key={itemHref}
+                      selected={pathname === itemHref}
+                      sx={{ px: 1, py: 0 }}
+                    >
+                      {ItemIcon ? (
+                        <ListItemIcon sx={{ minWidth: 0, mr: 1 }}>
+                          <ItemIcon />
+                        </ListItemIcon>
+                      ) : null}
+                      <ListItemText primary={itemLabel} />
+                    </ListItemButton>
+                  ),
+                )}
               </List>
             </Box>
           ),

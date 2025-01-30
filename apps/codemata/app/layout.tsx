@@ -1,4 +1,5 @@
-import CodeIcon from '@mui/icons-material/Code'
+import CompressIcon from '@mui/icons-material/Compress'
+import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter'
 import { blue, pink } from '@mui/material/colors'
 import type { BaseRootLayoutProps } from '@repo/ui/base-root-layout'
 import { BaseRootLayout } from '@repo/ui/base-root-layout'
@@ -20,18 +21,18 @@ const THEME_OPTIONS: BaseRootLayoutProps['themeOptions'] = {
 
 const NAV_MENU_ITEMS: BaseRootLayoutProps['navMenuItems'] = [
   {
-    Icon: CodeIcon,
-    href: '/formatters',
-    items: Object.values(FORMATTERS_INFO).map(({ pageTitle, url }) => ({
+    Icon: FormatAlignCenterIcon,
+    items: Object.values(FORMATTERS_INFO).map(({ Icon, pageTitle, url }) => ({
+      Icon,
       href: url,
       label: pageTitle,
     })),
     label: FORMATTER_SECTION_TITLE,
   },
   {
-    Icon: CodeIcon,
-    href: '/minifiers',
-    items: Object.values(MINIFIERS_INFO).map(({ pageTitle, url }) => ({
+    Icon: CompressIcon,
+    items: Object.values(MINIFIERS_INFO).map(({ Icon, pageTitle, url }) => ({
+      Icon,
       href: url,
       label: pageTitle,
     })),
