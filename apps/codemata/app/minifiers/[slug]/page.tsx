@@ -1,7 +1,8 @@
 import { Stack, Typography } from '@mui/material'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { ContentSectionUi } from '../../../components/content-section'
+import type { ContentSection } from '../../../components/content-section-ui'
+import { ContentSectionsUi } from '../../../components/content-sections-ui'
 import { TransformerUi } from '../../../components/transformer'
 import { getMinifierContent } from '../ai'
 import {
@@ -60,6 +61,15 @@ export default async function MinifierPage({ params }: PageProps) {
   const { displayName, pageTitle } = MINIFIERS_INFO[minifierId]
   const minifierContent = await getMinifierContent(minifierId)
   const minifier = MINIFIERS[minifierId]
+  const sections = [
+    minifierContent?.features,
+    minifierContent?.rationale,
+    minifierContent?.purpose,
+    minifierContent?.integrate,
+    minifierContent?.faq,
+    minifierContent?.recommendations,
+    minifierContent?.resources,
+  ].filter((section): section is ContentSection => Boolean(section))
 
   return (
     <>
@@ -81,13 +91,7 @@ export default async function MinifierPage({ params }: PageProps) {
           stateLabel={MINIFIER_TRANSFORMED_STATE}
         />
 
-        <ContentSectionUi section={minifierContent?.features} />
-        <ContentSectionUi section={minifierContent?.rationale} />
-        <ContentSectionUi section={minifierContent?.purpose} />
-        <ContentSectionUi section={minifierContent?.integrate} />
-        <ContentSectionUi section={minifierContent?.faq} />
-        <ContentSectionUi section={minifierContent?.recommendations} />
-        <ContentSectionUi section={minifierContent?.resources} />
+        <ContentSectionsUi sections={sections} />
       </Stack>
     </>
   )

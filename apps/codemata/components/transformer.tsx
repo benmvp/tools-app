@@ -12,8 +12,8 @@ import {
 } from '@mui/material'
 import { useState } from 'react'
 import type { TransformerAction, TransformerConfig } from '../types'
-import { ContentSectionUi } from './content-section'
-import type { ContentSection } from './content-section'
+import { ContentSectionUi } from './content-section-ui'
+import type { ContentSection } from './content-section-ui'
 import { GeneratedCode } from './generated-code'
 
 interface TransformerProps {

@@ -3,7 +3,7 @@ import { ensureDir, readJson, writeJson } from 'fs-extra'
 import { default as OpenAI } from 'openai'
 import { zodResponseFormat } from 'openai/helpers/zod'
 import { z } from 'zod'
-import { contentSectionSchema } from '../components/content-section'
+import { contentSectionSchema } from '../components/content-section-ui'
 
 const CACHE_DIR = 'app/.ai-cache'
 

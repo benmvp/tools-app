@@ -22,8 +22,7 @@ const THEME_OPTIONS: BaseRootLayoutProps['themeOptions'] = {
 const NAV_MENU_ITEMS: BaseRootLayoutProps['navMenuItems'] = [
   {
     Icon: FormatAlignCenterIcon,
-    items: Object.values(FORMATTERS_INFO).map(({ Icon, pageTitle, url }) => ({
-      Icon,
+    items: Object.values(FORMATTERS_INFO).map(({ pageTitle, url }) => ({
       href: url,
       label: pageTitle,
     })),
@@ -31,8 +30,7 @@ const NAV_MENU_ITEMS: BaseRootLayoutProps['navMenuItems'] = [
   },
   {
     Icon: CompressIcon,
-    items: Object.values(MINIFIERS_INFO).map(({ Icon, pageTitle, url }) => ({
-      Icon,
+    items: Object.values(MINIFIERS_INFO).map(({ pageTitle, url }) => ({
       href: url,
       label: pageTitle,
     })),

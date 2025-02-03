@@ -1,7 +1,8 @@
 import { Stack, Typography } from '@mui/material'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { ContentSectionUi } from '../../../components/content-section'
+import type { ContentSection } from '../../../components/content-section-ui'
+import { ContentSectionsUi } from '../../../components/content-sections-ui'
 import { TransformerUi } from '../../../components/transformer'
 import { getFormatterContent } from '../ai'
 import { FORMATTERS } from '../formatters'
@@ -59,6 +60,15 @@ export default async function FormatterPage({ params }: PageProps) {
   const { displayName, pageTitle } = FORMATTERS_INFO[formatterId]
   const formatterContent = await getFormatterContent(formatterId)
   const formatter = FORMATTERS[formatterId]
+  const sections = [
+    formatterContent?.features,
+    formatterContent?.rationale,
+    formatterContent?.purpose,
+    formatterContent?.integrate,
+    formatterContent?.faq,
+    formatterContent?.recommendations,
+    formatterContent?.resources,
+  ].filter((section): section is ContentSection => Boolean(section))
 
   return (
     <>
@@ -80,13 +90,7 @@ export default async function FormatterPage({ params }: PageProps) {
           stateLabel={FORMATTER_TRANSFORMED_STATE}
         />
 
-        <ContentSectionUi section={formatterContent?.features} />
-        <ContentSectionUi section={formatterContent?.rationale} />
-        <ContentSectionUi section={formatterContent?.purpose} />
-        <ContentSectionUi section={formatterContent?.integrate} />
-        <ContentSectionUi section={formatterContent?.faq} />
-        <ContentSectionUi section={formatterContent?.recommendations} />
-        <ContentSectionUi section={formatterContent?.resources} />
+        <ContentSectionsUi sections={sections} />
       </Stack>
     </>
   )

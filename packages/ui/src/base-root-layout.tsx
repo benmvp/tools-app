@@ -18,6 +18,7 @@ import {
   Paper,
   Stack,
   ListItemIcon,
+  Divider,
 } from '@mui/material'
 import type { SvgIconTypeMap } from '@mui/material'
 import type { OverridableComponent } from '@mui/material/OverridableComponent'
@@ -206,41 +207,42 @@ function Nav({ isNavOpen, menuItems }: NavProps) {
       sx={isNavOpen ? undefined : { display: 'none' }}
       variant={isNavOpen ? 'elevation' : 'outlined'}
     >
-      <Stack spacing={2}>
-        {menuItems.map(
-          ({ Icon, href: sectionHref, items, label: sectionLabel }) => (
-            <Box key={sectionHref}>
-              <Typography
-                component="span"
-                sx={{ alignItems: 'center', display: 'flex' }}
-                variant="subtitle2"
-              >
-                <Icon fontSize="large" sx={{ pr: 1 }} />
-                {sectionLabel}
-              </Typography>
-              <List>
-                {items.map(
-                  ({ Icon: ItemIcon, href: itemHref, label: itemLabel }) => (
-                    <ListItemButton
-                      component={NextLink}
-                      href={itemHref}
-                      key={itemHref}
-                      selected={pathname === itemHref}
-                      sx={{ px: 1, py: 0 }}
-                    >
-                      {ItemIcon ? (
-                        <ListItemIcon sx={{ minWidth: 0, mr: 1 }}>
-                          <ItemIcon />
-                        </ListItemIcon>
-                      ) : null}
-                      <ListItemText primary={itemLabel} />
-                    </ListItemButton>
-                  ),
-                )}
-              </List>
-            </Box>
-          ),
-        )}
+      <Stack
+        divider={<Divider orientation="horizontal" variant="inset" />}
+        spacing={2}
+      >
+        {menuItems.map(({ Icon, items, label: sectionLabel }) => (
+          <Box key={sectionLabel}>
+            <Typography
+              component="span"
+              sx={{ alignItems: 'center', display: 'flex' }}
+              variant="subtitle2"
+            >
+              <Icon fontSize="large" sx={{ pr: 1 }} />
+              {sectionLabel}
+            </Typography>
+            <List>
+              {items.map(
+                ({ Icon: ItemIcon, href: itemHref, label: itemLabel }) => (
+                  <ListItemButton
+                    component={NextLink}
+                    href={itemHref}
+                    key={itemHref}
+                    selected={pathname === itemHref}
+                    sx={{ px: 1, py: 0 }}
+                  >
+                    {ItemIcon ? (
+                      <ListItemIcon sx={{ minWidth: 0, mr: 1 }}>
+                        <ItemIcon />
+                      </ListItemIcon>
+                    ) : null}
+                    <ListItemText primary={itemLabel} />
+                  </ListItemButton>
+                ),
+              )}
+            </List>
+          </Box>
+        ))}
       </Stack>
     </StyledNav>
   )
