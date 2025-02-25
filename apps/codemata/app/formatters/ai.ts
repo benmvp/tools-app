@@ -1,5 +1,5 @@
 import type { ToolContent } from '../ai'
-import { getCachedToolContent, saveCachedContent } from '../ai'
+import { getCachedToolContent } from '../ai'
 import { MINIFIERS_INFO } from '../minifiers/info'
 import { FORMATTERS_INFO } from './info'
 import type { FormatterId } from './types'
@@ -22,8 +22,6 @@ export async function getFormatterContent(formatterId: FormatterId) {
     systemMessage,
     `Generate the content for the following formatter tool: ${formatterName}\n\nAll available tools:\n${availableTools}`,
   )
-
-  await saveCachedContent(cacheKey, content)
 
   return content
 }

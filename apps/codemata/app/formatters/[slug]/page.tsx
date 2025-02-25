@@ -13,15 +13,20 @@ import {
 } from '../info'
 import { getFormatterIdBySlug } from '../utils'
 
+interface PageProps {
+  params: { slug: string }
+}
+
+// Next.js will invalidate the cache when a
+// request comes in, at most once every 60 seconds.
+export const revalidate = 60
+
 export function generateStaticParams() {
   return Object.values(FORMATTERS_INFO).map(({ slug }) => ({
     params: {
       slug,
     },
   }))
-}
-interface PageProps {
-  params: { slug: string }
 }
 
 export async function generateMetadata({
@@ -56,7 +61,6 @@ export default async function FormatterPage({ params }: PageProps) {
   if (!formatterId) {
     return notFound()
   }
-
   const { displayName, pageTitle } = FORMATTERS_INFO[formatterId]
   const formatterContent = await getFormatterContent(formatterId)
   const formatter = FORMATTERS[formatterId]

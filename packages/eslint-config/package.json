@@ -17,6 +17,7 @@
     "eslint-plugin-sort-destructure-keys": "^2.0.0",
     "eslint-plugin-sort-keys-fix": "^1.1.2",
     "eslint-plugin-typescript-sort-keys": "^3.2.0",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "@next/eslint-plugin-next": "^15.1.7"
   }
 }

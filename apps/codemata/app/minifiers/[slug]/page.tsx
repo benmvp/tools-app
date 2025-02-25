@@ -13,16 +13,20 @@ import {
 import { MINIFIERS } from '../minifiers'
 import { getMinifierIdBySlug } from '../utils'
 
+interface PageProps {
+  params: { slug: string }
+}
+
+// Next.js will invalidate the cache when a
+// request comes in, at most once every 60 seconds.
+export const revalidate = 60
+
 export function generateStaticParams() {
   return Object.values(MINIFIERS_INFO).map(({ slug }) => ({
     params: {
       slug,
     },
   }))
-}
-
-interface PageProps {
-  params: { slug: string }
 }
 
 export async function generateMetadata({

@@ -1,6 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalEnv": ["GEMINI_API_KEY", "OPENAI_API_KEY"],
+  "globalEnv": ["AI_API_KEY", "AI_BASE_URL", "AI_MODEL"],
   "ui": "tui",
   "tasks": {
     "build": {

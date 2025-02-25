@@ -2,10 +2,9 @@ import { dirname, resolve } from 'node:path'
 import { ensureDir, readJson, writeJson } from 'fs-extra'
 import { default as OpenAI } from 'openai'
 import { zodResponseFormat } from 'openai/helpers/zod'
+import pLimit from 'p-limit'
 import { z } from 'zod'
 import { contentSectionSchema } from '../components/content-section-ui'
-
-const CACHE_DIR = 'app/.ai-cache'
 
 const toolContentSchema = z.object({
   faq: contentSectionSchema.describe(
@@ -42,6 +41,15 @@ const toolContentSchema = z.object({
 
 export type ToolContent = z.infer<typeof toolContentSchema>
 
+// Limit the number of requests to the AI API to avoid rate limiting.
+const limit = pLimit(1)
+
+// Production request cache to avoid duplicate requests
+const REQUEST_CACHE = new Map<string, unknown>()
+
+// Development file-system cache across file changes
+const CACHE_DIR = 'app/.ai-cache'
+
 export async function getCachedToolContent<T>(
   cacheKey: string,
   systemMessage: string,
@@ -51,17 +59,19 @@ export async function getCachedToolContent<T>(
     'messages' | 'model'
   >,
 ) {
-  const cachedContent = await getCachedContent<T>(cacheKey)
+  return limit(async () => {
+    const cachedContent = await getCachedContent<T>(cacheKey)
 
-  if (cachedContent) {
-    return cachedContent
-  }
+    if (cachedContent) {
+      return cachedContent
+    }
 
-  const content = await getToolContent<T>(systemMessage, userMessage, options)
+    const content = await getToolContent<T>(systemMessage, userMessage, options)
 
-  await saveCachedContent(cacheKey, content)
+    await saveCachedContent(cacheKey, content)
 
-  return content
+    return content
+  })
 }
 
 export async function getToolContent<T>(
@@ -73,13 +83,12 @@ export async function getToolContent<T>(
   >,
 ): Promise<T | undefined> {
   const client = new OpenAI({
-    // apiKey: process.env.GEMINI_API_KEY,
-    // baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai/',
-    apiKey: process.env.OPENAI_API_KEY,
+    apiKey: process.env.AI_API_KEY || undefined,
+    baseURL: process.env.AI_BASE_URL,
   })
 
   try {
-    const response = await client.chat.completions.create({
+    const response = await client.beta.chat.completions.parse({
       ...options,
       messages: [
         { content: systemMessage, role: 'system' },
@@ -88,8 +97,7 @@ export async function getToolContent<T>(
           role: 'user',
         },
       ],
-      // model: 'gemini-1.5-pro',
-      model: 'gpt-4o',
+      model: process.env.AI_MODEL || 'gpt-4o-mini',
       n: 1,
       response_format: zodResponseFormat(toolContentSchema, 'content'),
     })
@@ -98,19 +106,30 @@ export async function getToolContent<T>(
 
     return responseContent ? (JSON.parse(responseContent) as T) : undefined
   } catch (error) {
-    // console.error('AI request failed', error)
+    // eslint-disable-next-line no-console -- testing
+    console.error('AI request failed', (error as Error).message)
+    // throw for Next.js handling
+    throw error
   }
 }
 
-export async function getCachedContent<T = string>(cacheKey: string) {
+export async function getCachedContent<T = string>(
+  cacheKey: string,
+): Promise<T | undefined> {
+  if (process.env.NODE_ENV === 'production' && REQUEST_CACHE.has(cacheKey)) {
+    // in-memory cache hit for production
+    return REQUEST_CACHE.get(cacheKey) as T
+  }
+
   if (process.env.NODE_ENV !== 'development') {
     return undefined
   }
 
   try {
     const cachePath = getCachePath(cacheKey)
-
     const cachedData = (await readJson(cachePath)) as T
+
+    // file-system cache hit for development
 
     return cachedData
   } catch {
@@ -119,6 +138,11 @@ export async function getCachedContent<T = string>(cacheKey: string) {
 }
 
 export async function saveCachedContent(cacheKey: string, content: unknown) {
+  if (process.env.NODE_ENV === 'production') {
+    REQUEST_CACHE.set(cacheKey, content)
+    return
+  }
+
   if (process.env.NODE_ENV !== 'development') {
     return
   }
