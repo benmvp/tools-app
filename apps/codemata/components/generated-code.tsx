@@ -10,7 +10,7 @@ import {
   Tooltip,
   Snackbar,
 } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 interface GeneratedCodeProps {
   code: string
@@ -19,6 +19,15 @@ interface GeneratedCodeProps {
 
 export function GeneratedCode({ code, title }: GeneratedCodeProps) {
   const [copied, setCopied] = useState(false)
+  const labelNode = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!code) {
+      return
+    }
+
+    labelNode.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [code])
 
   if (!code) {
     return null
@@ -36,7 +45,7 @@ export function GeneratedCode({ code, title }: GeneratedCodeProps) {
   return (
     <>
       <Divider>
-        <Chip label={title} size="medium" />
+        <Chip label={title} ref={labelNode} size="medium" />
       </Divider>
 
       <Box sx={{ position: 'relative' }}>
