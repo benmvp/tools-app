@@ -2811,419 +2811,334 @@ git push origin main
 
 ### Overview
 
-The implementation is divided into **5 phases** that can be completed progressively. Each phase delivers working functionality and builds on the previous phase.
+The implementation follows a **pragmatic, YAGNI-driven approach** that prioritizes shipping working software over building infrastructure. The plan focuses on building Codemata first as a standalone Next.js app, then cloning and adapting it for Moni and Convertly. Shared packages are extracted **only when duplication becomes painful**, not upfront.
 
-### Phase 1: Foundation & Infrastructure (Week 1-2)
-
-**Goal:** Set up monorepo, shared packages, and basic project structure
-
-#### Tasks
-
-**1.1 Monorepo Setup**
-
-- [ ] Initialize new repository (or clean current one)
-- [ ] Configure pnpm workspace
-- [ ] Set up Turborepo
-- [ ] Create base directory structure
-- [ ] Configure root `package.json` with scripts
-
-**1.2 Shared Packages**
-
-- [ ] Create `@repo/typescript-config` package
-  - [ ] `base.json` - Strict TypeScript config
-  - [ ] `nextjs.json` - Next.js specific settings
-- [ ] Create `@repo/eslint-config` package
-  - [ ] `base.js` - Base ESLint rules
-  - [ ] `next.js` - Next.js specific rules
-- [ ] Create `@repo/ui` package structure
-  - [ ] Set up Tailwind CSS
-  - [ ] Configure shadcn/ui
-  - [ ] Install core components (button, card, accordion, etc.)
-
-**1.3 Base Components**
-
-- [ ] Create theme system (types, context, provider)
-- [ ] Build `BaseRootLayout` component
-- [ ] Build `Header` component (logo, nav, theme toggle)
-- [ ] Build `Footer` component
-- [ ] Build `ThemeProvider` with dark mode support
-
-**1.4 Development Setup**
-
-- [ ] Configure Biome for linting/formatting
-- [ ] Set up VS Code workspace settings
-- [ ] Create `.env.example` file
-- [ ] Document setup in README
-
-**1.5 GitHub Actions / CI Setup**
-
-- [ ] Create `.github/workflows/` directory
-- [ ] Set up main CI workflow (`ci.yml`)
-  - [ ] Lint checks
-  - [ ] Format checks
-  - [ ] Type checking
-  - [ ] Unit tests
-- [ ] Configure pnpm caching for faster runs
-- [ ] Set up branch protection rules for `main`
-- [ ] Add CI status badges to README
-- [ ] Test CI pipeline with sample PR
-
-**Deliverable:** Working monorepo with shared packages, basic UI components, and automated CI
+**Key Principles:**
+- Build one working tool ASAP
+- Deploy early and often
+- Extract shared code only when proven necessary
+- Clone and adapt rather than abstract prematurely
 
 ---
 
-### Phase 2: Codemata App - Core Structure (Week 3-4)
+### Phase 1: Codemata MVP - Single Formatter (Week 1)
 
-**Goal:** Build Codemata app with one working formatter (TypeScript)
+**Goal:** Get one working formatter deployed to production ASAP
 
 #### Tasks
 
-**2.1 App Initialization**
+**1.1 Basic Next.js App**
 
-- [ ] Create Next.js app in `apps/codemata`
-- [ ] Configure Next.js 15 with App Router
-- [ ] Set up Tailwind with Codemata theme
-- [ ] Configure TypeScript
-- [ ] Add shared packages as dependencies
-- [ ] Verify CI pipeline runs successfully for new app
+- [x] Create `apps/codemata/` with Next.js 15
+- [x] Configure Tailwind CSS (Codemata theme directly in app)
+- [x] Install shadcn/ui components (directly in app)
+- [x] Set up basic TypeScript config
 
-**2.2 Type Definitions**
+**1.2 Simple Layout**
 
-- [ ] Define `FormatterId` type
-- [ ] Define `Formatter` interface
-- [ ] Define `TransformerConfig` type
-- [ ] Define `FormatterInfo` type
-- [ ] Create `types.ts` file
+- [x] Create root layout with basic header/footer (in app)
+- [x] Add dark mode toggle (use next-themes)
+- [x] Basic responsive design
 
-**2.3 TypeScript Formatter (First Tool)**
+**1.3 TypeScript Formatter - First Tool**
 
-- [ ] Create `app/formatters/` directory
-- [ ] Define formatter info in `info.ts`
-- [ ] Configure formatter in `formatters.ts`
-- [ ] Implement `formatTypescriptAction` in `actions.ts`
-- [ ] Set up Prettier/Biome integration
-- [ ] Handle indentation configuration
+- [x] Create `app/formatters/typescript-formatter/page.tsx`
+- [x] Build dual CodeMirror editor layout (in page)
+- [x] Implement `formatTypescriptAction` with Prettier
+- [x] Add indentation config dropdown
+- [x] Add copy button
+- [x] Basic error handling
 
-**2.4 Tool Page**
+**1.4 Home Page**
 
-- [ ] Create `app/formatters/[slug]/page.tsx`
-- [ ] Implement `generateStaticParams()`
-- [ ] Implement `generateMetadata()`
-- [ ] Build page layout (title + intro + transformer)
-- [ ] Test TypeScript formatter end-to-end
+- [x] Simple hero section
+- [x] Link to TypeScript formatter
+- [x] Basic styling
 
-**2.5 Transformer Component**
+**1.5 Deploy**
 
-- [ ] Build dual editor layout (input/output)
-- [ ] Integrate CodeMirror 6
-- [ ] Add language mode switching
-- [ ] Implement configuration panel
-- [ ] Add action button with loading state
-- [ ] Add copy to clipboard button
-- [ ] Handle errors with inline messages + toast
+- [ ] Set up Vercel project
+- [ ] Deploy to codemata.benmvp.com
+- [ ] Test in production
 
-**2.6 Home Page**
-
-- [ ] Create `app/page.tsx`
-- [ ] Build hero section
-- [ ] Create category cards (Formatters, Minifiers)
-- [ ] Add tool grid with links
-- [ ] Make responsive
-
-**Deliverable:** Working Codemata app with TypeScript formatter
+**Deliverable:** Working Codemata app with ONE formatter in production 🚀
 
 ---
 
-### Phase 3: Complete Codemata Tools (Week 5-6)
+### Phase 2: Complete Formatters (Week 2)
 
-**Goal:** Add all remaining formatters and minifiers
+**Goal:** Add all 8 formatters using the pattern from Phase 1
 
 #### Tasks
 
-**3.1 Remaining Formatters**
+**2.1 Add Remaining Formatters**
 
-- [ ] CSS/SCSS formatter
-- [ ] GraphQL formatter
-- [ ] HTML formatter
-- [ ] JSON formatter
-- [ ] Markdown/MDX formatter
-- [ ] XML formatter (with @prettier/plugin-xml)
-- [ ] YAML formatter
+- [ ] JSON formatter (`/formatters/json-formatter/`)
+- [ ] CSS formatter (`/formatters/css-formatter/`)
+- [ ] HTML formatter (`/formatters/html-formatter/`)
+- [ ] GraphQL formatter (`/formatters/graphql-formatter/`)
+- [ ] Markdown formatter (`/formatters/markdown-formatter/`)
+- [ ] XML formatter (`/formatters/xml-formatter/`)
+- [ ] YAML formatter (`/formatters/yaml-formatter/`)
 
-**3.2 Minifiers**
+**2.2 Refactor if Needed**
 
-- [ ] Create `app/minifiers/` directory
-- [ ] CSS minifier (clean-css)
-- [ ] HTML minifier (html-minifier-terser)
-- [ ] JSON minifier (native)
-- [ ] SVG minifier (svgo)
-- [ ] TypeScript minifier (terser)
-- [ ] XML minifier (minify-xml)
+- [ ] Extract common transformer component if duplication is annoying
+- [ ] Extract shared types if needed
+- [ ] Keep everything in Codemata app for now
 
-**3.3 Testing**
+**2.3 Home Page Update**
+
+- [ ] Add "Formatters" section with tool grid
+- [ ] Add icons and descriptions
+- [ ] Make it look nice
+
+**2.4 Testing**
 
 - [ ] Set up Vitest
-- [ ] Write unit tests for each formatter action
-- [ ] Write unit tests for each minifier action
-- [ ] Create test fixtures
-- [ ] Achieve 90%+ coverage on actions
+- [ ] Write tests for each formatter action
+- [ ] Test manually
 
-**3.4 Polish**
-
-- [ ] Add loading states
-- [ ] Improve error messages
-- [ ] Test all tools manually
-- [ ] Mobile responsive testing
-- [ ] Dark mode testing
-
-**Deliverable:** Complete Codemata with all 8 formatters + 6 minifiers
+**Deliverable:** Codemata with all 8 formatters working
 
 ---
 
-### Phase 4: AI Content Integration (Week 7-8)
+### Phase 3: Add Minifiers (Week 3)
 
-**Goal:** Integrate Gemini AI for content generation
+**Goal:** Add all 6 minifiers
+
+#### Tasks
+
+**3.1 Create Minifier Pages**
+
+- [ ] TypeScript minifier (`/minifiers/typescript-minifier/`)
+- [ ] JSON minifier (`/minifiers/json-minifier/`)
+- [ ] CSS minifier (`/minifiers/css-minifier/`)
+- [ ] HTML minifier (`/minifiers/html-minifier/`)
+- [ ] SVG minifier (`/minifiers/svg-minifier/`)
+- [ ] XML minifier (`/minifiers/xml-minifier/`)
+
+**3.2 Update Home Page**
+
+- [ ] Add "Minifiers" section
+- [ ] Update navigation
+
+**3.3 Polish**
+
+- [ ] Improve error messages
+- [ ] Add loading states
+- [ ] Mobile testing
+- [ ] Dark mode testing
+
+**Deliverable:** Complete Codemata with 14 tools (8 formatters + 6 minifiers)
+
+---
+
+### Phase 4: AI Content (Week 4)
+
+**Goal:** Add AI-generated educational content
 
 #### Tasks
 
 **4.1 AI Setup**
 
 - [ ] Install Google AI SDK
-- [ ] Set up `GOOGLE_API_KEY` environment variable
-- [ ] Create `app/ai.ts` with Gemini client
-- [ ] Configure structured output with Zod
+- [ ] Set up Gemini client in `lib/ai.ts`
+- [ ] Define content schema with Zod
+- [ ] Write prompt templates
 
-**4.2 Content Schema**
+**4.2 Content Generation**
 
-- [ ] Define `toolContentSchema` with Zod
-- [ ] Define all content section types
-- [ ] Set up validation and error handling
-- [ ] Test schema with sample Gemini responses
-
-**4.3 AI Prompts**
-
-- [ ] Write system message template
-- [ ] Write user message template
-- [ ] Create prompt function for formatters
-- [ ] Create prompt function for minifiers
-- [ ] Test prompts with Gemini API
-
-**4.4 Content Generation**
-
-- [ ] Implement `getFormatterContent()` function
-- [ ] Implement `getMinifierContent()` function
-- [ ] Add caching strategy (in-memory + ISR)
+- [ ] Create `getToolContent()` function
+- [ ] Add ISR configuration (`revalidate = 86400`)
 - [ ] Handle API failures gracefully
-- [ ] Test build with AI generation
+- [ ] Test with a few tools
 
-**4.5 Content Display**
+**4.3 Content Display**
 
-- [ ] Build `ContentSection` component
-- [ ] Build `ContentSections` component with accordion
-- [ ] Integrate Markdown rendering
+- [ ] Build collapsible content sections (accordion)
+- [ ] Add Markdown rendering
 - [ ] Update tool pages to show AI content
-- [ ] Ensure first section expanded, rest collapsed
+- [ ] Update metadata (SEO)
 
-**4.6 Metadata Integration**
+**4.4 Regeneration**
 
-- [ ] Update `generateMetadata()` to use AI content
-- [ ] Add SEO title, description, keywords
-- [ ] Test with various tools
-
-**4.7 ISR Configuration**
-
-- [ ] Set `revalidate = 86400` on tool pages
 - [ ] Create `/api/revalidate` endpoint
-- [ ] Test on-demand revalidation
-- [ ] Document regeneration process
+- [ ] Create manual regeneration script
+- [ ] Document process
 
-**4.8 Manual Regeneration Script**
-
-- [ ] Create `scripts/regenerate-ai.js`
-- [ ] Add CLI argument parsing
-- [ ] Implement revalidation logic
-- [ ] Test script locally and in production
-
-**Deliverable:** Codemata with full AI-generated content and SEO
+**Deliverable:** Codemata with full AI content and SEO
 
 ---
 
-### Phase 5: Moni & Convertly Apps (Week 9-12)
+### Phase 5: Moni App (Week 5-6)
 
-**Goal:** Build Moni and Convertly apps with initial tools
+**Goal:** Build Moni with 3-5 calculators using Codemata as template
 
 #### Tasks
 
-**5.1 Moni App Setup**
+**5.1 Copy & Adapt Codemata Structure**
 
-- [ ] Create Next.js app in `apps/moni`
-- [ ] Configure Moni theme (green)
-- [ ] Set up directory structure
-- [ ] Create home page with hero
+- [ ] Create `apps/moni/` based on Codemata
+- [ ] Change theme to green
+- [ ] Adapt layout components
+- [ ] Update branding
 
-**5.2 Moni - First Calculators (Priority)**
+**5.2 First Calculators**
 
 - [ ] Compound Interest Calculator
-  - [ ] Define input schema
-  - [ ] Build calculator form
-  - [ ] Implement calculation logic (server action)
-  - [ ] Display results with chart
-  - [ ] Add AI content generation
 - [ ] Savings Goal Calculator
 - [ ] Loan/Mortgage Calculator
+- [ ] (Maybe 2-3 more from TODO.md)
 
-**5.3 Moni - Additional Calculators**
+**5.3 AI Content**
 
-- [ ] Retirement Calculator
-- [ ] Credit Card Payoff Calculator
-- [ ] Investment Return Calculator
-- [ ] (See TODO.md for full list)
+- [ ] Adapt AI system for calculator content
+- [ ] Generate content for each calculator
 
-**5.4 Convertly App Setup**
+**5.4 Deploy**
 
-- [ ] Create Next.js app in `apps/convertly`
-- [ ] Configure Convertly theme (purple)
-- [ ] Set up directory structure
-- [ ] Create home page with hero
+- [ ] Set up Vercel project
+- [ ] Deploy to moni.benmvp.com
 
-**5.5 Convertly - First Converters**
+**Deliverable:** Moni app with initial calculators
+
+---
+
+### Phase 6: Convertly App (Week 7-8)
+
+**Goal:** Build Convertly with 5-10 converters
+
+#### Tasks
+
+**6.1 Copy & Adapt**
+
+- [ ] Create `apps/convertly/` based on Codemata/Moni
+- [ ] Change theme to purple
+- [ ] Adapt layout
+
+**6.2 First Converters**
 
 - [ ] Length Converter
-  - [ ] Define units and conversion factors
-  - [ ] Build converter UI (input → output)
-  - [ ] Implement conversion logic
-  - [ ] Add AI content generation
 - [ ] Temperature Converter
 - [ ] Weight Converter
+- [ ] Volume Converter
+- [ ] (Maybe 5-10 from TODO.md)
 
-**5.6 Convertly - Additional Converters**
+**6.3 AI Content**
 
-- [ ] Volume, Area, Speed converters
-- [ ] Time Zone Converter
-- [ ] Data Size Converter
-- [ ] (See TODO.md for full list)
+- [ ] Generate content for each converter
 
-**5.7 Testing**
+**6.4 Deploy**
 
-- [ ] Unit tests for calculator logic
-- [ ] Unit tests for conversion logic
-- [ ] Manual testing all tools
+- [ ] Deploy to convertly.benmvp.com
 
-**Deliverable:** All three apps deployed with initial tool set
+**Deliverable:** All three apps deployed
 
 ---
 
-### Phase 6: Production Launch & Polish (Week 13-14)
+### Phase 7: Extract Shared Code (Week 9) - Only if Needed
 
-**Goal:** Deploy to production and optimize
+**Goal:** Create shared packages ONLY if duplication is painful
 
-#### Tasks
+#### Decision Point
 
-**6.1 Deployment Setup**
+After building 3 apps, evaluate:
+- Is there significant duplication?
+- Is it actually causing maintenance pain?
+- Would extraction provide real value?
 
-- [ ] Create Vercel projects for all three apps
-- [ ] Configure custom domains
-- [ ] Set up environment variables
-- [ ] Configure build settings
+#### If Yes, Extract:
 
-**6.2 SEO Optimization**
+- [ ] Create `@repo/ui` package with truly shared components
+- [ ] Create `@repo/typescript-config` if configs are identical
+- [ ] Create `@repo/eslint-config` if configs are identical
+- [ ] Set up pnpm workspace
+- [ ] Set up Turborepo
+- [ ] Migrate apps to use shared packages
+- [ ] Test everything still works
 
-- [ ] Add `robots.txt`
-- [ ] Add `sitemap.xml` (dynamic)
-- [ ] Verify all metadata present
-- [ ] Test with Google Search Console
-- [ ] Submit sitemaps
+#### If No:
 
-**6.3 Performance Optimization**
+- Skip this phase entirely
+- Keep code duplicated across apps
+- Revisit later if needed
 
-- [ ] Run Lighthouse audits
-- [ ] Optimize images
-- [ ] Minimize bundle size
-- [ ] Test ISR performance
-- [ ] Test build times
-
-**6.4 Cross-Browser Testing**
-
-- [ ] Chrome
-- [ ] Firefox
-- [ ] Safari
-- [ ] Mobile Safari
-- [ ] Mobile Chrome
-
-**6.5 Documentation**
-
-- [ ] Update README with project overview
-- [ ] Document development setup
-- [ ] Document deployment process
-- [ ] Create contributing guidelines (if open source)
-
-**6.6 Monitoring Setup**
-
-- [ ] Set up error tracking (Sentry or similar)
-- [ ] Add basic logging
-- [ ] Monitor build times
-- [ ] Monitor ISR revalidation
-
-**Deliverable:** Production-ready apps deployed at custom domains
+**Deliverable:** Shared packages (only if beneficial)
 
 ---
 
-### Phase 7: Future Enhancements (Ongoing)
+### Phase 8: Polish & Launch (Week 10)
 
-**Goal:** Add analytics, ads, and expand tool offerings
+**Goal:** Production-ready launch
 
 #### Tasks
 
-**7.1 Analytics & Monetization**
+**8.1 Performance**
 
-- [ ] Integrate Google Analytics
-- [ ] Track tool usage events
-- [ ] Set up Google AdSense
-- [ ] Add ad placements (non-intrusive)
-- [ ] Monitor ad performance
+- [ ] Lighthouse audits
+- [ ] Bundle size optimization
+- [ ] ISR testing
 
-**7.2 Expand Codemata**
+**8.2 SEO**
 
-- [ ] Add viewers (SVG, Markdown, Diff)
-- [ ] Add validators (HTML, JSON, XML)
-- [ ] Add encoders/decoders
-- [ ] Add generators (Hash, UUID, QR codes)
-- [ ] (See TODO.md)
+- [ ] Add `robots.txt` and `sitemap.xml`
+- [ ] Submit to Google Search Console
+- [ ] Verify all metadata
 
-**7.3 Expand Moni**
+**8.3 Cross-browser Testing**
 
-- [ ] Add more calculators
-- [ ] Add data visualization
-- [ ] Add save/export functionality
+- [ ] Chrome, Firefox, Safari
+- [ ] Mobile testing
 
-**7.4 Expand Convertly**
+**8.4 Documentation**
 
-- [ ] Add more converters
-- [ ] Add conversion history
-- [ ] Add favorites/bookmarks
+- [ ] Update README
+- [ ] Document setup process
 
-**7.5 User Enhancements**
+**8.5 Assets & PWA**
 
-- [ ] Add keyboard shortcuts
-- [ ] Add example snippets
-- [ ] Add "Clear" buttons
-- [ ] Add settings persistence (optional)
+- [ ] Add favicon (multiple sizes for different platforms)
+- [ ] Add PWA support (manifest.json, service worker, icons)
+- [ ] Test app installation on mobile devices
+
+**Deliverable:** Production launch 🚀
+
+---
+
+### Phase 9: Future (Ongoing)
+
+**Goal:** Expand and optimize based on real usage
+
+#### Tasks
+
+- [ ] Add Google Analytics
+- [ ] Add Google Ads
+- [ ] Expand tools based on usage data
+- [ ] Extract shared code if duplication becomes painful
+- [ ] Add features based on user feedback
+
+**Deliverable:** Continuous improvement
 
 ---
 
 ### Milestones Summary
 
-| Phase | Duration | Key Deliverable              |
-| ----- | -------- | ---------------------------- |
-| 1     | 2 weeks  | Monorepo + Shared Packages   |
-| 2     | 2 weeks  | Codemata with 1 formatter    |
-| 3     | 2 weeks  | Complete Codemata (14 tools) |
-| 4     | 2 weeks  | AI Content Integration       |
-| 5     | 4 weeks  | Moni + Convertly apps        |
-| 6     | 2 weeks  | Production deployment        |
-| 7     | Ongoing  | Analytics + Expansion        |
+| Phase | Duration | Key Deliverable                       |
+| ----- | -------- | ------------------------------------- |
+| 1     | 1 week   | Codemata with 1 formatter (deployed)  |
+| 2     | 1 week   | All 8 formatters                      |
+| 3     | 1 week   | All 6 minifiers (14 total tools)      |
+| 4     | 1 week   | AI content integration                |
+| 5     | 2 weeks  | Moni app with 3-5 calculators         |
+| 6     | 2 weeks  | Convertly app with 5-10 converters    |
+| 7     | 1 week   | Shared packages (if needed)           |
+| 8     | 1 week   | Polish and production launch          |
+| 9     | Ongoing  | Analytics, ads, expansion             |
 
-**Total Initial Build:** ~14 weeks (3.5 months)
+**Total Initial Build:** ~10 weeks (2.5 months)
+
+**Key Difference:** This approach gets a deployed, working app in production in **1 week** instead of **8+ weeks**. The focus is on shipping working software and validating the concept before investing in infrastructure.
 
 ---
 
