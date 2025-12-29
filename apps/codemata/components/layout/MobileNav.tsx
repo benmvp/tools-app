@@ -1,28 +1,32 @@
-'use client'
+"use client";
 
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { X } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { FORMATTER_TOOLS, MINIFIER_TOOLS } from '@/lib/tools-data'
+import { X } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { FORMATTER_TOOLS, MINIFIER_TOOLS } from "@/lib/tools-data";
 
 interface MobileNavProps {
-  isOpen: boolean
-  onClose: () => void
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 export function MobileNav({ isOpen, onClose }: MobileNavProps) {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   return (
     <>
       {/* Backdrop */}
+      {/* biome-ignore lint/a11y/useSemanticElements: backdrop overlay, not a button */}
       <div
+        role="button"
+        tabIndex={0}
         className="fixed inset-0 z-50 bg-black/50 lg:hidden"
         onClick={onClose}
+        onKeyDown={(e) => e.key === "Escape" && onClose()}
       />
 
       {/* Sidebar */}
@@ -51,9 +55,9 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
                       onClick={() => !tool.comingSoon && onClose()}
                       className={`flex items-center justify-between gap-2 rounded-md px-3 py-2 text-sm transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 ${
                         pathname === tool.url
-                          ? 'bg-slate-100 font-medium dark:bg-slate-800'
-                          : ''
-                      } ${tool.comingSoon ? 'cursor-not-allowed opacity-60' : ''}`}
+                          ? "bg-slate-100 font-medium dark:bg-slate-800"
+                          : ""
+                      } ${tool.comingSoon ? "cursor-not-allowed opacity-60" : ""}`}
                     >
                       <span>{tool.name}</span>
                       {tool.comingSoon && (
@@ -80,9 +84,9 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
                       onClick={() => !tool.comingSoon && onClose()}
                       className={`flex items-center justify-between gap-2 rounded-md px-3 py-2 text-sm transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 ${
                         pathname === tool.url
-                          ? 'bg-slate-100 font-medium dark:bg-slate-800'
-                          : ''
-                      } ${tool.comingSoon ? 'cursor-not-allowed opacity-60' : ''}`}
+                          ? "bg-slate-100 font-medium dark:bg-slate-800"
+                          : ""
+                      } ${tool.comingSoon ? "cursor-not-allowed opacity-60" : ""}`}
                     >
                       <span>{tool.name}</span>
                       {tool.comingSoon && (
@@ -99,5 +103,5 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
         </div>
       </aside>
     </>
-  )
+  );
 }

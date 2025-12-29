@@ -1,14 +1,14 @@
-'use client'
+"use client";
 
-import CodeMirror from '@uiw/react-codemirror'
-import { javascript } from '@codemirror/lang-javascript'
-import { useTheme } from 'next-themes'
+import { javascript } from "@codemirror/lang-javascript";
+import CodeMirror from "@uiw/react-codemirror";
+import { useTheme } from "next-themes";
 
 interface CodeEditorProps {
-  value: string
-  onChange?: (value: string) => void
-  readOnly?: boolean
-  label: string
+  value: string;
+  onChange?: (value: string) => void;
+  readOnly?: boolean;
+  label: string;
 }
 
 export function CodeEditor({
@@ -17,11 +17,11 @@ export function CodeEditor({
   readOnly = false,
   label,
 }: CodeEditorProps) {
-  const { theme } = useTheme()
+  const { theme } = useTheme();
 
   return (
     <div className="space-y-2">
-      <label className="text-sm font-medium">{label}</label>
+      <span className="text-sm font-medium">{label}</span>
       <div className="border rounded-md overflow-hidden">
         <CodeMirror
           value={value}
@@ -29,10 +29,10 @@ export function CodeEditor({
           extensions={[javascript({ jsx: true, typescript: true })]}
           onChange={onChange}
           readOnly={readOnly}
-          theme={theme === 'dark' ? 'dark' : 'light'}
+          theme={theme === "dark" ? "dark" : "light"}
           className="text-sm"
         />
       </div>
     </div>
-  )
+  );
 }

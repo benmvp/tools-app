@@ -1,27 +1,27 @@
-import type { Metadata } from 'next'
-import { Transformer } from '@/components/Transformer'
-import { formatTypescript } from './actions'
-import { TYPESCRIPT_EXAMPLE } from '@/lib/examples'
+import type { Metadata } from "next";
+import { Transformer } from "@/components/Transformer";
+import { TYPESCRIPT_EXAMPLE } from "@/lib/examples";
+import { formatTypescript } from "./actions";
 
 export const metadata: Metadata = {
-  title: 'TypeScript & JavaScript Formatter | Codemata',
+  title: "TypeScript & JavaScript Formatter | Codemata",
   description:
-    'Format and beautify TypeScript, JavaScript, JSX, and TSX code instantly with Prettier. Free online formatter with customizable indentation.',
-}
+    "Format and beautify TypeScript, JavaScript, JSX, and TSX code instantly with Prettier. Free online formatter with customizable indentation.",
+};
 
 export default function TypeScriptFormatterPage() {
   const configOptions = [
     {
-      id: 'indentation',
-      label: 'Indentation',
+      id: "indentation",
+      label: "Indentation",
       options: [
-        { label: '2 Spaces', value: 'two-spaces' },
-        { label: '4 Spaces', value: 'four-spaces' },
-        { label: 'Tabs', value: 'tabs' },
+        { label: "2 Spaces", value: "two-spaces" },
+        { label: "4 Spaces", value: "four-spaces" },
+        { label: "Tabs", value: "tabs" },
       ],
-      defaultValue: 'two-spaces',
+      defaultValue: "two-spaces",
     },
-  ]
+  ];
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -39,5 +39,5 @@ export default function TypeScriptFormatterPage() {
         configOptions={configOptions}
       />
     </div>
-  )
+  );
 }

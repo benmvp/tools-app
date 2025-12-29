@@ -1,83 +1,88 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Copy, Check, Loader2 } from 'lucide-react'
-import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
+import { Check, Copy, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { CodeEditor } from './CodeEditor'
+} from "@/components/ui/select";
+import { CodeEditor } from "./CodeEditor";
 
 interface ConfigOption {
-  id: string
-  label: string
-  options: { label: string; value: string }[]
-  defaultValue: string
+  id: string;
+  label: string;
+  options: { label: string; value: string }[];
+  defaultValue: string;
 }
 
-interface TransformerProps {
-  action: (input: string, config: any) => Promise<string>
-  actionLabel?: string
-  defaultInput?: string
-  configOptions?: ConfigOption[]
+interface TransformerProps<
+  T extends Record<string, string> = Record<string, string>,
+> {
+  action: (input: string, config: T) => Promise<string>;
+  actionLabel?: string;
+  defaultInput?: string;
+  configOptions?: ConfigOption[];
 }
 
-export function Transformer({
+export function Transformer<
+  T extends Record<string, string> = Record<string, string>,
+>({
   action,
-  actionLabel = 'Format',
-  defaultInput = '',
+  actionLabel = "Format",
+  defaultInput = "",
   configOptions = [],
-}: TransformerProps) {
-  const [input, setInput] = useState(defaultInput)
-  const [output, setOutput] = useState('')
-  const [config, setConfig] = useState<Record<string, string>>(() => {
-    const initial: Record<string, string> = {}
+}: TransformerProps<T>) {
+  const [input, setInput] = useState(defaultInput);
+  const [output, setOutput] = useState("");
+  const [config, setConfig] = useState<T>(() => {
+    const initial: Record<string, string> = {};
     configOptions.forEach((opt) => {
-      initial[opt.id] = opt.defaultValue
-    })
-    return initial
-  })
-  const [loading, setLoading] = useState(false)
-  const [copied, setCopied] = useState(false)
+      initial[opt.id] = opt.defaultValue;
+    });
+    return initial as T;
+  });
+  const [loading, setLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const handleTransform = async () => {
-    if (!input) return
+    if (!input) return;
 
-    setLoading(true)
+    setLoading(true);
     try {
-      const result = await action(input, config)
-      setOutput(result)
-      toast.success('Success!', {
-        description: 'Code formatted successfully',
-      })
+      const result = await action(input, config);
+      setOutput(result);
+      toast.success("Success!", {
+        description: "Code formatted successfully",
+      });
     } catch (error) {
-      toast.error('Error', {
-        description: error instanceof Error ? error.message : 'Formatting failed',
-      })
+      toast.error("Error", {
+        description:
+          error instanceof Error ? error.message : "Formatting failed",
+      });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleCopy = async () => {
-    if (!output) return
+    if (!output) return;
 
-    await navigator.clipboard.writeText(output)
-    setCopied(true)
-    toast.success('Copied!', {
-      description: 'Code copied to clipboard',
-    })
-    setTimeout(() => setCopied(false), 2000)
-  }
+    await navigator.clipboard.writeText(output);
+    setCopied(true);
+    toast.success("Copied!", {
+      description: "Code copied to clipboard",
+    });
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const loadExample = () => {
-    setInput(defaultInput)
-  }
+    setInput(defaultInput);
+  };
 
   return (
     <div className="space-y-4">
@@ -106,11 +111,11 @@ export function Transformer({
         {/* Config dropdowns */}
         {configOptions.map((opt) => (
           <div key={opt.id} className="flex items-center gap-2">
-            <label className="text-sm font-medium">{opt.label}:</label>
+            <span className="text-sm font-medium">{opt.label}:</span>
             <Select
               value={config[opt.id]}
               onValueChange={(value) =>
-                setConfig((prev) => ({ ...prev, [opt.id]: value }))
+                setConfig((prev) => ({ ...prev, [opt.id]: value }) as T)
               }
             >
               <SelectTrigger className="w-[180px]">
@@ -159,5 +164,5 @@ export function Transformer({
         </div>
       </div>
     </div>
-  )
+  );
 }

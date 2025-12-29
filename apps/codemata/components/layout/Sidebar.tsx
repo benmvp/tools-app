@@ -1,16 +1,16 @@
-'use client'
+"use client";
 
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { Code2, Moon, Sun } from 'lucide-react'
-import { useTheme } from 'next-themes'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { FORMATTER_TOOLS, MINIFIER_TOOLS } from '@/lib/tools-data'
+import { Code2, Moon, Sun } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useTheme } from "next-themes";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { FORMATTER_TOOLS, MINIFIER_TOOLS } from "@/lib/tools-data";
 
 export function Sidebar() {
-  const pathname = usePathname()
-  const { theme, setTheme } = useTheme()
+  const pathname = usePathname();
+  const { theme, setTheme } = useTheme();
 
   return (
     <aside className="hidden lg:block fixed left-0 top-0 h-screen w-60 border-r bg-background">
@@ -37,9 +37,9 @@ export function Sidebar() {
                     href={tool.url}
                     className={`flex items-center justify-between gap-2 rounded-md px-3 py-2 text-sm transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 ${
                       pathname === tool.url
-                        ? 'bg-slate-100 font-medium dark:bg-slate-800'
-                        : ''
-                    } ${tool.comingSoon ? 'cursor-not-allowed opacity-60' : ''}`}
+                        ? "bg-slate-100 font-medium dark:bg-slate-800"
+                        : ""
+                    } ${tool.comingSoon ? "cursor-not-allowed opacity-60" : ""}`}
                     onClick={(e) => tool.comingSoon && e.preventDefault()}
                   >
                     <span>{tool.name}</span>
@@ -66,9 +66,9 @@ export function Sidebar() {
                     href={tool.url}
                     className={`flex items-center justify-between gap-2 rounded-md px-3 py-2 text-sm transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 ${
                       pathname === tool.url
-                        ? 'bg-slate-100 font-medium dark:bg-slate-800'
-                        : ''
-                    } ${tool.comingSoon ? 'cursor-not-allowed opacity-60' : ''}`}
+                        ? "bg-slate-100 font-medium dark:bg-slate-800"
+                        : ""
+                    } ${tool.comingSoon ? "cursor-not-allowed opacity-60" : ""}`}
                     onClick={(e) => tool.comingSoon && e.preventDefault()}
                   >
                     <span>{tool.name}</span>
@@ -89,7 +89,7 @@ export function Sidebar() {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             className="w-full justify-start"
           >
             <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
@@ -99,5 +99,5 @@ export function Sidebar() {
         </div>
       </div>
     </aside>
-  )
+  );
 }

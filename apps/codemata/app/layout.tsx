@@ -1,28 +1,27 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
-import { ThemeProvider } from 'next-themes'
-import { Toaster } from '@/components/ui/sonner'
-import { Sidebar } from '@/components/layout/Sidebar'
-import { MobileHeader } from '@/components/layout/MobileHeader'
-import { MobileNav } from '@/components/layout/MobileNav'
-import { Footer } from '@/components/layout/Footer'
-import './globals.css'
+import { Inter } from "next/font/google";
+import { ThemeProvider } from "next-themes";
+import { useState } from "react";
+import { Footer } from "@/components/layout/Footer";
+import { MobileHeader } from "@/components/layout/MobileHeader";
+import { MobileNav } from "@/components/layout/MobileNav";
+import { Sidebar } from "@/components/layout/Sidebar";
+import { Toaster } from "@/components/ui/sonner";
+import "./globals.css";
 
 const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-})
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
-  const [mobileNavOpen, setMobileNavOpen] = useState(false)
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -56,6 +55,5 @@ export default function RootLayout({
         </ThemeProvider>
       </body>
     </html>
-  )
+  );
 }
-

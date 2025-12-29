@@ -1,5 +1,5 @@
-import { ToolCard } from '@/components/ToolCard'
-import { FORMATTER_TOOLS, MINIFIER_TOOLS } from '@/lib/tools-data'
+import { ToolCard } from "@/components/ToolCard";
+import { FORMATTER_TOOLS, MINIFIER_TOOLS } from "@/lib/tools-data";
 
 export default function HomePage() {
   return (
@@ -41,5 +41,5 @@ export default function HomePage() {
         </div>
       </section>
     </div>
-  )
+  );
 }

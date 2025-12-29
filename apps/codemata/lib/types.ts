@@ -1,13 +1,13 @@
-export type Indentation = 'two-spaces' | 'four-spaces' | 'tabs'
+export type Indentation = "two-spaces" | "four-spaces" | "tabs";
 
-export interface FormatConfig {
-  indentation: Indentation
+export interface FormatConfig extends Record<string, string> {
+  indentation: Indentation;
 }
 
 export interface Tool {
-  id: string
-  name: string
-  description: string
-  url: string
-  comingSoon?: boolean
+  id: string;
+  name: string;
+  description: string;
+  url: string;
+  comingSoon?: boolean;
 }
