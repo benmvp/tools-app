@@ -80,23 +80,12 @@ export function Transformer<
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const loadExample = () => {
-    setInput(defaultInput);
-  };
-
   return (
     <div className="space-y-4">
       {/* Editors */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div>
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium">Input</span>
-            {defaultInput && (
-              <Button variant="ghost" size="sm" onClick={loadExample}>
-                Load Example
-              </Button>
-            )}
-          </div>
+          <span className="text-sm font-medium mb-2 block">Input</span>
           <CodeEditor value={input} onChange={setInput} label="" />
         </div>
 

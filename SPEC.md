@@ -2857,9 +2857,9 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 
 **1.5 Deploy**
 
-- [ ] Set up Vercel project
-- [ ] Deploy to codemata.benmvp.com
-- [ ] Test in production
+- [x] Set up Vercel project
+- [x] Deploy to codemata.benmvp.com
+- [x] Test in production
 
 **Deliverable:** Working Codemata app with ONE formatter in production 🚀
 
@@ -2956,10 +2956,10 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 
 **4.3 Content Display**
 
-- [ ] Build collapsible content sections (accordion)
+- [ ] Build content sections
 - [ ] Add Markdown rendering
 - [ ] Update tool pages to show AI content
-- [ ] Update metadata (SEO)
+- [ ] Update metadata (SEO & OpenGraph)
 
 **4.4 Regeneration**
 

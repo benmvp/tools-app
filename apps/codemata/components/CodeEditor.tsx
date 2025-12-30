@@ -30,7 +30,10 @@ export function CodeEditor({
           onChange={onChange}
           readOnly={readOnly}
           theme={theme === "dark" ? "dark" : "light"}
-          className="text-sm"
+          className="text-sm font-mono"
+          data-gramm="false"
+          data-gramm_editor="false"
+          data-enable-grammarly="false"
         />
       </div>
     </div>
