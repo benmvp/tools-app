@@ -2873,31 +2873,31 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 
 **2.1 Add Remaining Formatters**
 
-- [ ] JSON formatter (`/formatters/json-formatter/`)
-- [ ] CSS formatter (`/formatters/css-formatter/`)
-- [ ] HTML formatter (`/formatters/html-formatter/`)
-- [ ] GraphQL formatter (`/formatters/graphql-formatter/`)
-- [ ] Markdown formatter (`/formatters/markdown-formatter/`)
-- [ ] XML formatter (`/formatters/xml-formatter/`)
-- [ ] YAML formatter (`/formatters/yaml-formatter/`)
+- [x] JSON formatter (`/formatters/json-formatter/`)
+- [x] CSS formatter (`/formatters/css-formatter/`)
+- [x] HTML formatter (`/formatters/html-formatter/`)
+- [x] GraphQL formatter (`/formatters/graphql-formatter/`)
+- [x] Markdown formatter (`/formatters/markdown-formatter/`)
+- [x] XML formatter (`/formatters/xml-formatter/`)
+- [x] YAML formatter (`/formatters/yaml-formatter/`)
 
 **2.2 Refactor if Needed**
 
-- [ ] Extract common transformer component if duplication is annoying
-- [ ] Extract shared types if needed
-- [ ] Keep everything in Codemata app for now
+- [x] Extract common transformer component if duplication is annoying
+- [x] Extract shared types if needed
+- [x] Keep everything in Codemata app for now
 
 **2.3 Home Page Update**
 
-- [ ] Add "Formatters" section with tool grid
-- [ ] Add icons and descriptions
-- [ ] Make it look nice
+- [x] Add "Formatters" section with tool grid
+- [x] Add icons and descriptions
+- [x] Make it look nice
 
 **2.4 Testing**
 
-- [ ] Set up Vitest
-- [ ] Write tests for each formatter action
-- [ ] Test manually
+- [x] Set up Vitest
+- [x] Write tests for each formatter action
+- [x] Test manually
 
 **Deliverable:** Codemata with all 8 formatters working
 

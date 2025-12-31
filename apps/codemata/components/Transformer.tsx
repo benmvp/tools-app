@@ -13,6 +13,17 @@ import {
 } from "@/components/ui/select";
 import { CodeEditor } from "./CodeEditor";
 
+type SupportedLanguage =
+  | "typescript"
+  | "javascript"
+  | "json"
+  | "yaml"
+  | "css"
+  | "html"
+  | "graphql"
+  | "markdown"
+  | "xml";
+
 interface ConfigOption {
   id: string;
   label: string;
@@ -27,6 +38,7 @@ interface TransformerProps<
   actionLabel?: string;
   defaultInput?: string;
   configOptions?: ConfigOption[];
+  language?: SupportedLanguage;
 }
 
 export function Transformer<
@@ -36,6 +48,7 @@ export function Transformer<
   actionLabel = "Format",
   defaultInput = "",
   configOptions = [],
+  language = "typescript",
 }: TransformerProps<T>) {
   const [input, setInput] = useState(defaultInput);
   const [output, setOutput] = useState("");
@@ -86,12 +99,17 @@ export function Transformer<
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div>
           <span className="text-sm font-medium mb-2 block">Input</span>
-          <CodeEditor value={input} onChange={setInput} label="" />
+          <CodeEditor
+            value={input}
+            onChange={setInput}
+            label=""
+            language={language}
+          />
         </div>
 
         <div>
           <span className="text-sm font-medium mb-2 block">Output</span>
-          <CodeEditor value={output} readOnly label="" />
+          <CodeEditor value={output} readOnly label="" language={language} />
         </div>
       </div>
 

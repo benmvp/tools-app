@@ -31,7 +31,7 @@ export const FORMATTER_TOOLS: ToolWithIcon[] = [
     description: "Format and beautify JSON",
     url: "/formatters/json-formatter",
     icon: Braces,
-    comingSoon: true,
+    comingSoon: false,
   },
   {
     id: "css",
@@ -39,7 +39,7 @@ export const FORMATTER_TOOLS: ToolWithIcon[] = [
     description: "Format CSS and SCSS stylesheets",
     url: "/formatters/css-formatter",
     icon: Palette,
-    comingSoon: true,
+    comingSoon: false,
   },
   {
     id: "html",
@@ -47,7 +47,7 @@ export const FORMATTER_TOOLS: ToolWithIcon[] = [
     description: "Format and beautify HTML",
     url: "/formatters/html-formatter",
     icon: Globe,
-    comingSoon: true,
+    comingSoon: false,
   },
   {
     id: "graphql",
@@ -55,7 +55,7 @@ export const FORMATTER_TOOLS: ToolWithIcon[] = [
     description: "Format GraphQL queries and schemas",
     url: "/formatters/graphql-formatter",
     icon: Database,
-    comingSoon: true,
+    comingSoon: false,
   },
   {
     id: "markdown",
@@ -63,7 +63,7 @@ export const FORMATTER_TOOLS: ToolWithIcon[] = [
     description: "Format Markdown and MDX files",
     url: "/formatters/markdown-formatter",
     icon: FileText,
-    comingSoon: true,
+    comingSoon: false,
   },
   {
     id: "xml",
@@ -71,7 +71,7 @@ export const FORMATTER_TOOLS: ToolWithIcon[] = [
     description: "Format and beautify XML",
     url: "/formatters/xml-formatter",
     icon: FileCode,
-    comingSoon: true,
+    comingSoon: false,
   },
   {
     id: "yaml",
@@ -79,7 +79,7 @@ export const FORMATTER_TOOLS: ToolWithIcon[] = [
     description: "Format YAML configuration files",
     url: "/formatters/yaml-formatter",
     icon: Settings,
-    comingSoon: true,
+    comingSoon: false,
   },
 ];
 
