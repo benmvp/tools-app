@@ -62,7 +62,7 @@ export function CodeEditor({
   label,
   language = "typescript",
 }: CodeEditorProps) {
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
 
   return (
     <div className="space-y-2">
@@ -74,7 +74,7 @@ export function CodeEditor({
           extensions={[getLanguageExtension(language)]}
           onChange={onChange}
           readOnly={readOnly}
-          theme={theme === "dark" ? "dark" : "light"}
+          theme={resolvedTheme === "dark" ? "dark" : "light"}
           className="text-sm font-mono"
           data-gramm="false"
           data-gramm_editor="false"
