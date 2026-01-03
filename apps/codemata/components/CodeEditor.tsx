@@ -8,8 +8,10 @@ import { markdown } from "@codemirror/lang-markdown";
 import { xml } from "@codemirror/lang-xml";
 import { yaml } from "@codemirror/lang-yaml";
 import type { Extension } from "@codemirror/state";
+import { EditorView } from "@codemirror/view";
 import CodeMirror from "@uiw/react-codemirror";
 import { useTheme } from "next-themes";
+import { useMemo } from "react";
 
 type SupportedLanguage =
   | "typescript"
@@ -28,6 +30,7 @@ interface CodeEditorProps {
   readOnly?: boolean;
   label: string;
   language?: SupportedLanguage;
+  lineWrapping?: boolean;
 }
 
 function getLanguageExtension(language: SupportedLanguage): Extension {
@@ -61,8 +64,17 @@ export function CodeEditor({
   readOnly = false,
   label,
   language = "typescript",
+  lineWrapping = false,
 }: CodeEditorProps) {
   const { resolvedTheme } = useTheme();
+
+  const extensions = useMemo(() => {
+    const exts: Extension[] = [getLanguageExtension(language)];
+    if (lineWrapping) {
+      exts.push(EditorView.lineWrapping);
+    }
+    return exts;
+  }, [language, lineWrapping]);
 
   return (
     <div className="space-y-2">
@@ -71,7 +83,7 @@ export function CodeEditor({
         <CodeMirror
           value={value}
           height="400px"
-          extensions={[getLanguageExtension(language)]}
+          extensions={extensions}
           onChange={onChange}
           readOnly={readOnly}
           theme={resolvedTheme === "dark" ? "dark" : "light"}

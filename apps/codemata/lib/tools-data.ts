@@ -90,7 +90,7 @@ export const MINIFIER_TOOLS: ToolWithIcon[] = [
     description: "Minify JS and TS",
     url: "/minifiers/typescript-minifier",
     icon: FileCode2,
-    comingSoon: true,
+    comingSoon: false,
   },
   {
     id: "json-min",
@@ -98,7 +98,7 @@ export const MINIFIER_TOOLS: ToolWithIcon[] = [
     description: "Compress JSON",
     url: "/minifiers/json-minifier",
     icon: Braces,
-    comingSoon: true,
+    comingSoon: false,
   },
   {
     id: "css-min",
@@ -106,7 +106,7 @@ export const MINIFIER_TOOLS: ToolWithIcon[] = [
     description: "Minify CSS",
     url: "/minifiers/css-minifier",
     icon: Palette,
-    comingSoon: true,
+    comingSoon: false,
   },
   {
     id: "html-min",
@@ -114,7 +114,7 @@ export const MINIFIER_TOOLS: ToolWithIcon[] = [
     description: "Compress HTML",
     url: "/minifiers/html-minifier",
     icon: Globe,
-    comingSoon: true,
+    comingSoon: false,
   },
   {
     id: "svg-min",
@@ -122,7 +122,7 @@ export const MINIFIER_TOOLS: ToolWithIcon[] = [
     description: "Optimize and compress SVG",
     url: "/minifiers/svg-minifier",
     icon: ImageIcon,
-    comingSoon: true,
+    comingSoon: false,
   },
   {
     id: "xml-min",
@@ -130,6 +130,6 @@ export const MINIFIER_TOOLS: ToolWithIcon[] = [
     description: "Compress XML",
     url: "/minifiers/xml-minifier",
     icon: FileCode,
-    comingSoon: true,
+    comingSoon: false,
   },
 ];

@@ -96,7 +96,7 @@ export function Transformer<
   return (
     <div className="space-y-4">
       {/* Editors */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <span className="text-sm font-medium mb-2 block">Input</span>
           <CodeEditor
