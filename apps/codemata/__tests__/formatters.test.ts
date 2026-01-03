@@ -1,12 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { formatCss } from "../app/formatters/css-formatter/actions";
-import { formatGraphql } from "../app/formatters/graphql-formatter/actions";
-import { formatHtml } from "../app/formatters/html-formatter/actions";
-import { formatJson } from "../app/formatters/json-formatter/actions";
-import { formatMarkdown } from "../app/formatters/markdown-formatter/actions";
-import { formatTypescript } from "../app/formatters/typescript-formatter/actions";
-import { formatXml } from "../app/formatters/xml-formatter/actions";
-import { formatYaml } from "../app/formatters/yaml-formatter/actions";
+import {
+  formatCss,
+  formatGraphql,
+  formatHtml,
+  formatJson,
+  formatMarkdown,
+  formatTypescript,
+  formatXml,
+  formatYaml,
+} from "../app/formatters/actions";
 
 describe("TypeScript/JavaScript Formatter", () => {
   it("formats valid TypeScript code with 2-space indentation", async () => {
