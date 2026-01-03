@@ -2811,17 +2811,21 @@ git push origin main
 
 ### Overview
 
-The implementation follows a **pragmatic, YAGNI-driven approach** that prioritizes shipping working software over building infrastructure. The plan focuses on building Codemata first as a standalone Next.js app, then cloning and adapting it for Moni and Convertly. Shared packages are extracted **only when duplication becomes painful**, not upfront.
+The implementation follows a **pragmatic, YAGNI-driven approach** that prioritizes shipping working software over building infrastructure. The plan focuses on building Codemata first, launching it publicly, then expanding it with additional tools before building the other apps. Shared packages are extracted **only when duplication becomes painful**, not upfront.
 
 **Key Principles:**
 - Build one working tool ASAP
 - Deploy early and often
+- Launch publicly after AI content integration
+- Expand Codemata based on traffic/analytics data
 - Extract shared code only when proven necessary
-- Clone and adapt rather than abstract prematurely
+- Build Convertly and Moni last, once Codemata is generating revenue
+
+**Effort Estimates:** Tasks are sized as S (Small), M (Medium), L (Large), or XL (Extra Large)
 
 ---
 
-### Phase 1: Codemata MVP - Single Formatter (Week 1)
+### Phase 1: Codemata MVP - Single Formatter (Size: S)
 
 **Goal:** Get one working formatter deployed to production ASAP
 
@@ -2865,7 +2869,7 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 
 ---
 
-### Phase 2: Complete Formatters (Week 2)
+### Phase 2: Complete Formatters (Size: M)
 
 **Goal:** Add all 8 formatters using the pattern from Phase 1
 
@@ -2903,7 +2907,7 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 
 ---
 
-### Phase 3: Add Minifiers (Week 3)
+### Phase 3: Add Minifiers (Size: M)
 
 **Goal:** Add all 6 minifiers
 
@@ -2934,7 +2938,7 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 
 ---
 
-### Phase 4: AI Content (Week 4)
+### Phase 4: AI Content Integration (Size: M)
 
 **Goal:** Add AI-generated educational content
 
@@ -2961,184 +2965,372 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 - [ ] Update tool pages to show AI content
 - [ ] Update metadata (SEO & OpenGraph)
 
-**4.4 Regeneration**
+**4.4 Build Optimization & Cost Management**
+
+- [ ] Evaluate build-time vs on-demand generation strategy
+- [ ] Consider on-demand generation for most pages (ISR with very long revalidate)
+- [ ] Pre-build only high-traffic pages (formatters, minifiers, top encoders)
+- [ ] Implement incremental builds to avoid regenerating all content
+- [ ] Add caching layer to prevent duplicate AI API calls
+- [ ] Monitor AI API costs and optimize accordingly
+
+**4.5 Regeneration**
 
 - [ ] Create `/api/revalidate` endpoint
 - [ ] Create manual regeneration script
 - [ ] Document process
 
-**Deliverable:** Codemata with full AI content and SEO
+**Deliverable:** Codemata with full AI content, SEO, and cost-optimized builds
 
 ---
 
-### Phase 5: Moni App (Week 5-6)
+### Phase 5: Polish & Public Launch (Size: M)
 
-**Goal:** Build Moni with 3-5 calculators using Codemata as template
+**Goal:** Production-ready public launch of Codemata
 
 #### Tasks
 
-**5.1 Copy & Adapt Codemata Structure**
-
-- [ ] Create `apps/moni/` based on Codemata
-- [ ] Change theme to green
-- [ ] Adapt layout components
-- [ ] Update branding
-
-**5.2 First Calculators**
-
-- [ ] Compound Interest Calculator
-- [ ] Savings Goal Calculator
-- [ ] Loan/Mortgage Calculator
-- [ ] (Maybe 2-3 more from TODO.md)
-
-**5.3 AI Content**
-
-- [ ] Adapt AI system for calculator content
-- [ ] Generate content for each calculator
-
-**5.4 Deploy**
-
-- [ ] Set up Vercel project
-- [ ] Deploy to moni.benmvp.com
-
-**Deliverable:** Moni app with initial calculators
-
----
-
-### Phase 6: Convertly App (Week 7-8)
-
-**Goal:** Build Convertly with 5-10 converters
-
-#### Tasks
-
-**6.1 Copy & Adapt**
-
-- [ ] Create `apps/convertly/` based on Codemata/Moni
-- [ ] Change theme to purple
-- [ ] Adapt layout
-
-**6.2 First Converters**
-
-- [ ] Length Converter
-- [ ] Temperature Converter
-- [ ] Weight Converter
-- [ ] Volume Converter
-- [ ] (Maybe 5-10 from TODO.md)
-
-**6.3 AI Content**
-
-- [ ] Generate content for each converter
-
-**6.4 Deploy**
-
-- [ ] Deploy to convertly.benmvp.com
-
-**Deliverable:** All three apps deployed
-
----
-
-### Phase 7: Extract Shared Code (Week 9) - Only if Needed
-
-**Goal:** Create shared packages ONLY if duplication is painful
-
-#### Decision Point
-
-After building 3 apps, evaluate:
-- Is there significant duplication?
-- Is it actually causing maintenance pain?
-- Would extraction provide real value?
-
-#### If Yes, Extract:
-
-- [ ] Create `@repo/ui` package with truly shared components
-- [ ] Create `@repo/typescript-config` if configs are identical
-- [ ] Create `@repo/eslint-config` if configs are identical
-- [ ] Set up pnpm workspace
-- [ ] Set up Turborepo
-- [ ] Migrate apps to use shared packages
-- [ ] Test everything still works
-
-#### If No:
-
-- Skip this phase entirely
-- Keep code duplicated across apps
-- Revisit later if needed
-
-**Deliverable:** Shared packages (only if beneficial)
-
----
-
-### Phase 8: Polish & Launch (Week 10)
-
-**Goal:** Production-ready launch
-
-#### Tasks
-
-**8.1 Performance**
+**5.1 Performance**
 
 - [ ] Lighthouse audits
 - [ ] Bundle size optimization
 - [ ] ISR testing
 
-**8.2 SEO**
+**5.2 SEO**
 
 - [ ] Add `robots.txt` and `sitemap.xml`
 - [ ] Submit to Google Search Console
 - [ ] Verify all metadata
 
-**8.3 Cross-browser Testing**
+**5.3 Cross-browser Testing**
 
 - [ ] Chrome, Firefox, Safari
 - [ ] Mobile testing
 
-**8.4 Documentation**
+**5.4 Documentation**
 
 - [ ] Update README
 - [ ] Document setup process
 
-**8.5 Assets & PWA**
+**5.5 Assets & PWA**
 
 - [x] Add favicon (multiple sizes for different platforms)
 - [x] Add PWA support (manifest.json, service worker, icons)
 - [ ] Test app installation on mobile devices
 
-**Deliverable:** Production launch 🚀
+**Deliverable:** Codemata publicly launched and ready for users 🚀
 
 ---
 
-### Phase 9: Future (Ongoing)
+### Phase 6: Additional Formatters (Size: S)
 
-**Goal:** Expand and optimize based on real usage
+**Goal:** Add high-traffic formatter discovered after initial launch
 
 #### Tasks
 
-- [ ] Add Google Analytics
-- [ ] Add Google Ads
-- [ ] Expand tools based on usage data
-- [ ] Extract shared code if duplication becomes painful
-- [ ] Add features based on user feedback
+**6.1 SQL Formatter**
 
-**Deliverable:** Continuous improvement
+- [ ] Add SQL formatter page (`/formatters/sql-formatter/`)
+- [ ] Implement `formatSqlAction` using `sql-formatter`
+- [ ] Support multiple SQL dialects (MySQL, PostgreSQL, SQLite, etc.)
+- [ ] Add configuration options (indentation, keyword case, etc.)
+- [ ] Write tests
+
+**6.2 AI Content & Deploy**
+
+- [ ] Generate AI content for SQL formatter
+- [ ] Update home page with new tool
+- [ ] Deploy to production
+
+**Deliverable:** Codemata with 15 tools (SQL formatter gets massive search traffic)
+
+---
+
+### Phase 7: Analytics & Monetization (Size: S)
+
+**Goal:** Add analytics and ads to generate revenue
+
+#### Tasks
+
+**6.1 Google Analytics**
+
+- [ ] Set up Google Analytics 4
+- [ ] Add tracking to all pages
+- [ ] Track tool usage events
+- [ ] Set up custom dashboards
+
+**6.2 Initial Data Collection**
+
+- [ ] Monitor traffic for 2-4 weeks
+- [ ] Identify popular tools
+- [ ] Analyze user behavior
+- [ ] Identify optimization opportunities
+
+**6.3 Google Ads Integration**
+
+- [ ] Set up Google AdSense account
+- [ ] Add ads below tools
+- [ ] Add ads in content sections
+- [ ] Test ad placement and performance
+- [ ] Optimize based on revenue data
+
+**Deliverable:** Revenue-generating Codemata with performance tracking
+
+---
+
+### Phase 8: Expand Codemata - Encoders/Decoders (Size: L)
+
+**Goal:** Add high-traffic encoder/decoder tools
+
+#### Tools to Build
+
+- [ ] JWT Decoder (very high traffic potential)
+- [ ] Base64 Encoder/Decoder
+- [ ] URL Encoder/Decoder
+- [ ] HTML Entity Encoder/Decoder
+- [ ] JS String Encoder/Decoder
+
+#### Tasks
+
+**7.1 Implement Tools**
+
+- [ ] Create encoder/decoder pages
+- [ ] Implement server actions for each
+- [ ] Build appropriate UI (may differ from transformer pattern)
+- [ ] Write tests
+
+**7.2 AI Content & SEO**
+
+- [ ] Generate AI content for each tool
+- [ ] Optimize for high-traffic keywords
+- [ ] Update sitemap
+
+**7.3 Deploy & Monitor**
+
+- [ ] Deploy to production
+- [ ] Monitor analytics for these tools
+- [ ] Track revenue impact
+
+**Deliverable:** Codemata with 20 tools (15 existing + 5 encoders/decoders)
+
+---
+
+### Phase 9: Expand Codemata - Validators/Checkers (Size: L)
+
+**Goal:** Add validation and checking tools
+
+#### Tools to Build
+
+- [ ] JSON Validator (with schema support)
+- [ ] HTML Validator
+- [ ] XML Validator
+- [ ] CSS Validator
+- [ ] Regex Tester
+- [ ] (More validators as prioritized by analytics)
+
+#### Tasks
+
+**8.1 Implement Tools**
+
+- [ ] Create validator pages
+- [ ] Implement validation logic
+- [ ] Build error display UI
+- [ ] Write tests
+
+**8.2 AI Content & SEO**
+
+- [ ] Generate AI content for each tool
+- [ ] Update sitemap
+
+**8.3 Deploy & Monitor**
+
+- [ ] Deploy to production
+- [ ] Monitor analytics
+- [ ] Track revenue impact
+
+**Deliverable:** Codemata with comprehensive validation tools
+
+---
+
+### Phase 10+: Continue Codemata Expansion (Size: Varies)
+
+**Goal:** Add remaining tool categories based on data
+
+#### Tool Categories (in priority order)
+
+1. **Git/DevOps** (Size: S) - HIGHEST PRIORITY
+   - .gitignore Generator (massive traffic), GitHub Markdown Preview, Dockerfile Linter
+
+2. **CSS Generators** (Size: M) - VERY HIGH ENGAGEMENT
+   - Box Shadow Generator, Border Radius, Flexbox Generator, CSS Grid Generator
+
+3. **Image Tools** (Size: L) - HIGH SEO VALUE
+   - Image Compressor/Optimizer, Format Converter, Resizer, Favicon Generator
+
+4. **Converters** (Size: L)
+   - CRON Generator/Parser (very high traffic), HTML ↔ Markdown, XML ↔ JSON, CSV ↔ JSON, YAML ↔ JSON, Timestamp ↔ Date, SVG/Image to Data URI
+
+5. **Generators** (Size: M)
+   - Fake Data Generator (high value), Hash, UUID, QR codes, Meta tags, Passwords, Lorem Ipsum, JSON Schema to Sample, Badge Generator
+
+6. **Text Tools** (Size: M)
+   - String Diff, JSONPath Tester, XPath Tester, Case converter, Text analyzer, String reverser, Line sort/dedup, ASCII Art
+
+7. **Security/Crypto** (Size: M)
+   - Password Strength Checker, Certificate Decoder, Public Key Converter
+
+8. **API/HTTP Reference** (Size: S)
+   - HTTP Status Reference, MIME Type Lookup, User Agent Parser, Query String Builder
+
+9. **Viewers** (Size: L)
+   - SVG Viewer, Markdown Preview, Diff Tool, Page Source, Google Fonts
+
+10. **Colors** (Size: M)
+    - Color converter, Gradient generator, Color scheme creator
+
+11. **Network Tools** (Size: M)
+    - IP lookup, WHOIS, DNS lookup
+
+12. **AI Meta Tools** (Size: M) - HUGE SEO POTENTIAL (Tools ABOUT AI)
+    - ⚠️ Note: Client-side AI execution requires careful cost management
+    - Prompt Optimizer (flagship), Token Counter & Cost Calculator (no API cost!), Prompt Template Library (educational, no API cost), Context Window Optimizer, Code Explainer, Code Review Assistant
+
+13. **Other Tools** (Size: Varies)
+    - Character count, Unicode lookup, Date/Time calculator, API Tester
+
+#### Approach
+
+- Complete one category at a time
+- Monitor analytics after each deployment
+- Let data guide prioritization
+- Optimize based on traffic and revenue
+
+**Deliverable:** Comprehensive Codemata with 50+ developer tools
+
+---
+
+### Phase 11: Convertly App (Size: L)
+
+**Goal:** Build conversion tools app using learnings from Codemata
+
+#### Tasks
+
+**10.1 Copy & Adapt**
+
+- [ ] Create `apps/convertly/` based on Codemata
+- [ ] Change theme to purple
+- [ ] Adapt layout components
+- [ ] Update branding
+
+**10.2 Initial Converters** (8-10 tools)
+
+- [ ] Length Converter
+- [ ] Weight/Mass Converter
+- [ ] Volume Converter
+- [ ] Temperature Converter
+- [ ] Data Size Converter
+- [ ] Time Zone Converter
+- [ ] Numeral System Converter
+- [ ] Area Converter
+
+**10.3 AI Content**
+
+- [ ] Adapt AI system for converter content
+- [ ] Generate content for each converter
+
+**10.4 Deploy**
+
+- [ ] Set up Vercel project
+- [ ] Deploy to convertly.benmvp.com
+- [ ] Add analytics and ads
+
+**Deliverable:** Convertly app launched with core converters
+
+---
+
+### Phase 12: Moni App (Size: XL)
+
+**Goal:** Build financial calculator app
+
+#### Tasks
+
+**11.1 Copy & Adapt**
+
+- [ ] Create `apps/moni/` based on Codemata/Convertly
+- [ ] Change theme to green
+- [ ] Adapt layout components
+- [ ] Update branding
+
+**11.2 Initial Calculators** (5-8 tools)
+
+- [ ] Compound Interest Calculator
+- [ ] Savings Goal Calculator
+- [ ] Simple Mortgage Calculator
+- [ ] Loan Pre-payment Calculator
+- [ ] ROI Calculator
+- [ ] Retirement Calculator (basic)
+- [ ] Tip Calculator
+- [ ] Currency Converter
+
+**11.3 AI Content**
+
+- [ ] Adapt AI system for calculator content
+- [ ] Generate content for each calculator
+
+**11.4 Deploy**
+
+- [ ] Set up Vercel project
+- [ ] Deploy to moni.benmvp.com
+- [ ] Add analytics and ads
+
+**Deliverable:** Moni app launched with core calculators
+
+---
+
+### Ongoing: Extract Shared Code (When Needed)
+
+**Goal:** Create shared packages ONLY when duplication becomes painful
+
+#### Decision Point
+
+Extract shared code when:
+- Making the same change across multiple apps becomes tedious
+- Bug fixes need to be applied in multiple places
+- Component behavior diverges unintentionally
+- The duplication is actually causing real maintenance pain
+
+#### If/When Extracting:
+
+- [ ] Create `@repo/ui` package with truly shared components
+- [ ] Create `@repo/typescript-config` if configs are identical
+- [ ] Create `@repo/eslint-config` if configs are identical
+- [ ] Set up pnpm workspace (if not already done)
+- [ ] Set up Turborepo (if not already done)
+- [ ] Migrate apps to use shared packages
+- [ ] Test everything still works
+
+**Approach:** Extract incrementally, not all at once. Start with the most painful duplication first.
 
 ---
 
 ### Milestones Summary
 
-| Phase | Duration | Key Deliverable                       |
-| ----- | -------- | ------------------------------------- |
-| 1     | 1 week   | Codemata with 1 formatter (deployed)  |
-| 2     | 1 week   | All 8 formatters                      |
-| 3     | 1 week   | All 6 minifiers (14 total tools)      |
-| 4     | 1 week   | AI content integration                |
-| 5     | 2 weeks  | Moni app with 3-5 calculators         |
-| 6     | 2 weeks  | Convertly app with 5-10 converters    |
-| 7     | 1 week   | Shared packages (if needed)           |
-| 8     | 1 week   | Polish and production launch          |
-| 9     | Ongoing  | Analytics, ads, expansion             |
+| Phase | Size | Key Deliverable                              | Status      |
+| ----- | ---- | -------------------------------------------- | ----------- |
+| 1     | S    | Codemata with 1 formatter (deployed)         | ✅ Complete |
+| 2     | M    | All 8 formatters                             | ✅ Complete |
+| 3     | M    | All 6 minifiers (14 total tools)             | ✅ Complete |
+| 4     | M    | AI content + build optimization              | 🔄 Next     |
+| 5     | M    | Polish and public launch                     | ⏳ Pending  |
+| 6     | S    | SQL Formatter (high-traffic addition)        | ⏳ Pending  |
+| 7     | S    | Analytics and ads (monetization)             | ⏳ Pending  |
+| 8     | L    | Encoders/Decoders (5 tools)                  | ⏳ Pending  |
+| 9     | L    | Validators/Checkers (8+ tools)               | ⏳ Pending  |
+| 10+   | Varies | Remaining Codemata categories (40+ tools)  | ⏳ Pending  |
+| 11    | L    | Convertly app launch                         | ⏳ Pending  |
+| 12    | XL   | Moni app launch                              | ⏳ Pending  |
 
-**Total Initial Build:** ~10 weeks (2.5 months)
-
-**Key Difference:** This approach gets a deployed, working app in production in **1 week** instead of **8+ weeks**. The focus is on shipping working software and validating the concept before investing in infrastructure.
+**Key Strategy:** Launch Codemata publicly, add analytics/ads, then expand based on traffic data before building other apps. Extract shared code only when duplication hurts.
 
 ---
 
