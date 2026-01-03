@@ -3098,8 +3098,8 @@ After building 3 apps, evaluate:
 
 **8.5 Assets & PWA**
 
-- [ ] Add favicon (multiple sizes for different platforms)
-- [ ] Add PWA support (manifest.json, service worker, icons)
+- [x] Add favicon (multiple sizes for different platforms)
+- [x] Add PWA support (manifest.json, service worker, icons)
 - [ ] Test app installation on mobile devices
 
 **Deliverable:** Production launch 🚀
