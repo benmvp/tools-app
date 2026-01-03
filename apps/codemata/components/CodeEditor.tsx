@@ -11,7 +11,7 @@ import type { Extension } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
 import CodeMirror from "@uiw/react-codemirror";
 import { useTheme } from "next-themes";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type SupportedLanguage =
   | "typescript"
@@ -67,6 +67,12 @@ export function CodeEditor({
   lineWrapping = false,
 }: CodeEditorProps) {
   const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  // Avoid hydration mismatch by only rendering theme after mount
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const extensions = useMemo(() => {
     const exts: Extension[] = [getLanguageExtension(language)];
@@ -86,7 +92,7 @@ export function CodeEditor({
           extensions={extensions}
           onChange={onChange}
           readOnly={readOnly}
-          theme={resolvedTheme === "dark" ? "dark" : "light"}
+          theme={mounted && resolvedTheme === "dark" ? "dark" : "light"}
           className="text-sm font-mono"
           data-gramm="false"
           data-gramm_editor="false"

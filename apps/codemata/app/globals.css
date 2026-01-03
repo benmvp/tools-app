@@ -122,4 +122,23 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* CodeMirror dark mode styling */
+  .dark .cm-editor {
+    background-color: oklch(0.21 0.006 285.885) !important;
+  }
+
+  .dark .cm-gutters {
+    background-color: oklch(0.21 0.006 285.885) !important;
+    color: oklch(0.552 0.016 285.938) !important;
+    border-right: 1px solid oklch(1 0 0 / 10%) !important;
+  }
+
+  .dark .cm-activeLineGutter {
+    background-color: oklch(0.274 0.006 286.033) !important;
+  }
+
+  .dark .cm-lineNumbers .cm-gutterElement {
+    color: oklch(0.552 0.016 285.938) !important;
+  }
 }
