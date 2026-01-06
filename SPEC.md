@@ -147,7 +147,7 @@ Content is generated at build time and cached:
 
 | Category            | Technology              | Purpose             |
 | ------------------- | ----------------------- | ------------------- |
-| **AI Model**        | Gemini 2.0 Flash        | Content generation  |
+| **AI Model**        | Gemini 3.0 Flash        | Content generation  |
 | **Validation**      | Zod                     | Schema validation   |
 | **Code Formatting** | Prettier, Biome         | Code transformation |
 | **Minification**    | Terser, clean-css, etc. | Code minification   |
@@ -3405,6 +3405,117 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 - Vercel OG Image Generation: https://vercel.com/docs/functions/edge-functions/og-image-generation
 - @vercel/og package: https://www.npmjs.com/package/@vercel/og
 - Example template: Card with logo + tool name + icon + tagline
+
+**5.7 Breadcrumbs Navigation**
+
+- [ ] Install shadcn/ui breadcrumb component
+- [ ] Create `<Breadcrumbs>` component:
+  - [ ] Props: items array with label and href
+  - [ ] Support current page (no link)
+  - [ ] Responsive design (truncate on mobile if needed)
+- [ ] Add breadcrumbs to formatter tool pages:
+  - [ ] Home → Formatters → [Tool Name]
+  - [ ] Link to `/formatters` category page
+- [ ] Add breadcrumbs to minifier tool pages:
+  - [ ] Home → Minifiers → [Tool Name]
+  - [ ] Link to `/minifiers` category page
+- [ ] Position breadcrumbs at top of content (above tool heading)
+- [ ] Test breadcrumb navigation on all tool pages
+- [ ] Ensure proper spacing and visual hierarchy
+
+**5.8 Category Page AI Content**
+
+- [ ] Generate AI descriptions for category pages:
+  - [ ] `/formatters` page - About code formatters
+  - [ ] `/minifiers` page - About code minifiers
+  - [ ] Future: encoders, validators, etc.
+- [ ] AI content to include:
+  - [ ] What are formatters/minifiers (educational overview)
+  - [ ] When to use them (use cases and scenarios)
+  - [ ] Best practices (industry standards)
+  - [ ] Benefits and trade-offs
+  - [ ] Common workflows and integrations
+- [ ] Update category page components:
+  - [ ] Add `<Suspense>` boundary for AI content
+  - [ ] Display content sections below hero and above tool grid
+  - [ ] Use same `<ContentSection>` component pattern as tool pages
+  - [ ] Gracefully hide if content generation fails
+- [ ] SEO benefits:
+  - [ ] Category pages become valuable landing pages
+  - [ ] Broader educational content for category-level keywords
+  - [ ] Better internal linking structure
+- [ ] Extend AI generation logic:
+  - [ ] Create category-specific prompts in `lib/ai/prompts.ts`
+  - [ ] Add `generateCategoryContent()` function
+  - [ ] Use ISR with 24-hour revalidation (same as tools)
+
+**5.9 Command Menu Search (Cmd+K)**
+
+**Goal:** Enable fast, keyboard-first tool discovery as the tool catalog grows
+
+**UI/UX Pattern:**
+
+- Cmd+K keyboard shortcut (Ctrl+K on Windows) opens search modal
+- Modal with auto-focused search input and fuzzy matching
+- Results grouped by category (Formatters, Minifiers, Encoders, etc.)
+- Keyboard navigation: arrow keys to select, Enter to navigate, Esc to close
+- Search icon in header opens same modal (mobile-friendly)
+- Empty state shows recent tools (stored in localStorage)
+- Subtle hints throughout app: "Press ⌘K to search"
+
+**Technical Approach:**
+
+- Use `cmdk` library (by Radix team) for command menu with built-in fuzzy search
+- Client-side search (instant results, no API latency)
+- Search index generated from tool metadata at build time
+- Index includes: tool name, category, keywords, description
+- Modal managed with shadcn/ui Dialog component
+- Global keyboard listener for Cmd+K shortcut
+- Navigation via Next.js router on selection
+
+**Search Features by Phase:**
+
+*MVP (Phase 5.9):*
+- Fuzzy text matching on tool names
+- Category grouping in results
+- Keyboard navigation
+- Basic keyword matching (e.g., "js" finds JavaScript tools)
+
+*Enhanced (Future):*
+- Filter by category ("formatters", "minifiers")
+- Filter by language ("javascript tools", "json tools")
+- Recent searches (localStorage)
+- Analytics tracking for popular searches
+- "Did you mean?" suggestions
+
+*Advanced (Future):*
+- Search within AI-generated content
+- Popular tools highlighted
+- Search shortcuts ("f" = jump to formatters, "m" = minifiers)
+- Command palette for app actions (theme toggle, etc.)
+
+**Tasks:**
+
+- [ ] Install `cmdk` package from npm
+- [ ] Generate search index from tool metadata
+- [ ] Create `<CommandMenu>` component using cmdk:
+  - [ ] Cmd+K/Ctrl+K keyboard shortcut listener
+  - [ ] Fuzzy search across tool names and keywords
+  - [ ] Category-based result grouping
+  - [ ] Keyboard navigation support
+  - [ ] Recent tools in empty state (localStorage)
+- [ ] Add search button to header:
+  - [ ] Desktop: Shows "Search" text with ⌘K hint
+  - [ ] Mobile: Icon button only
+  - [ ] Opens command menu on click
+- [ ] Add search hints in empty states
+- [ ] Track search analytics (optional, Phase 7)
+- [ ] Test across browsers and devices
+- [ ] Verify accessibility (screen readers, keyboard-only navigation)
+
+**Resources:**
+- cmdk library: https://cmdk.paco.me/
+- shadcn/ui command component: https://ui.shadcn.com/docs/components/command
 
 **Deliverable:** Codemata publicly launched and ready for users 🚀
 
