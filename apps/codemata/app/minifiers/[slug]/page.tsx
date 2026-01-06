@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
+import { AIContentSkeleton } from "@/components/AIContentSkeleton";
+import { MinifierAIContent } from "@/components/MinifierAIContent";
+import { MinifierIntro } from "@/components/MinifierIntro";
 import { TransformerMinifier } from "@/components/TransformerMinifier";
+import { getMinifierContent } from "@/lib/ai/helpers";
 import {
   CSS_MINIFIER_EXAMPLE,
   HTML_MINIFIER_EXAMPLE,
@@ -9,6 +14,7 @@ import {
   TYPESCRIPT_MINIFIER_EXAMPLE,
   XML_MINIFIER_EXAMPLE,
 } from "@/lib/examples";
+import { isProductionBuild } from "@/lib/utils";
 import {
   minifyCss,
   minifyHtml,
@@ -17,6 +23,9 @@ import {
   minifyTypescript,
   minifyXml,
 } from "../actions";
+
+// ISR: Revalidate every 24 hours
+export const revalidate = 86400;
 
 type MinifierSlug =
   | "typescript-minifier"
@@ -121,10 +130,19 @@ const MINIFIERS: Record<MinifierSlug, MinifierConfig> = {
   },
 };
 
+// Enable dynamic params for ISR
+export const dynamicParams = true;
+
 export async function generateStaticParams() {
-  return Object.keys(MINIFIERS).map((slug) => ({
-    slug,
-  }));
+  // Pre-render all pages ONLY in true Vercel production builds
+  // This ensures crawlers get instant pages with good SEO
+  // Preview builds and local dev use on-demand ISR to save API costs
+  if (isProductionBuild()) {
+    return Object.keys(MINIFIERS).map((slug) => ({ slug }));
+  }
+
+  // Return empty array for preview/dev - pages generated on-demand
+  return [];
 }
 
 export async function generateMetadata({
@@ -136,9 +154,34 @@ export async function generateMetadata({
   const minifier = MINIFIERS[slug as MinifierSlug];
 
   if (!minifier) {
-    return {};
+    return {
+      title: "Minifier Not Found",
+    };
   }
 
+  // Try to get AI-generated content for metadata
+  const aiContent = await getMinifierContent(slug, minifier.name);
+
+  if (aiContent) {
+    return {
+      title: aiContent.seo.title,
+      description: aiContent.seo.description,
+      keywords: aiContent.seo.keywords,
+      openGraph: {
+        title: aiContent.openGraph.title,
+        description: aiContent.openGraph.description,
+        type: aiContent.openGraph.type,
+        url: `/minifiers/${slug}`,
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: aiContent.openGraph.title,
+        description: aiContent.openGraph.description,
+      },
+    };
+  }
+
+  // Fallback to static metadata if AI generation fails
   return {
     title: minifier.metadata.title,
     description: minifier.metadata.description,
@@ -159,17 +202,38 @@ export default async function MinifierPage({
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-2">{minifier.name}</h1>
-      <p className="text-slate-600 dark:text-slate-400 mb-8">
-        {minifier.description}
-      </p>
+      {/* Page Header */}
+      <h1 className="text-4xl font-bold mb-2">{minifier.name}</h1>
 
+      {/* Intro paragraph with Suspense (replaces with AI intro when ready) */}
+      <Suspense
+        fallback={
+          <p className="text-slate-600 dark:text-slate-400 mb-8">
+            {minifier.description}
+          </p>
+        }
+      >
+        <MinifierIntro
+          slug={slug}
+          minifierName={minifier.name}
+          fallbackDescription={minifier.description}
+        />
+      </Suspense>
+
+      {/* Transformer Tool */}
       <TransformerMinifier
         action={minifier.action}
         actionLabel="Minify"
         defaultInput={minifier.example}
         language={minifier.language}
       />
+
+      {/* AI-Generated Content Sections with Suspense */}
+      <div className="mt-12 space-y-8">
+        <Suspense fallback={<AIContentSkeleton />}>
+          <MinifierAIContent slug={slug} minifierName={minifier.name} />
+        </Suspense>
+      </div>
     </div>
   );
 }

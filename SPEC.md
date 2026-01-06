@@ -382,31 +382,153 @@ Shared ESLint configurations:
 
 ### Overview
 
-The AI Content System uses Google Gemini to generate high-quality, SEO-optimized educational content for each tool. Content is generated at build time and cached using Next.js ISR (Incremental Static Regeneration).
+The AI Content System uses Google Gemini to generate high-quality, SEO-optimized educational content for each tool. This system transforms simple code transformation tools into comprehensive educational resources that:
 
+- **Drive Organic Traffic:** SEO-optimized content targeting long-tail keywords related to each tool
+- **Increase User Engagement:** Educational material including how-to guides, best practices, FAQs, and contextual tips
+- **Establish Authority:** Comprehensive information about each tool, its domain, and integration workflows
+- **Scale Efficiently:** Smart pre-rendering in production, on-demand in preview/dev
+- **Stay Fresh:** Automatic 24-hour revalidation keeps content current without manual intervention
+- **Cost-Optimized:** Production builds pre-render for SEO, preview/dev use on-demand to save API costs
+- **Developer-Friendly:** Skip AI in local dev to preserve API quota during hot-reload
+
+**Strategy:** Hybrid approach - pre-render in production for SEO, on-demand ISR elsewhere for cost efficiency.
+
+### Build & Rendering Strategy
+
+The system uses a **convention-based approach** with automatic environment detection. No configuration needed for typical scenarios - just set `GOOGLE_API_KEY` and everything works:
+
+**Production Builds (`VERCEL_ENV=production`):**
+- Pre-render ALL pages with AI content during build
+- Ensures search engine crawlers get instant, fully-rendered pages
+- Optimal SEO performance with fast initial loads
+- AI content baked into static HTML
+- Link prefetching enabled for instant navigation
+
+**Preview Builds (`VERCEL_ENV=preview`):**
+- No pre-rendering - pages generated on first request (saves API costs)
+- AI generation on-demand for visited pages only
+- Link prefetching disabled (prevents automatic generation)
+- ISR caching works for subsequent requests
+- Good for testing without incurring full build costs
+
+**Local Development (`next dev`):**
+- No pre-rendering (development mode)
+- AI generation DISABLED automatically (no `VERCEL_ENV` set)
+- Preserves API quota during hot-reload cycles
+- Pages work perfectly without AI content (graceful degradation)
+- **Enable AI:** Set `VERCEL_ENV=preview` + `NEXT_PUBLIC_VERCEL_ENV=preview` to test AI locally
+
+**Local Production Builds (`next build` without `VERCEL_ENV`):**
+- Pre-renders all pages (NODE_ENV=production)
+- AI generation ENABLED by default (full production behavior)
+- Link prefetching enabled
+- Override: Set `DISABLE_AI=true` to pre-render without AI content
+- Note: Setting `VERCEL_ENV="production"` is unnecessary - `next build` already defaults to production mode
+
+**Environment Detection Logic:**
+```typescript
+// Pre-rendering decision (independent of AI)
+function getEnvironmentMode(): 'development' | 'preview' | 'production' {
+  const vercelEnv = process.env.VERCEL_ENV || process.env.NEXT_PUBLIC_VERCEL_ENV
+  if (vercelEnv) return vercelEnv as typeof mode
+  return process.env.NODE_ENV === 'production' ? 'production' : 'development'
+}
+
+// AI generation decision (checks DISABLE_AI separately)
+function shouldGenerateAI(): boolean {
+  if (process.env.DISABLE_AI === 'true') return false
+  return getEnvironmentMode() !== 'development'
+}
+
+// Pre-rendering happens whenever environment is 'production'
+// AI generation is separate - can pre-render without AI
 ### Content Generation Flow
 
 ```
-Build Time:
-1. Next.js builds static pages
-2. For each tool page, call AI content generation
-3. Gemini API returns structured content (Zod validated)
-4. Convert to TypeScript objects
-5. Render page with AI content
-6. Deploy to Vercel
+Production Build (VERCEL_ENV=production or NODE_ENV=production):
+1. Next.js pre-renders all tool pages
+2. For each page: Call Gemini API for content
+3. Generate complete HTML with AI content
+4. Deploy with all pages ready
+5. Crawlers get instant pages (good SEO)
+6. ISR revalidates every 24 hours
+7. Link prefetching enabled
 
-Runtime (ISR):
-1. User requests page (after 24 hours)
+Preview Build (VERCEL_ENV=preview):
+1. Next.js builds without pre-rendering
+2. Deploy to Vercel
+3. First request: Generate AI content on-demand
+4. Cache for 24 hours
+5. Subsequent requests use cache
+6. Link prefetching disabled (saves API costs)
+
+Local Dev (next dev):
+1. No pre-rendering
+2. AI generation skipped (mode=disabled)
+3. Pages load without AI content
+4. Tool functionality works perfectly
+
+Local Production Build (next build, no VERCEL_ENV):
+1. Pre-renders all pages (environment=production)
+2. AI generation enabled by default
+3. Full production behavior
+4. Use DISABLE_AI=true to pre-render without AI content
+5. Pages work perfectly without AI (graceful degradation)
+
+Runtime (ISR - After 24 Hours):
+1. User requests page with stale cache
 2. Return cached version immediately
 3. Background: Trigger revalidation
 4. Call Gemini API for fresh content
 5. Update cache with new content
 6. If API fails: Keep existing cached content
 
+Error Handling:
+1. If AI generation fails, page still works
+2. Tool functionality always available
+3. Content sections gracefully hidden if unavailable
+4. No broken pages or build failures
+
 Manual Regeneration:
 1. Run `pnpm regenerate-ai` script
 2. Trigger on-demand revalidation for all pages
 3. Fresh content generated for selected tools
+```
+
+### Environment Variables
+
+**Required (Production/Testing):**
+- `GOOGLE_API_KEY` - Google AI API key for Gemini API
+
+**Optional (Testing/Override):**
+- `DISABLE_AI` - Set to `"true"` to force disable AI in any environment
+- `VERCEL_ENV` - Override environment mode: `"production"`, `"preview"`, or `"development"`
+- `NEXT_PUBLIC_VERCEL_ENV` - Client-side environment mode (set to same value as `VERCEL_ENV`)
+
+**Automatic (No Configuration Needed):**
+- Vercel automatically sets `VERCEL_ENV` and `NEXT_PUBLIC_VERCEL_ENV`
+- Local `next dev` runs with AI disabled (no VERCEL_ENV)
+- Local `next build` runs with AI enabled (NODE_ENV=production fallback)
+
+**Testing Scenarios:**
+
+```bash
+# .env.local examples:
+
+# Enable AI in local dev (on-demand generation, no prefetch)
+# Useful for testing AI without doing full production build
+VERCEL_ENV="preview"
+NEXT_PUBLIC_VERCEL_ENV="preview"
+
+# Force disable AI but still pre-render pages
+# Useful for testing static pages without AI costs
+DISABLE_AI="true"
+
+# Note: Local production builds (next build) work out-of-the-box:
+# - Automatically pre-renders all pages
+# - Enables AI generation by default
+# - No VERCEL_ENV="production" needed
 ```
 
 ### Gemini API Configuration
@@ -448,6 +570,85 @@ const toolContentSchema = z.object({
   intro: z.string().describe('Introductory paragraph (1-2 sentences)'),
 
   seo: z.object({
+    title: z.string().describe('Page title (50-60 chars)'),
+    description: z.string().describe('Meta description (150-160 chars)'),
+    keywords: z.string().describe('Comma-separated keywords'),
+  }),
+
+  // OpenGraph metadata for social sharing
+  openGraph: z.object({
+    title: z.string().describe('OG title (can be longer than SEO title)'),
+    description: z.string().describe('OG description (can be longer)'),
+    type: z.literal('website'),
+  }),
+
+  // Main content sections
+  howToUse: z.object({
+    heading: z.string(),
+    content: z.string().describe('Markdown: numbered list of 3-5 steps'),
+  }).optional(),
+
+  features: z.object({
+    heading: z.string(),
+    content: z.string().describe('Markdown: bulleted list of features/benefits'),
+  }),
+
+  rationale: z.object({
+    heading: z.string(),
+    content: z.string().describe('Markdown: why use this tool'),
+  }),
+
+  purpose: z.object({
+    heading: z.string(),
+    content: z.string().describe('Markdown: what is this language/format'),
+  }),
+
+  integrate: z.object({
+    heading: z.string(),
+    content: z.string().describe('Markdown: workflow integration tips'),
+  }),
+
+  faq: z.object({
+    heading: z.string(),
+    content: z.string().describe('Markdown: 3-5 Q&A pairs'),
+  }),
+
+  recommendations: z.object({
+    heading: z.string(),
+    content: z.string().describe('Markdown: related tool links'),
+    tools: z.array(z.string()).describe('Tool IDs recommended by AI'),
+  }),
+
+  resources: z.object({
+    heading: z.string(),
+    content: z.string().describe('Markdown: external resource links'),
+  }),
+
+  // Enhanced features
+  tips: z.array(
+    z.object({
+      type: z.enum(['tip', 'fact', 'bestPractice']),
+      content: z.string().describe('Short, actionable tip or fact'),
+    })
+  ).describe('3-5 contextual tips, facts, or best practices'),
+
+  // Legacy field kept for compatibility
+  old_seo: z.object({
+    title: z.string().describe('Page title (50-60 chars)'),
+    description: z.string().describe('Meta description (150-160 chars)'),
+    keywords: z.string().describe('Comma-separated keywords'),
+  }),
+
+  // OpenGraph metadata for social sharing
+  openGraph: z.object({
+    title: z.string().describe('OG title (can be longer than SEO title)'),
+    description: z.string().describe('OG description (can be longer)'),
+    type: z.literal('website'),
+    image: z.string().optional().describe('OG image URL (optional)'),
+  }),
+
+  // Comprehensive content sections
+  howToUse: z.object({
     title: z.string().describe('Page title (50-60 chars)'),
     description: z.string().describe('Meta description (150-160 chars)'),
     keywords: z.string().describe('Comma-separated keywords'),
@@ -2940,47 +3141,204 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 
 ### Phase 4: AI Content Integration (Size: M)
 
-**Goal:** Add AI-generated educational content
+**Goal:** Transform tools into comprehensive educational resources with AI-generated content that drives organic traffic, increases engagement, and establishes authority—while keeping builds fast and costs optimized through on-demand generation.
+
+**Strategy Summary:**
+- **Content:** Full comprehensive content (8 sections + tips + recommendations)
+- **Generation:** On-demand with ISR (first request loads longer, then cached)
+- **Refresh:** Automatic 24-hour revalidation
+- **Errors:** Graceful degradation (tool always works)
+- **Enhancements:** Contextual tips + AI-powered tool recommendations
 
 #### Tasks
 
-**4.1 AI Setup**
+**4.1 Infrastructure Setup**
 
-- [ ] Install Google AI SDK
-- [ ] Set up Gemini client in `lib/ai.ts`
-- [ ] Define content schema with Zod
-- [ ] Write prompt templates
+- [x] Install Google AI SDK (`@google/generative-ai`)
+- [x] Install Zod for schema validation
+- [x] Install Markdown rendering library:
+  - [x] `react-markdown` - Main renderer
+  - [x] `remark-gfm` - GitHub Flavored Markdown support
+  - [x] `react-syntax-highlighter` - Code block syntax highlighting
+- [x] Set up `GOOGLE_API_KEY` environment variable
+- [x] Create `lib/ai/client.ts` - Gemini client initialization
+- [x] Create `lib/ai/cache.ts` - In-memory request cache (prevent duplicate calls)
+- [x] Add retry logic with exponential backoff for API failures
 
-**4.2 Content Generation**
+**4.2 Content Schema & Types**
 
-- [ ] Create `getToolContent()` function
-- [ ] Add ISR configuration (`revalidate = 86400`)
-- [ ] Handle API failures gracefully
-- [ ] Test with a few tools
+- [x] Define comprehensive Zod schema in `lib/ai/schema.ts`:
+  - [x] SEO metadata (title, description, keywords)
+  - [x] OpenGraph metadata (title, description, type)
+  - [x] 8 content sections (intro, features, rationale, purpose, integrate, faq, recommendations, resources)
+  - [x] Tips array (3-5 tips/facts/best practices)
+  - [x] Recommendations (related tool suggestions)
+- [x] Export TypeScript types from schema
+- [x] Document schema structure in comments
 
-**4.3 Content Display**
+**4.3 Prompt Engineering**
 
-- [ ] Build content sections
-- [ ] Add Markdown rendering
-- [ ] Update tool pages to show AI content
-- [ ] Update metadata (SEO & OpenGraph)
+- [x] Create system prompt template in `lib/ai/prompts.ts`:
+  - [x] Define tone and style (friendly, educational, SEO-optimized)
+  - [x] Specify output format for each section
+  - [x] Include markdown formatting rules
+  - [x] Set character/word limits per section
+- [x] Create dynamic user prompt builder:
+  - [x] Include tool metadata (name, description, languages)
+  - [x] Include list of all available tools (for recommendations)
+  - [x] Include tool category context
+- [x] Write separate prompt templates for:
+  - [x] Formatters
+  - [x] Minifiers
+  - [ ] Future: Encoders, Validators, Converters
 
-**4.4 Build Optimization & Cost Management**
+**4.4 Content Generation Logic**
 
-- [ ] Evaluate build-time vs on-demand generation strategy
-- [ ] Consider on-demand generation for most pages (ISR with very long revalidate)
-- [ ] Pre-build only high-traffic pages (formatters, minifiers, top encoders)
-- [ ] Implement incremental builds to avoid regenerating all content
-- [ ] Add caching layer to prevent duplicate AI API calls
-- [ ] Monitor AI API costs and optimize accordingly
+- [x] Create `lib/ai/generate.ts` with core functions:
+  - [x] `generateToolContent(toolId, toolMetadata)` - Main generation function
+  - [x] `getCachedContent(cacheKey)` - Check in-memory cache
+  - [x] `setCachedContent(cacheKey, content)` - Store in cache
+  - [x] `validateContent(response)` - Zod validation
+- [x] Implement error handling:
+  - [x] Return `undefined` on API failure (graceful degradation)
+  - [x] Log errors for monitoring
+  - [x] Retry failed requests (max 3 attempts)
+- [x] Add ISR configuration (`revalidate = 86400` - 24 hours)
+- [x] Test generation with 2-3 tools initially
+- [x] Add `SKIP_AI_GENERATION` env var for local dev
+- [x] Implement React cache() for request deduplication
+- [x] Configure production pre-rendering (`VERCEL_ENV=production`)
 
-**4.5 Regeneration**
+**4.5 Tool Recommendations**
 
-- [ ] Create `/api/revalidate` endpoint
-- [ ] Create manual regeneration script
-- [ ] Document process
+- [x] Create AI-powered recommendations in generation logic
+- [x] Parse and validate tool IDs from AI response
+- [x] Fallback: Return empty array if AI fails (no recommendations shown)
+- [x] Validate tool IDs exist in current tool list
+- [x] Add recommendation display component (`<RecommendedTools>`)
+- [x] Link to recommended tools with icons
+- [x] Hide entire section if no recommendations available
+- [x] Limit to max 3 recommendations for better layout
 
-**Deliverable:** Codemata with full AI content, SEO, and cost-optimized builds
+**4.6 Contextual Tips System**
+
+- [x] Generate 3-5 tips per tool in content generation
+- [x] Categorize as tip/fact/bestPractice
+- [x] Keep each tip under 150 characters
+- [x] Create `<TipCard>` component:
+  - [x] Floating card style with icon (lightbulb for tips, star for facts, checkmark for best practices)
+  - [x] Visually distinct from content sections (colored border, background)
+  - [x] Style by type (different colors: blue for tips, purple for facts, green for best practices)
+  - [x] Interspersed between content sections (breaks up long text)
+  - [x] Responsive padding and margins
+- [x] Test tips display on mobile
+- [x] Ensure tips don't disrupt reading flow
+
+**4.7 Content Display Components**
+
+- [x] Create `<ContentSection>` component:
+  - [x] Props: heading, content (markdown)
+  - [x] Use `react-markdown` with `remark-gfm` for rendering
+  - [x] Use `react-syntax-highlighter` for code blocks
+  - [x] All sections expanded by default (no collapsing)
+  - [x] Responsive design with proper typography
+  - [x] Semantic HTML (section, h2, etc.)
+- [x] Create content display with consistent spacing
+- [x] Section ordering: How to Use → Features → Rationale → Purpose → Integration → FAQ → Recommendations → Resources
+- [x] Intersperse tip cards between sections (sequential distribution)
+- [x] Create `<TipCard>` component (floating cards):
+  - [x] Props: type ('tip' | 'fact' | 'bestPractice'), content
+  - [x] Icon based on type (lucide-react icons)
+  - [x] Colored border and background based on type
+  - [x] Margin top/bottom for breathing room
+  - [x] Responsive width (full width on mobile)
+- [x] Create `<RecommendedTools>` component:
+  - [x] Display tool cards with links
+  - [x] Show tool icon and brief description
+  - [x] Grid layout (responsive: 1 col mobile, 3 cols desktop)
+  - [x] Fallback: hide section if no recommendations
+
+**4.8 Page Integration**
+
+- [x] Update `app/formatters/[slug]/page.tsx`:
+  - [x] Page structure with Suspense for loading states
+  - [x] Call AI generation with React cache() deduplication
+  - [x] Intro paragraph with separate Suspense boundary
+  - [x] Tool functionality (always available)
+  - [x] Content sections with tips interspersed
+  - [x] Gracefully hide content sections if generation fails
+  - [x] Ensure proper TypeScript typing for all props
+- [x] Update `app/minifiers/[slug]/page.tsx` (same pattern)
+- [x] Ensure tool functionality works WITHOUT AI content
+- [x] Test page with and without AI content
+- [x] Verify tip cards render properly between sections
+- [x] Add `<AIContentSkeleton>` loading component
+- [x] Fix newline processing in AI content
+
+**4.9 Metadata & SEO**
+
+- [x] Update `generateMetadata()` in page components:
+  - [x] Use AI-generated SEO metadata
+  - [x] Set title, description, keywords
+  - [x] Add OpenGraph tags:
+    - [x] `og:title`
+    - [x] `og:description`
+    - [x] `og:type` (website)
+    - [x] `og:url`
+    - [ ] `og:image` (app logo/screenshot) - Future: Phase 5
+  - [x] Add Twitter Card tags:
+    - [x] `twitter:card` (summary_large_image)
+    - [x] `twitter:title`
+    - [x] `twitter:description`
+    - [ ] `twitter:image` - Future: Phase 5
+  - [x] Fallback to static metadata if AI fails
+- [ ] Test social sharing preview (Twitter, LinkedIn, Slack) - Phase 5
+
+**4.10 Build Optimization**
+
+- [x] Configure ISR with 24-hour revalidation
+- [x] Implement React cache() for request deduplication
+- [x] Production pre-rendering via `VERCEL_ENV=production`
+- [x] Skip AI in preview builds and local dev
+- [x] `SKIP_AI_GENERATION` env var for local development
+- [x] Monitor API usage with console logging
+- [ ] Set up alerts for high usage - Future: Phase 5
+
+**4.11 Manual Regeneration**
+
+- [ ] Create `/api/revalidate` endpoint:
+  - [ ] Accept tool slug or "all"
+  - [ ] Trigger ISR revalidation
+  - [ ] Require secret token for security
+- [ ] Create `scripts/regenerate-ai.js`:
+  - [ ] CLI script to regenerate content
+  - [ ] Options: specific tool, category, or all
+  - [ ] Progress indicator
+  - [ ] Error reporting
+- [ ] Document regeneration process in README
+
+**4.12 Testing & Quality Assurance**
+
+- [x] Test content generation for sample tools
+- [x] Verify Zod validation catches malformed responses
+- [x] Test error handling (simulate API failures)
+- [x] Verify ISR caching behavior
+- [x] Test on-demand generation (first request)
+- [x] Verify graceful degradation (tool works without AI)
+- [x] Verify SEO metadata in page source
+- [x] Test Suspense loading states
+- [x] Test production pre-rendering
+- [x] Test preview build on-demand generation
+- [x] Test local dev with SKIP_AI_GENERATION
+- [ ] Test social media preview cards (Twitter, LinkedIn, Slack) - Phase 5
+- [ ] Mobile testing for content display and tip cards - Phase 5
+- [ ] Accessibility audit for content sections - Phase 5
+- [ ] Deploy and monitor content quality via spot checks - Phase 5
+- [ ] Use manual regeneration script if issues found in production - After 4.11
+
+**Status:** ✅ **COMPLETED** (Core implementation done, manual regeneration tools and polish in Phase 5)
+
+**Deliverable:** Codemata with full AI content, SEO-optimized metadata, production pre-rendering, and developer-friendly local workflow
 
 ---
 
@@ -3017,6 +3375,36 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 - [x] Add favicon (multiple sizes for different platforms)
 - [x] Add PWA support (manifest.json, service worker, icons)
 - [ ] Test app installation on mobile devices
+
+**5.6 Dynamic OpenGraph Images**
+
+- [ ] Install `@vercel/og` package
+- [ ] Create `/api/og/[slug]/route.tsx` endpoint:
+  - [ ] Generate OG image dynamically using Vercel's edge runtime
+  - [ ] Design card template:
+    - [ ] Codemata logo (top left)
+    - [ ] Tool name (large, centered): e.g., "JSON Formatter"
+    - [ ] Tool icon (centered below name)
+    - [ ] Tagline: "Developer Tools" (bottom)
+    - [ ] Gradient or solid color background (brand colors)
+  - [ ] Use Inter font (loaded via @vercel/og)
+  - [ ] Return PNG image (1200x630px for optimal social sharing)
+  - [ ] Cache images at edge (stale-while-revalidate)
+- [ ] Update `generateMetadata()` in tool pages:
+  - [ ] Set `openGraph.images` to API route: `/api/og/${slug}.png`
+  - [ ] Set `twitter:image` to same URL
+- [ ] Test OG images in social media debuggers:
+  - [ ] Twitter Card Validator
+  - [ ] LinkedIn Post Inspector
+  - [ ] Facebook Sharing Debugger
+  - [ ] Slack unfurl preview
+- [ ] Ensure images render correctly on all platforms
+- [ ] Verify edge caching is working (check response headers)
+
+**Resources:**
+- Vercel OG Image Generation: https://vercel.com/docs/functions/edge-functions/og-image-generation
+- @vercel/og package: https://www.npmjs.com/package/@vercel/og
+- Example template: Card with logo + tool name + icon + tagline
 
 **Deliverable:** Codemata publicly launched and ready for users 🚀
 

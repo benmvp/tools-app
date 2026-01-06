@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import type { ToolWithIcon } from "@/lib/tools-data";
+import { shouldPrefetch } from "@/lib/utils";
 
 export function ToolCard({
   name,
@@ -49,5 +50,9 @@ export function ToolCard({
     return <div>{CardContent}</div>;
   }
 
-  return <Link href={url}>{CardContent}</Link>;
+  return (
+    <Link href={url} prefetch={shouldPrefetch()}>
+      {CardContent}
+    </Link>
+  );
 }

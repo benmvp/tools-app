@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FORMATTER_TOOLS, MINIFIER_TOOLS } from "@/lib/tools-data";
+import { shouldPrefetch } from "@/lib/utils";
 
 interface MobileNavProps {
   isOpen: boolean;
@@ -52,6 +53,7 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
                   <li key={tool.id}>
                     <Link
                       href={tool.url}
+                      prefetch={shouldPrefetch()}
                       onClick={() => !tool.comingSoon && onClose()}
                       className={`flex items-center justify-between gap-2 rounded-md px-3 py-2 text-sm transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 ${
                         pathname === tool.url
@@ -81,6 +83,7 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
                   <li key={tool.id}>
                     <Link
                       href={tool.url}
+                      prefetch={shouldPrefetch()}
                       onClick={() => !tool.comingSoon && onClose()}
                       className={`flex items-center justify-between gap-2 rounded-md px-3 py-2 text-sm transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 ${
                         pathname === tool.url

@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
+import { AIContentSkeleton } from "@/components/AIContentSkeleton";
+import { FormatterAIContent } from "@/components/FormatterAIContent";
+import { FormatterIntro } from "@/components/FormatterIntro";
 import { Transformer } from "@/components/Transformer";
+import { getFormatterContent } from "@/lib/ai/helpers";
 import {
   CSS_EXAMPLE,
   GRAPHQL_EXAMPLE,
@@ -12,6 +17,7 @@ import {
   YAML_EXAMPLE,
 } from "@/lib/examples";
 import type { FormatConfig } from "@/lib/types";
+import { isProductionBuild } from "@/lib/utils";
 import {
   formatCss,
   formatGraphql,
@@ -22,6 +28,9 @@ import {
   formatXml,
   formatYaml,
 } from "../actions";
+
+// ISR: Revalidate every 24 hours
+export const revalidate = 86400;
 
 type SupportedLanguage =
   | "typescript"
@@ -145,8 +154,19 @@ const FORMATTERS: Record<string, FormatterConfig> = {
   },
 };
 
+// Enable dynamic params for ISR
+export const dynamicParams = true;
+
 export function generateStaticParams() {
-  return Object.keys(FORMATTERS).map((slug) => ({ slug }));
+  // Pre-render all pages ONLY in true Vercel production builds
+  // This ensures crawlers get instant pages with good SEO
+  // Preview builds and local dev use on-demand ISR to save API costs
+  if (isProductionBuild()) {
+    return Object.keys(FORMATTERS).map((slug) => ({ slug }));
+  }
+
+  // Return empty array for preview/dev - pages generated on-demand
+  return [];
 }
 
 export async function generateMetadata({
@@ -163,6 +183,29 @@ export async function generateMetadata({
     };
   }
 
+  // Try to get AI-generated content for metadata
+  const aiContent = await getFormatterContent(slug, formatter.name);
+
+  if (aiContent) {
+    return {
+      title: aiContent.seo.title,
+      description: aiContent.seo.description,
+      keywords: aiContent.seo.keywords,
+      openGraph: {
+        title: aiContent.openGraph.title,
+        description: aiContent.openGraph.description,
+        type: aiContent.openGraph.type,
+        url: `/formatters/${slug}`,
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: aiContent.openGraph.title,
+        description: aiContent.openGraph.description,
+      },
+    };
+  }
+
+  // Fallback to static metadata if AI generation fails
   return {
     title: formatter.metadata.title,
     description: formatter.metadata.description,
@@ -182,12 +225,26 @@ export default async function FormatterPage({
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-2">{formatter.name}</h1>
-      <p className="text-slate-600 dark:text-slate-400 mb-8">
-        {formatter.description}
-      </p>
+    <div className="mx-auto max-w-7xl px-4 py-8">
+      {/* Page Header */}
+      <h1 className="mb-2 text-4xl font-bold">{formatter.name}</h1>
 
+      {/* Intro paragraph with Suspense (replaces with AI intro when ready) */}
+      <Suspense
+        fallback={
+          <p className="mb-8 text-slate-600 dark:text-slate-400">
+            {formatter.description}
+          </p>
+        }
+      >
+        <FormatterIntro
+          slug={slug}
+          formatterName={formatter.name}
+          fallbackDescription={formatter.description}
+        />
+      </Suspense>
+
+      {/* Transformer Tool */}
       <Transformer
         action={formatter.action}
         actionLabel="Format"
@@ -206,6 +263,13 @@ export default async function FormatterPage({
           },
         ]}
       />
+
+      {/* AI-Generated Content Sections with Suspense */}
+      <div className="mt-12 space-y-8">
+        <Suspense fallback={<AIContentSkeleton />}>
+          <FormatterAIContent slug={slug} formatterName={formatter.name} />
+        </Suspense>
+      </div>
     </div>
   );
 }
