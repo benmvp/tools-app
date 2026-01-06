@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { AIContentSkeleton } from "@/components/AIContentSkeleton";
 import { MinifierAIContent } from "@/components/MinifierAIContent";
 import { MinifierIntro } from "@/components/MinifierIntro";
+import { ScrollToTopFab } from "@/components/ScrollToTopFab";
 import { TransformerMinifier } from "@/components/TransformerMinifier";
 import { getMinifierContent } from "@/lib/ai/helpers";
 import {
@@ -234,6 +235,9 @@ export default async function MinifierPage({
           <MinifierAIContent slug={slug} minifierName={minifier.name} />
         </Suspense>
       </div>
+
+      {/* Scroll to Top FAB */}
+      <ScrollToTopFab />
     </div>
   );
 }

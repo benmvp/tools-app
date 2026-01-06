@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { AIContentSkeleton } from "@/components/AIContentSkeleton";
 import { FormatterAIContent } from "@/components/FormatterAIContent";
 import { FormatterIntro } from "@/components/FormatterIntro";
+import { ScrollToTopFab } from "@/components/ScrollToTopFab";
 import { Transformer } from "@/components/Transformer";
 import { getFormatterContent } from "@/lib/ai/helpers";
 import {
@@ -270,6 +271,9 @@ export default async function FormatterPage({
           <FormatterAIContent slug={slug} formatterName={formatter.name} />
         </Suspense>
       </div>
+
+      {/* Scroll to Top FAB */}
+      <ScrollToTopFab />
     </div>
   );
 }
