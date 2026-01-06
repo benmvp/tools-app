@@ -1,13 +1,8 @@
-"use client";
-
+import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
-import { ThemeProvider } from "next-themes";
-import { useState } from "react";
-import { Footer } from "@/components/layout/Footer";
-import { MobileHeader } from "@/components/layout/MobileHeader";
-import { MobileNav } from "@/components/layout/MobileNav";
-import { Sidebar } from "@/components/layout/Sidebar";
-import { Toaster } from "@/components/ui/sonner";
+import { SITE_CONFIG } from "@/lib/site-config";
+import { getAppUrl } from "@/lib/utils";
+import { LayoutContent } from "./layout-content";
 import "./globals.css";
 
 const inter = Inter({
@@ -22,45 +17,47 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
+export const metadata: Metadata = {
+  metadataBase: new URL(getAppUrl()),
+  title: {
+    default: SITE_CONFIG.title,
+    template: `%s | ${SITE_CONFIG.name}`,
+  },
+  description: SITE_CONFIG.description,
+  keywords: [...SITE_CONFIG.keywords],
+  authors: [{ name: SITE_CONFIG.author.name, url: SITE_CONFIG.author.url }],
+  creator: SITE_CONFIG.author.name,
+  publisher: SITE_CONFIG.name,
+  openGraph: {
+    type: SITE_CONFIG.openGraph.type,
+    locale: SITE_CONFIG.openGraph.locale,
+    url: getAppUrl(),
+    siteName: SITE_CONFIG.openGraph.siteName,
+    title: SITE_CONFIG.title,
+    description: SITE_CONFIG.description,
+    images: [SITE_CONFIG.openGraph.images],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_CONFIG.title,
+    description: SITE_CONFIG.description,
+    creator: SITE_CONFIG.author.twitter,
+    images: [SITE_CONFIG.openGraph.images.url],
+  },
+  robots: SITE_CONFIG.robots,
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [mobileNavOpen, setMobileNavOpen] = useState(false);
-
   return (
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <div className="min-h-screen flex flex-col">
-            {/* Desktop Sidebar */}
-            <Sidebar />
-
-            {/* Mobile Header */}
-            <MobileHeader onMenuClick={() => setMobileNavOpen(true)} />
-
-            {/* Mobile Nav Overlay */}
-            <MobileNav
-              isOpen={mobileNavOpen}
-              onClose={() => setMobileNavOpen(false)}
-            />
-
-            {/* Main Content */}
-            <div className="flex-1 lg:ml-60">
-              <main className="min-h-[calc(100vh-4rem)]">{children}</main>
-              <Footer />
-            </div>
-          </div>
-          <Toaster />
-        </ThemeProvider>
+        <LayoutContent>{children}</LayoutContent>
       </body>
     </html>
   );

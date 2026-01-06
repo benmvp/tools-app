@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { AIContentSkeleton } from "@/components/AIContentSkeleton";
 import { FormatterAIContent } from "@/components/FormatterAIContent";
 import { FormatterIntro } from "@/components/FormatterIntro";
+import { JsonLd } from "@/components/JsonLd";
 import { ScrollToTopFab } from "@/components/ScrollToTopFab";
 import { Transformer } from "@/components/Transformer";
 import { getFormatterContent } from "@/lib/ai/helpers";
@@ -18,7 +19,7 @@ import {
   YAML_EXAMPLE,
 } from "@/lib/examples";
 import type { FormatConfig } from "@/lib/types";
-import { isProductionBuild } from "@/lib/utils";
+import { getAppUrl, isProductionBuild } from "@/lib/utils";
 import {
   formatCss,
   formatGraphql,
@@ -196,6 +197,9 @@ export async function generateMetadata({
       title: aiContent.seo.title,
       description: aiContent.seo.description,
       keywords: aiContent.seo.keywords,
+      alternates: {
+        canonical: getAppUrl(`/formatters/${slug}`),
+      },
       openGraph: {
         title: aiContent.openGraph.title,
         description: aiContent.openGraph.description,
@@ -214,6 +218,9 @@ export async function generateMetadata({
   return {
     title: formatter.metadata.title,
     description: formatter.metadata.description,
+    alternates: {
+      canonical: getAppUrl(`/formatters/${slug}`),
+    },
   };
 }
 
@@ -229,55 +236,75 @@ export default async function FormatterPage({
     notFound();
   }
 
+  // Structured data for SEO
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: formatter.name,
+    applicationCategory: "DeveloperApplication",
+    operatingSystem: "Web browser",
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+    },
+    url: getAppUrl(`/formatters/${slug}`),
+  };
+
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8">
-      {/* Page Header */}
-      <h1 className="mb-2 text-4xl font-bold">{formatter.name}</h1>
+    <>
+      {/* Structured Data */}
+      <JsonLd data={structuredData} />
 
-      {/* Intro paragraph with Suspense (replaces with AI intro when ready) */}
-      <Suspense
-        fallback={
-          <p className="mb-8 text-slate-600 dark:text-slate-400">
-            {formatter.description}
-          </p>
-        }
-      >
-        <FormatterIntro
-          slug={slug}
-          formatterName={formatter.name}
-          fallbackDescription={formatter.description}
-        />
-      </Suspense>
+      <div className="mx-auto max-w-7xl px-4 py-8">
+        {/* Page Header */}
+        <h1 className="mb-2 text-4xl font-bold">{formatter.name}</h1>
 
-      {/* Transformer Tool */}
-      <Transformer
-        action={formatter.action}
-        actionLabel="Format"
-        defaultInput={formatter.example}
-        language={formatter.language}
-        configOptions={[
-          {
-            id: "indentation",
-            label: "Indentation",
-            defaultValue: "two-spaces",
-            options: [
-              { label: "2 Spaces", value: "two-spaces" },
-              { label: "4 Spaces", value: "four-spaces" },
-              { label: "Tabs", value: "tabs" },
-            ],
-          },
-        ]}
-      />
-
-      {/* AI-Generated Content Sections with Suspense */}
-      <div className="mt-12 space-y-8">
-        <Suspense fallback={<AIContentSkeleton />}>
-          <FormatterAIContent slug={slug} formatterName={formatter.name} />
+        {/* Intro paragraph with Suspense (replaces with AI intro when ready) */}
+        <Suspense
+          fallback={
+            <p className="mb-8 text-slate-600 dark:text-slate-400">
+              {formatter.description}
+            </p>
+          }
+        >
+          <FormatterIntro
+            slug={slug}
+            formatterName={formatter.name}
+            fallbackDescription={formatter.description}
+          />
         </Suspense>
-      </div>
 
-      {/* Scroll to Top FAB */}
-      <ScrollToTopFab />
-    </div>
+        {/* Transformer Tool */}
+        <Transformer
+          action={formatter.action}
+          actionLabel="Format"
+          defaultInput={formatter.example}
+          language={formatter.language}
+          configOptions={[
+            {
+              id: "indentation",
+              label: "Indentation",
+              defaultValue: "two-spaces",
+              options: [
+                { label: "2 Spaces", value: "two-spaces" },
+                { label: "4 Spaces", value: "four-spaces" },
+                { label: "Tabs", value: "tabs" },
+              ],
+            },
+          ]}
+        />
+
+        {/* AI-Generated Content Sections with Suspense */}
+        <div className="mt-12 space-y-8">
+          <Suspense fallback={<AIContentSkeleton />}>
+            <FormatterAIContent slug={slug} formatterName={formatter.name} />
+          </Suspense>
+        </div>
+
+        {/* Scroll to Top FAB */}
+        <ScrollToTopFab />
+      </div>
+    </>
   );
 }

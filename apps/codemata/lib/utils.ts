@@ -71,3 +71,46 @@ export function isProductionBuild(): boolean {
 export function shouldPrefetch(): boolean {
   return getEnvironmentMode() === "production";
 }
+
+/**
+ * Builds the full app URL using the VERCEL_PROJECT_PRODUCTION_URL environment variable.
+ * Automatically detects localhost and uses http:// instead of https://.
+ *
+ * Usage:
+ * - getAppUrl() → "https://codemata.benmvp.com" (production)
+ * - getAppUrl() → "http://localhost:3001" (local dev)
+ * - getAppUrl("/formatters") → "https://codemata.benmvp.com/formatters"
+ *
+ * Environment Variables:
+ * - VERCEL_PROJECT_PRODUCTION_URL: Domain without protocol (e.g., "codemata.benmvp.com" or "localhost:3001")
+ * - Vercel automatically sets this in production/preview
+ * - Set manually in .env.local for local development
+ *
+ * @param path - Optional path to append (should start with /)
+ * @returns Full URL with protocol
+ */
+export function getAppUrl(path = ""): string {
+  const domain =
+    process.env.VERCEL_PROJECT_PRODUCTION_URL ||
+    process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL ||
+    "codemata.benmvp.com";
+
+  // Detect localhost and use http:// instead of https://
+  const protocol = domain.includes("localhost") ? "http://" : "https://";
+
+  return `${protocol}${domain}${path}`;
+}
+
+/**
+ * Builds the full URL for a tool page.
+ * Convenience wrapper around getAppUrl() that accepts a ToolWithIcon object.
+ *
+ * Usage:
+ * - getToolUrl(tool) → "https://codemata.benmvp.com/formatters/typescript-formatter"
+ *
+ * @param tool - Tool object with url property
+ * @returns Full URL for the tool page
+ */
+export function getToolUrl(tool: { url: string }): string {
+  return getAppUrl(tool.url);
+}

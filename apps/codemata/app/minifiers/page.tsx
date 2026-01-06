@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
 import { ToolCard } from "@/components/ToolCard";
 import { MINIFIER_TOOLS } from "@/lib/tools-data";
+import { getAppUrl } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Code Minifiers | Codemata Developer Tools",
   description:
     "Free online code minifiers for JavaScript, TypeScript, JSON, CSS, HTML, SVG, and XML. Compress and optimize your code by removing whitespace and reducing file size.",
+  alternates: {
+    canonical: getAppUrl("/minifiers"),
+  },
 };
-
 export default function MinifiersPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">

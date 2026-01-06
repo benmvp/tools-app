@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
 import { ToolCard } from "@/components/ToolCard";
 import { FORMATTER_TOOLS } from "@/lib/tools-data";
+import { getAppUrl } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Code Formatters | Codemata Developer Tools",
   description:
     "Free online code formatters for JavaScript, TypeScript, JSON, CSS, HTML, GraphQL, Markdown, XML, and YAML. Beautify and format your code instantly with customizable indentation.",
+  alternates: {
+    canonical: getAppUrl("/formatters"),
+  },
 };
 
 export default function FormattersPage() {

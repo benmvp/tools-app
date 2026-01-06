@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { AIContentSkeleton } from "@/components/AIContentSkeleton";
+import { JsonLd } from "@/components/JsonLd";
 import { MinifierAIContent } from "@/components/MinifierAIContent";
 import { MinifierIntro } from "@/components/MinifierIntro";
 import { ScrollToTopFab } from "@/components/ScrollToTopFab";
@@ -15,7 +16,7 @@ import {
   TYPESCRIPT_MINIFIER_EXAMPLE,
   XML_MINIFIER_EXAMPLE,
 } from "@/lib/examples";
-import { isProductionBuild } from "@/lib/utils";
+import { getAppUrl, isProductionBuild } from "@/lib/utils";
 import {
   minifyCss,
   minifyHtml,
@@ -172,6 +173,9 @@ export async function generateMetadata({
       title: aiContent.seo.title,
       description: aiContent.seo.description,
       keywords: aiContent.seo.keywords,
+      alternates: {
+        canonical: getAppUrl(`/minifiers/${slug}`),
+      },
       openGraph: {
         title: aiContent.openGraph.title,
         description: aiContent.openGraph.description,
@@ -190,6 +194,9 @@ export async function generateMetadata({
   return {
     title: minifier.metadata.title,
     description: minifier.metadata.description,
+    alternates: {
+      canonical: getAppUrl(`/minifiers/${slug}`),
+    },
   };
 }
 
@@ -205,43 +212,63 @@ export default async function MinifierPage({
     notFound();
   }
 
+  // Structured data for SEO
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: minifier.name,
+    applicationCategory: "DeveloperApplication",
+    operatingSystem: "Web browser",
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+    },
+    url: getAppUrl(`/minifiers/${slug}`),
+  };
+
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      {/* Page Header */}
-      <h1 className="text-4xl font-bold mb-2">{minifier.name}</h1>
+    <>
+      {/* Structured Data */}
+      <JsonLd data={structuredData} />
 
-      {/* Intro paragraph with Suspense (replaces with AI intro when ready) */}
-      <Suspense
-        fallback={
-          <p className="text-slate-600 dark:text-slate-400 mb-8">
-            {minifier.description}
-          </p>
-        }
-      >
-        <MinifierIntro
-          slug={slug}
-          minifierName={minifier.name}
-          fallbackDescription={minifier.description}
-        />
-      </Suspense>
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Page Header */}
+        <h1 className="text-4xl font-bold mb-2">{minifier.name}</h1>
 
-      {/* Transformer Tool */}
-      <TransformerMinifier
-        action={minifier.action}
-        actionLabel="Minify"
-        defaultInput={minifier.example}
-        language={minifier.language}
-      />
-
-      {/* AI-Generated Content Sections with Suspense */}
-      <div className="mt-12 space-y-8">
-        <Suspense fallback={<AIContentSkeleton />}>
-          <MinifierAIContent slug={slug} minifierName={minifier.name} />
+        {/* Intro paragraph with Suspense (replaces with AI intro when ready) */}
+        <Suspense
+          fallback={
+            <p className="text-slate-600 dark:text-slate-400 mb-8">
+              {minifier.description}
+            </p>
+          }
+        >
+          <MinifierIntro
+            slug={slug}
+            minifierName={minifier.name}
+            fallbackDescription={minifier.description}
+          />
         </Suspense>
-      </div>
 
-      {/* Scroll to Top FAB */}
-      <ScrollToTopFab />
-    </div>
+        {/* Transformer Tool */}
+        <TransformerMinifier
+          action={minifier.action}
+          actionLabel="Minify"
+          defaultInput={minifier.example}
+          language={minifier.language}
+        />
+
+        {/* AI-Generated Content Sections with Suspense */}
+        <div className="mt-12 space-y-8">
+          <Suspense fallback={<AIContentSkeleton />}>
+            <MinifierAIContent slug={slug} minifierName={minifier.name} />
+          </Suspense>
+        </div>
+
+        {/* Scroll to Top FAB */}
+        <ScrollToTopFab />
+      </div>
+    </>
   );
 }

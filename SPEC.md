@@ -3348,35 +3348,29 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 
 #### Tasks
 
-**5.1 Performance**
+**5.1 SEO Foundation**
+
+- [x] Add `robots.txt` and `sitemap.xml`
+- [x] Add base metadata to root layout (title template, description, OpenGraph, Twitter Cards, robots)
+- [x] Add page-level metadata (home, category pages, tool pages)
+- [x] Add JSON-LD structured data to all tool pages
+- [x] Add canonical URLs to all pages
+- [x] Create metadata verification script (`scripts/verify-metadata.ts`)
+- [x] Create centralized site configuration (`lib/site-config.ts`)
+- [x] Create `getAppUrl()` helper for environment-aware URLs (localhost vs production)
+- [x] Create `getToolUrl()` helper for tool URL construction
+- [x] Create `JsonLd` component to safely handle JSON-LD structured data
+- [x] All metadata validation passing (100% pass rate)
+- [ ] Submit to Google Search Console
+- [ ] Monitor search rankings and traffic
+
+**5.2 Performance Optimization**
 
 - [ ] Lighthouse audits
 - [ ] Bundle size optimization
 - [ ] ISR testing
 
-**5.2 SEO**
-
-- [ ] Add `robots.txt` and `sitemap.xml`
-- [ ] Submit to Google Search Console
-- [ ] Verify all metadata
-
-**5.3 Cross-browser Testing**
-
-- [ ] Chrome, Firefox, Safari
-- [ ] Mobile testing
-
-**5.4 Documentation**
-
-- [ ] Update README
-- [ ] Document setup process
-
-**5.5 Assets & PWA**
-
-- [x] Add favicon (multiple sizes for different platforms)
-- [x] Add PWA support (manifest.json, service worker, icons)
-- [ ] Test app installation on mobile devices
-
-**5.6 Dynamic OpenGraph Images**
+**5.3 Dynamic OpenGraph Images**
 
 - [ ] Install `@vercel/og` package
 - [ ] Create `/api/og/[slug]/route.tsx` endpoint:
@@ -3406,7 +3400,7 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 - @vercel/og package: https://www.npmjs.com/package/@vercel/og
 - Example template: Card with logo + tool name + icon + tagline
 
-**5.7 Breadcrumbs Navigation**
+**5.4 Breadcrumbs Navigation**
 
 - [ ] Install shadcn/ui breadcrumb component
 - [ ] Create `<Breadcrumbs>` component:
@@ -3423,7 +3417,7 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 - [ ] Test breadcrumb navigation on all tool pages
 - [ ] Ensure proper spacing and visual hierarchy
 
-**5.8 Category Page AI Content**
+**5.5 Category Page AI Content**
 
 - [ ] Generate AI descriptions for category pages:
   - [ ] `/formatters` page - About code formatters
@@ -3448,6 +3442,22 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
   - [ ] Create category-specific prompts in `lib/ai/prompts.ts`
   - [ ] Add `generateCategoryContent()` function
   - [ ] Use ISR with 24-hour revalidation (same as tools)
+
+**5.6 Cross-browser Testing**
+
+- [ ] Chrome, Firefox, Safari
+- [ ] Mobile testing
+
+**5.7 Documentation**
+
+- [ ] Update README
+- [ ] Document the setup process
+
+**5.8 PWA Testing**
+
+- [x] Add favicon (multiple sizes for different platforms)
+- [x] Add PWA support (manifest.json, service worker, icons)
+- [ ] Test app installation on mobile devices
 
 **5.9 Command Menu Search (Cmd+K)**
 
