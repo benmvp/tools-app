@@ -28,6 +28,10 @@ import {
 // ISR: Revalidate every 24 hours
 export const revalidate = 86400;
 
+// Extend serverless function timeout for AI generation
+// Default is 10s on Hobby, this allows up to 30s on Preview/Production
+export const maxDuration = 30;
+
 type MinifierSlug =
   | "typescript-minifier"
   | "json-minifier"
