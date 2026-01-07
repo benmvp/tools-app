@@ -84,7 +84,6 @@ export function CodeEditor({
 
   return (
     <div className="space-y-2">
-      <span className="text-sm font-medium">{label}</span>
       <div className="border rounded-md overflow-hidden">
         <CodeMirror
           value={value}
@@ -94,6 +93,7 @@ export function CodeEditor({
           readOnly={readOnly}
           theme={mounted && resolvedTheme === "dark" ? "dark" : "light"}
           className="text-sm font-mono"
+          aria-label={label || (readOnly ? "Output" : "Input")}
           data-gramm="false"
           data-gramm_editor="false"
           data-enable-grammarly="false"
