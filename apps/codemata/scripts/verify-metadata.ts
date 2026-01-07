@@ -234,105 +234,51 @@ function validateMetadata(metadata: PageMetadata): string[] {
   if (!metadata.ogImage) {
     issues.push("Missing og:image");
   } else {
-    // Validate OG image URL format
+    // Validate OG image URL format (new simplified format with title+description)
     if (!metadata.ogImage.includes("/api/og?")) {
       issues.push(
         `OG image should use dynamic API route (/api/og?...), found: ${metadata.ogImage}`,
       );
     }
 
-    // Validate OG image parameters based on page type
+    // Validate OG image has required parameters (title, description, v)
+    if (!metadata.ogImage.includes("title=")) {
+      issues.push("OG image URL missing 'title' parameter");
+    }
+    if (!metadata.ogImage.includes("description=")) {
+      issues.push("OG image URL missing 'description' parameter");
+    }
+    if (!metadata.ogImage.includes("v=")) {
+      issues.push("OG image URL missing 'v' (version/cache key) parameter");
+    }
+
+    // Validate cache key strategy
     if (metadata.url === getAppUrl() || metadata.url === `${getAppUrl()}/`) {
-      // Home page: should have count parameter only
-      if (
-        !metadata.ogImage.includes("count=") ||
-        metadata.ogImage.includes("type=")
-      ) {
+      // Home page: should use tool count as cache key
+      const totalCount = Object.values(ALL_TOOLS).flat().length;
+      if (!metadata.ogImage.includes(`v=${totalCount}`)) {
         issues.push(
-          "Home page OG image should have count parameter only (no type parameter)",
+          `Home page OG image should use total count as cache key (expected v=${totalCount})`,
         );
-      } else {
-        // Verify count matches total tools
-        const totalCount = Object.values(ALL_TOOLS).flat().length;
-        if (!metadata.ogImage.includes(`count=${totalCount}`)) {
-          issues.push(
-            `Home page OG image count mismatch (expected count=${totalCount})`,
-          );
-        }
-      }
-    } else if (
-      metadata.url.includes("/formatters/") &&
-      !metadata.url.endsWith("/formatters")
-    ) {
-      // Formatter tool page: should have type=tool with category and name
-      if (
-        !metadata.ogImage.includes("type=tool") ||
-        !metadata.ogImage.includes("category=formatters") ||
-        !metadata.ogImage.includes("name=")
-      ) {
-        issues.push(
-          "Formatter tool page OG image should have type=tool&category=formatters&name=...",
-        );
-      }
-      if (metadata.ogImage.includes("count=")) {
-        issues.push("Tool page OG image should not include count parameter");
-      }
-    } else if (
-      metadata.url.includes("/minifiers/") &&
-      !metadata.url.endsWith("/minifiers")
-    ) {
-      // Minifier tool page: should have type=tool with category and name
-      if (
-        !metadata.ogImage.includes("type=tool") ||
-        !metadata.ogImage.includes("category=minifiers") ||
-        !metadata.ogImage.includes("name=")
-      ) {
-        issues.push(
-          "Minifier tool page OG image should have type=tool&category=minifiers&name=...",
-        );
-      }
-      if (metadata.ogImage.includes("count=")) {
-        issues.push("Tool page OG image should not include count parameter");
       }
     } else if (metadata.url.endsWith("/formatters")) {
-      // Formatters category page: should have type=category with count
-      if (
-        !metadata.ogImage.includes("type=category") ||
-        !metadata.ogImage.includes("category=formatters") ||
-        !metadata.ogImage.includes("count=")
-      ) {
+      // Formatters category: should use formatter count as cache key
+      const count = ALL_TOOLS.formatters.length;
+      if (!metadata.ogImage.includes(`v=${count}`)) {
         issues.push(
-          "Formatters category page OG image should have type=category&category=formatters&count=...",
+          `Formatters category OG image should use formatter count as cache key (expected v=${count})`,
         );
-      } else {
-        // Verify count matches formatter tools
-        const count = ALL_TOOLS.formatters.length;
-        if (!metadata.ogImage.includes(`count=${count}`)) {
-          issues.push(
-            `Formatters category OG image count mismatch (expected count=${count})`,
-          );
-        }
       }
     } else if (metadata.url.endsWith("/minifiers")) {
-      // Minifiers category page: should have type=category with count
-      if (
-        !metadata.ogImage.includes("type=category") ||
-        !metadata.ogImage.includes("category=minifiers") ||
-        !metadata.ogImage.includes("count=")
-      ) {
+      // Minifiers category: should use minifier count as cache key
+      const count = ALL_TOOLS.minifiers.length;
+      if (!metadata.ogImage.includes(`v=${count}`)) {
         issues.push(
-          "Minifiers category page OG image should have type=category&category=minifiers&count=...",
+          `Minifiers category OG image should use minifier count as cache key (expected v=${count})`,
         );
-      } else {
-        // Verify count matches minifier tools
-        const count = ALL_TOOLS.minifiers.length;
-        if (!metadata.ogImage.includes(`count=${count}`)) {
-          issues.push(
-            `Minifiers category OG image count mismatch (expected count=${count})`,
-          );
-        }
       }
     }
+    // Tool pages use OG_IMAGE_VERSION (typically "1"), no validation needed
 
     // Check if image is accessible
     if (!metadata.ogImageAccessible) {
