@@ -3397,9 +3397,9 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
   - [x] OG_IMAGE_VERSION constant for manual design changes
   - [x] Count-based URLs for home/category pages (auto-bust when tools added)
 - [ ] Test OG images in social media debuggers:
-  - [ ] Twitter Card Validator
-  - [ ] LinkedIn Post Inspector
-  - [ ] Facebook Sharing Debugger
+  - [ ] [Twitter Card Validator](https://cards-dev.twitter.com/validator)
+  - [ ] [LinkedIn Post Inspector](https://www.linkedin.com/post-inspector/)
+  - [ ] [Facebook Sharing Debugger](https://developers.facebook.com/tools/debug/)
   - [ ] Slack unfurl preview
 - [ ] Ensure images render correctly on all platforms
 - [ ] Verify edge caching is working (check response headers in production)
