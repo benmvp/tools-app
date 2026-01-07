@@ -46,7 +46,7 @@ export default function HomePage() {
     <div className="max-w-7xl mx-auto px-4 py-12">
       {/* Hero */}
       <section className="text-center py-20">
-        <h1 className="text-5xl font-bold mb-4 bg-linear-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
+        <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
           {SITE_CONFIG.tagline}
         </h1>
         <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
