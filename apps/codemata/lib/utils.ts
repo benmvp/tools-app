@@ -114,3 +114,39 @@ export function getAppUrl(path = ""): string {
 export function getToolUrl(tool: { url: string }): string {
   return getAppUrl(tool.url);
 }
+
+/**
+ * OG Image version - increment this when making design changes to bust all caches.
+ * Current version: 1 (initial implementation)
+ */
+export const OG_IMAGE_VERSION = "1";
+
+/**
+ * Generates OG image URLs with title + description.
+ *
+ * Usage:
+ * - getOgImageUrl("14 Free Developer Tools", "...", "14") → "/api/og?title=...&description=...&v=14"
+ * - getOgImageUrl("JSON Formatter", "...") → "/api/og?title=...&description=...&v=1"
+ *
+ * Cache Busting Strategy:
+ * - Pages with dynamic counts: Pass count as cacheKey → URL changes when tools added
+ * - Static tool pages: No cacheKey → uses OG_IMAGE_VERSION, stable URL
+ * - Design changes: Increment OG_IMAGE_VERSION constant above
+ *
+ * @param title - Main heading text (e.g., "14 Free Developer Tools", "JSON Formatter")
+ * @param description - Supporting description text
+ * @param cacheKey - Optional cache-busting key (defaults to OG_IMAGE_VERSION)
+ * @returns Full OG image URL
+ */
+export function getOgImageUrl(
+  title: string,
+  description: string,
+  cacheKey?: string,
+): string {
+  const searchParams = new URLSearchParams();
+  searchParams.set("title", title);
+  searchParams.set("description", description);
+  searchParams.set("v", cacheKey || OG_IMAGE_VERSION);
+
+  return getAppUrl(`/api/og?${searchParams.toString()}`);
+}

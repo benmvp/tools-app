@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { FORMATTER_TOOLS, MINIFIER_TOOLS } from "@/lib/tools-data";
+import { ALL_FORMATTERS, ALL_MINIFIERS } from "@/lib/tools-data";
 import { shouldPrefetch } from "@/lib/utils";
 
 interface MobileNavProps {
@@ -49,7 +49,7 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
                 Formatters
               </h3>
               <ul className="space-y-1">
-                {FORMATTER_TOOLS.map((tool) => (
+                {ALL_FORMATTERS.map((tool) => (
                   <li key={tool.id}>
                     <Link
                       href={tool.url}
@@ -79,7 +79,7 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
                 Minifiers
               </h3>
               <ul className="space-y-1">
-                {MINIFIER_TOOLS.map((tool) => (
+                {ALL_MINIFIERS.map((tool) => (
                   <li key={tool.id}>
                     <Link
                       href={tool.url}

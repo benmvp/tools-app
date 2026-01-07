@@ -1,12 +1,37 @@
 import type { Metadata } from "next";
 import { ToolCard } from "@/components/ToolCard";
-import { FORMATTER_TOOLS } from "@/lib/tools-data";
-import { getAppUrl } from "@/lib/utils";
+import { SITE_CONFIG } from "@/lib/site-config";
+import { ALL_FORMATTERS } from "@/lib/tools-data";
+import { getAppUrl, getOgImageUrl } from "@/lib/utils";
+
+const ogImageUrl = getOgImageUrl(
+  `${ALL_FORMATTERS.length} Formatters`,
+  SITE_CONFIG.pages.formatters.description,
+  ALL_FORMATTERS.length.toString(),
+);
 
 export const metadata: Metadata = {
-  title: "Code Formatters | Codemata Developer Tools",
-  description:
-    "Free online code formatters for JavaScript, TypeScript, JSON, CSS, HTML, GraphQL, Markdown, XML, and YAML. Beautify and format your code instantly with customizable indentation.",
+  title: SITE_CONFIG.pages.formatters.title,
+  description: SITE_CONFIG.pages.formatters.description,
+  openGraph: {
+    title: SITE_CONFIG.pages.formatters.title,
+    description: SITE_CONFIG.pages.formatters.description,
+    url: getAppUrl("/formatters"),
+    images: [
+      {
+        url: ogImageUrl,
+        width: 1200,
+        height: 630,
+        alt: `Codemata - ${ALL_FORMATTERS.length} Code Formatters`,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_CONFIG.pages.formatters.title,
+    description: SITE_CONFIG.pages.formatters.description,
+    images: [ogImageUrl],
+  },
   alternates: {
     canonical: getAppUrl("/formatters"),
   },
@@ -21,15 +46,16 @@ export default function FormattersPage() {
           Code Formatters
         </h1>
         <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-          Beautify and format your code with consistent styling. Choose from 8
-          different formatters with customizable indentation options.
+          Beautify and format your code with consistent styling. Choose from{" "}
+          {ALL_FORMATTERS.length} different formatters with customizable
+          indentation options.
         </p>
       </section>
 
       {/* Tools Grid */}
       <section>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {FORMATTER_TOOLS.map((tool) => (
+          {ALL_FORMATTERS.map((tool) => (
             <ToolCard key={tool.id} {...tool} />
           ))}
         </div>

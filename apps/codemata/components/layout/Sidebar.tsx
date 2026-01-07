@@ -8,7 +8,7 @@ import { useTheme } from "next-themes";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SITE_CONFIG } from "@/lib/site-config";
-import { FORMATTER_TOOLS, MINIFIER_TOOLS } from "@/lib/tools-data";
+import { ALL_FORMATTERS, ALL_MINIFIERS } from "@/lib/tools-data";
 import { shouldPrefetch } from "@/lib/utils";
 
 export function Sidebar() {
@@ -44,7 +44,7 @@ export function Sidebar() {
               Formatters
             </h3>
             <ul className="space-y-1">
-              {FORMATTER_TOOLS.map((tool) => (
+              {ALL_FORMATTERS.map((tool) => (
                 <li key={tool.id}>
                   <Link
                     href={tool.url}
@@ -75,7 +75,7 @@ export function Sidebar() {
               Minifiers
             </h3>
             <ul className="space-y-1">
-              {MINIFIER_TOOLS.map((tool) => (
+              {ALL_MINIFIERS.map((tool) => (
                 <li key={tool.id}>
                   <Link
                     href={tool.url}

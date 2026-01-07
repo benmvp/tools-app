@@ -30,7 +30,7 @@ const projectDir = join(__dirname, "..");
 loadEnvConfig(projectDir);
 
 import { load } from "cheerio";
-import { FORMATTER_TOOLS, MINIFIER_TOOLS } from "../lib/tools-data";
+import { ALL_FORMATTERS, ALL_MINIFIERS, ALL_TOOLS } from "../lib/tools-data";
 import { getAppUrl, getToolUrl } from "../lib/utils";
 
 interface PageMetadata {
@@ -46,6 +46,7 @@ interface PageMetadata {
   ogType: string | null;
   ogImage: string | null;
   ogImageAccessible: boolean;
+  ogImageAlt: string | null;
   twitterCard: string | null;
   twitterTitle: string | null;
   twitterDescription: string | null;
@@ -82,6 +83,8 @@ async function fetchPageMetadata(url: string): Promise<PageMetadata | null> {
     const ogUrl = $('meta[property="og:url"]').attr("content") || null;
     const ogType = $('meta[property="og:type"]').attr("content") || null;
     const ogImage = $('meta[property="og:image"]').attr("content") || null;
+    const ogImageAlt =
+      $('meta[property="og:image:alt"]').attr("content") || null;
 
     const twitterCard = $('meta[name="twitter:card"]').attr("content") || null;
     const twitterTitle =
@@ -93,28 +96,69 @@ async function fetchPageMetadata(url: string): Promise<PageMetadata | null> {
 
     const structuredData = $('script[type="application/ld+json"]').length > 0;
 
-    // Check if image URLs are accessible
+    // Check if OG image is accessible and valid
     let ogImageAccessible = false;
     if (ogImage) {
       try {
         const imageUrl = ogImage.startsWith("http")
           ? ogImage
           : `${new URL(url).origin}${ogImage}`;
-        const imageResponse = await fetch(imageUrl, { method: "HEAD" });
-        ogImageAccessible = imageResponse.ok;
+        const imageResponse = await fetch(imageUrl);
+
+        if (imageResponse.ok) {
+          // Verify it's a PNG image
+          const contentType = imageResponse.headers.get("content-type");
+          if (contentType === "image/png") {
+            // Verify PNG signature (first 8 bytes: 89 50 4E 47 0D 0A 1A 0A)
+            const buffer = await imageResponse.arrayBuffer();
+            const bytes = new Uint8Array(buffer);
+            const isPng =
+              bytes.length >= 8 &&
+              bytes[0] === 0x89 &&
+              bytes[1] === 0x50 &&
+              bytes[2] === 0x4e &&
+              bytes[3] === 0x47 &&
+              bytes[4] === 0x0d &&
+              bytes[5] === 0x0a &&
+              bytes[6] === 0x1a &&
+              bytes[7] === 0x0a;
+            ogImageAccessible = isPng;
+          }
+        }
       } catch {
         ogImageAccessible = false;
       }
     }
 
+    // Check if Twitter image is accessible and valid
     let twitterImageAccessible = false;
     if (twitterImage) {
       try {
         const imageUrl = twitterImage.startsWith("http")
           ? twitterImage
           : `${new URL(url).origin}${twitterImage}`;
-        const imageResponse = await fetch(imageUrl, { method: "HEAD" });
-        twitterImageAccessible = imageResponse.ok;
+        const imageResponse = await fetch(imageUrl);
+
+        if (imageResponse.ok) {
+          // Verify it's a PNG image
+          const contentType = imageResponse.headers.get("content-type");
+          if (contentType === "image/png") {
+            // Verify PNG signature
+            const buffer = await imageResponse.arrayBuffer();
+            const bytes = new Uint8Array(buffer);
+            const isPng =
+              bytes.length >= 8 &&
+              bytes[0] === 0x89 &&
+              bytes[1] === 0x50 &&
+              bytes[2] === 0x4e &&
+              bytes[3] === 0x47 &&
+              bytes[4] === 0x0d &&
+              bytes[5] === 0x0a &&
+              bytes[6] === 0x1a &&
+              bytes[7] === 0x0a;
+            twitterImageAccessible = isPng;
+          }
+        }
       } catch {
         twitterImageAccessible = false;
       }
@@ -133,6 +177,7 @@ async function fetchPageMetadata(url: string): Promise<PageMetadata | null> {
       ogType,
       ogImage,
       ogImageAccessible,
+      ogImageAlt,
       twitterCard,
       twitterTitle,
       twitterDescription,
@@ -188,8 +233,118 @@ function validateMetadata(metadata: PageMetadata): string[] {
   if (!metadata.ogDescription) issues.push("Missing og:description");
   if (!metadata.ogImage) {
     issues.push("Missing og:image");
-  } else if (!metadata.ogImageAccessible) {
-    issues.push(`og:image URL not accessible: ${metadata.ogImage}`);
+  } else {
+    // Validate OG image URL format
+    if (!metadata.ogImage.includes("/api/og?")) {
+      issues.push(
+        `OG image should use dynamic API route (/api/og?...), found: ${metadata.ogImage}`,
+      );
+    }
+
+    // Validate OG image parameters based on page type
+    if (metadata.url === getAppUrl() || metadata.url === `${getAppUrl()}/`) {
+      // Home page: should have count parameter only
+      if (
+        !metadata.ogImage.includes("count=") ||
+        metadata.ogImage.includes("type=")
+      ) {
+        issues.push(
+          "Home page OG image should have count parameter only (no type parameter)",
+        );
+      } else {
+        // Verify count matches total tools
+        const totalCount = Object.values(ALL_TOOLS).flat().length;
+        if (!metadata.ogImage.includes(`count=${totalCount}`)) {
+          issues.push(
+            `Home page OG image count mismatch (expected count=${totalCount})`,
+          );
+        }
+      }
+    } else if (
+      metadata.url.includes("/formatters/") &&
+      !metadata.url.endsWith("/formatters")
+    ) {
+      // Formatter tool page: should have type=tool with category and name
+      if (
+        !metadata.ogImage.includes("type=tool") ||
+        !metadata.ogImage.includes("category=formatters") ||
+        !metadata.ogImage.includes("name=")
+      ) {
+        issues.push(
+          "Formatter tool page OG image should have type=tool&category=formatters&name=...",
+        );
+      }
+      if (metadata.ogImage.includes("count=")) {
+        issues.push("Tool page OG image should not include count parameter");
+      }
+    } else if (
+      metadata.url.includes("/minifiers/") &&
+      !metadata.url.endsWith("/minifiers")
+    ) {
+      // Minifier tool page: should have type=tool with category and name
+      if (
+        !metadata.ogImage.includes("type=tool") ||
+        !metadata.ogImage.includes("category=minifiers") ||
+        !metadata.ogImage.includes("name=")
+      ) {
+        issues.push(
+          "Minifier tool page OG image should have type=tool&category=minifiers&name=...",
+        );
+      }
+      if (metadata.ogImage.includes("count=")) {
+        issues.push("Tool page OG image should not include count parameter");
+      }
+    } else if (metadata.url.endsWith("/formatters")) {
+      // Formatters category page: should have type=category with count
+      if (
+        !metadata.ogImage.includes("type=category") ||
+        !metadata.ogImage.includes("category=formatters") ||
+        !metadata.ogImage.includes("count=")
+      ) {
+        issues.push(
+          "Formatters category page OG image should have type=category&category=formatters&count=...",
+        );
+      } else {
+        // Verify count matches formatter tools
+        const count = ALL_TOOLS.formatters.length;
+        if (!metadata.ogImage.includes(`count=${count}`)) {
+          issues.push(
+            `Formatters category OG image count mismatch (expected count=${count})`,
+          );
+        }
+      }
+    } else if (metadata.url.endsWith("/minifiers")) {
+      // Minifiers category page: should have type=category with count
+      if (
+        !metadata.ogImage.includes("type=category") ||
+        !metadata.ogImage.includes("category=minifiers") ||
+        !metadata.ogImage.includes("count=")
+      ) {
+        issues.push(
+          "Minifiers category page OG image should have type=category&category=minifiers&count=...",
+        );
+      } else {
+        // Verify count matches minifier tools
+        const count = ALL_TOOLS.minifiers.length;
+        if (!metadata.ogImage.includes(`count=${count}`)) {
+          issues.push(
+            `Minifiers category OG image count mismatch (expected count=${count})`,
+          );
+        }
+      }
+    }
+
+    // Check if image is accessible
+    if (!metadata.ogImageAccessible) {
+      issues.push(
+        `og:image is not accessible or not a valid PNG: ${metadata.ogImage}`,
+      );
+    }
+
+    // Check for alt text
+    if (!metadata.ogImageAlt) {
+      issues.push("Missing og:image:alt text");
+    }
   }
 
   // Twitter Card
@@ -199,7 +354,9 @@ function validateMetadata(metadata: PageMetadata): string[] {
   if (!metadata.twitterImage) {
     issues.push("Missing twitter:image");
   } else if (!metadata.twitterImageAccessible) {
-    issues.push(`twitter:image URL not accessible: ${metadata.twitterImage}`);
+    issues.push(
+      `twitter:image is not accessible or not a valid PNG: ${metadata.twitterImage}`,
+    );
   }
 
   // Structured Data (only for tool pages, not home/category pages)
@@ -282,11 +439,11 @@ async function main() {
     { url: getAppUrl(), name: "Home" },
     { url: getAppUrl("/formatters"), name: "Formatters" },
     { url: getAppUrl("/minifiers"), name: "Minifiers" },
-    ...FORMATTER_TOOLS.map((tool) => ({
+    ...ALL_FORMATTERS.map((tool) => ({
       url: getToolUrl(tool),
       name: tool.name,
     })),
-    ...MINIFIER_TOOLS.map((tool) => ({
+    ...ALL_MINIFIERS.map((tool) => ({
       url: getToolUrl(tool),
       name: tool.name,
     })),

@@ -8,23 +8,9 @@ import { MinifierIntro } from "@/components/MinifierIntro";
 import { ScrollToTopFab } from "@/components/ScrollToTopFab";
 import { TransformerMinifier } from "@/components/TransformerMinifier";
 import { getMinifierContent } from "@/lib/ai/helpers";
-import {
-  CSS_MINIFIER_EXAMPLE,
-  HTML_MINIFIER_EXAMPLE,
-  JSON_MINIFIER_EXAMPLE,
-  SVG_MINIFIER_EXAMPLE,
-  TYPESCRIPT_MINIFIER_EXAMPLE,
-  XML_MINIFIER_EXAMPLE,
-} from "@/lib/examples";
-import { getAppUrl, isProductionBuild } from "@/lib/utils";
-import {
-  minifyCss,
-  minifyHtml,
-  minifyJson,
-  minifySvg,
-  minifyTypescript,
-  minifyXml,
-} from "../actions";
+import { MINIFIER_TOOLS } from "@/lib/tools-data";
+import type { MinifierAction } from "@/lib/types";
+import { getAppUrl, getOgImageUrl, isProductionBuild } from "@/lib/utils";
 
 // ISR: Revalidate every 24 hours
 export const revalidate = 86400;
@@ -32,109 +18,6 @@ export const revalidate = 86400;
 // Extend serverless function timeout for AI generation
 // Default is 10s on Hobby, this allows up to 30s on Preview/Production
 export const maxDuration = 30;
-
-type MinifierSlug =
-  | "typescript-minifier"
-  | "json-minifier"
-  | "css-minifier"
-  | "html-minifier"
-  | "svg-minifier"
-  | "xml-minifier";
-
-type SupportedLanguage =
-  | "typescript"
-  | "javascript"
-  | "json"
-  | "css"
-  | "html"
-  | "xml";
-
-interface MinifierConfig {
-  name: string;
-  description: string;
-  action: (input: string) => Promise<string>;
-  example: string;
-  language: SupportedLanguage;
-  metadata: {
-    title: string;
-    description: string;
-  };
-}
-
-const MINIFIERS: Record<MinifierSlug, MinifierConfig> = {
-  "typescript-minifier": {
-    name: "TypeScript & JavaScript Minifier",
-    description: "Minify and compress your JavaScript and TypeScript code",
-    action: minifyTypescript,
-    example: TYPESCRIPT_MINIFIER_EXAMPLE,
-    language: "typescript",
-    metadata: {
-      title: "TypeScript & JavaScript Minifier | Codemata",
-      description:
-        "Minify and compress JavaScript and TypeScript code. Free online minifier that removes whitespace, shortens variable names, and optimizes your code for production.",
-    },
-  },
-  "json-minifier": {
-    name: "JSON Minifier",
-    description: "Compress JSON by removing whitespace",
-    action: minifyJson,
-    example: JSON_MINIFIER_EXAMPLE,
-    language: "json",
-    metadata: {
-      title: "JSON Minifier | Codemata",
-      description:
-        "Minify and compress JSON data by removing whitespace. Free online JSON minifier for reducing file size.",
-    },
-  },
-  "css-minifier": {
-    name: "CSS Minifier",
-    description: "Minify and optimize your CSS stylesheets",
-    action: minifyCss,
-    example: CSS_MINIFIER_EXAMPLE,
-    language: "css",
-    metadata: {
-      title: "CSS Minifier | Codemata",
-      description:
-        "Minify and optimize CSS stylesheets. Free online CSS minifier that removes whitespace, comments, and optimizes your styles for production.",
-    },
-  },
-  "html-minifier": {
-    name: "HTML Minifier",
-    description: "Compress HTML by removing whitespace and comments",
-    action: minifyHtml,
-    example: HTML_MINIFIER_EXAMPLE,
-    language: "html",
-    metadata: {
-      title: "HTML Minifier | Codemata",
-      description:
-        "Minify and compress HTML code. Free online HTML minifier that removes whitespace, comments, and optimizes your HTML for production.",
-    },
-  },
-  "svg-minifier": {
-    name: "SVG Minifier",
-    description: "Optimize and compress SVG images",
-    action: minifySvg,
-    example: SVG_MINIFIER_EXAMPLE,
-    language: "xml",
-    metadata: {
-      title: "SVG Minifier | Codemata",
-      description:
-        "Optimize and compress SVG images. Free online SVG minifier that removes unnecessary data, comments, and optimizes your SVG files.",
-    },
-  },
-  "xml-minifier": {
-    name: "XML Minifier",
-    description: "Compress XML by removing whitespace and comments",
-    action: minifyXml,
-    example: XML_MINIFIER_EXAMPLE,
-    language: "xml",
-    metadata: {
-      title: "XML Minifier | Codemata",
-      description:
-        "Minify and compress XML documents. Free online XML minifier that removes whitespace, comments, and optimizes your XML for production.",
-    },
-  },
-};
 
 // Enable dynamic params for ISR
 export const dynamicParams = true;
@@ -144,7 +27,7 @@ export async function generateStaticParams() {
   // This ensures crawlers get instant pages with good SEO
   // Preview builds and local dev use on-demand ISR to save API costs
   if (isProductionBuild()) {
-    return Object.keys(MINIFIERS).map((slug) => ({ slug }));
+    return Object.keys(MINIFIER_TOOLS).map((slug) => ({ slug }));
   }
 
   // Return empty array for preview/dev - pages generated on-demand
@@ -157,7 +40,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const minifier = MINIFIERS[slug as MinifierSlug];
+  const minifier = MINIFIER_TOOLS[slug];
 
   if (!minifier) {
     return {
@@ -181,11 +64,20 @@ export async function generateMetadata({
         description: aiContent.openGraph.description,
         type: aiContent.openGraph.type,
         url: `/minifiers/${slug}`,
+        images: [
+          {
+            url: getOgImageUrl(minifier.name, aiContent.openGraph.description),
+            width: 1200,
+            height: 630,
+            alt: `Codemata - ${minifier.name} Minifier`,
+          },
+        ],
       },
       twitter: {
         card: "summary_large_image",
         title: aiContent.openGraph.title,
         description: aiContent.openGraph.description,
+        images: [getOgImageUrl(minifier.name, aiContent.openGraph.description)],
       },
     };
   }
@@ -197,6 +89,23 @@ export async function generateMetadata({
     alternates: {
       canonical: getAppUrl(`/minifiers/${slug}`),
     },
+    openGraph: {
+      title: minifier.metadata.title,
+      description: minifier.metadata.description,
+      url: `/minifiers/${slug}`,
+      images: [
+        {
+          url: getOgImageUrl(minifier.name, minifier.metadata.description),
+          width: 1200,
+          height: 630,
+          alt: `Codemata - ${minifier.name} Minifier`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      images: [getOgImageUrl(minifier.name, minifier.metadata.description)],
+    },
   };
 }
 
@@ -206,7 +115,7 @@ export default async function MinifierPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const minifier = MINIFIERS[slug as MinifierSlug];
+  const minifier = MINIFIER_TOOLS[slug];
 
   if (!minifier) {
     notFound();
@@ -253,7 +162,7 @@ export default async function MinifierPage({
 
         {/* Transformer Tool */}
         <TransformerMinifier
-          action={minifier.action}
+          action={minifier.action as MinifierAction}
           actionLabel="Minify"
           defaultInput={minifier.example}
           language={minifier.language}
