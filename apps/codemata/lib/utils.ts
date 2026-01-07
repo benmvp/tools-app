@@ -135,18 +135,13 @@ export const OG_IMAGE_VERSION = "1";
  *
  * @param title - Main heading text (e.g., "14 Free Developer Tools", "JSON Formatter")
  * @param description - Supporting description text
- * @param cacheKey - Optional cache-busting key (defaults to OG_IMAGE_VERSION)
  * @returns Full OG image URL
  */
-export function getOgImageUrl(
-  title: string,
-  description: string,
-  cacheKey?: string,
-): string {
+export function getOgImageUrl(title: string, description: string): string {
   const searchParams = new URLSearchParams();
   searchParams.set("title", title);
   searchParams.set("description", description);
-  searchParams.set("v", cacheKey || OG_IMAGE_VERSION);
+  searchParams.set("v", OG_IMAGE_VERSION);
 
   return getAppUrl(`/api/og?${searchParams.toString()}`);
 }

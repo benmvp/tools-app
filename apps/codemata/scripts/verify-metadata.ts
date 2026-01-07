@@ -252,33 +252,35 @@ function validateMetadata(metadata: PageMetadata): string[] {
       issues.push("OG image URL missing 'v' (version/cache key) parameter");
     }
 
-    // Validate cache key strategy
+    // Validate title parameter includes count for cache busting
     if (metadata.url === getAppUrl() || metadata.url === `${getAppUrl()}/`) {
-      // Home page: should use tool count as cache key
-      const totalCount = Object.values(ALL_TOOLS).flat().length;
-      if (!metadata.ogImage.includes(`v=${totalCount}`)) {
+      // Home page: title should include total count (e.g., "14 Free Developer Tools")
+      const totalCount = Object.values(ALL_TOOLS).flat(2).length;
+      if (
+        !metadata.ogImage.includes(`title=${totalCount}+Free+Developer+Tools`)
+      ) {
         issues.push(
-          `Home page OG image should use total count as cache key (expected v=${totalCount})`,
+          `Home page OG image title should include total count (expected "${totalCount} Free Developer Tools")`,
         );
       }
     } else if (metadata.url.endsWith("/formatters")) {
-      // Formatters category: should use formatter count as cache key
+      // Formatters category: title should include formatter count
       const count = ALL_TOOLS.formatters.length;
-      if (!metadata.ogImage.includes(`v=${count}`)) {
+      if (!metadata.ogImage.includes(`title=${count}+Formatters`)) {
         issues.push(
-          `Formatters category OG image should use formatter count as cache key (expected v=${count})`,
+          `Formatters category OG image title should include formatter count (expected "${count} Formatters")`,
         );
       }
     } else if (metadata.url.endsWith("/minifiers")) {
-      // Minifiers category: should use minifier count as cache key
+      // Minifiers category: title should include minifier count
       const count = ALL_TOOLS.minifiers.length;
-      if (!metadata.ogImage.includes(`v=${count}`)) {
+      if (!metadata.ogImage.includes(`title=${count}+Minifiers`)) {
         issues.push(
-          `Minifiers category OG image should use minifier count as cache key (expected v=${count})`,
+          `Minifiers category OG image title should include minifier count (expected "${count} Minifiers")`,
         );
       }
     }
-    // Tool pages use OG_IMAGE_VERSION (typically "1"), no validation needed
+    // Tool pages use tool name in title for uniqueness, v= uses OG_IMAGE_VERSION
 
     // Check if image is accessible
     if (!metadata.ogImageAccessible) {

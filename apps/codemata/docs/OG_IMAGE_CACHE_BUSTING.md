@@ -2,129 +2,120 @@
 
 ## Overview
 
-OG images are generated dynamically at `/api/og` with automatic cache management. This document explains how cache busting works and when manual intervention is needed.
+OG images are generated dynamically at `/api/og` using a simplified title + description API. Cache busting happens **automatically** through content changes, with minimal manual intervention needed.
 
-## Automatic Cache Busting
+## How It Works
 
-### Tool Count Changes (Automatic)
+### URL Format
 
-When you add or remove tools, cache busting happens automatically:
+All OG images use a simple, consistent format:
+
+```
+/api/og?title=<page-title>&description=<page-description>&v=<version>
+```
+
+**Parameters:**
+- `title` - Main heading text (e.g., "14 Free Developer Tools", "JSON Formatter")
+- `description` - Supporting description text
+- `v` - Version number from `OG_IMAGE_VERSION` constant
+
+### Automatic Cache Busting
+
+Cache busting happens **automatically** when page content changes:
 
 **Home Page:**
-- URL format: `/api/og?count=14`
-- Count calculated from `ALL_TOOLS` registry
-- Adding a tool updates count → new URL → fresh image
+```
+/api/og?title=14+Free+Developer+Tools&description=...&v=1
+```
+- Adding a tool: `14` → `15` → URL changes → new image
 
 **Category Pages:**
-- URL format: `/api/og?type=category&category=formatters&count=8`
-- Count calculated from `ALL_TOOLS[category]`
-- Adding a tool updates count → new URL → fresh image
+```
+/api/og?title=8+Formatters&description=...&v=1
+```
+- Adding a formatter: `8` → `9` → URL changes → new image
 
 **Tool Pages:**
-- URL format: `/api/og?type=tool&category=formatters&name=JSON`
-- No count parameter (stable URL)
-- Images cached indefinitely
-- Adding tools doesn't affect existing tool OG images
+```
+/api/og?title=JSON+Formatter&description=...&v=1
+```
+- Each tool has unique title → unique URL → unique image
+- Tool name changes → URL changes → new image
 
-### How It Works
-
-1. `getOgImageUrl()` in `lib/utils.ts` dynamically calculates counts from `ALL_TOOLS`
-2. When you add a tool to `FORMATTER_TOOLS` or `MINIFIER_TOOLS`, the count changes
-3. The helper regenerates URLs with new counts
-4. Social platforms fetch new URLs → get fresh images
+**Key Insight:** The title parameter naturally changes when tools are added/removed, automatically busting the cache without any manual intervention.
 
 ## Manual Cache Busting
 
-### Design Changes
+### When Design Changes
 
-If you change the OG image design (layout, colors, fonts, etc.), the URL stays the same but content changes. Manual cache busting is required.
-
-**Method: Add Version Parameter**
-
-Add `&v=2` (or increment version) to all OG image URLs:
+If you modify the OG image **design** (layout, colors, fonts, logo position, etc.) without changing any page titles, increment `OG_IMAGE_VERSION`:
 
 ```typescript
-// lib/utils.ts - getOgImageUrl()
+// lib/utils.ts
+export const OG_IMAGE_VERSION = "2";  // Increment this number
+```
+
+This updates the `v` parameter in all OG image URLs, forcing fresh generation.
+
+### What Requires Manual Busting
+
+**Increment OG_IMAGE_VERSION when:**
+- Changing image dimensions (though 1200×630 is standard)
+- Updating gradient colors or background
+- Modifying font sizes (title: 110px, description: 36px)
+- Adjusting logo size or position
+- Changing decorative elements (circles, bars, etc.)
+- Updating brand colors or styling
+
+**Don't increment when:**
+- Adding/removing tools (title text changes automatically)
+- Updating page descriptions (URL parameter changes automatically)
+- Changing metadata elsewhere (doesn't affect OG images)
+- Renaming tools (title parameter updates automatically)
+
+## Implementation Details
+
+### Code Example
+
+```typescript
+// lib/utils.ts
+export const OG_IMAGE_VERSION = "1";
 
 export function getOgImageUrl(
-  type?: "category" | "tool",
-  params?: { category?: "formatters" | "minifiers"; name?: string },
+  title: string,
+  description: string,
 ): string {
-  const { ALL_TOOLS } = require("./tools-data");
   const searchParams = new URLSearchParams();
-
-  // Add version parameter for cache busting
-  const VERSION = "2"; // Increment this when design changes
-
-  if (!type) {
-    // Home page
-    const totalCount = Object.values(ALL_TOOLS).flat().length;
-    searchParams.set("count", totalCount.toString());
-    searchParams.set("v", VERSION); // ← Add version
-  } else if (type === "category" && params?.category) {
-    // Category page
-    searchParams.set("type", "category");
-    searchParams.set("category", params.category);
-    const count = ALL_TOOLS[params.category].length;
-    searchParams.set("count", count.toString());
-    searchParams.set("v", VERSION); // ← Add version
-  } else if (type === "tool" && params?.category && params?.name) {
-    // Tool page
-    searchParams.set("type", "tool");
-    searchParams.set("category", params.category);
-    searchParams.set("name", params.name);
-    searchParams.set("v", VERSION); // ← Add version
-  }
+  searchParams.set("title", title);
+  searchParams.set("description", description);
+  searchParams.set("v", OG_IMAGE_VERSION);
 
   return getAppUrl(`/api/og?${searchParams.toString()}`);
 }
 ```
 
-**Update `/api/og/route.tsx`:**
+### Usage in Pages
 
-The API route already ignores unknown parameters, so no changes needed. The `v` parameter won't affect image generation, only the URL.
+```typescript
+// Home page - count in title
+const totalCount = Object.values(ALL_TOOLS).flat().length;
+const ogImageUrl = getOgImageUrl(
+  `${totalCount} Free Developer Tools`,
+  SITE_CONFIG.pages.home.description
+);
 
-## When to Manually Bust Cache
+// Category page - count in title
+const ogImageUrl = getOgImageUrl(
+  `${ALL_FORMATTERS.length} Formatters`,
+  SITE_CONFIG.pages.formatters.description
+);
 
-**Increment VERSION when:**
-- Changing image layout or dimensions
-- Updating colors, gradients, or backgrounds
-- Modifying fonts or text sizes
-- Adjusting logo position or size
-- Changing text content or taglines
-
-**Don't increment VERSION when:**
-- Adding or removing tools (counts handle this automatically)
-- Renaming tools (tool names in URL change naturally)
-- Updating metadata elsewhere (doesn't affect OG images)
-
-## Deployment Checklist
-
-After deploying OG image changes:
-
-1. **Verify images render correctly:**
-   ```bash
-   # Test all three variants
-   curl -I https://codemata.benmvp.com/api/og?count=14
-   curl -I https://codemata.benmvp.com/api/og?type=category&category=formatters&count=8
-   curl -I https://codemata.benmvp.com/api/og?type=tool&category=formatters&name=JSON
-   ```
-
-2. **Clear social media caches:**
-   - [Twitter Card Validator](https://cards-dev.twitter.com/validator)
-   - [LinkedIn Post Inspector](https://www.linkedin.com/post-inspector/)
-   - [Facebook Sharing Debugger](https://developers.facebook.com/tools/debug/)
-
-3. **Verify metadata script passes:**
-   ```bash
-   cd apps/codemata
-   pnpm verify-metadata
-   ```
-
-4. **Check tool counts match reality:**
-   - Home page should show correct total tool count
-   - Category pages should show correct category counts
-   - Tool pages should display correct tool names
+// Tool page - unique tool name
+const ogImageUrl = getOgImageUrl(
+  formatter.name,
+  formatter.metadata.description
+);
+```
 
 ## Cache Headers
 
@@ -136,28 +127,107 @@ headers: {
 }
 ```
 
-- **max-age=31536000**: Cache for 1 year (URL changes trigger fresh fetch)
-- **stale-while-revalidate=86400**: Serve stale content for 24 hours while revalidating in background
+- **max-age=31536000**: Cache for 1 year
+- **stale-while-revalidate=86400**: Serve stale for 24 hours while revalidating
 
-This ensures:
-- Fast load times (images cached at edge)
-- Automatic updates when URLs change
-- Graceful handling of API failures
+Since URLs change when content changes, this long cache is safe and performant.
+
+## Verification
+
+### Metadata Verification Script
+
+Run after making changes:
+
+```bash
+cd apps/codemata
+pnpm verify-metadata
+```
+
+This validates:
+- All 17 pages have OG images
+- URLs include title, description, and v parameters
+- Title text includes counts for home/category pages
+- Images are accessible and valid PNG format
+- All metadata is complete and unique
+
+### Manual Testing
+
+Test generated images locally:
+
+```bash
+# Start dev server
+pnpm dev
+
+# Test image generation (in browser)
+http://localhost:3001/api/og?title=Test&description=Testing&v=1
+```
+
+## Deployment Checklist
+
+After deploying OG image changes:
+
+1. **Run verification script:**
+   ```bash
+   cd apps/codemata
+   pnpm verify-metadata  # Must pass 100%
+   ```
+
+2. **Test image URLs:**
+   ```bash
+   curl -I https://codemata.benmvp.com/api/og?title=Test&description=Test&v=1
+   # Should return 200 OK with Content-Type: image/png
+   ```
+
+3. **Clear social media caches:**
+   - [Twitter Card Validator](https://cards-dev.twitter.com/validator)
+   - [LinkedIn Post Inspector](https://www.linkedin.com/post-inspector/)
+   - [Facebook Sharing Debugger](https://developers.facebook.com/tools/debug/)
+
+4. **Verify on social platforms:**
+   - Share a link on Twitter/LinkedIn
+   - Confirm image renders correctly
+   - Check title and description display
 
 ## Troubleshooting
 
-**Issue: OG image shows old design after deploying**
+### Issue: OG image shows old design after deploying
 
-**Solution:** Increment `VERSION` parameter in `getOgImageUrl()`, redeploy, and clear social media caches.
+**Solution:**
+1. Increment `OG_IMAGE_VERSION` in `lib/utils.ts`
+2. Redeploy
+3. Clear social media caches using debugger tools above
 
-**Issue: Tool count is incorrect in OG image**
+### Issue: Tool count not updating in OG image
 
-**Solution:** Verify `ALL_TOOLS` in `lib/tools-data.ts` includes all tools. Run `pnpm verify-metadata` to check counts.
+**Problem:** You added tools but the count still shows old number.
 
-**Issue: Social platform shows cached old image**
+**Solution:** This shouldn't happen with the new system. The count is embedded in the title parameter. Check:
+1. Did you restart the dev server?
+2. Is the tool properly added to `FORMATTER_TOOLS` or `MINIFIER_TOOLS`?
+3. Run `pnpm verify-metadata` to check actual URLs
 
-**Solution:** Use platform-specific debugging tools to clear their cache (links above).
+### Issue: Social platform shows cached old image
 
-**Issue: OG image returns 500 error**
+**Solution:** Use platform-specific debugging tools (links above) to force a refresh. Social platforms cache aggressively.
 
-**Solution:** Check Edge Runtime logs on Vercel dashboard. Verify `@vercel/og` package is installed.
+### Issue: OG image returns 500 error
+
+**Solution:**
+1. Check Vercel Edge Runtime logs in dashboard
+2. Verify `@vercel/og` package is installed (`pnpm list @vercel/og`)
+3. Check if title/description contain special characters that need encoding
+
+### Issue: Image displays but looks broken
+
+**Solution:**
+1. Verify image dimensions are 1200×630 (in `route.tsx`)
+2. Check if fonts are loading (Inter should be auto-loaded by Next.js)
+3. Test locally first: `http://localhost:3001/api/og?title=Test&description=Test&v=1`
+
+## Benefits of This Approach
+
+1. **Zero manual work** for content changes - adding/removing tools automatically generates new URLs
+2. **Simple API** - just title + description, no complex type/category/name logic
+3. **Easy debugging** - URL parameters are human-readable
+4. **Type-safe** - all URLs generated through centralized `getOgImageUrl()` helper
+5. **Automatic validation** - `verify-metadata` script catches issues before deploy

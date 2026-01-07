@@ -7,7 +7,6 @@ import { getAppUrl, getOgImageUrl } from "@/lib/utils";
 const ogImageUrl = getOgImageUrl(
   `${ALL_FORMATTERS.length} Formatters`,
   SITE_CONFIG.pages.formatters.description,
-  ALL_FORMATTERS.length.toString(),
 );
 
 export const metadata: Metadata = {

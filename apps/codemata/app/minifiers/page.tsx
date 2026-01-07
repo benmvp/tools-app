@@ -4,6 +4,11 @@ import { SITE_CONFIG } from "@/lib/site-config";
 import { ALL_MINIFIERS } from "@/lib/tools-data";
 import { getAppUrl, getOgImageUrl } from "@/lib/utils";
 
+const ogImageUrl = getOgImageUrl(
+  `${ALL_MINIFIERS.length} Minifiers`,
+  SITE_CONFIG.pages.minifiers.description,
+);
+
 export const metadata: Metadata = {
   title: SITE_CONFIG.pages.minifiers.title,
   description: SITE_CONFIG.pages.minifiers.description,
@@ -13,11 +18,7 @@ export const metadata: Metadata = {
     url: getAppUrl("/minifiers"),
     images: [
       {
-        url: getOgImageUrl(
-          `${ALL_MINIFIERS.length} Minifiers`,
-          SITE_CONFIG.pages.minifiers.description,
-          ALL_MINIFIERS.length.toString(),
-        ),
+        url: ogImageUrl,
         width: 1200,
         height: 630,
         alt: `Codemata - ${ALL_MINIFIERS.length} Code Minifiers`,
@@ -28,13 +29,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: SITE_CONFIG.pages.minifiers.title,
     description: SITE_CONFIG.pages.minifiers.description,
-    images: [
-      getOgImageUrl(
-        `${ALL_MINIFIERS.length} Minifiers`,
-        SITE_CONFIG.pages.minifiers.description,
-        ALL_MINIFIERS.length.toString(),
-      ),
-    ],
+    images: [ogImageUrl],
   },
   alternates: {
     canonical: getAppUrl("/minifiers"),

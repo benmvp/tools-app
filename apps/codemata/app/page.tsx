@@ -4,12 +4,11 @@ import { SITE_CONFIG } from "@/lib/site-config";
 import { ALL_FORMATTERS, ALL_MINIFIERS, ALL_TOOLS } from "@/lib/tools-data";
 import { getAppUrl, getOgImageUrl } from "@/lib/utils";
 
-const totalCount = Object.values(ALL_TOOLS).flat().length;
+const totalCount = Object.values(ALL_TOOLS).flat(2).length;
 
 const ogImageUrl = getOgImageUrl(
   `${totalCount} Free Developer Tools`,
   SITE_CONFIG.pages.home.description,
-  totalCount.toString(),
 );
 
 export const metadata: Metadata = {
