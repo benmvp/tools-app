@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { SITE_CONFIG } from "@/lib/site-config";
 import { FORMATTER_TOOLS, MINIFIER_TOOLS } from "@/lib/tools-data";
 import { shouldPrefetch } from "@/lib/utils";
 
@@ -26,7 +27,7 @@ export function Sidebar() {
 									? "/img/logos/wordmark-dark.svg"
 									: "/img/logos/wordmark.svg"
 							}
-							alt="Codemata"
+							alt={SITE_CONFIG.name}
 							width={180}
 							height={40}
 							className="h-10 w-auto"

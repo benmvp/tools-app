@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
+import { SITE_CONFIG } from "@/lib/site-config";
 
 interface MobileHeaderProps {
 	onMenuClick: () => void;
@@ -28,7 +29,7 @@ export function MobileHeader({ onMenuClick }: MobileHeaderProps) {
 									? "/img/logos/wordmark-dark.svg"
 									: "/img/logos/wordmark.svg"
 							}
-							alt="Codemata"
+							alt={SITE_CONFIG.name}
 							width={140}
 							height={30}
 							className="h-8 w-auto"
