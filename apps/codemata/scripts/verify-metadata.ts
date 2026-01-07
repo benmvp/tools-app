@@ -44,9 +44,13 @@ interface PageMetadata {
   ogDescription: string | null;
   ogUrl: string | null;
   ogType: string | null;
+  ogImage: string | null;
+  ogImageAccessible: boolean;
   twitterCard: string | null;
   twitterTitle: string | null;
   twitterDescription: string | null;
+  twitterImage: string | null;
+  twitterImageAccessible: boolean;
   structuredData: boolean;
 }
 
@@ -77,14 +81,44 @@ async function fetchPageMetadata(url: string): Promise<PageMetadata | null> {
       $('meta[property="og:description"]').attr("content") || null;
     const ogUrl = $('meta[property="og:url"]').attr("content") || null;
     const ogType = $('meta[property="og:type"]').attr("content") || null;
+    const ogImage = $('meta[property="og:image"]').attr("content") || null;
 
     const twitterCard = $('meta[name="twitter:card"]').attr("content") || null;
     const twitterTitle =
       $('meta[name="twitter:title"]').attr("content") || null;
     const twitterDescription =
       $('meta[name="twitter:description"]').attr("content") || null;
+    const twitterImage =
+      $('meta[name="twitter:image"]').attr("content") || null;
 
     const structuredData = $('script[type="application/ld+json"]').length > 0;
+
+    // Check if image URLs are accessible
+    let ogImageAccessible = false;
+    if (ogImage) {
+      try {
+        const imageUrl = ogImage.startsWith("http")
+          ? ogImage
+          : `${new URL(url).origin}${ogImage}`;
+        const imageResponse = await fetch(imageUrl, { method: "HEAD" });
+        ogImageAccessible = imageResponse.ok;
+      } catch {
+        ogImageAccessible = false;
+      }
+    }
+
+    let twitterImageAccessible = false;
+    if (twitterImage) {
+      try {
+        const imageUrl = twitterImage.startsWith("http")
+          ? twitterImage
+          : `${new URL(url).origin}${twitterImage}`;
+        const imageResponse = await fetch(imageUrl, { method: "HEAD" });
+        twitterImageAccessible = imageResponse.ok;
+      } catch {
+        twitterImageAccessible = false;
+      }
+    }
 
     return {
       url,
@@ -97,9 +131,13 @@ async function fetchPageMetadata(url: string): Promise<PageMetadata | null> {
       ogDescription,
       ogUrl,
       ogType,
+      ogImage,
+      ogImageAccessible,
       twitterCard,
       twitterTitle,
       twitterDescription,
+      twitterImage,
+      twitterImageAccessible,
       structuredData,
     };
   } catch (error) {
@@ -148,13 +186,21 @@ function validateMetadata(metadata: PageMetadata): string[] {
   // OpenGraph
   if (!metadata.ogTitle) issues.push("Missing og:title");
   if (!metadata.ogDescription) issues.push("Missing og:description");
-  if (!metadata.ogUrl) issues.push("Missing og:url");
-  if (!metadata.ogType) issues.push("Missing og:type");
+  if (!metadata.ogImage) {
+    issues.push("Missing og:image");
+  } else if (!metadata.ogImageAccessible) {
+    issues.push(`og:image URL not accessible: ${metadata.ogImage}`);
+  }
 
   // Twitter Card
   if (!metadata.twitterCard) issues.push("Missing twitter:card");
   if (!metadata.twitterTitle) issues.push("Missing twitter:title");
   if (!metadata.twitterDescription) issues.push("Missing twitter:description");
+  if (!metadata.twitterImage) {
+    issues.push("Missing twitter:image");
+  } else if (!metadata.twitterImageAccessible) {
+    issues.push(`twitter:image URL not accessible: ${metadata.twitterImage}`);
+  }
 
   // Structured Data (only for tool pages, not home/category pages)
   if (
