@@ -3331,8 +3331,8 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 - [x] Test preview build on-demand generation
 - [x] Test local dev with SKIP_AI_GENERATION
 - [ ] Test social media preview cards (Twitter, LinkedIn, Slack) - Phase 5
-- [ ] Mobile testing for content display and tip cards - Phase 5
-- [ ] Accessibility audit for content sections - Phase 5
+- [x] Mobile testing for content display and tip cards - Phase 5
+- [x] Accessibility audit for content sections - Phase 5
 - [ ] Deploy and monitor content quality via spot checks - Phase 5
 - [ ] Use manual regeneration script if issues found in production - After 4.11
 
@@ -3361,12 +3361,12 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 - [x] Create `getToolUrl()` helper for tool URL construction
 - [x] Create `JsonLd` component to safely handle JSON-LD structured data
 - [x] All metadata validation passing (100% pass rate)
-- [ ] Submit to Google Search Console
+- [x] Submit to Google Search Console
 - [ ] Monitor search rankings and traffic
 
 **5.2 Performance Optimization**
 
-- [ ] Lighthouse audits
+- [x] Lighthouse audits
 - [ ] Bundle size optimization
 - [ ] ISR testing
 
@@ -3555,35 +3555,66 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 
 ---
 
-### Phase 7: Analytics & Monetization (Size: S)
+### Phase 7: Quality, Monitoring & Monetization (Size: M)
 
-**Goal:** Add analytics and ads to generate revenue
+**Goal:** Establish quality gates, analytics, and revenue streams
 
 #### Tasks
 
-**6.1 Google Analytics**
+**7.1 Analytics Setup**
 
 - [ ] Set up Google Analytics 4
 - [ ] Add tracking to all pages
 - [ ] Track tool usage events
 - [ ] Set up custom dashboards
 
-**6.2 Initial Data Collection**
+**7.2 Automated Testing & CI**
+
+- [ ] Install Playwright for E2E testing
+- [ ] Write E2E tests for critical user flows:
+  - [ ] Paste code → format → copy result (formatters)
+  - [ ] Paste code → minify → copy result (minifiers)
+  - [ ] Navigation between tools
+  - [ ] Dark mode toggle
+  - [ ] Mobile responsive behavior
+- [ ] Install axe-core for accessibility testing
+- [ ] Write accessibility tests:
+  - [ ] WCAG AA compliance checks
+  - [ ] Keyboard navigation (Tab, Enter, Esc)
+  - [ ] Screen reader compatibility (ARIA labels, roles)
+  - [ ] Color contrast validation
+  - [ ] Focus management
+- [ ] Set up Lighthouse CI:
+  - [ ] Performance score > 90
+  - [ ] Accessibility score > 95
+  - [ ] Best Practices score > 90
+  - [ ] SEO score > 95
+- [ ] Add CI jobs to `.github/workflows/ci.yml`:
+  - [ ] `e2e` job - Run Playwright tests
+  - [ ] `a11y` job - Run accessibility audits
+  - [ ] `lighthouse` job - Run Lighthouse CI
+- [ ] Configure to run on all PRs and main branch pushes
+- [ ] Set up GitHub status checks for branch protection
+- [ ] Document testing approach in README
+
+**7.3 Monitoring & Data Collection**
 
 - [ ] Monitor traffic for 2-4 weeks
 - [ ] Identify popular tools
 - [ ] Analyze user behavior
 - [ ] Identify optimization opportunities
+- [ ] Monitor test results and fix failures
 
-**6.3 Google Ads Integration**
+**7.4 Monetization**
 
 - [ ] Set up Google AdSense account
 - [ ] Add ads below tools
 - [ ] Add ads in content sections
 - [ ] Test ad placement and performance
+- [ ] A/B test different placements
 - [ ] Optimize based on revenue data
 
-**Deliverable:** Revenue-generating Codemata with performance tracking
+**Deliverable:** Revenue-generating Codemata with comprehensive quality gates and performance tracking
 
 ---
 
@@ -3601,20 +3632,20 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 
 #### Tasks
 
-**7.1 Implement Tools**
+**8.1 Implement Tools**
 
 - [ ] Create encoder/decoder pages
 - [ ] Implement server actions for each
 - [ ] Build appropriate UI (may differ from transformer pattern)
 - [ ] Write tests
 
-**7.2 AI Content & SEO**
+**8.2 AI Content & SEO**
 
 - [ ] Generate AI content for each tool
 - [ ] Optimize for high-traffic keywords
 - [ ] Update sitemap
 
-**7.3 Deploy & Monitor**
+**8.3 Deploy & Monitor**
 
 - [ ] Deploy to production
 - [ ] Monitor analytics for these tools
@@ -3639,19 +3670,19 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 
 #### Tasks
 
-**8.1 Implement Tools**
+**9.1 Implement Tools**
 
 - [ ] Create validator pages
 - [ ] Implement validation logic
 - [ ] Build error display UI
 - [ ] Write tests
 
-**8.2 AI Content & SEO**
+**9.2 AI Content & SEO**
 
 - [ ] Generate AI content for each tool
 - [ ] Update sitemap
 
-**8.3 Deploy & Monitor**
+**9.3 Deploy & Monitor**
 
 - [ ] Deploy to production
 - [ ] Monitor analytics

@@ -102,14 +102,19 @@ export function Transformer<
           <CodeEditor
             value={input}
             onChange={setInput}
-            label=""
+            label="Input"
             language={language}
           />
         </div>
 
         <div>
           <span className="text-sm font-medium mb-2 block">Output</span>
-          <CodeEditor value={output} readOnly label="" language={language} />
+          <CodeEditor
+            value={output}
+            readOnly
+            label="Output"
+            language={language}
+          />
         </div>
       </div>
 
@@ -125,7 +130,7 @@ export function Transformer<
                 setConfig((prev) => ({ ...prev, [opt.id]: value }) as T)
               }
             >
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-45" aria-label={opt.label}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
