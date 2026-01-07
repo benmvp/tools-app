@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getAppUrl, getToolUrl } from "@/lib/utils";
-import { FORMATTER_TOOLS, MINIFIER_TOOLS } from "../lib/tools-data";
+import { ALL_TOOLS } from "../lib/tools-data";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date().toISOString();
@@ -29,21 +29,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
-  // Tool pages (formatters)
-  const formatters: MetadataRoute.Sitemap = FORMATTER_TOOLS.map((tool) => ({
-    url: getToolUrl(tool),
-    lastModified,
-    changeFrequency: "daily" as const,
-    priority: 1.0,
-  }));
+  // Tool pages
+  const tools: MetadataRoute.Sitemap = Object.values(ALL_TOOLS)
+    .flat(2)
+    .map((tool) => ({
+      url: getToolUrl(tool),
+      lastModified,
+      changeFrequency: "daily" as const,
+      priority: 1.0,
+    }));
 
-  // Tool pages (minifiers)
-  const minifiers: MetadataRoute.Sitemap = MINIFIER_TOOLS.map((tool) => ({
-    url: getToolUrl(tool),
-    lastModified,
-    changeFrequency: "daily" as const,
-    priority: 1.0,
-  }));
-
-  return [home, ...categories, ...formatters, ...minifiers];
+  return [home, ...categories, ...tools];
 }

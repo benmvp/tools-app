@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import type { ToolWithIcon } from "@/lib/tools-data";
+import type { Tool } from "@/lib/types";
 import { shouldPrefetch } from "@/lib/utils";
 
 export function ToolCard({
@@ -9,7 +9,7 @@ export function ToolCard({
   url,
   icon: Icon,
   comingSoon,
-}: ToolWithIcon) {
+}: Tool) {
   const CardContent = (
     <div
       className={`group h-full rounded-lg border bg-card p-6 transition-all duration-300 ${

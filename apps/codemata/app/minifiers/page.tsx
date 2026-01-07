@@ -1,12 +1,36 @@
 import type { Metadata } from "next";
 import { ToolCard } from "@/components/ToolCard";
-import { MINIFIER_TOOLS } from "@/lib/tools-data";
-import { getAppUrl } from "@/lib/utils";
+import { SITE_CONFIG } from "@/lib/site-config";
+import { ALL_MINIFIERS } from "@/lib/tools-data";
+import { getAppUrl, getOgImageUrl } from "@/lib/utils";
+
+const ogImageUrl = getOgImageUrl(
+  `${ALL_MINIFIERS.length} Minifiers`,
+  SITE_CONFIG.pages.minifiers.description,
+);
 
 export const metadata: Metadata = {
-  title: "Code Minifiers | Codemata Developer Tools",
-  description:
-    "Free online code minifiers for JavaScript, TypeScript, JSON, CSS, HTML, SVG, and XML. Compress and optimize your code by removing whitespace and reducing file size.",
+  title: SITE_CONFIG.pages.minifiers.title,
+  description: SITE_CONFIG.pages.minifiers.description,
+  openGraph: {
+    title: SITE_CONFIG.pages.minifiers.title,
+    description: SITE_CONFIG.pages.minifiers.description,
+    url: getAppUrl("/minifiers"),
+    images: [
+      {
+        url: ogImageUrl,
+        width: 1200,
+        height: 630,
+        alt: `Codemata - ${ALL_MINIFIERS.length} Code Minifiers`,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_CONFIG.pages.minifiers.title,
+    description: SITE_CONFIG.pages.minifiers.description,
+    images: [ogImageUrl],
+  },
   alternates: {
     canonical: getAppUrl("/minifiers"),
   },
@@ -28,7 +52,7 @@ export default function MinifiersPage() {
       {/* Tools Grid */}
       <section>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {MINIFIER_TOOLS.map((tool) => (
+          {ALL_MINIFIERS.map((tool) => (
             <ToolCard key={tool.id} {...tool} />
           ))}
         </div>

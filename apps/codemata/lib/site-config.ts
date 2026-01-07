@@ -19,16 +19,19 @@ export const SITE_CONFIG = {
 
   // Common keywords used across pages
   keywords: [
+    "beautify code",
+    "code beautifier",
+    "code formatter online",
     "code formatter",
     "code minifier",
-    "online developer tools",
-    "beautify code",
-    "javascript formatter",
-    "typescript formatter",
-    "json formatter",
     "css formatter",
-    "html formatter",
     "free developer tools",
+    "html formatter",
+    "javascript formatter",
+    "json formatter",
+    "online code tools",
+    "online developer tools",
+    "typescript formatter",
   ],
 
   // OpenGraph defaults
@@ -64,6 +67,25 @@ export const SITE_CONFIG = {
       "max-video-preview": -1,
       "max-image-preview": "large" as const,
       "max-snippet": -1,
+    },
+  },
+
+  // Page-specific metadata
+  pages: {
+    home: {
+      title: "Codemata | Free Online Developer Tools",
+      description:
+        "Free online code formatters, minifiers, and developer tools. Format and beautify JavaScript, TypeScript, JSON, CSS, HTML, and more. No installation required.",
+    },
+    formatters: {
+      title: "Code Formatters | Codemata",
+      description:
+        "Free online code formatters for JavaScript, TypeScript, JSON, CSS, HTML, GraphQL, Markdown, XML, and YAML. Beautify and format your code instantly with proper indentation.",
+    },
+    minifiers: {
+      title: "Code Minifiers | Codemata",
+      description:
+        "Free online code minifiers for JavaScript, TypeScript, JSON, CSS, HTML, SVG, and XML. Compress and optimize your code for production deployment.",
     },
   },
 } as const;

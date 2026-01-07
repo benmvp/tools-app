@@ -130,7 +130,7 @@ export function Transformer<
                 setConfig((prev) => ({ ...prev, [opt.id]: value }) as T)
               }
             >
-              <SelectTrigger className="w-45" aria-label={opt.label}>
+              <SelectTrigger className="w-44" aria-label={opt.label}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

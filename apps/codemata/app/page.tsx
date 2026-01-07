@@ -1,33 +1,39 @@
 import type { Metadata } from "next";
 import { ToolCard } from "@/components/ToolCard";
 import { SITE_CONFIG } from "@/lib/site-config";
-import { FORMATTER_TOOLS, MINIFIER_TOOLS } from "@/lib/tools-data";
-import { getAppUrl } from "@/lib/utils";
+import { ALL_FORMATTERS, ALL_MINIFIERS, ALL_TOOLS } from "@/lib/tools-data";
+import { getAppUrl, getOgImageUrl } from "@/lib/utils";
+
+const totalCount = Object.values(ALL_TOOLS).flat(2).length;
+
+const ogImageUrl = getOgImageUrl(
+  `${totalCount} Free Developer Tools`,
+  SITE_CONFIG.pages.home.description,
+);
 
 export const metadata: Metadata = {
-  title: "Free Online Developer Tools - Code Formatters & Minifiers",
-  description:
-    "Free online formatters and minifiers for JavaScript, TypeScript, JSON, CSS, HTML, GraphQL, Markdown, XML, and YAML. Beautify and compress code instantly. No sign-up required.",
-  keywords: [
-    ...SITE_CONFIG.keywords,
-    "code formatter online",
-    "online code tools",
-    "code beautifier",
-  ],
+  title: SITE_CONFIG.pages.home.title,
+  description: SITE_CONFIG.pages.home.description,
+  keywords: SITE_CONFIG.keywords as unknown as string[],
   openGraph: {
-    title: "Codemata - Free Online Developer Tools",
-    description:
-      "Transform your code instantly with free formatters and minifiers. Support for JavaScript, TypeScript, JSON, CSS, HTML, and more.",
+    title: SITE_CONFIG.pages.home.title,
+    description: SITE_CONFIG.pages.home.description,
     type: SITE_CONFIG.openGraph.type,
     url: getAppUrl(),
-    images: [SITE_CONFIG.openGraph.images],
+    images: [
+      {
+        url: ogImageUrl,
+        width: 1200,
+        height: 630,
+        alt: `${SITE_CONFIG.name} - ${totalCount} Free Developer Tools`,
+      },
+    ],
   },
   twitter: {
     card: SITE_CONFIG.twitter.card,
-    title: "Codemata - Free Online Developer Tools",
-    description:
-      "Transform your code instantly with free formatters and minifiers. Support for JavaScript, TypeScript, JSON, CSS, HTML, and more.",
-    images: [SITE_CONFIG.openGraph.images.url],
+    title: SITE_CONFIG.pages.home.title,
+    description: SITE_CONFIG.pages.home.description,
+    images: [ogImageUrl],
   },
   alternates: {
     canonical: getAppUrl(),
@@ -55,7 +61,7 @@ export default function HomePage() {
           Beautify and format your code with consistent styling
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {FORMATTER_TOOLS.map((tool) => (
+          {ALL_FORMATTERS.map((tool) => (
             <ToolCard key={tool.id} {...tool} />
           ))}
         </div>
@@ -68,7 +74,7 @@ export default function HomePage() {
           Compress your code by removing whitespace and optimizing
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {MINIFIER_TOOLS.map((tool) => (
+          {ALL_MINIFIERS.map((tool) => (
             <ToolCard key={tool.id} {...tool} />
           ))}
         </div>

@@ -30,7 +30,7 @@ const projectDir = join(__dirname, "..");
 loadEnvConfig(projectDir);
 
 import { load } from "cheerio";
-import { FORMATTER_TOOLS, MINIFIER_TOOLS } from "../lib/tools-data";
+import { ALL_FORMATTERS, ALL_MINIFIERS, ALL_TOOLS } from "../lib/tools-data";
 import { getAppUrl, getToolUrl } from "../lib/utils";
 
 interface PageMetadata {
@@ -46,6 +46,7 @@ interface PageMetadata {
   ogType: string | null;
   ogImage: string | null;
   ogImageAccessible: boolean;
+  ogImageAlt: string | null;
   twitterCard: string | null;
   twitterTitle: string | null;
   twitterDescription: string | null;
@@ -82,6 +83,8 @@ async function fetchPageMetadata(url: string): Promise<PageMetadata | null> {
     const ogUrl = $('meta[property="og:url"]').attr("content") || null;
     const ogType = $('meta[property="og:type"]').attr("content") || null;
     const ogImage = $('meta[property="og:image"]').attr("content") || null;
+    const ogImageAlt =
+      $('meta[property="og:image:alt"]').attr("content") || null;
 
     const twitterCard = $('meta[name="twitter:card"]').attr("content") || null;
     const twitterTitle =
@@ -93,28 +96,69 @@ async function fetchPageMetadata(url: string): Promise<PageMetadata | null> {
 
     const structuredData = $('script[type="application/ld+json"]').length > 0;
 
-    // Check if image URLs are accessible
+    // Check if OG image is accessible and valid
     let ogImageAccessible = false;
     if (ogImage) {
       try {
         const imageUrl = ogImage.startsWith("http")
           ? ogImage
           : `${new URL(url).origin}${ogImage}`;
-        const imageResponse = await fetch(imageUrl, { method: "HEAD" });
-        ogImageAccessible = imageResponse.ok;
+        const imageResponse = await fetch(imageUrl);
+
+        if (imageResponse.ok) {
+          // Verify it's a PNG image
+          const contentType = imageResponse.headers.get("content-type");
+          if (contentType === "image/png") {
+            // Verify PNG signature (first 8 bytes: 89 50 4E 47 0D 0A 1A 0A)
+            const buffer = await imageResponse.arrayBuffer();
+            const bytes = new Uint8Array(buffer);
+            const isPng =
+              bytes.length >= 8 &&
+              bytes[0] === 0x89 &&
+              bytes[1] === 0x50 &&
+              bytes[2] === 0x4e &&
+              bytes[3] === 0x47 &&
+              bytes[4] === 0x0d &&
+              bytes[5] === 0x0a &&
+              bytes[6] === 0x1a &&
+              bytes[7] === 0x0a;
+            ogImageAccessible = isPng;
+          }
+        }
       } catch {
         ogImageAccessible = false;
       }
     }
 
+    // Check if Twitter image is accessible and valid
     let twitterImageAccessible = false;
     if (twitterImage) {
       try {
         const imageUrl = twitterImage.startsWith("http")
           ? twitterImage
           : `${new URL(url).origin}${twitterImage}`;
-        const imageResponse = await fetch(imageUrl, { method: "HEAD" });
-        twitterImageAccessible = imageResponse.ok;
+        const imageResponse = await fetch(imageUrl);
+
+        if (imageResponse.ok) {
+          // Verify it's a PNG image
+          const contentType = imageResponse.headers.get("content-type");
+          if (contentType === "image/png") {
+            // Verify PNG signature
+            const buffer = await imageResponse.arrayBuffer();
+            const bytes = new Uint8Array(buffer);
+            const isPng =
+              bytes.length >= 8 &&
+              bytes[0] === 0x89 &&
+              bytes[1] === 0x50 &&
+              bytes[2] === 0x4e &&
+              bytes[3] === 0x47 &&
+              bytes[4] === 0x0d &&
+              bytes[5] === 0x0a &&
+              bytes[6] === 0x1a &&
+              bytes[7] === 0x0a;
+            twitterImageAccessible = isPng;
+          }
+        }
       } catch {
         twitterImageAccessible = false;
       }
@@ -133,6 +177,7 @@ async function fetchPageMetadata(url: string): Promise<PageMetadata | null> {
       ogType,
       ogImage,
       ogImageAccessible,
+      ogImageAlt,
       twitterCard,
       twitterTitle,
       twitterDescription,
@@ -188,8 +233,66 @@ function validateMetadata(metadata: PageMetadata): string[] {
   if (!metadata.ogDescription) issues.push("Missing og:description");
   if (!metadata.ogImage) {
     issues.push("Missing og:image");
-  } else if (!metadata.ogImageAccessible) {
-    issues.push(`og:image URL not accessible: ${metadata.ogImage}`);
+  } else {
+    // Validate OG image URL format (new simplified format with title+description)
+    if (!metadata.ogImage.includes("/api/og?")) {
+      issues.push(
+        `OG image should use dynamic API route (/api/og?...), found: ${metadata.ogImage}`,
+      );
+    }
+
+    // Validate OG image has required parameters (title, description, v)
+    if (!metadata.ogImage.includes("title=")) {
+      issues.push("OG image URL missing 'title' parameter");
+    }
+    if (!metadata.ogImage.includes("description=")) {
+      issues.push("OG image URL missing 'description' parameter");
+    }
+    if (!metadata.ogImage.includes("v=")) {
+      issues.push("OG image URL missing 'v' (version/cache key) parameter");
+    }
+
+    // Validate title parameter includes count for cache busting
+    if (metadata.url === getAppUrl() || metadata.url === `${getAppUrl()}/`) {
+      // Home page: title should include total count (e.g., "14 Free Developer Tools")
+      const totalCount = Object.values(ALL_TOOLS).flat(2).length;
+      if (
+        !metadata.ogImage.includes(`title=${totalCount}+Free+Developer+Tools`)
+      ) {
+        issues.push(
+          `Home page OG image title should include total count (expected "${totalCount} Free Developer Tools")`,
+        );
+      }
+    } else if (metadata.url.endsWith("/formatters")) {
+      // Formatters category: title should include formatter count
+      const count = ALL_TOOLS.formatters.length;
+      if (!metadata.ogImage.includes(`title=${count}+Formatters`)) {
+        issues.push(
+          `Formatters category OG image title should include formatter count (expected "${count} Formatters")`,
+        );
+      }
+    } else if (metadata.url.endsWith("/minifiers")) {
+      // Minifiers category: title should include minifier count
+      const count = ALL_TOOLS.minifiers.length;
+      if (!metadata.ogImage.includes(`title=${count}+Minifiers`)) {
+        issues.push(
+          `Minifiers category OG image title should include minifier count (expected "${count} Minifiers")`,
+        );
+      }
+    }
+    // Tool pages use tool name in title for uniqueness, v= uses OG_IMAGE_VERSION
+
+    // Check if image is accessible
+    if (!metadata.ogImageAccessible) {
+      issues.push(
+        `og:image is not accessible or not a valid PNG: ${metadata.ogImage}`,
+      );
+    }
+
+    // Check for alt text
+    if (!metadata.ogImageAlt) {
+      issues.push("Missing og:image:alt text");
+    }
   }
 
   // Twitter Card
@@ -199,7 +302,9 @@ function validateMetadata(metadata: PageMetadata): string[] {
   if (!metadata.twitterImage) {
     issues.push("Missing twitter:image");
   } else if (!metadata.twitterImageAccessible) {
-    issues.push(`twitter:image URL not accessible: ${metadata.twitterImage}`);
+    issues.push(
+      `twitter:image is not accessible or not a valid PNG: ${metadata.twitterImage}`,
+    );
   }
 
   // Structured Data (only for tool pages, not home/category pages)
@@ -282,11 +387,11 @@ async function main() {
     { url: getAppUrl(), name: "Home" },
     { url: getAppUrl("/formatters"), name: "Formatters" },
     { url: getAppUrl("/minifiers"), name: "Minifiers" },
-    ...FORMATTER_TOOLS.map((tool) => ({
+    ...ALL_FORMATTERS.map((tool) => ({
       url: getToolUrl(tool),
       name: tool.name,
     })),
-    ...MINIFIER_TOOLS.map((tool) => ({
+    ...ALL_MINIFIERS.map((tool) => ({
       url: getToolUrl(tool),
       name: tool.name,
     })),

@@ -3372,28 +3372,37 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 
 **5.3 Dynamic OpenGraph Images**
 
-- [ ] Install `@vercel/og` package
-- [ ] Create `/api/og/[slug]/route.tsx` endpoint:
-  - [ ] Generate OG image dynamically using Vercel's edge runtime
-  - [ ] Design card template:
-    - [ ] Codemata logo (top left)
-    - [ ] Tool name (large, centered): e.g., "JSON Formatter"
-    - [ ] Tool icon (centered below name)
-    - [ ] Tagline: "Developer Tools" (bottom)
-    - [ ] Gradient or solid color background (brand colors)
-  - [ ] Use Inter font (loaded via @vercel/og)
-  - [ ] Return PNG image (1200x630px for optimal social sharing)
-  - [ ] Cache images at edge (stale-while-revalidate)
-- [ ] Update `generateMetadata()` in tool pages:
-  - [ ] Set `openGraph.images` to API route: `/api/og/${slug}.png`
-  - [ ] Set `twitter:image` to same URL
+- [x] Install `@vercel/og` package
+- [x] Create `/api/og/route.tsx` endpoint:
+  - [x] Generate OG image dynamically using Vercel's edge runtime
+  - [x] Design card template:
+    - [x] Codemata logo (top left)
+    - [x] Tool/page title (large, 110px font): e.g., "JSON Formatter", "14 Free Developer Tools"
+    - [x] Description text (36px font, supporting context)
+    - [x] Tagline: "Codemata — Developer Tools" (bottom)
+    - [x] Gradient background (blue-100 to white) with decorative elements
+    - [x] Decorative circles with subtle opacity for visual depth
+  - [x] Inter font loaded automatically by Next.js OG
+  - [x] Return PNG image (1200x630px for optimal social sharing)
+  - [x] Cache images at edge (`max-age=31536000, stale-while-revalidate=86400`)
+- [x] Update `generateMetadata()` in all pages (17 total):
+  - [x] Home page (`/`)
+  - [x] Formatters category page (`/formatters`)
+  - [x] Minifiers category page (`/minifiers`)
+  - [x] 8 formatter tool pages
+  - [x] 6 minifier tool pages
+  - [x] Set `openGraph.images` with title+description parameters
+  - [x] Set `twitter:image` to same URL
+- [x] Implement cache busting strategy:
+  - [x] OG_IMAGE_VERSION constant for manual design changes
+  - [x] Count-based URLs for home/category pages (auto-bust when tools added)
 - [ ] Test OG images in social media debuggers:
   - [ ] Twitter Card Validator
   - [ ] LinkedIn Post Inspector
   - [ ] Facebook Sharing Debugger
   - [ ] Slack unfurl preview
 - [ ] Ensure images render correctly on all platforms
-- [ ] Verify edge caching is working (check response headers)
+- [ ] Verify edge caching is working (check response headers in production)
 
 **Resources:**
 - Vercel OG Image Generation: https://vercel.com/docs/functions/edge-functions/og-image-generation
