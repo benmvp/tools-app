@@ -1,22 +1,33 @@
 # Tools App
 
-A monorepo of three web applications providing developer tools, financial calculators, and unit converters.
+A **pnpm monorepo** of three Next.js applications providing free developer tools, financial calculators, and unit converters. Built with Next.js 15, TypeScript, and Turborepo.
 
 ## Apps
 
-- **Codemata** (codemata.benmvp.com) - Code formatters & minifiers
-- **Moni** (moni.benmvp.com) - Financial calculators
-- **Convertly** (convertly.benmvp.com) - Unit converters
+| App | Status | Description | Port |
+|-----|--------|-------------|------|
+| **[Codemata](apps/codemata/)** | ✅ **[Live](https://codemata.benmvp.com)** | Code formatters & minifiers (14 tools) | 3001 |
+| **Moni** | 🚧 Planned | Financial calculators | 3002 |
+| **Convertly** | 🚧 Planned | Unit converters | 3003 |
+
+👉 **See [apps/codemata/README.md](apps/codemata/README.md) for detailed documentation**
+
+## Quick Start
+
+```bash
+# Install dependencies
+pnpm install
+
+# Run all apps (or cd apps/codemata && pnpm dev)
+pnpm dev
+```
 
 ## Documentation
 
-- [SPEC.md](./SPEC.md) - Complete project specification
-- [TODO.md](./TODO.md) - Planned features
+- **[Codemata README](apps/codemata/README.md)** - Complete guide (setup, architecture, deployment, testing)
+- **[SPEC.md](SPEC.md)** - Project specification & architecture decisions
+- **[TODO.md](TODO.md)** - Feature roadmap
 
-## Getting Started
+## License
 
-See [SPEC.md - Implementation Plan](./SPEC.md#implementation-plan) for step-by-step setup.
-
-## Status
-
-🚧 In development - Following Phase 1 of implementation plan
+© 2025 Ben Ilegbodu. All rights reserved.

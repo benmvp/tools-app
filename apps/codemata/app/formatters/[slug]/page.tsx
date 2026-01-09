@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { AIContentSkeleton } from "@/components/AIContentSkeleton";
+import { CategoryBackLink } from "@/components/CategoryBackLink";
 import { FormatterAIContent } from "@/components/FormatterAIContent";
 import { FormatterIntro } from "@/components/FormatterIntro";
 import { JsonLd } from "@/components/JsonLd";
@@ -143,9 +144,12 @@ export default async function FormatterPage({
       {/* Structured Data */}
       <JsonLd data={structuredData} />
 
-      <div className="mx-auto max-w-7xl px-4 py-8">
-        {/* Page Header */}
+      <div className="mx-auto max-w-7xl px-4 py-8 flex flex-col">
+        {/* Page Header (first in DOM for SEO/A11y) */}
         <h1 className="mb-2 text-4xl font-bold">{formatter.name}</h1>
+
+        {/* Category Navigation (after H1 in DOM, but displayed above via CSS order) */}
+        <CategoryBackLink href="/formatters" label="Formatters" />
 
         {/* Intro paragraph with Suspense (replaces with AI intro when ready) */}
         <Suspense

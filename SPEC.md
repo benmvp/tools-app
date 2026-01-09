@@ -3396,11 +3396,11 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 - [x] Implement cache busting strategy:
   - [x] OG_IMAGE_VERSION constant for manual design changes
   - [x] Count-based URLs for home/category pages (auto-bust when tools added)
-- [ ] Test OG images in social media debuggers:
+- [x] Test OG images in social media debuggers:
   - [ ] [Twitter Card Validator](https://cards-dev.twitter.com/validator)
   - [ ] [LinkedIn Post Inspector](https://www.linkedin.com/post-inspector/)
   - [ ] [Facebook Sharing Debugger](https://developers.facebook.com/tools/debug/)
-  - [ ] Slack unfurl preview
+  - [x] Slack unfurl preview
 - [ ] Ensure images render correctly on all platforms
 - [ ] Verify edge caching is working (check response headers in production)
 
@@ -3409,22 +3409,36 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 - @vercel/og package: https://www.npmjs.com/package/@vercel/og
 - Example template: Card with logo + tool name + icon + tagline
 
-**5.4 Breadcrumbs Navigation**
+**5.4 Category Back Navigation**
 
-- [ ] Install shadcn/ui breadcrumb component
-- [ ] Create `<Breadcrumbs>` component:
-  - [ ] Props: items array with label and href
-  - [ ] Support current page (no link)
-  - [ ] Responsive design (truncate on mobile if needed)
-- [ ] Add breadcrumbs to formatter tool pages:
-  - [ ] Home → Formatters → [Tool Name]
-  - [ ] Link to `/formatters` category page
-- [ ] Add breadcrumbs to minifier tool pages:
-  - [ ] Home → Minifiers → [Tool Name]
-  - [ ] Link to `/minifiers` category page
-- [ ] Position breadcrumbs at top of content (above tool heading)
-- [ ] Test breadcrumb navigation on all tool pages
-- [ ] Ensure proper spacing and visual hierarchy
+- [x] Create `<CategoryBackLink>` component:
+  - [x] Pill/badge style with rounded corners
+  - [x] ArrowLeft icon from lucide-react
+  - [x] Background: `bg-muted` with hover effect
+  - [x] Text: `text-sm font-medium text-muted-foreground`
+  - [x] Hover: scale slightly + darken background
+  - [x] Props: `href` and `label`
+  - [x] CSS `order-[-1]` to display above H1 while maintaining semantic DOM order
+- [x] Add back link to formatter tool pages:
+  - [x] Shows "← Formatters" above page title
+  - [x] Links to `/formatters` category page
+  - [x] Positioned with `mb-6` spacing
+- [x] Add back link to minifier tool pages:
+  - [x] Shows "← Minifiers" above page title
+  - [x] Links to `/minifiers` category page
+  - [x] Positioned with `mb-6` spacing
+- [x] Design decisions:
+  - [x] No "Home" link (logo/wordmark serves that purpose)
+  - [x] No current page in navigation (H1 title shows that)
+  - [x] Single category link acts as "back to category" navigation
+  - [x] Floating above title, not traditional breadcrumbs
+- [x] SEO & Accessibility improvements:
+  - [x] H1 title comes first in DOM (semantic order)
+  - [x] CategoryBackLink comes after H1, uses flexbox `order-[-1]` to display above
+  - [x] Main content comes before Sidebar in DOM
+  - [x] Visual layout maintained with CSS positioning
+- [x] Test navigation on all 14 tool pages (8 formatters + 6 minifiers)
+- [x] Verify hover states and accessibility
 
 **5.5 Category Page AI Content**
 
