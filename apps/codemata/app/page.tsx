@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { ToolCard } from "@/components/ToolCard";
 import { SITE_CONFIG } from "@/lib/site-config";
 import { ALL_FORMATTERS, ALL_MINIFIERS, ALL_TOOLS } from "@/lib/tools-data";
@@ -56,7 +57,11 @@ export default function HomePage() {
 
       {/* Formatters */}
       <section className="mb-16">
-        <h2 className="text-3xl font-bold mb-6">Formatters</h2>
+        <Link href="/formatters">
+          <h2 className="text-3xl font-bold mb-6 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer">
+            Formatters
+          </h2>
+        </Link>
         <p className="text-slate-600 dark:text-slate-400 mb-6">
           Beautify and format your code with consistent styling
         </p>
@@ -69,7 +74,11 @@ export default function HomePage() {
 
       {/* Minifiers */}
       <section>
-        <h2 className="text-3xl font-bold mb-6">Minifiers</h2>
+        <Link href="/minifiers">
+          <h2 className="text-3xl font-bold mb-6 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer">
+            Minifiers
+          </h2>
+        </Link>
         <p className="text-slate-600 dark:text-slate-400 mb-6">
           Compress your code by removing whitespace and optimizing
         </p>
