@@ -43,9 +43,9 @@ export const metadata: Metadata = {
 
 export default function HomePage() {
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12">
+    <div className="max-w-7xl mx-auto px-4 py-6 md:py-12">
       {/* Hero */}
-      <section className="text-center py-20">
+      <section className="text-center py-8 md:py-20">
         <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
           {SITE_CONFIG.tagline}
         </h1>

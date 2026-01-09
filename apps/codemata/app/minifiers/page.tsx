@@ -37,9 +37,9 @@ export const metadata: Metadata = {
 };
 export default function MinifiersPage() {
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12">
+    <div className="max-w-7xl mx-auto px-4 py-6 md:py-12">
       {/* Hero */}
-      <section className="text-center py-12 mb-12">
+      <section className="text-center py-8 md:py-12 mb-12">
         <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
           Code Minifiers
         </h1>
@@ -55,6 +55,23 @@ export default function MinifiersPage() {
           {ALL_MINIFIERS.map((tool) => (
             <ToolCard key={tool.id} {...tool} />
           ))}
+        </div>
+      </section>
+
+      {/* Educational Content */}
+      <section className="mt-16 max-w-3xl mx-auto">
+        <div className="text-base text-slate-600 dark:text-slate-400 space-y-4">
+          <p>
+            Code minifiers reduce file sizes by removing unnecessary whitespace,
+            comments, and verbose syntax. Essential for production deployments,
+            minified code loads faster and uses less bandwidth while maintaining
+            full functionality.
+          </p>
+          <p>
+            All our minifiers are free, secure, and optimized for modern
+            codebases. Perfect for preparing JavaScript, CSS, HTML, and other
+            assets for production.
+          </p>
         </div>
       </section>
     </div>
