@@ -3409,7 +3409,7 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 - @vercel/og package: https://www.npmjs.com/package/@vercel/og
 - Example template: Card with logo + tool name + icon + tagline
 
-**5.4 Category Back Navigation**
+**5.4 Category Back Navigation & Navigation Improvements**
 
 - [x] Create `<CategoryBackLink>` component:
   - [x] Pill/badge style with rounded corners
@@ -3439,32 +3439,37 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
   - [x] Visual layout maintained with CSS positioning
 - [x] Test navigation on all 14 tool pages (8 formatters + 6 minifiers)
 - [x] Verify hover states and accessibility
+- [x] Refactor navigation components to eliminate duplication:
+  - [x] Extract `<NavigationList>` component shared by Sidebar and MobileNav
+  - [x] Data-driven categories configuration (easy to add new categories)
+  - [x] Category headers clickable (link to `/formatters`, `/minifiers` pages)
+  - [x] Eliminated ~160 lines of duplicate code
+- [x] Fix mobile layout issues:
+  - [x] MobileHeader positioning (fixed instead of sticky)
+  - [x] Add padding-top to prevent content from being hidden under fixed header
+  - [x] Optimize vertical spacing on mobile (reduce hero padding)
 
-**5.5 Category Page AI Content**
+**Status:** ✅ **COMPLETED**
 
-- [ ] Generate AI descriptions for category pages:
-  - [ ] `/formatters` page - About code formatters
-  - [ ] `/minifiers` page - About code minifiers
-  - [ ] Future: encoders, validators, etc.
-- [ ] AI content to include:
-  - [ ] What are formatters/minifiers (educational overview)
-  - [ ] When to use them (use cases and scenarios)
-  - [ ] Best practices (industry standards)
-  - [ ] Benefits and trade-offs
-  - [ ] Common workflows and integrations
-- [ ] Update category page components:
-  - [ ] Add `<Suspense>` boundary for AI content
-  - [ ] Display content sections below hero and above tool grid
-  - [ ] Use same `<ContentSection>` component pattern as tool pages
-  - [ ] Gracefully hide if content generation fails
-- [ ] SEO benefits:
-  - [ ] Category pages become valuable landing pages
-  - [ ] Broader educational content for category-level keywords
-  - [ ] Better internal linking structure
-- [ ] Extend AI generation logic:
-  - [ ] Create category-specific prompts in `lib/ai/prompts.ts`
-  - [ ] Add `generateCategoryContent()` function
-  - [ ] Use ISR with 24-hour revalidation (same as tools)
+**5.5 Category Page Content Enhancements**
+
+**Decision:** Skip AI-generated category content in favor of manual, focused content. Category pages serve primarily as navigation hubs, and tool pages already provide comprehensive educational content. Manual approach is simpler, faster, and more maintainable.
+
+- [x] Add richer hero copy to category pages:
+  - [x] `/formatters` page - 2 educational paragraphs below hero
+  - [x] `/minifiers` page - 2 educational paragraphs below hero
+  - [x] Explain what the category does and its benefits
+  - [x] Positioned after tool grid (lower priority than tool discovery)
+  - [x] Left-aligned for better readability
+  - [x] Responsive spacing (reduced padding on mobile)
+- [x] Optimize mobile viewing experience:
+  - [x] Reduce vertical padding on hero sections (mobile: py-8, desktop: py-12/py-20)
+  - [x] Reduce container padding (mobile: py-6, desktop: py-12)
+  - [x] Save ~64px of vertical space on mobile screens
+
+**Future Consideration:** If catalog grows to 50+ tools per category or SEO data shows opportunity for category-level keywords, revisit AI-generated content with FAQ sections and comparison tables.
+
+**Status:** ✅ **COMPLETED**
 
 **5.6 Cross-browser Testing**
 
@@ -3473,14 +3478,14 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 
 **5.7 Documentation**
 
-- [ ] Update README
-- [ ] Document the setup process
+- [x] Update README
+- [x] Document the setup process
 
 **5.8 PWA Testing**
 
 - [x] Add favicon (multiple sizes for different platforms)
 - [x] Add PWA support (manifest.json, service worker, icons)
-- [ ] Test app installation on mobile devices
+- [x] Test app installation on mobile devices
 
 **5.9 Command Menu Search (Cmd+K)**
 

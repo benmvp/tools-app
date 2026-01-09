@@ -18,17 +18,17 @@ export function LayoutContent({ children }: { children: React.ReactNode }) {
       enableSystem
       disableTransitionOnChange
     >
+      {/* Mobile Header (fixed at top, outside flex container) */}
+      <MobileHeader onMenuClick={() => setMobileNavOpen(true)} />
+
       <div className="min-h-screen flex flex-col">
-        {/* Main Content (first in DOM for SEO/A11y) */}
-        <div className="flex-1 lg:ml-60">
+        {/* Main Content (uses pt-16 on mobile for header clearance) */}
+        <div className="flex-1 lg:ml-60 pt-16 lg:pt-0">
           <main className="min-h-[calc(100vh-4rem)]">{children}</main>
           <Footer />
         </div>
 
-        {/* Mobile Header (after main, positioned at top via fixed/sticky) */}
-        <MobileHeader onMenuClick={() => setMobileNavOpen(true)} />
-
-        {/* Desktop Sidebar (after main in DOM, positioned left via fixed positioning) */}
+        {/* Desktop Sidebar (positioned left via fixed positioning) */}
         <Sidebar />
 
         {/* Mobile Nav Overlay (at end since it's a modal) */}
