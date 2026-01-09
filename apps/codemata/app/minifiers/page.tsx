@@ -68,9 +68,9 @@ export default function MinifiersPage() {
             full functionality.
           </p>
           <p>
-            All our minifiers are free, secure (everything runs in your
-            browser), and optimized for modern codebases. Perfect for preparing
-            JavaScript, CSS, HTML, and other assets for production.
+            All our minifiers are free, secure, and optimized for modern
+            codebases. Perfect for preparing JavaScript, CSS, HTML, and other
+            assets for production.
           </p>
         </div>
       </section>

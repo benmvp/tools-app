@@ -15,13 +15,23 @@ export function NavigationList({ onItemClick }: NavigationListProps) {
 
   // Data-driven categories configuration
   const categories = [
-    { name: "Formatters", href: "/formatters", tools: ALL_FORMATTERS },
-    { name: "Minifiers", href: "/minifiers", tools: ALL_MINIFIERS },
+    {
+      name: "Formatters",
+      singular: "Formatter",
+      href: "/formatters",
+      tools: ALL_FORMATTERS,
+    },
+    {
+      name: "Minifiers",
+      singular: "Minifier",
+      href: "/minifiers",
+      tools: ALL_MINIFIERS,
+    },
   ];
 
   return (
     <div className="space-y-6">
-      {categories.map(({ name, href, tools }) => (
+      {categories.map(({ name, singular, href, tools }) => (
         <div key={name}>
           <Link
             href={href}
@@ -37,8 +47,14 @@ export function NavigationList({ onItemClick }: NavigationListProps) {
                 <Link
                   href={tool.url}
                   prefetch={shouldPrefetch()}
-                  title={`${tool.name} ${name.slice(0, -1)}`}
-                  onClick={() => !tool.comingSoon && onItemClick?.()}
+                  title={`${tool.name} ${singular}`}
+                  onClick={(e) => {
+                    if (tool.comingSoon) {
+                      e.preventDefault();
+                    } else {
+                      onItemClick?.();
+                    }
+                  }}
                   className={`flex items-center justify-between gap-2 rounded-md px-3 py-2 text-sm transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 ${
                     pathname === tool.url
                       ? "bg-slate-100 font-medium dark:bg-slate-800"

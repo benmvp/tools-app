@@ -70,9 +70,8 @@ export default function FormattersPage() {
             codebase maintains consistent styling across your team.
           </p>
           <p>
-            All our formatters are free, work instantly in your browser, and
-            support customizable indentation (2 spaces, 4 spaces, or tabs). No
-            signup or installation required.
+            All our formatters are free and support customizable indentation (2
+            spaces, 4 spaces, or tabs). No signup or installation required.
           </p>
         </div>
       </section>
