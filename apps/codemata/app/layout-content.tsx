@@ -19,23 +19,23 @@ export function LayoutContent({ children }: { children: React.ReactNode }) {
       disableTransitionOnChange
     >
       <div className="min-h-screen flex flex-col">
-        {/* Desktop Sidebar */}
-        <Sidebar />
-
-        {/* Mobile Header */}
-        <MobileHeader onMenuClick={() => setMobileNavOpen(true)} />
-
-        {/* Mobile Nav Overlay */}
-        <MobileNav
-          isOpen={mobileNavOpen}
-          onClose={() => setMobileNavOpen(false)}
-        />
-
-        {/* Main Content */}
+        {/* Main Content (first in DOM for SEO/A11y) */}
         <div className="flex-1 lg:ml-60">
           <main className="min-h-[calc(100vh-4rem)]">{children}</main>
           <Footer />
         </div>
+
+        {/* Mobile Header (after main, positioned at top via fixed/sticky) */}
+        <MobileHeader onMenuClick={() => setMobileNavOpen(true)} />
+
+        {/* Desktop Sidebar (after main in DOM, positioned left via fixed positioning) */}
+        <Sidebar />
+
+        {/* Mobile Nav Overlay (at end since it's a modal) */}
+        <MobileNav
+          isOpen={mobileNavOpen}
+          onClose={() => setMobileNavOpen(false)}
+        />
       </div>
       <Toaster />
     </ThemeProvider>

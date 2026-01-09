@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { AIContentSkeleton } from "@/components/AIContentSkeleton";
+import { CategoryBackLink } from "@/components/CategoryBackLink";
 import { JsonLd } from "@/components/JsonLd";
 import { MinifierAIContent } from "@/components/MinifierAIContent";
 import { MinifierIntro } from "@/components/MinifierIntro";
@@ -141,9 +142,12 @@ export default async function MinifierPage({
       {/* Structured Data */}
       <JsonLd data={structuredData} />
 
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Page Header */}
+      <div className="max-w-7xl mx-auto px-4 py-8 flex flex-col">
+        {/* Page Header (first in DOM for SEO/A11y) */}
         <h1 className="text-4xl font-bold mb-2">{minifier.name}</h1>
+
+        {/* Category Navigation (after H1 in DOM, but displayed above via CSS order) */}
+        <CategoryBackLink href="/minifiers" label="Minifiers" />
 
         {/* Intro paragraph with Suspense (replaces with AI intro when ready) */}
         <Suspense
