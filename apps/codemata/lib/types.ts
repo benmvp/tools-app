@@ -50,6 +50,9 @@ export interface Tool {
   example: string;
   language: SupportedLanguage;
 
+  // Search keywords for command menu
+  keywords?: string[];
+
   // SEO Metadata (static fallback when AI fails)
   metadata: {
     title: string;

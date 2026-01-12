@@ -4,7 +4,7 @@ export function Footer() {
 
   return (
     <footer className="border-t py-6 text-center text-sm text-slate-600 dark:text-slate-400">
-      <p>
+      <p className="mb-2">
         © {yearRange}
         {", "}
         <a
@@ -25,6 +25,13 @@ export function Footer() {
           2 Cor 5:17
         </a>
         .
+      </p>
+      <p className="text-xs mb-2">
+        Press{" "}
+        <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium">
+          <span className="text-xs">⌘</span>K
+        </kbd>{" "}
+        to search
       </p>
       <p className="text-xs">
         Built using{" "}

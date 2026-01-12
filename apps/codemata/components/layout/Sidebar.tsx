@@ -1,6 +1,6 @@
 "use client";
 
-import { Moon, Sun } from "lucide-react";
+import { Moon, Search, Sun } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
@@ -8,7 +8,11 @@ import { Button } from "@/components/ui/button";
 import { SITE_CONFIG } from "@/lib/site-config";
 import { NavigationList } from "./NavigationList";
 
-export function Sidebar() {
+interface SidebarProps {
+  onSearchClick: () => void;
+}
+
+export function Sidebar({ onSearchClick }: SidebarProps) {
   const { theme, setTheme } = useTheme();
 
   return (
@@ -36,6 +40,21 @@ export function Sidebar() {
         <nav className="flex-1 overflow-y-auto p-4">
           <NavigationList />
         </nav>
+
+        {/* Search Box */}
+        <div className="border-t p-4">
+          <button
+            type="button"
+            onClick={onSearchClick}
+            className="flex w-full items-center gap-2 rounded-md border bg-muted/50 px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          >
+            <Search className="h-4 w-4" />
+            <span className="flex-1 text-left">Search tools...</span>
+            <kbd className="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-background px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
+              <span className="text-xs">⌘</span>K
+            </kbd>
+          </button>
+        </div>
 
         {/* Theme Toggle */}
         <div className="border-t p-4">
