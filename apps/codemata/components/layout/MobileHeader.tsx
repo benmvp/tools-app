@@ -1,6 +1,6 @@
 "use client";
 
-import { Menu, Moon, Sun } from "lucide-react";
+import { Menu, Moon, Search, Sun } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
@@ -9,9 +9,13 @@ import { SITE_CONFIG } from "@/lib/site-config";
 
 interface MobileHeaderProps {
   onMenuClick: () => void;
+  onSearchClick: () => void;
 }
 
-export function MobileHeader({ onMenuClick }: MobileHeaderProps) {
+export function MobileHeader({
+  onMenuClick,
+  onSearchClick,
+}: MobileHeaderProps) {
   const { theme, setTheme } = useTheme();
 
   return (
@@ -38,15 +42,23 @@ export function MobileHeader({ onMenuClick }: MobileHeaderProps) {
           </Link>
         </div>
 
-        {/* Theme Toggle */}
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-        >
-          <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-          <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-        </Button>
+        {/* Right side: Search + Theme Toggle */}
+        <div className="flex items-center gap-2">
+          {/* Search Button */}
+          <Button variant="ghost" size="icon" onClick={onSearchClick}>
+            <Search className="h-5 w-5" />
+          </Button>
+
+          {/* Theme Toggle */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+          >
+            <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+            <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+          </Button>
+        </div>
       </div>
     </header>
   );

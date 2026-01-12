@@ -8,6 +8,7 @@ import { MinifierAIContent } from "@/components/MinifierAIContent";
 import { MinifierIntro } from "@/components/MinifierIntro";
 import { ScrollToTopFab } from "@/components/ScrollToTopFab";
 import { TransformerMinifier } from "@/components/TransformerMinifier";
+import { VisitTracker } from "@/components/VisitTracker";
 import { getMinifierContent } from "@/lib/ai/helpers";
 import { MINIFIER_TOOLS } from "@/lib/tools-data";
 import type { MinifierAction } from "@/lib/types";
@@ -139,6 +140,9 @@ export default async function MinifierPage({
 
   return (
     <>
+      {/* Track page visit for recent tools */}
+      <VisitTracker url={`/minifiers/${slug}`} />
+
       {/* Structured Data */}
       <JsonLd data={structuredData} />
 

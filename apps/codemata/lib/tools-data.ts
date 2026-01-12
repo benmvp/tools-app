@@ -44,6 +44,16 @@ export const FORMATTER_TOOLS: Record<string, Tool> = {
     comingSoon: false,
     action: formatTypescript,
     language: "typescript",
+    keywords: [
+      "js",
+      "javascript",
+      "ts",
+      "typescript",
+      "jsx",
+      "tsx",
+      "ecmascript",
+      "code",
+    ],
     example: `function messy(x,y){
 if(x>y){return x}
 else{return y}}
@@ -67,6 +77,7 @@ const arr=[1,2,3,4,5].map(n=>n*2).filter(n=>n>5)
     comingSoon: false,
     action: formatJson,
     language: "json",
+    keywords: ["json", "data", "api", "rest", "object"],
     example: `{"name":"John Doe","age":30,"email":"john@example.com","address":{"street":"123 Main St","city":"New York","zipCode":"10001"},"hobbies":["reading","coding","hiking"],"isActive":true}`,
     metadata: {
       title: `JSON Formatter | ${SITE_CONFIG.name}`,
@@ -83,6 +94,7 @@ const arr=[1,2,3,4,5].map(n=>n*2).filter(n=>n>5)
     comingSoon: false,
     action: formatCss,
     language: "css",
+    keywords: ["css", "scss", "sass", "styles", "stylesheet", "styling"],
     example: `.button{background-color:#007bff;color:#fff;padding:10px 20px;border:none;border-radius:4px;cursor:pointer}
 .button:hover{background-color:#0056b3}
 .container{max-width:1200px;margin:0 auto;padding:20px}
@@ -102,6 +114,7 @@ const arr=[1,2,3,4,5].map(n=>n*2).filter(n=>n>5)
     comingSoon: false,
     action: formatHtml,
     language: "html",
+    keywords: ["html", "markup", "web", "htm", "tags"],
     example: `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Sample Page</title></head><body><header><h1>Welcome</h1><nav><ul><li><a href="#home">Home</a></li><li><a href="#about">About</a></li></ul></nav></header><main><p>This is a sample HTML document.</p></main></body></html>`,
     metadata: {
       title: `HTML Formatter | ${SITE_CONFIG.name}`,
@@ -118,6 +131,7 @@ const arr=[1,2,3,4,5].map(n=>n*2).filter(n=>n>5)
     comingSoon: false,
     action: formatGraphql,
     language: "graphql",
+    keywords: ["graphql", "gql", "query", "api", "graph", "schema"],
     example: `query GetUser($id: ID!) { user(id: $id) { id name email posts { id title content createdAt } } }
 
 mutation CreatePost($input: PostInput!) { createPost(input: $input) { id title content author { name } } }`,
@@ -136,6 +150,7 @@ mutation CreatePost($input: PostInput!) { createPost(input: $input) { id title c
     comingSoon: false,
     action: formatMarkdown,
     language: "markdown",
+    keywords: ["markdown", "md", "mdx", "docs", "readme", "documentation"],
     example: `# Sample Document
 
 This is a **markdown** document with _various_ formatting.
@@ -168,6 +183,7 @@ const greeting = "Hello World";
     comingSoon: false,
     action: formatXml,
     language: "xml",
+    keywords: ["xml", "markup", "soap", "rss", "feed"],
     example: `<?xml version="1.0" encoding="UTF-8"?><catalog><book id="bk101"><author>Gambardella, Matthew</author><title>XML Developer's Guide</title><genre>Computer</genre><price>44.95</price><publish_date>2000-10-01</publish_date></book><book id="bk102"><author>Ralls, Kim</author><title>Midnight Rain</title><genre>Fantasy</genre><price>5.95</price></book></catalog>`,
     metadata: {
       title: `XML Formatter | ${SITE_CONFIG.name}`,
@@ -184,7 +200,8 @@ const greeting = "Hello World";
     comingSoon: false,
     action: formatYaml,
     language: "yaml",
-    example: `name:    John Doe
+    keywords: ["yaml", "yml", "config", "configuration", "settings"],
+    example: `name: John Doe
 age:  30
 email:  john@example.com
 address:  {  street:  123 Main St,  city:  New York,  zipCode:  '10001'  }
@@ -212,6 +229,15 @@ export const MINIFIER_TOOLS: Record<string, Tool> = {
     comingSoon: false,
     action: minifyTypescript,
     language: "typescript",
+    keywords: [
+      "js",
+      "javascript",
+      "ts",
+      "typescript",
+      "compress",
+      "uglify",
+      "minify",
+    ],
     example: `// Calculate factorial recursively
 function factorial(n) {
   if (n <= 1) {
@@ -244,6 +270,7 @@ const sum = doubled.reduce((acc, val) => acc + val, 0);
     comingSoon: false,
     action: minifyJson,
     language: "json",
+    keywords: ["json", "compress", "minify", "compact"],
     example: `{
   "name": "John Doe",
   "age": 30,
@@ -275,6 +302,7 @@ const sum = doubled.reduce((acc, val) => acc + val, 0);
     comingSoon: false,
     action: minifyCss,
     language: "css",
+    keywords: ["css", "compress", "minify", "optimize"],
     example: `/* Button styles */
 .button {
   background-color: #007bff;
@@ -317,6 +345,7 @@ const sum = doubled.reduce((acc, val) => acc + val, 0);
     comingSoon: false,
     action: minifyHtml,
     language: "html",
+    keywords: ["html", "compress", "minify", "optimize"],
     example: `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -365,6 +394,7 @@ const sum = doubled.reduce((acc, val) => acc + val, 0);
     comingSoon: false,
     action: minifySvg,
     language: "xml",
+    keywords: ["svg", "image", "vector", "optimize", "compress"],
     example: `<?xml version="1.0" encoding="UTF-8"?>
 <!-- SVG Icon Example -->
 <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -386,6 +416,7 @@ const sum = doubled.reduce((acc, val) => acc + val, 0);
     comingSoon: false,
     action: minifyXml,
     language: "xml",
+    keywords: ["xml", "compress", "minify", "optimize"],
     example: `<?xml version="1.0" encoding="UTF-8"?>
 <!-- Book catalog -->
 <catalog>

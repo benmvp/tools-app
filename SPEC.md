@@ -3534,28 +3534,39 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 
 **Tasks:**
 
-- [ ] Install `cmdk` package from npm
-- [ ] Generate search index from tool metadata
-- [ ] Create `<CommandMenu>` component using cmdk:
-  - [ ] Cmd+K/Ctrl+K keyboard shortcut listener
-  - [ ] Fuzzy search across tool names and keywords
-  - [ ] Category-based result grouping
-  - [ ] Keyboard navigation support
-  - [ ] Recent tools in empty state (localStorage)
-- [ ] Add search button to header:
-  - [ ] Desktop: Shows "Search" text with ⌘K hint
-  - [ ] Mobile: Icon button only
-  - [ ] Opens command menu on click
-- [ ] Add search hints in empty states
+- [x] Install `cmdk` package from npm
+- [x] Install shadcn/ui command component
+- [x] Add `keywords` field to Tool type
+- [x] Add keywords to all 14 tools (8 formatters + 6 minifiers)
+- [x] Generate search index from tool metadata (`lib/search-index.ts`)
+- [x] Create recent tools storage utility (`lib/recent-tools.ts`)
+- [x] Create `<CommandMenu>` component using cmdk:
+  - [x] Cmd+K/Ctrl+K keyboard shortcut listener
+  - [x] Fuzzy search across tool names and keywords
+  - [x] Category-based result grouping (Formatters, Minifiers)
+  - [x] Keyboard navigation support (arrows, Enter, Esc)
+  - [x] Recent tools in empty state (localStorage)
+  - [x] Popular tools fallback when no recent history
+- [x] Add search triggers:
+  - [x] Desktop: Fake search box in sidebar with ⌘K hint
+  - [x] Mobile: Icon button in header
+  - [x] Both open command menu on click
+- [x] Add `<VisitTracker>` component to track tool visits
+- [x] Add visit tracking to all formatter pages
+- [x] Add visit tracking to all minifier pages
+- [x] Add keyboard shortcut hint to Footer ("Press ⌘K to search")
+- [x] Customize CommandDialog for mobile (90-95% width)
+- [x] Test across browsers and devices
+- [x] Verify accessibility (keyboard-only navigation works)
 - [ ] Track search analytics (optional, Phase 7)
-- [ ] Test across browsers and devices
-- [ ] Verify accessibility (screen readers, keyboard-only navigation)
 
 **Resources:**
 - cmdk library: https://cmdk.paco.me/
 - shadcn/ui command component: https://ui.shadcn.com/docs/components/command
 
-**Deliverable:** Codemata publicly launched and ready for users 🚀
+**Status:** ✅ **COMPLETED**
+
+**Deliverable:** Codemata with fast, keyboard-first tool discovery via Cmd+K search 🚀
 
 ---
 

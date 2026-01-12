@@ -1,7 +1,8 @@
 "use client";
 
 import { ThemeProvider } from "next-themes";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { CommandMenu } from "@/components/CommandMenu";
 import { Footer } from "@/components/layout/Footer";
 import { MobileHeader } from "@/components/layout/MobileHeader";
 import { MobileNav } from "@/components/layout/MobileNav";
@@ -10,6 +11,20 @@ import { Toaster } from "@/components/ui/sonner";
 
 export function LayoutContent({ children }: { children: React.ReactNode }) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [commandMenuOpen, setCommandMenuOpen] = useState(false);
+
+  // Keyboard shortcut listener for Cmd+K / Ctrl+K
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setCommandMenuOpen(true);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   return (
     <ThemeProvider
@@ -19,7 +34,10 @@ export function LayoutContent({ children }: { children: React.ReactNode }) {
       disableTransitionOnChange
     >
       {/* Mobile Header (fixed at top, outside flex container) */}
-      <MobileHeader onMenuClick={() => setMobileNavOpen(true)} />
+      <MobileHeader
+        onMenuClick={() => setMobileNavOpen(true)}
+        onSearchClick={() => setCommandMenuOpen(true)}
+      />
 
       <div className="min-h-screen flex flex-col">
         {/* Main Content (uses pt-16 on mobile for header clearance) */}
@@ -29,13 +47,16 @@ export function LayoutContent({ children }: { children: React.ReactNode }) {
         </div>
 
         {/* Desktop Sidebar (positioned left via fixed positioning) */}
-        <Sidebar />
+        <Sidebar onSearchClick={() => setCommandMenuOpen(true)} />
 
         {/* Mobile Nav Overlay (at end since it's a modal) */}
         <MobileNav
           isOpen={mobileNavOpen}
           onClose={() => setMobileNavOpen(false)}
         />
+
+        {/* Command Menu */}
+        <CommandMenu open={commandMenuOpen} onOpenChange={setCommandMenuOpen} />
       </div>
       <Toaster />
     </ThemeProvider>

@@ -8,6 +8,7 @@ import { FormatterIntro } from "@/components/FormatterIntro";
 import { JsonLd } from "@/components/JsonLd";
 import { ScrollToTopFab } from "@/components/ScrollToTopFab";
 import { Transformer } from "@/components/Transformer";
+import { VisitTracker } from "@/components/VisitTracker";
 import { getFormatterContent } from "@/lib/ai/helpers";
 import { FORMATTER_TOOLS } from "@/lib/tools-data";
 import type { FormatterAction } from "@/lib/types";
@@ -141,6 +142,9 @@ export default async function FormatterPage({
 
   return (
     <>
+      {/* Track page visit for recent tools */}
+      <VisitTracker url={`/formatters/${slug}`} />
+
       {/* Structured Data */}
       <JsonLd data={structuredData} />
 
