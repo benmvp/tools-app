@@ -13,29 +13,20 @@ import { EditorView } from "@codemirror/view";
 import CodeMirror from "@uiw/react-codemirror";
 import { useTheme } from "next-themes";
 import { useEffect, useMemo, useState } from "react";
+import type { FormatterTool, MinifierTool } from "@/lib/types";
 
-type SupportedLanguage =
-  | "typescript"
-  | "javascript"
-  | "json"
-  | "yaml"
-  | "css"
-  | "html"
-  | "graphql"
-  | "markdown"
-  | "xml"
-  | "sql";
+type CodeEditorLanguage = FormatterTool["language"] | MinifierTool["language"];
 
 interface CodeEditorProps {
   value: string;
   onChange?: (value: string) => void;
   readOnly?: boolean;
   label: string;
-  language?: SupportedLanguage;
+  language?: CodeEditorLanguage;
   lineWrapping?: boolean;
 }
 
-function getLanguageExtension(language: SupportedLanguage): Extension {
+function getLanguageExtension(language: CodeEditorLanguage): Extension {
   switch (language) {
     case "typescript":
     case "javascript":

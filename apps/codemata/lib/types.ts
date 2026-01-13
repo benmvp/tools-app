@@ -33,21 +33,6 @@ export interface SqlFormatConfig extends FormatConfig {
 }
 
 /**
- * Supported languages for code editors
- */
-export type SupportedLanguage =
-  | "typescript"
-  | "javascript"
-  | "json"
-  | "yaml"
-  | "css"
-  | "html"
-  | "graphql"
-  | "markdown"
-  | "xml"
-  | "sql";
-
-/**
  * Server action function signature for formatters
  */
 export type FormatterAction = (
@@ -69,7 +54,7 @@ export type SqlFormatterAction = (
 export type MinifierAction = (input: string) => Promise<string>;
 
 /**
- * Unified Tool interface that combines nav/card data with page config
+ * Base Tool interface for all tools (formatters, minifiers, converters, etc.)
  */
 export interface Tool {
   // Navigation & Card Display
@@ -80,11 +65,6 @@ export interface Tool {
   icon: LucideIcon;
   comingSoon?: boolean;
 
-  // Page Configuration
-  action: FormatterAction | SqlFormatterAction | MinifierAction;
-  example: string;
-  language: SupportedLanguage;
-
   // Search keywords for command menu
   keywords?: string[];
 
@@ -93,4 +73,32 @@ export interface Tool {
     title: string;
     description: string; // Long meta description
   };
+}
+
+/**
+ * Formatter Tool interface with language support
+ */
+export interface FormatterTool extends Tool {
+  action: FormatterAction | SqlFormatterAction;
+  example: string;
+  language:
+    | "typescript"
+    | "javascript"
+    | "json"
+    | "yaml"
+    | "css"
+    | "html"
+    | "graphql"
+    | "markdown"
+    | "xml"
+    | "sql";
+}
+
+/**
+ * Minifier Tool interface with language support (excludes SQL and GraphQL)
+ */
+export interface MinifierTool extends Tool {
+  action: MinifierAction;
+  example: string;
+  language: "typescript" | "javascript" | "json" | "css" | "html" | "xml";
 }

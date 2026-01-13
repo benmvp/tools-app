@@ -29,13 +29,13 @@ import {
   minifyXml,
 } from "../app/minifiers/actions";
 import { SITE_CONFIG } from "./site-config";
-import type { Tool } from "./types";
+import type { FormatterTool, MinifierTool } from "./types";
 
 /**
  * Formatter Tools - Record-based structure for O(1) lookups
  * Key is the URL slug (e.g., "typescript-formatter")
  */
-export const FORMATTER_TOOLS: Record<string, Tool> = {
+export const FORMATTER_TOOLS: Record<string, FormatterTool> = {
   "typescript-formatter": {
     id: "typescript",
     name: "TypeScript & JavaScript Formatter",
@@ -246,7 +246,7 @@ isActive:  true`,
  * Minifier Tools - Record-based structure for O(1) lookups
  * Key is the URL slug (e.g., "typescript-minifier")
  */
-export const MINIFIER_TOOLS: Record<string, Tool> = {
+export const MINIFIER_TOOLS: Record<string, MinifierTool> = {
   "typescript-minifier": {
     id: "typescript-min",
     name: "TypeScript & JavaScript Minifier",
@@ -476,8 +476,8 @@ const sum = doubled.reduce((acc, val) => acc + val, 0);
  * Helper arrays for navigation components
  * Use Object.values() to get arrays from Records
  */
-export const ALL_FORMATTERS = Object.values(FORMATTER_TOOLS);
-export const ALL_MINIFIERS = Object.values(MINIFIER_TOOLS);
+export const ALL_FORMATTERS: FormatterTool[] = Object.values(FORMATTER_TOOLS);
+export const ALL_MINIFIERS: MinifierTool[] = Object.values(MINIFIER_TOOLS);
 
 /**
  * Centralized tool registry for dynamic counting and category lookups.
