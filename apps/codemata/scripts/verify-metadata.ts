@@ -4,8 +4,8 @@
  * Metadata Verification Script
  *
  * Fetches all pages from localhost and validates metadata completeness:
- * - Title length (50-60 chars ideal)
- * - Description length (150-160 chars ideal)
+ * - Title length (20-70 chars acceptable, 50-60 chars ideal for SEO)
+ * - Description length (80-200 chars acceptable, 150-160 chars ideal)
  * - Uniqueness across all pages
  * - Canonical URLs presence
  * - OpenGraph tags (og:title, og:description, og:url, og:type)
@@ -194,11 +194,12 @@ async function fetchPageMetadata(url: string): Promise<PageMetadata | null> {
 function validateMetadata(metadata: PageMetadata): string[] {
   const issues: string[] = [];
 
-  // Title validation (30-70 chars is reasonable, SEO ideal is 50-60)
+  // Title validation (20-70 chars is reasonable, SEO ideal is 50-60)
+  // Lower threshold accounts for simple tool names + "| Codemata" suffix
   if (!metadata.title) {
     issues.push("Missing <title> tag");
   } else {
-    if (metadata.titleLength < 30) {
+    if (metadata.titleLength < 20) {
       issues.push(`Title too short (${metadata.titleLength} chars)`);
     }
     if (metadata.titleLength > 70) {

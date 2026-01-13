@@ -28,7 +28,6 @@ import {
   minifyTypescript,
   minifyXml,
 } from "../app/minifiers/actions";
-import { SITE_CONFIG } from "./site-config";
 import type { FormatterTool, MinifierTool } from "./types";
 
 /**
@@ -64,7 +63,7 @@ const data={name:"John",age:30,city:"NYC"}
 const arr=[1,2,3,4,5].map(n=>n*2).filter(n=>n>5)
 `,
     metadata: {
-      title: `TypeScript Formatter | ${SITE_CONFIG.name}`,
+      title: "TypeScript Formatter",
       description:
         "Format and beautify TypeScript code with proper indentation. Free online TypeScript formatter for cleaner, more readable code.",
     },
@@ -81,7 +80,7 @@ const arr=[1,2,3,4,5].map(n=>n*2).filter(n=>n>5)
     keywords: ["json", "data", "api", "rest", "object"],
     example: `{"name":"John Doe","age":30,"email":"john@example.com","address":{"street":"123 Main St","city":"New York","zipCode":"10001"},"hobbies":["reading","coding","hiking"],"isActive":true}`,
     metadata: {
-      title: `JSON Formatter | ${SITE_CONFIG.name}`,
+      title: "JSON Formatter",
       description:
         "Format and beautify JSON data with proper indentation. Free online JSON formatter for better readability.",
     },
@@ -101,7 +100,7 @@ const arr=[1,2,3,4,5].map(n=>n*2).filter(n=>n>5)
 .container{max-width:1200px;margin:0 auto;padding:20px}
 @media (max-width: 768px){.container{padding:10px}}`,
     metadata: {
-      title: `CSS Formatter | ${SITE_CONFIG.name}`,
+      title: "CSS Formatter",
       description:
         "Format and beautify CSS code with proper indentation. Free online CSS formatter for cleaner stylesheets.",
     },
@@ -118,7 +117,7 @@ const arr=[1,2,3,4,5].map(n=>n*2).filter(n=>n>5)
     keywords: ["html", "markup", "web", "htm", "tags"],
     example: `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Sample Page</title></head><body><header><h1>Welcome</h1><nav><ul><li><a href="#home">Home</a></li><li><a href="#about">About</a></li></ul></nav></header><main><p>This is a sample HTML document.</p></main></body></html>`,
     metadata: {
-      title: `HTML Formatter | ${SITE_CONFIG.name}`,
+      title: "HTML Formatter",
       description:
         "Format and beautify HTML code with proper indentation. Free online HTML formatter for cleaner markup.",
     },
@@ -137,7 +136,7 @@ const arr=[1,2,3,4,5].map(n=>n*2).filter(n=>n>5)
 
 mutation CreatePost($input: PostInput!) { createPost(input: $input) { id title content author { name } } }`,
     metadata: {
-      title: `GraphQL Formatter | ${SITE_CONFIG.name}`,
+      title: "GraphQL Formatter",
       description:
         "Format and beautify GraphQL schemas and queries. Free online GraphQL formatter for better readability.",
     },
@@ -170,7 +169,7 @@ const greeting = "Hello World";
 
 > A blockquote for emphasis`,
     metadata: {
-      title: `Markdown Formatter | ${SITE_CONFIG.name}`,
+      title: "Markdown Formatter",
       description:
         "Format and beautify Markdown documents. Free online Markdown formatter for consistent formatting.",
     },
@@ -187,7 +186,7 @@ const greeting = "Hello World";
     keywords: ["xml", "markup", "soap", "rss", "feed"],
     example: `<?xml version="1.0" encoding="UTF-8"?><catalog><book id="bk101"><author>Gambardella, Matthew</author><title>XML Developer's Guide</title><genre>Computer</genre><price>44.95</price><publish_date>2000-10-01</publish_date></book><book id="bk102"><author>Ralls, Kim</author><title>Midnight Rain</title><genre>Fantasy</genre><price>5.95</price></book></catalog>`,
     metadata: {
-      title: `XML Formatter | ${SITE_CONFIG.name}`,
+      title: "XML Formatter",
       description:
         "Format and beautify XML documents with proper indentation. Free online XML formatter for cleaner markup.",
     },
@@ -209,7 +208,7 @@ address:  {  street:  123 Main St,  city:  New York,  zipCode:  '10001'  }
 hobbies:  [  reading,  coding,  hiking  ]
 isActive:  true`,
     metadata: {
-      title: `YAML Formatter | ${SITE_CONFIG.name}`,
+      title: "YAML Formatter",
       description:
         "Format and beautify YAML configuration files. Free online YAML formatter for consistent formatting.",
     },
@@ -235,7 +234,7 @@ isActive:  true`,
     ],
     example: `SELECT u.id,u.name,u.email,o.order_id,o.total,o.created_at FROM users u INNER JOIN orders o ON u.id=o.user_id WHERE o.total>100 AND u.status='active' ORDER BY o.created_at DESC LIMIT 10`,
     metadata: {
-      title: `SQL Formatter | ${SITE_CONFIG.name}`,
+      title: "SQL Formatter",
       description:
         "Format and beautify SQL queries with customizable indentation and keyword case. Free online SQL formatter for all major dialects.",
     },
@@ -283,7 +282,7 @@ const doubled = numbers.map(num => num * 2);
 const sum = doubled.reduce((acc, val) => acc + val, 0);
 `,
     metadata: {
-      title: `TypeScript & JavaScript Minifier | ${SITE_CONFIG.name}`,
+      title: "TypeScript & JavaScript Minifier",
       description:
         "Minify and compress JavaScript and TypeScript code. Free online minifier that removes whitespace, shortens variable names, and optimizes your code for production.",
     },
@@ -315,7 +314,7 @@ const sum = doubled.reduce((acc, val) => acc + val, 0);
   "isActive": true
 }`,
     metadata: {
-      title: `JSON Minifier | ${SITE_CONFIG.name}`,
+      title: "JSON Minifier",
       description:
         "Minify and compress JSON data by removing whitespace. Free online JSON minifier for reducing file size.",
     },
@@ -358,7 +357,7 @@ const sum = doubled.reduce((acc, val) => acc + val, 0);
   }
 }`,
     metadata: {
-      title: `CSS Minifier | ${SITE_CONFIG.name}`,
+      title: "CSS Minifier",
       description:
         "Minify and optimize CSS stylesheets. Free online CSS minifier that removes whitespace, comments, and optimizes your styles for production.",
     },
@@ -407,7 +406,7 @@ const sum = doubled.reduce((acc, val) => acc + val, 0);
 </body>
 </html>`,
     metadata: {
-      title: `HTML Minifier | ${SITE_CONFIG.name}`,
+      title: "HTML Minifier",
       description:
         "Minify and compress HTML code. Free online HTML minifier that removes whitespace, comments, and optimizes your HTML for production.",
     },
@@ -429,7 +428,7 @@ const sum = doubled.reduce((acc, val) => acc + val, 0);
   <path d="M 30 50 L 45 65 L 70 35" stroke="white" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>`,
     metadata: {
-      title: `SVG Minifier | ${SITE_CONFIG.name}`,
+      title: "SVG Minifier",
       description:
         "Optimize and compress SVG images. Free online SVG minifier that removes unnecessary data, comments, and optimizes your SVG files.",
     },
@@ -465,7 +464,7 @@ const sum = doubled.reduce((acc, val) => acc + val, 0);
   </book>
 </catalog>`,
     metadata: {
-      title: `XML Minifier | ${SITE_CONFIG.name}`,
+      title: "XML Minifier",
       description:
         "Minify and compress XML documents. Free online XML minifier that removes whitespace, comments, and optimizes your XML for production.",
     },
