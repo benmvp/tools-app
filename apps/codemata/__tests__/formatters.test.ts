@@ -255,7 +255,7 @@ describe("SQL Formatter", () => {
     expect(result).toContain("FROM");
   });
 
-  it("handles complex multi-table joins", async () => {
+  it("handles complex multi-table joins with proper formatting", async () => {
     const input =
       "select u.name,o.total,p.name from users u join orders o on u.id=o.user_id join products p on o.product_id=p.id where o.total>100";
     const result = await formatSql(input, {
@@ -263,8 +263,16 @@ describe("SQL Formatter", () => {
       dialect: "postgresql",
       keywordCase: "uppercase",
     });
+    // Verify uppercase keywords
     expect(result).toContain("SELECT");
+    expect(result).toContain("FROM");
     expect(result).toContain("JOIN");
-    expect(result.match(/JOIN/g)?.length).toBe(2); // Two joins
+    expect(result).toContain("WHERE");
+    // Verify multi-line formatting (contains newlines)
+    expect(result).toContain("\n");
+    // Verify proper indentation (has 2-space indentation)
+    expect(result).toMatch(/\n {2}/);
+    // Verify both joins are present
+    expect(result.match(/JOIN/g)?.length).toBe(2);
   });
 });

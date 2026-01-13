@@ -50,7 +50,6 @@ const SPECIAL_CONFIG_OPTIONS: Record<string, ConfigOption[]> = {
         { label: "Spark", value: "spark" },
         { label: "Standard SQL", value: "sql" },
         { label: "Trino", value: "trino" },
-        { label: "T-SQL", value: "transactsql" },
       ],
     },
     {

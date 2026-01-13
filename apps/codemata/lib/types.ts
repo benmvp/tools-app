@@ -27,6 +27,14 @@ export interface FormatConfig extends Record<string, string> {
   indentation: Indentation;
 }
 
+/**
+ * Configuration for SQL formatter using sql-formatter library.
+ * Maps to sql-formatter's FormatOptions:
+ * - dialect → language (SQL dialect/vendor)
+ * - keywordCase → keywordCase ("upper" or "lower")
+ * - indentation → tabWidth + useTabs (2/4 spaces or tabs)
+ * Other sql-formatter options (linesBetweenQueries, etc.) use library defaults.
+ */
 export interface SqlFormatConfig extends FormatConfig {
   dialect: SqlDialect;
   keywordCase: KeywordCase;
