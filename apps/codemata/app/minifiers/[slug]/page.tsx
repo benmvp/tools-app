@@ -173,7 +173,12 @@ export default async function MinifierPage({
           action={minifier.action as MinifierAction}
           actionLabel="Minify"
           defaultInput={minifier.example}
-          language={minifier.language}
+          language={
+            minifier.language as Exclude<
+              typeof minifier.language,
+              "sql" | "graphql"
+            >
+          }
         />
 
         {/* AI-Generated Content Sections with Suspense */}

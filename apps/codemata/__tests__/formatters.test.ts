@@ -5,6 +5,7 @@ import {
   formatHtml,
   formatJson,
   formatMarkdown,
+  formatSql,
   formatTypescript,
   formatXml,
   formatYaml,
@@ -202,5 +203,68 @@ describe("XML Formatter", () => {
     await expect(
       formatXml(input, { indentation: "two-spaces" }),
     ).rejects.toThrow();
+  });
+});
+
+describe("SQL Formatter", () => {
+  it("formats valid SQL with PostgreSQL dialect and uppercase keywords", async () => {
+    const input =
+      "select u.id,u.name,o.total from users u join orders o on u.id=o.user_id where o.total>100 order by o.created_at desc";
+    const result = await formatSql(input, {
+      indentation: "two-spaces",
+      dialect: "postgresql",
+      keywordCase: "uppercase",
+    });
+    expect(result).toContain("SELECT");
+    expect(result).toContain("FROM");
+    expect(result).toContain("JOIN");
+    expect(result).toContain("WHERE");
+  });
+
+  it("formats with lowercase keywords", async () => {
+    const input = "SELECT * FROM users WHERE age > 18";
+    const result = await formatSql(input, {
+      indentation: "two-spaces",
+      dialect: "postgresql",
+      keywordCase: "lowercase",
+    });
+    expect(result).toContain("select");
+    expect(result).toContain("from");
+    expect(result).toContain("where");
+  });
+
+  it("formats with MySQL dialect", async () => {
+    const input = "select * from users where status='active'";
+    const result = await formatSql(input, {
+      indentation: "four-spaces",
+      dialect: "mysql",
+      keywordCase: "uppercase",
+    });
+    expect(result).toContain("SELECT");
+    expect(result).toContain("FROM");
+  });
+
+  it("formats with tabs", async () => {
+    const input = "select * from users where age>18";
+    const result = await formatSql(input, {
+      indentation: "tabs",
+      dialect: "sqlite",
+      keywordCase: "uppercase",
+    });
+    expect(result).toContain("SELECT");
+    expect(result).toContain("FROM");
+  });
+
+  it("handles complex multi-table joins", async () => {
+    const input =
+      "select u.name,o.total,p.name from users u join orders o on u.id=o.user_id join products p on o.product_id=p.id where o.total>100";
+    const result = await formatSql(input, {
+      indentation: "two-spaces",
+      dialect: "postgresql",
+      keywordCase: "uppercase",
+    });
+    expect(result).toContain("SELECT");
+    expect(result).toContain("JOIN");
+    expect(result.match(/JOIN/g)?.length).toBe(2); // Two joins
   });
 });

@@ -17,6 +17,75 @@ import { getAppUrl, getOgImageUrl, isProductionBuild } from "@/lib/utils";
 // ISR: Revalidate every 24 hours
 export const revalidate = 86400;
 
+// Configuration option type
+interface ConfigOption {
+  id: string;
+  label: string;
+  defaultValue: string;
+  options: { label: string; value: string }[];
+}
+
+// Special configuration options for specific formatters
+const SPECIAL_CONFIG_OPTIONS: Record<string, ConfigOption[]> = {
+  "sql-formatter": [
+    {
+      id: "dialect",
+      label: "SQL Dialect",
+      defaultValue: "postgresql",
+      options: [
+        { label: "PostgreSQL", value: "postgresql" },
+        { label: "MySQL", value: "mysql" },
+        { label: "MariaDB", value: "mariadb" },
+        { label: "SQLite", value: "sqlite" },
+        { label: "SQL Server", value: "transactsql" },
+        { label: "BigQuery", value: "bigquery" },
+        { label: "DB2", value: "db2" },
+        { label: "DB2i", value: "db2i" },
+        { label: "Hive", value: "hive" },
+        { label: "N1QL", value: "n1ql" },
+        { label: "PL/SQL", value: "plsql" },
+        { label: "Redshift", value: "redshift" },
+        { label: "SingleStoreDB", value: "singlestoredb" },
+        { label: "Snowflake", value: "snowflake" },
+        { label: "Spark", value: "spark" },
+        { label: "Standard SQL", value: "sql" },
+        { label: "Trino", value: "trino" },
+        { label: "T-SQL", value: "tsql" },
+      ],
+    },
+    {
+      id: "keywordCase",
+      label: "Keyword Case",
+      defaultValue: "uppercase",
+      options: [
+        { label: "UPPERCASE", value: "uppercase" },
+        { label: "lowercase", value: "lowercase" },
+      ],
+    },
+  ],
+};
+
+// Standard indentation config (always added last)
+const INDENTATION_CONFIG: ConfigOption = {
+  id: "indentation",
+  label: "Indentation",
+  defaultValue: "two-spaces",
+  options: [
+    { label: "2 Spaces", value: "two-spaces" },
+    { label: "4 Spaces", value: "four-spaces" },
+    { label: "Tabs", value: "tabs" },
+  ],
+};
+
+/**
+ * Get configuration options for a formatter
+ * Special options (if any) come first, indentation always comes last
+ */
+function getConfigOptions(slug: string): ConfigOption[] {
+  const specialOptions = SPECIAL_CONFIG_OPTIONS[slug] || [];
+  return [...specialOptions, INDENTATION_CONFIG];
+}
+
 // Extend serverless function timeout for AI generation
 // Default is 10s on Hobby, this allows up to 30s on Preview/Production
 export const maxDuration = 30;
@@ -176,18 +245,7 @@ export default async function FormatterPage({
           actionLabel="Format"
           defaultInput={formatter.example}
           language={formatter.language}
-          configOptions={[
-            {
-              id: "indentation",
-              label: "Indentation",
-              defaultValue: "two-spaces",
-              options: [
-                { label: "2 Spaces", value: "two-spaces" },
-                { label: "4 Spaces", value: "four-spaces" },
-                { label: "Tabs", value: "tabs" },
-              ],
-            },
-          ]}
+          configOptions={getConfigOptions(slug)}
         />
 
         {/* AI-Generated Content Sections with Suspense */}

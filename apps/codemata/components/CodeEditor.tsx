@@ -5,6 +5,7 @@ import { html } from "@codemirror/lang-html";
 import { javascript } from "@codemirror/lang-javascript";
 import { json } from "@codemirror/lang-json";
 import { markdown } from "@codemirror/lang-markdown";
+import { sql } from "@codemirror/lang-sql";
 import { xml } from "@codemirror/lang-xml";
 import { yaml } from "@codemirror/lang-yaml";
 import type { Extension } from "@codemirror/state";
@@ -22,7 +23,8 @@ type SupportedLanguage =
   | "html"
   | "graphql"
   | "markdown"
-  | "xml";
+  | "xml"
+  | "sql";
 
 interface CodeEditorProps {
   value: string;
@@ -50,6 +52,8 @@ function getLanguageExtension(language: SupportedLanguage): Extension {
       return markdown();
     case "xml":
       return xml();
+    case "sql":
+      return sql();
     case "graphql":
       // GraphQL uses javascript for now as a fallback
       return javascript();

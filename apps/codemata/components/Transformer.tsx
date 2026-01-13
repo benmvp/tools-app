@@ -22,7 +22,8 @@ type SupportedLanguage =
   | "html"
   | "graphql"
   | "markdown"
-  | "xml";
+  | "xml"
+  | "sql";
 
 interface ConfigOption {
   id: string;

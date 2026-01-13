@@ -13,9 +13,9 @@ describe("Search Index", () => {
         (item) => item.category === "Minifiers",
       );
 
-      expect(formatters.length).toBe(8);
+      expect(formatters.length).toBe(9);
       expect(minifiers.length).toBe(6);
-      expect(SEARCH_INDEX.length).toBe(14);
+      expect(SEARCH_INDEX.length).toBe(15);
     });
 
     it("creates proper searchText with name and keywords", () => {
