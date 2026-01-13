@@ -2,7 +2,8 @@
 
 import xmlPlugin from "@prettier/plugin-xml";
 import { format } from "prettier";
-import type { FormatConfig } from "@/lib/types";
+import { format as formatSqlQuery } from "sql-formatter";
+import type { FormatConfig, SqlFormatConfig } from "@/lib/types";
 
 function getFormatterOptions(config: FormatConfig) {
   const tabWidth =
@@ -170,6 +171,28 @@ export async function formatYaml(
       parser: "yaml",
       tabWidth,
       useTabs,
+    });
+    return formatted;
+  } catch (error) {
+    throw new Error(
+      `Formatting failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+    );
+  }
+}
+
+export async function formatSql(
+  input: string,
+  config: SqlFormatConfig,
+): Promise<string> {
+  const { tabWidth, useTabs } = getFormatterOptions(config);
+
+  try {
+    const formatted = formatSqlQuery(input, {
+      language: config.dialect,
+      tabWidth,
+      useTabs,
+      keywordCase: config.keywordCase === "uppercase" ? "upper" : "lower",
+      linesBetweenQueries: 2,
     });
     return formatted;
   } catch (error) {

@@ -5,6 +5,7 @@ import { html } from "@codemirror/lang-html";
 import { javascript } from "@codemirror/lang-javascript";
 import { json } from "@codemirror/lang-json";
 import { markdown } from "@codemirror/lang-markdown";
+import { sql } from "@codemirror/lang-sql";
 import { xml } from "@codemirror/lang-xml";
 import { yaml } from "@codemirror/lang-yaml";
 import type { Extension } from "@codemirror/state";
@@ -12,28 +13,20 @@ import { EditorView } from "@codemirror/view";
 import CodeMirror from "@uiw/react-codemirror";
 import { useTheme } from "next-themes";
 import { useEffect, useMemo, useState } from "react";
+import type { FormatterTool, MinifierTool } from "@/lib/types";
 
-type SupportedLanguage =
-  | "typescript"
-  | "javascript"
-  | "json"
-  | "yaml"
-  | "css"
-  | "html"
-  | "graphql"
-  | "markdown"
-  | "xml";
+type CodeEditorLanguage = FormatterTool["language"] | MinifierTool["language"];
 
 interface CodeEditorProps {
   value: string;
   onChange?: (value: string) => void;
   readOnly?: boolean;
   label: string;
-  language?: SupportedLanguage;
+  language?: CodeEditorLanguage;
   lineWrapping?: boolean;
 }
 
-function getLanguageExtension(language: SupportedLanguage): Extension {
+function getLanguageExtension(language: CodeEditorLanguage): Extension {
   switch (language) {
     case "typescript":
     case "javascript":
@@ -50,6 +43,8 @@ function getLanguageExtension(language: SupportedLanguage): Extension {
       return markdown();
     case "xml":
       return xml();
+    case "sql":
+      return sql();
     case "graphql":
       // GraphQL uses javascript for now as a fallback
       return javascript();

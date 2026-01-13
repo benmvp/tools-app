@@ -5,24 +5,14 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import type { MinifierTool } from "@/lib/types";
 import { CodeEditor } from "./CodeEditor";
-
-type SupportedLanguage =
-  | "typescript"
-  | "javascript"
-  | "json"
-  | "yaml"
-  | "css"
-  | "html"
-  | "graphql"
-  | "markdown"
-  | "xml";
 
 interface TransformerMinifierProps {
   action: (input: string) => Promise<string>;
   actionLabel?: string;
   defaultInput?: string;
-  language?: SupportedLanguage;
+  language?: MinifierTool["language"];
 }
 
 function formatBytes(bytes: number): string {

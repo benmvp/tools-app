@@ -2,23 +2,43 @@ import type { LucideIcon } from "lucide-react";
 
 export type Indentation = "two-spaces" | "four-spaces" | "tabs";
 
+export type KeywordCase = "uppercase" | "lowercase";
+
+export type SqlDialect =
+  | "postgresql"
+  | "mysql"
+  | "mariadb"
+  | "sqlite"
+  | "sql"
+  | "bigquery"
+  | "db2"
+  | "db2i"
+  | "hive"
+  | "n1ql"
+  | "plsql"
+  | "redshift"
+  | "singlestoredb"
+  | "snowflake"
+  | "spark"
+  | "transactsql"
+  | "trino";
+
 export interface FormatConfig extends Record<string, string> {
   indentation: Indentation;
 }
 
 /**
- * Supported languages for code editors
+ * Configuration for SQL formatter using sql-formatter library.
+ * Maps to sql-formatter's FormatOptions:
+ * - dialect → language (SQL dialect/vendor)
+ * - keywordCase → keywordCase ("upper" or "lower")
+ * - indentation → tabWidth + useTabs (2/4 spaces or tabs)
+ * Other sql-formatter options (linesBetweenQueries, etc.) use library defaults.
  */
-export type SupportedLanguage =
-  | "typescript"
-  | "javascript"
-  | "json"
-  | "yaml"
-  | "css"
-  | "html"
-  | "graphql"
-  | "markdown"
-  | "xml";
+export interface SqlFormatConfig extends FormatConfig {
+  dialect: SqlDialect;
+  keywordCase: KeywordCase;
+}
 
 /**
  * Server action function signature for formatters
@@ -29,12 +49,20 @@ export type FormatterAction = (
 ) => Promise<string>;
 
 /**
+ * Server action function signature for SQL formatter
+ */
+export type SqlFormatterAction = (
+  input: string,
+  config: SqlFormatConfig,
+) => Promise<string>;
+
+/**
  * Server action function signature for minifiers
  */
 export type MinifierAction = (input: string) => Promise<string>;
 
 /**
- * Unified Tool interface that combines nav/card data with page config
+ * Base Tool interface for all tools (formatters, minifiers, converters, etc.)
  */
 export interface Tool {
   // Navigation & Card Display
@@ -45,11 +73,6 @@ export interface Tool {
   icon: LucideIcon;
   comingSoon?: boolean;
 
-  // Page Configuration
-  action: FormatterAction | MinifierAction;
-  example: string;
-  language: SupportedLanguage;
-
   // Search keywords for command menu
   keywords?: string[];
 
@@ -58,4 +81,32 @@ export interface Tool {
     title: string;
     description: string; // Long meta description
   };
+}
+
+/**
+ * Formatter Tool interface with language support
+ */
+export interface FormatterTool extends Tool {
+  action: FormatterAction | SqlFormatterAction;
+  example: string;
+  language:
+    | "typescript"
+    | "javascript"
+    | "json"
+    | "yaml"
+    | "css"
+    | "html"
+    | "graphql"
+    | "markdown"
+    | "xml"
+    | "sql";
+}
+
+/**
+ * Minifier Tool interface with language support (excludes SQL and GraphQL)
+ */
+export interface MinifierTool extends Tool {
+  action: MinifierAction;
+  example: string;
+  language: "typescript" | "javascript" | "json" | "css" | "html" | "xml";
 }

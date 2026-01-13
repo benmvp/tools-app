@@ -11,18 +11,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import type { FormatterTool } from "@/lib/types";
 import { CodeEditor } from "./CodeEditor";
-
-type SupportedLanguage =
-  | "typescript"
-  | "javascript"
-  | "json"
-  | "yaml"
-  | "css"
-  | "html"
-  | "graphql"
-  | "markdown"
-  | "xml";
 
 interface ConfigOption {
   id: string;
@@ -38,7 +28,7 @@ interface TransformerProps<
   actionLabel?: string;
   defaultInput?: string;
   configOptions?: ConfigOption[];
-  language?: SupportedLanguage;
+  language?: FormatterTool["language"];
 }
 
 export function Transformer<

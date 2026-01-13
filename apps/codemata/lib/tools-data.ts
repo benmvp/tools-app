@@ -15,6 +15,7 @@ import {
   formatHtml,
   formatJson,
   formatMarkdown,
+  formatSql,
   formatTypescript,
   formatXml,
   formatYaml,
@@ -28,13 +29,13 @@ import {
   minifyXml,
 } from "../app/minifiers/actions";
 import { SITE_CONFIG } from "./site-config";
-import type { Tool } from "./types";
+import type { FormatterTool, MinifierTool } from "./types";
 
 /**
  * Formatter Tools - Record-based structure for O(1) lookups
  * Key is the URL slug (e.g., "typescript-formatter")
  */
-export const FORMATTER_TOOLS: Record<string, Tool> = {
+export const FORMATTER_TOOLS: Record<string, FormatterTool> = {
   "typescript-formatter": {
     id: "typescript",
     name: "TypeScript & JavaScript Formatter",
@@ -213,13 +214,39 @@ isActive:  true`,
         "Format and beautify YAML configuration files. Free online YAML formatter for consistent formatting.",
     },
   },
+  "sql-formatter": {
+    id: "sql",
+    name: "SQL Formatter",
+    description: "Format SQL queries with proper indentation and keyword case",
+    url: "/formatters/sql-formatter",
+    icon: Database,
+    comingSoon: false,
+    action: formatSql,
+    language: "sql",
+    keywords: [
+      "sql",
+      "query",
+      "database",
+      "mysql",
+      "postgresql",
+      "sqlite",
+      "mssql",
+      "oracle",
+    ],
+    example: `SELECT u.id,u.name,u.email,o.order_id,o.total,o.created_at FROM users u INNER JOIN orders o ON u.id=o.user_id WHERE o.total>100 AND u.status='active' ORDER BY o.created_at DESC LIMIT 10`,
+    metadata: {
+      title: `SQL Formatter | ${SITE_CONFIG.name}`,
+      description:
+        "Format and beautify SQL queries with customizable indentation and keyword case. Free online SQL formatter for all major dialects.",
+    },
+  },
 };
 
 /**
  * Minifier Tools - Record-based structure for O(1) lookups
  * Key is the URL slug (e.g., "typescript-minifier")
  */
-export const MINIFIER_TOOLS: Record<string, Tool> = {
+export const MINIFIER_TOOLS: Record<string, MinifierTool> = {
   "typescript-minifier": {
     id: "typescript-min",
     name: "TypeScript & JavaScript Minifier",
@@ -449,8 +476,8 @@ const sum = doubled.reduce((acc, val) => acc + val, 0);
  * Helper arrays for navigation components
  * Use Object.values() to get arrays from Records
  */
-export const ALL_FORMATTERS = Object.values(FORMATTER_TOOLS);
-export const ALL_MINIFIERS = Object.values(MINIFIER_TOOLS);
+export const ALL_FORMATTERS: FormatterTool[] = Object.values(FORMATTER_TOOLS);
+export const ALL_MINIFIERS: MinifierTool[] = Object.values(MINIFIER_TOOLS);
 
 /**
  * Centralized tool registry for dynamic counting and category lookups.
