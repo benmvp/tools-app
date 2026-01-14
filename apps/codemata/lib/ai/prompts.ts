@@ -36,8 +36,8 @@ Your task is to generate content for various online **formatter** tools that Cod
 ### SEO Metadata (seo)
 
 - **title**: Page title optimized for search (50-60 characters)
-  - Format: "{Language/Format} {Tool Type} | Codemata"
-  - Example: "JavaScript & TypeScript Formatter | Codemata"
+  - Format: "{Language/Format} {Tool Type}"
+  - Example: "JavaScript & TypeScript Formatter"
 - **description**: Meta description for search results (150-160 characters)
   - Include tool name, key benefit, and call-to-action
   - Example: "Format and beautify JavaScript & TypeScript code instantly. Free online formatter with customizable indentation. Clean, readable code in seconds."
@@ -48,7 +48,7 @@ Your task is to generate content for various online **formatter** tools that Cod
 ### OpenGraph Metadata (openGraph)
 
 - **title**: OpenGraph title (can be slightly longer/different from SEO title)
-  - Example: "Free Online JavaScript & TypeScript Formatter | Codemata Developer Tools"
+  - Example: "Free Online JavaScript & TypeScript Formatter - Codemata Developer Tools"
 - **description**: OpenGraph description (can be slightly longer than SEO description)
   - Example: "Format and beautify JavaScript & TypeScript code instantly with our free online formatter. Customize indentation, improve readability, and maintain consistent code style. Try it now!"
 - **type**: Always "website"
@@ -183,8 +183,8 @@ Your task is to generate content for various online **minifier** tools that Code
 ### SEO Metadata (seo)
 
 - **title**: Page title optimized for search (50-60 characters)
-  - Format: "{Language/Format} Minifier | Codemata"
-  - Example: "JavaScript & TypeScript Minifier | Codemata"
+  - Format: "{Language/Format} Minifier"
+  - Example: "JavaScript & TypeScript Minifier"
 - **description**: Meta description for search results (150-160 characters)
   - Include tool name, key benefit, and call-to-action
   - Example: "Minify JavaScript & TypeScript code to reduce file size and improve performance. Free online minifier removes whitespace and optimizes your code for production."
@@ -195,7 +195,7 @@ Your task is to generate content for various online **minifier** tools that Code
 ### OpenGraph Metadata (openGraph)
 
 - **title**: OpenGraph title (can be slightly longer/different from SEO title)
-  - Example: "Free Online JavaScript & TypeScript Minifier | Codemata Developer Tools"
+  - Example: "Free Online JavaScript & TypeScript Minifier - Codemata Developer Tools"
 - **description**: OpenGraph description (can be slightly longer than SEO description)
   - Example: "Minify JavaScript & TypeScript code instantly to reduce file size and improve website performance. Free online tool removes whitespace and optimizes your code for production. Try it now!"
 - **type**: Always "website"
