@@ -1,21 +1,22 @@
 {
-  "$schema": "https://turbo.build/schema.json",
-  "globalEnv": [
-    "GOOGLE_API_KEY",
-    "GEMINI_MODEL"
-  ],
-  "tasks": {
-    "build": {
-      "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**"]
-    },
-    "dev": {
-      "cache": false,
-      "persistent": true
-    },
-    "lint": {},
-    "format": {},
-    "test": {},
-    "type-check": {}
-  }
+	"$schema": "https://turbo.build/schema.json",
+	"globalEnv": [
+		"GOOGLE_API_KEY",
+		"GEMINI_MODEL",
+		"NEXT_PUBLIC_GA_MEASUREMENT_ID"
+	],
+	"tasks": {
+		"build": {
+			"dependsOn": ["^build"],
+			"outputs": [".next/**", "!.next/cache/**"]
+		},
+		"dev": {
+			"cache": false,
+			"persistent": true
+		},
+		"lint": {},
+		"format": {},
+		"test": {},
+		"type-check": {}
+	}
 }
