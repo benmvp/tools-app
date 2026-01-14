@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
+import Script from "next/script";
 import { SITE_CONFIG } from "@/lib/site-config";
 import { getAppUrl } from "@/lib/utils";
 import { LayoutContent } from "./layout-content";
@@ -47,13 +48,35 @@ export const metadata: Metadata = {
   robots: SITE_CONFIG.robots,
 };
 
+const SCRIPT_TAG_ID = "google-analytics";
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        {gaId && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+              strategy="afterInteractive"
+            />
+            <Script id={SCRIPT_TAG_ID} strategy="afterInteractive">
+              {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${gaId}');
+          `}
+            </Script>
+          </>
+        )}
+      </head>
       <body
         className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}
       >
