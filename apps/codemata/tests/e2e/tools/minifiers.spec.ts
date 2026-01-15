@@ -97,7 +97,7 @@ test.describe("Minifier Tools", () => {
         ) as keyof typeof MINIFIER_SAMPLES;
         const sample = MINIFIER_SAMPLES[sampleKey];
 
-        if (!sample || !('withComments' in sample) || !sample.withComments) {
+        if (!sample || !("withComments" in sample) || !sample.withComments) {
           test.skip(true, `No comments fixture for ${tool.id}`);
           return;
         }

@@ -81,7 +81,7 @@ test.describe("Formatter Tools", () => {
         const sampleKey = tool.id as keyof typeof FORMATTER_SAMPLES;
         const sample = FORMATTER_SAMPLES[sampleKey];
 
-        if (!sample || !('invalid' in sample) || !sample.invalid) {
+        if (!sample || !("invalid" in sample) || !sample.invalid) {
           test.skip(true, `No invalid fixture for ${tool.id}`);
           return;
         }
