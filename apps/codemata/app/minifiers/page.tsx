@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ScrollToTopFab } from "@/components/ScrollToTopFab";
 import { ToolCard } from "@/components/ToolCard";
 import { SITE_CONFIG } from "@/lib/site-config";
 import { ALL_MINIFIERS } from "@/lib/tools-data";
@@ -48,7 +49,6 @@ export default function MinifiersPage() {
           production. Reduce file sizes and improve load times.
         </p>
       </section>
-
       {/* Tools Grid */}
       <section>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -57,7 +57,6 @@ export default function MinifiersPage() {
           ))}
         </div>
       </section>
-
       {/* Educational Content */}
       <section className="mt-16 max-w-3xl mx-auto">
         <div className="text-base text-slate-600 dark:text-slate-400 space-y-4">
@@ -73,7 +72,8 @@ export default function MinifiersPage() {
             assets for production.
           </p>
         </div>
-      </section>
+      </section>{" "}
+      <ScrollToTopFab />{" "}
     </div>
   );
 }

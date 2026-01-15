@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ScrollToTopFab } from "@/components/ScrollToTopFab";
 import { ToolCard } from "@/components/ToolCard";
 import { SITE_CONFIG } from "@/lib/site-config";
 import { ALL_FORMATTERS } from "@/lib/tools-data";
@@ -50,7 +51,6 @@ export default function FormattersPage() {
           indentation options.
         </p>
       </section>
-
       {/* Tools Grid */}
       <section>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -59,7 +59,6 @@ export default function FormattersPage() {
           ))}
         </div>
       </section>
-
       {/* Educational Content */}
       <section className="mt-16 max-w-3xl mx-auto">
         <div className="text-base text-slate-600 dark:text-slate-400 space-y-4">
@@ -74,7 +73,8 @@ export default function FormattersPage() {
             spaces, 4 spaces, or tabs). No signup or installation required.
           </p>
         </div>
-      </section>
+      </section>{" "}
+      <ScrollToTopFab />{" "}
     </div>
   );
 }

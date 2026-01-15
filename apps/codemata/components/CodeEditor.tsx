@@ -63,6 +63,7 @@ export function CodeEditor({
 }: CodeEditorProps) {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const editorId = `code-editor-${label.toLowerCase().replace(/\s+/g, "-")}`;
 
   // Avoid hydration mismatch by only rendering theme after mount
   useEffect(() => {
@@ -79,7 +80,13 @@ export function CodeEditor({
 
   return (
     <div className="space-y-2">
-      <div className="border rounded-md overflow-hidden">
+      <span id={editorId} className="sr-only">
+        {label || (readOnly ? "Output" : "Input")}
+      </span>
+      <section
+        className="border rounded-md overflow-hidden"
+        aria-labelledby={editorId}
+      >
         <CodeMirror
           value={value}
           height="400px"
@@ -88,12 +95,11 @@ export function CodeEditor({
           readOnly={readOnly}
           theme={mounted && resolvedTheme === "dark" ? "dark" : "light"}
           className="text-sm font-mono"
-          aria-label={label || (readOnly ? "Output" : "Input")}
           data-gramm="false"
           data-gramm_editor="false"
           data-enable-grammarly="false"
         />
-      </div>
+      </section>
     </div>
   );
 }

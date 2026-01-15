@@ -37,7 +37,7 @@ export function NavigationList({ onItemClick }: NavigationListProps) {
             href={href}
             prefetch={shouldPrefetch()}
             onClick={onItemClick}
-            className="mb-2 text-xs font-semibold uppercase text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors block"
+            className="mb-2 text-xs font-semibold uppercase text-slate-600 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300 transition-colors block"
           >
             {name}
           </Link>

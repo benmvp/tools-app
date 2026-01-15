@@ -78,6 +78,7 @@ export function CommandMenu({ open, onOpenChange }: CommandMenuProps) {
         placeholder="Search tools..."
         value={searchQuery}
         onValueChange={setSearchQuery}
+        aria-label="Search tools"
       />
       <CommandList>
         <CommandEmpty>No tools found.</CommandEmpty>

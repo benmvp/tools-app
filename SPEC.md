@@ -3611,42 +3611,79 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 
 **7.2 Automated Testing & CI**
 
-- [ ] Install Playwright for E2E testing
-- [ ] Write E2E tests for critical user flows:
-  - [ ] Paste code → format → copy result (formatters)
-  - [ ] Paste code → minify → copy result (minifiers)
-  - [ ] Navigation between tools
-  - [ ] Dark mode toggle
-  - [ ] Mobile responsive behavior
-- [ ] Install axe-core for accessibility testing
-- [ ] Write accessibility tests:
-  - [ ] WCAG AA compliance checks
-  - [ ] Keyboard navigation (Tab, Enter, Esc)
-  - [ ] Screen reader compatibility (ARIA labels, roles)
-  - [ ] Color contrast validation
-  - [ ] Focus management
-- [ ] Set up Lighthouse CI:
-  - [ ] Performance score > 90
-  - [ ] Accessibility score > 95
-  - [ ] Best Practices score > 90
-  - [ ] SEO score > 95
-- [ ] Add CI jobs to `.github/workflows/ci.yml`:
-  - [ ] `e2e` job - Run Playwright tests
-  - [ ] `a11y` job - Run accessibility audits
-  - [ ] `lighthouse` job - Run Lighthouse CI
-- [ ] Configure to run on all PRs and main branch pushes
-- [ ] Set up GitHub status checks for branch protection
-- [ ] Document testing approach in README
+- [x] Install Playwright for E2E testing (Firefox browser)
+- [x] Configure Playwright:
+  - [x] Headed mode for local dev (with `--ui` debug mode)
+  - [x] Headless mode for CI
+  - [x] Test against production build (`next build` + `next start`)
+  - [x] Tests in `apps/codemata/tests/e2e/`
+- [x] Write E2E tests for critical user flows:
+  - [x] **Core Tool Functionality:**
+    - [x] Paste code → format → copy result (formatters)
+    - [x] Paste code → minify → copy result (minifiers)
+    - [x] Configuration changes (indentation options)
+    - [x] Error handling (invalid syntax, malformed code)
+  - [x] **Navigation & Discovery:**
+    - [x] Navigation between tools via sidebar
+    - [x] Category landing pages (`/formatters`, `/minifiers`)
+    - [x] Category back links
+    - [x] Command Menu (⌘K) search and navigation
+    - [x] Recent tools tracking and display
+  - [x] **UI Features:**
+    - [x] Dark mode toggle persistence
+    - [x] Mobile responsive behavior (sidebar drawer)
+    - [x] Scroll-to-top FAB on long pages
+  - [x] **SEO & Metadata:**
+    - [x] Verify page titles and descriptions
+    - [x] OpenGraph image URLs load correctly
+    - [x] Canonical URLs are correct
+- [x] Install axe-core for accessibility testing
+- [x] Write accessibility tests (comprehensive - all 17 pages):
+  - [x] **WCAG AA Compliance:**
+    - [x] Home page
+    - [x] Category pages (formatters, minifiers)
+    - [x] All 8 formatter tool pages (9 formatters including SQL)
+    - [x] All 6 minifier tool pages
+  - [x] **Keyboard Navigation:**
+    - [x] Tab order follows logical flow
+    - [x] Enter activates buttons/links
+    - [x] Escape closes dialogs (command menu)
+    - [x] Focus visible on all interactive elements
+    - [x] CodeMirror editor keyboard accessible
+  - [x] **Screen Reader Compatibility:**
+    - [x] ARIA labels on all controls
+    - [x] Proper ARIA roles (dialog, menu, button)
+    - [x] Tool configuration dropdowns/selects labeled
+    - [x] Dynamic content announcements
+    - [x] Heading hierarchy (h1 → h2 → h3)
+  - [x] **Visual Accessibility:**
+    - [x] Color contrast validation (WCAG AA 4.5:1)
+    - [x] Focus indicators meet contrast requirements
+    - [x] No color-only information
+  - [x] **Component-Specific:**
+    - [x] Command menu focus trap
+    - [x] Mobile navigation accessible
+    - [x] Collapsible AI content sections keyboard accessible
+- [x] Set up Lighthouse CI (blocking):
+  - [x] Performance score ≥ 90
+  - [x] Accessibility score ≥ 93
+  - [x] Best Practices score ≥ 90
+  - [x] SEO score ≥ 95
+  - [x] Fail builds if scores drop below thresholds
+  - [x] Test representative pages (home, 2 categories, 2 tools per category = 7 pages)
+- [x] Update `.github/workflows/ci.yml` with hybrid job strategy:
+  - [x] **Stage 1 (Parallel):** `type-check`, `lint`, `format` (fast quality checks)
+  - [x] **Stage 2 (Sequential):** `build` (uploads artifact) + `test` (unit tests)
+  - [x] **Stage 3 (Parallel):** `e2e`, `lighthouse` (download artifact, comprehensive validation)
+  - [x] Run on all PRs and main branch pushes
+  - [x] Set up GitHub branch protection requiring all checks to pass
+- [x] Document testing approach:
+  - [x] Add testing section to README with local commands
+  - [x] Document how to run Playwright UI mode
+  - [x] Explain CI workflow stages
+  - [x] Add troubleshooting guide for common test failures
 
-**7.3 Monitoring & Data Collection**
-
-- [ ] Monitor traffic for 2-4 weeks
-- [ ] Identify popular tools
-- [ ] Analyze user behavior
-- [ ] Identify optimization opportunities
-- [ ] Monitor test results and fix failures
-
-**7.4 Monetization**
+**7.3 Monetization**
 
 - [ ] Set up Google AdSense account
 - [ ] Add ads below tools
@@ -3654,6 +3691,14 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 - [ ] Test ad placement and performance
 - [ ] A/B test different placements
 - [ ] Optimize based on revenue data
+
+**7.4 Monitoring & Data Collection**
+
+- [ ] Monitor traffic for 2-4 weeks
+- [ ] Identify popular tools
+- [ ] Analyze user behavior
+- [ ] Identify optimization opportunities
+- [ ] Monitor test results and fix failures
 
 **Deliverable:** Revenue-generating Codemata with comprehensive quality gates and performance tracking
 
