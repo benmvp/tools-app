@@ -678,7 +678,6 @@ All checks must pass to ensure production-ready code quality.
 - Run axe DevTools browser extension to debug locally
 - CodeMirror internals (.cm-content, .cm-scroller) are excluded from scans
 - Check color contrast with browser DevTools
-- **Performance**: Lighthouse CI
 
 ### Running Tests Locally
 

@@ -29,11 +29,9 @@ test.describe("Formatter Tools", () => {
         // Click the Format button
         await page.getByRole("button", { name: /format/i }).click();
 
-        // Wait for formatting to complete (server action + re-render)
-        await page.waitForTimeout(1500);
-
-        // Verify output editor has content
+        // Wait for output editor to have content (server action + re-render)
         const outputEditor = page.locator(".cm-content").last();
+        await expect(outputEditor).not.toBeEmpty({ timeout: 5000 });
         const outputText = await outputEditor.textContent();
         expect(outputText).toBeTruthy();
         expect(outputText?.length).toBeGreaterThan(0);

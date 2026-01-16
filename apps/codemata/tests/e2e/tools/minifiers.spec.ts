@@ -32,11 +32,9 @@ test.describe("Minifier Tools", () => {
         // Click the Minify button
         await page.getByRole("button", { name: /minify/i }).click();
 
-        // Wait for minification to complete
-        await page.waitForTimeout(1500);
-
-        // Verify output editor has content
+        // Wait for output editor to have content (server action + re-render)
         const outputEditor = page.locator(".cm-content").last();
+        await expect(outputEditor).not.toBeEmpty({ timeout: 5000 });
         const outputText = await outputEditor.textContent();
         expect(outputText).toBeTruthy();
         expect(outputText?.length).toBeGreaterThan(0);
