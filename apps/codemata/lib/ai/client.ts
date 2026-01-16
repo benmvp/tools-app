@@ -27,12 +27,20 @@ function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
 // Get API key from environment
 const API_KEY = process.env.GOOGLE_API_KEY;
 
-if (!API_KEY) {
-  throw new Error("GOOGLE_API_KEY environment variable is required");
-}
+// Lazy initialization - only create client when actually needed
+let genAI: GoogleGenerativeAI | null = null;
 
-// Initialize Gemini client
-const genAI = new GoogleGenerativeAI(API_KEY);
+function getGenAI(): GoogleGenerativeAI {
+  if (!API_KEY) {
+    throw new Error("GOOGLE_API_KEY environment variable is required");
+  }
+
+  if (!genAI) {
+    genAI = new GoogleGenerativeAI(API_KEY);
+  }
+
+  return genAI;
+}
 
 // Get model name from environment or use default
 const MODEL_NAME = process.env.GEMINI_MODEL || "gemini-2.0-flash-exp";
@@ -41,7 +49,7 @@ const MODEL_NAME = process.env.GEMINI_MODEL || "gemini-2.0-flash-exp";
  * Get Gemini model configured for JSON output with schema
  */
 export function getGeminiModel() {
-  return genAI.getGenerativeModel({
+  return getGenAI().getGenerativeModel({
     model: MODEL_NAME,
     generationConfig: {
       responseMimeType: "application/json",

@@ -23,7 +23,12 @@ export function MobileHeader({
       <div className="flex items-center justify-between p-4">
         {/* Menu Button + Brand */}
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={onMenuClick}>
+          <Button
+            variant="ghost"
+            size="icon-touch"
+            onClick={onMenuClick}
+            aria-label="Open navigation menu"
+          >
             <Menu className="h-5 w-5" />
           </Button>
           <Link href="/" className="flex items-center">
@@ -45,15 +50,21 @@ export function MobileHeader({
         {/* Right side: Search + Theme Toggle */}
         <div className="flex items-center gap-2">
           {/* Search Button */}
-          <Button variant="ghost" size="icon" onClick={onSearchClick}>
+          <Button
+            variant="ghost"
+            size="icon-touch"
+            onClick={onSearchClick}
+            aria-label="Search tools"
+          >
             <Search className="h-5 w-5" />
           </Button>
 
           {/* Theme Toggle */}
           <Button
             variant="ghost"
-            size="icon"
+            size="icon-touch"
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            aria-label="Toggle theme"
           >
             <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
             <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />

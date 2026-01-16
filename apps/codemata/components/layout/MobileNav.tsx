@@ -25,12 +25,20 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
       />
 
       {/* Sidebar */}
-      <aside className="fixed left-0 top-0 z-50 h-screen w-[60%] max-w-xs border-r bg-background lg:hidden">
+      <aside
+        data-testid="mobile-nav-drawer"
+        className="fixed left-0 top-0 z-50 h-screen w-[60%] max-w-xs border-r bg-background lg:hidden"
+      >
         <div className="flex h-full flex-col">
           {/* Close Button */}
           <div className="flex items-center justify-between border-b p-4">
             <span className="font-bold">Menu</span>
-            <Button variant="ghost" size="icon" onClick={onClose}>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onClose}
+              aria-label="Close navigation menu"
+            >
               <X className="h-5 w-5" />
             </Button>
           </div>

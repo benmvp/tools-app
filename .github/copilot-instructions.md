@@ -144,6 +144,8 @@ cd apps/codemata && pnpm dev  # Single app (port 3001)
 ```bash
 pnpm test                 # Run all tests (Vitest)
 cd apps/codemata && pnpm test:watch  # Watch mode
+pnpm test:e2e             # E2E tests (Playwright)
+pnpm lighthouse           # Lighthouse CI
 ```
 
 **Test pattern** - Test Server Actions directly:
@@ -157,6 +159,14 @@ it("formats with 2-space indentation", async () => {
   expect(result).toContain("const x");
 });
 ```
+
+**Test Stack:**
+- Unit tests: Vitest (Server Actions & utilities)
+- E2E tests: Playwright (desktop + mobile)
+- Accessibility: @axe-core/playwright (WCAG 2.0/2.1 Level AA)
+- Performance: Lighthouse CI
+
+**See [TESTING.md](apps/codemata/TESTING.md) for comprehensive documentation.**
 
 ### Linting & Formatting
 ```bash
@@ -172,8 +182,8 @@ cd apps/codemata
 pnpm format              # Auto-fix formatting issues
 pnpm lint                # Check for code quality issues
 pnpm type-check          # Verify TypeScript compilation
-pnpm test                # Run unit tests (46 tests)
-pnpm verify-metadata     # Validate metadata & OG images (17 pages)
+pnpm test                # Run unit tests
+pnpm verify-metadata     # Validate metadata & OG images
 ```
 
 All checks must pass before committing. This ensures no regressions and maintains code quality.
@@ -290,20 +300,11 @@ cd apps/codemata
 pnpm type-check      # TypeScript compilation
 pnpm lint            # Biome linting
 pnpm format          # Auto-fix formatting
-pnpm test            # Unit tests (46 tests)
-pnpm verify-metadata # Validate OG images & metadata (17 pages)
-4. **How to Use** - Step-by-step instructions
-5. **Features** - Bulleted benefits
-- Tool data is centralized in `tools-data.ts` - no duplication across files
-- OG images auto-update when adding tools (count-based cache keys)
-- Run `pnpm verify-metadata` before committing to catch metadata issues
-- Access tools via Record keys (O(1) lookup) or helper arrays (for iteration)
-6. **Rationale** - Why use this tool
-7. **Purpose** - What is this language/format
-8. **Integration** - Workflow tips (editor plugins, CI/CD)
-9. **FAQ** - Common questions
-10. **Recommendations** - Related tool suggestions (AI-powered, max 3)
-11. **Resources** - External links
+pnpm test            # Unit tests
+pnpm verify-metadata # Validate OG images & metadata
+pnpm test:e2e        # E2E tests (requires production build)
+pnpm lighthouse      # Performance benchmarks
+```
 
 Plus **3-5 contextual tips** (displayed as floating cards between sections).
 
@@ -327,7 +328,9 @@ This project follows **"You Aren't Gonna Need It"** - extract shared packages **
 
 - **SPEC.md** - Complete project specification & architecture decisions
 - **TODO.md** - Roadmap for future tools & features
-- **Implementation Plan** - See SPEC.md Phase 1-5 for step-by-step progress
+- **apps/codemata/README.md** - Complete developer guide (setup, architecture, deployment)
+- **apps/codemata/TESTING.md** - Comprehensive testing documentation (E2E, accessibility, CI/CD)
+- **Implementation Plan** - See SPEC.md Phase 1-7 for step-by-step progress
 
 ## Quick Tips
 

@@ -1,0 +1,64 @@
+import { defineConfig, devices } from "@playwright/test";
+
+/**
+ * Playwright configuration for Codemata E2E tests
+ *
+ * Test Environment:
+ * - Production build with DISABLE_AI=true (fast builds, no API costs)
+ * - Firefox browser (user manually tests Chrome)
+ * - Local: Headed mode with --ui flag for debugging
+ * - CI: Headless mode
+ *
+ * Test Coverage:
+ * - All tool pages (9 formatters + 6 minifiers = 15 tools)
+ * - Navigation (sidebar, command menu, category pages)
+ * - Mobile responsive behavior
+ * - Accessibility compliance (separate a11y tests)
+ * - SEO metadata validation
+ */
+
+// Use production server on port 3333
+const BASE_URL = process.env.BASE_URL || "http://localhost:3333";
+
+export default defineConfig({
+  testDir: "./tests/e2e",
+  fullyParallel: true,
+  forbidOnly: !!process.env.CI,
+  retries: 0, // No retries - catch flakiness early
+  workers: process.env.CI ? 2 : 1, // Sequential locally (more stable), 2 workers in CI
+  reporter: process.env.CI ? [["html"], ["github"]] : [["html"], ["list"]],
+
+  use: {
+    baseURL: BASE_URL,
+    trace: "on-first-retry",
+    screenshot: "only-on-failure",
+    video: "retain-on-failure",
+  },
+
+  projects: [
+    {
+      name: "firefox-desktop",
+      use: {
+        ...devices["Desktop Firefox"],
+        viewport: { width: 1280, height: 720 },
+      },
+    },
+    {
+      name: "iphone-13",
+      use: {
+        ...devices["iPhone 13"],
+        // iPhone 13 viewport: 390×844 (iOS Safari)
+      },
+    },
+  ],
+
+  // Web server configuration
+  // CI: Playwright starts server (no reuse)
+  // Local: Reuse existing server if available (faster dev loop)
+  webServer: {
+    command: "pnpm start",
+    url: BASE_URL,
+    reuseExistingServer: !process.env.CI,
+    timeout: 120000,
+  },
+});
