@@ -68,10 +68,15 @@ export default function RootLayout({
             />
             <Script id={SCRIPT_TAG_ID} strategy="afterInteractive">
               {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${gaId}');
+            // Only load GA if not on localhost
+            if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${gaId}');
+            } else {
+              console.log('Google Analytics disabled on localhost');
+            }
           `}
             </Script>
           </>
