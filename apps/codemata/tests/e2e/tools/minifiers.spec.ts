@@ -4,7 +4,7 @@ import { MINIFIER_SAMPLES } from "../../fixtures/samples";
 
 test.describe("Minifier Tools", () => {
   // Auto-generate tests for all minifiers
-  for (const [_slug, tool] of Object.entries(MINIFIER_TOOLS)) {
+  for (const [, tool] of Object.entries(MINIFIER_TOOLS)) {
     test.describe(tool.name, () => {
       test("should minify valid code successfully", async ({ page }) => {
         await page.goto(tool.url);

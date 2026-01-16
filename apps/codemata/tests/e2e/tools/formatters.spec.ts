@@ -4,7 +4,7 @@ import { FORMATTER_SAMPLES } from "../../fixtures/samples";
 
 test.describe("Formatter Tools", () => {
   // Auto-generate tests for all formatters
-  for (const [_slug, tool] of Object.entries(FORMATTER_TOOLS)) {
+  for (const [, tool] of Object.entries(FORMATTER_TOOLS)) {
     test.describe(tool.name, () => {
       test("should format valid code successfully", async ({ page }) => {
         await page.goto(tool.url);
