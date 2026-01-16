@@ -160,7 +160,7 @@ jobs:
 
       - name: Install Playwright browsers
         working-directory: apps/codemata
-        run: pnpm exec playwright install firefox --with-deps
+        run: pnpm exec playwright install --with-deps
 
       - name: Run E2E tests
         working-directory: apps/codemata
