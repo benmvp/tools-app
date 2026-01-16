@@ -72,8 +72,8 @@ export default function MinifiersPage() {
             assets for production.
           </p>
         </div>
-      </section>{" "}
-      <ScrollToTopFab />{" "}
+      </section>
+      <ScrollToTopFab />
     </div>
   );
 }

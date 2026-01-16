@@ -73,8 +73,8 @@ export default function FormattersPage() {
             spaces, 4 spaces, or tabs). No signup or installation required.
           </p>
         </div>
-      </section>{" "}
-      <ScrollToTopFab />{" "}
+      </section>
+      <ScrollToTopFab />
     </div>
   );
 }

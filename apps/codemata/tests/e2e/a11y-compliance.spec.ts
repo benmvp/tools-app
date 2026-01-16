@@ -5,7 +5,7 @@ import { ALL_FORMATTERS, ALL_MINIFIERS } from "../../lib/tools-data";
 /**
  * Accessibility Compliance Tests
  *
- * Auto-loops through all 17 pages (home, 2 categories, 9 formatters, 6 minifiers)
+ * Auto-loops through all pages (home, categories, formatters, minifiers)
  * and runs axe-core WCAG AA compliance checks.
  *
  * Fails on: critical, serious, AND moderate violations

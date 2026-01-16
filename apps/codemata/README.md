@@ -542,7 +542,7 @@ pnpm test:e2e --project=iphone-13
 *WCAG Compliance (42 tests):*
 - Home page compliance
 - Category pages (formatters, minifiers)
-- All 18 tool pages (9 formatters + 9 minifiers)
+- All tool pages (formatters and minifiers)
 - Color contrast validation (4.5:1 minimum)
 - Dark mode testing (desktop + mobile)
 - CodeMirror editor wrapped in accessible sections
@@ -572,7 +572,7 @@ pnpm test:e2e --project=iphone-13
 
 ### Accessibility Compliance
 
-✅ **WCAG 2.0/2.1 Level AA** compliance achieved across all 21 pages
+✅ **WCAG 2.0/2.1 Level AA** compliance achieved across all pages
 
 **Standards Met:**
 - Color contrast: 4.5:1 minimum ratio for all text
@@ -660,7 +660,7 @@ All checks must pass to ensure production-ready code quality.
 **Test Failures:**
 - Check test video in `test-results/` folder (saved on failure)
 - Run with `--ui` flag for interactive debugging
-- Verify production build is running (`pnpm build && pnpm start`)
+- Verify production build is running (`pnpm build && PORT=3333 pnpm start`)
 
 **Port Already in Use:**
 - Kill process on port 3333: `lsof -ti:3333 | xargs kill`
