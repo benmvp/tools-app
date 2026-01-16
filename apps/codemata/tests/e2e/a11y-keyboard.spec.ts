@@ -13,7 +13,7 @@ import { ALL_FORMATTERS } from "../../lib/tools-data";
 
 test.describe("Keyboard Navigation", () => {
   // Skip on mobile - keyboard navigation is for desktop users
-  test.beforeEach(async (_fixtures, testInfo) => {
+  test.beforeEach(async ({ page: _page }, testInfo) => {
     if (testInfo.project.name === "iphone-13") {
       test.skip();
     }
