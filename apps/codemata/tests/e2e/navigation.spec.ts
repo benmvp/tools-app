@@ -80,7 +80,15 @@ test.describe("Navigation", () => {
     await expect(page).toHaveURL("/formatters");
   });
 
-  test("should navigate using sidebar on desktop", async ({ page }) => {
+  test("should navigate using sidebar on desktop", async ({
+    page,
+  }, testInfo) => {
+    // Skip on mobile - sidebar is hidden by default
+    test.skip(
+      testInfo.project.name === "iphone-13",
+      "Sidebar hidden on mobile",
+    );
+
     await page.goto("/");
 
     // Verify sidebar is visible on desktop
@@ -97,7 +105,13 @@ test.describe("Navigation", () => {
 
   test("should navigate between tool categories via sidebar", async ({
     page,
-  }) => {
+  }, testInfo) => {
+    // Skip on mobile - sidebar is hidden by default
+    test.skip(
+      testInfo.project.name === "iphone-13",
+      "Sidebar hidden on mobile",
+    );
+
     await page.goto(ALL_FORMATTERS[0].url);
 
     // Click on minifiers section in sidebar
@@ -112,7 +126,15 @@ test.describe("Navigation", () => {
     await expect(page).toHaveURL(firstMinifier.url);
   });
 
-  test("should highlight active tool in sidebar", async ({ page }) => {
+  test("should highlight active tool in sidebar", async ({
+    page,
+  }, testInfo) => {
+    // Skip on mobile - sidebar is hidden by default
+    test.skip(
+      testInfo.project.name === "iphone-13",
+      "Sidebar hidden on mobile",
+    );
+
     const formatter = ALL_FORMATTERS[0];
     await page.goto(formatter.url);
 
