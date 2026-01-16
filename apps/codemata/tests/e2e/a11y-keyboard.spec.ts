@@ -259,9 +259,9 @@ test.describe("Keyboard Navigation", () => {
       // Activate skip link
       await page.keyboard.press("Enter");
 
-      // Focus should move to main content
-      const _mainContent = page.locator("#main-content");
-      // Main content or first element inside should be focused/scrolled to
+      // Verify main content is now in viewport (skip link worked)
+      const mainContent = page.locator("#main-content");
+      await expect(mainContent).toBeInViewport();
     }
   });
 });
