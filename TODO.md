@@ -72,6 +72,12 @@ Examples
 
 ### Converters
 
+- [ ] Hexadecimal/Base Converter (Binary, Octal, Decimal, Hexadecimal)
+  - **Description:** Convert numbers between different bases (binary, octal, decimal, hexadecimal)
+  - **Inputs:** Number in any base, source base, target base
+  - **Outputs:** Converted number in target base(s), visual representation for binary
+  - **Why useful:** Low-level programming, debugging, color codes, bitwise operations
+  - **Libraries:** Browser native `parseInt(value, base)` and `Number.prototype.toString(base)`
 - [ ] Color Format Converter (`chroma-js`, `color.js`) - HIGH TRAFFIC
   - **Description:** Convert colors between HEX, RGB, HSL, HSV, CMYK formats with live preview
   - **Inputs:** Color in any format (HEX, RGB, HSL, HSV, CMYK)
@@ -477,6 +483,13 @@ Examples
 
 ### Other Useful Tools
 
+- [ ] **Percentage Calculator** ⭐ - HIGH TRAFFIC
+  - **Description:** Calculate percentages, percentage increases/decreases, and percentage differences
+  - **Inputs:** Various depending on calculation type (e.g., "what is X% of Y?", "X is what % of Y?", "% change from X to Y")
+  - **Outputs:** Calculated percentage or value
+  - **Why useful:** Essential for financial calculations (discounts, interest, returns, tips, tax), appears in Favorites of popular calculator apps
+  - **Libraries:** None needed.
+  - **Data:** User provides all inputs. Moni maintains calculation formulas.
 - [ ] **APR to APY Converter** ⭐ - HIGH VALUE
   - **Description:** Convert between APR (Annual Percentage Rate) and APY (Annual Percentage Yield)
   - **Inputs:** Interest rate (APR or APY), compounding frequency (daily, monthly, quarterly, annually)

@@ -3685,7 +3685,7 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 
 **7.3 Monetization**
 
-- [ ] Set up Google AdSense account
+- [x] Set up Google AdSense account
 - [ ] Add ads below tools
 - [ ] Add ads in content sections
 - [ ] Test ad placement and performance
