@@ -48,7 +48,8 @@ export const metadata: Metadata = {
   robots: SITE_CONFIG.robots,
 };
 
-const SCRIPT_TAG_ID = "google-analytics";
+const GOOGLE_ANALYTICS_SCRIPT_TAG_ID = "google-analytics";
+const GOOGLE_ADSENSE_SCRIPT_TAG_ID = "google-adsense";
 
 export default function RootLayout({
   children,
@@ -56,6 +57,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+  const adsenseClientId = process.env.NEXT_PUBLIC_GOOGLE_ADSENSE_CLIENT_ID;
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -66,7 +68,10 @@ export default function RootLayout({
               src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
               strategy="afterInteractive"
             />
-            <Script id={SCRIPT_TAG_ID} strategy="afterInteractive">
+            <Script
+              id={GOOGLE_ANALYTICS_SCRIPT_TAG_ID}
+              strategy="afterInteractive"
+            >
               {`
             // Only load GA if not on localhost
             if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
@@ -80,6 +85,16 @@ export default function RootLayout({
           `}
             </Script>
           </>
+        )}
+        {/* Google Adsense */}
+        {adsenseClientId && (
+          <Script
+            id={GOOGLE_ADSENSE_SCRIPT_TAG_ID}
+            async
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClientId}`}
+            crossOrigin="anonymous"
+            strategy="afterInteractive"
+          />
         )}
       </head>
       <body
