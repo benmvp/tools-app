@@ -30,11 +30,14 @@ test.describe("Encoder Tools", () => {
           await leftEditor.click();
           await leftEditor.fill(sample.plain);
 
-          // Click the Encode button (on the left side)
-          await page
+          // Wait for encode button to be enabled (after React state updates)
+          const encodeButton = page
             .getByRole("button", { name: /encode/i })
-            .first()
-            .click();
+            .first();
+          await expect(encodeButton).toBeEnabled({ timeout: 5000 });
+
+          // Click the Encode button (on the left side)
+          await encodeButton.click();
 
           // Wait for right editor to have encoded content
           const rightEditor = page.locator(".cm-content").last();
@@ -71,8 +74,12 @@ test.describe("Encoder Tools", () => {
           // Enter encoded text in right editor
           await rightEditor.fill(sample.encoded);
 
+          // Wait for decode button to be enabled (after React state updates)
+          const decodeButton = page.getByRole("button", { name: /decode/i });
+          await expect(decodeButton).toBeEnabled({ timeout: 5000 });
+
           // Click the Decode button (on the right side)
-          await page.getByRole("button", { name: /decode/i }).click();
+          await decodeButton.click();
 
           // Wait for left editor to have decoded content
           await expect(leftEditor).not.toBeEmpty({ timeout: 5000 });
@@ -103,14 +110,18 @@ test.describe("Encoder Tools", () => {
           const leftEditor = page.locator(".cm-content").first();
           await leftEditor.click();
           await leftEditor.fill(originalText);
-          await page
+
+          const encodeButton = page
             .getByRole("button", { name: /encode/i })
-            .first()
-            .click();
+            .first();
+          await expect(encodeButton).toBeEnabled({ timeout: 5000 });
+          await encodeButton.click();
           await page.waitForTimeout(1000);
 
           // Step 2: Decode
-          await page.getByRole("button", { name: /decode/i }).click();
+          const decodeButton = page.getByRole("button", { name: /decode/i });
+          await expect(decodeButton).toBeEnabled({ timeout: 5000 });
+          await decodeButton.click();
           await page.waitForTimeout(1000);
 
           // Verify we get back the original text
@@ -193,8 +204,12 @@ test.describe("Encoder Tools", () => {
           await leftEditor.click();
           await leftEditor.fill(sample.valid);
 
+          // Wait for decode button to be enabled
+          const decodeButton = page.getByRole("button", { name: /decode/i });
+          await expect(decodeButton).toBeEnabled({ timeout: 5000 });
+
           // Click the Decode button
-          await page.getByRole("button", { name: /decode/i }).click();
+          await decodeButton.click();
 
           // Wait for right editor to show decoded JSON
           const rightEditor = page.locator(".cm-content").last();
@@ -223,8 +238,12 @@ test.describe("Encoder Tools", () => {
           await leftEditor.click();
           await leftEditor.fill(sample.invalid);
 
+          // Wait for decode button to be enabled
+          const decodeButton = page.getByRole("button", { name: /decode/i });
+          await expect(decodeButton).toBeEnabled({ timeout: 5000 });
+
           // Click Decode button
-          await page.getByRole("button", { name: /decode/i }).click();
+          await decodeButton.click();
           await page.waitForTimeout(1000);
 
           // Verify error toast appears
@@ -247,7 +266,12 @@ test.describe("Encoder Tools", () => {
           const leftEditor = page.locator(".cm-content").first();
           await leftEditor.click();
           await leftEditor.fill(sample.valid);
-          await page.getByRole("button", { name: /decode/i }).click();
+
+          // Wait for decode button to be enabled
+          const decodeButton = page.getByRole("button", { name: /decode/i });
+          await expect(decodeButton).toBeEnabled({ timeout: 5000 });
+
+          await decodeButton.click();
           await page.waitForTimeout(1500);
 
           // Click right copy button using aria-label
