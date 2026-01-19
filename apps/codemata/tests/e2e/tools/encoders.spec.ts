@@ -75,7 +75,9 @@ test.describe("Encoder Tools", () => {
           await rightEditor.fill(sample.encoded);
 
           // On mobile, verify editor content actually changed before checking button
-          await expect(rightEditor).toHaveText(sample.encoded, { timeout: 5000 });
+          await expect(rightEditor).toHaveText(sample.encoded, {
+            timeout: 5000,
+          });
 
           // Wait for decode button to be enabled (after React state updates)
           const decodeButton = page.getByRole("button", { name: /decode/i });

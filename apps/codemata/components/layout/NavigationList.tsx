@@ -14,21 +14,19 @@ interface NavigationListProps {
 export function NavigationList({ onItemClick }: NavigationListProps) {
   const pathname = usePathname();
   const activeItemRef = useRef<HTMLAnchorElement>(null);
+  const hasScrolledRef = useRef<string | null>(null);
 
-  // Scroll to active item on mount only.
-  // We intentionally use an empty dependency array because:
-  // - When pathname changes, the entire page navigates and this component remounts
-  // - On remount, activeItemRef.current points to the new active item
-  // - This ensures scroll happens once per page load, not on every state change
+  // Scroll to active item when pathname changes (but only once per pathname)
   useEffect(() => {
-    if (activeItemRef.current) {
+    // Only scroll if pathname has changed and we haven't scrolled to this path yet
+    if (activeItemRef.current && hasScrolledRef.current !== pathname) {
       activeItemRef.current.scrollIntoView({
         behavior: "smooth",
         block: "center",
       });
+      hasScrolledRef.current = pathname;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [pathname]);
 
   // Data-driven categories configuration
   const categories = [
