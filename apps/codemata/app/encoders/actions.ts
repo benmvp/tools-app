@@ -133,8 +133,9 @@ export async function encodeJsString(
         decoded = decoded.slice(1, -1);
       }
       // Unescape special characters
-      // Use placeholder strategy to preserve literal backslashes (using Unicode private use character)
-      const BACKSLASH_PLACEHOLDER = "\uE000";
+      // Use placeholder strategy to preserve literal backslashes
+      // Using a unique string token that's extremely unlikely to appear in user input
+      const BACKSLASH_PLACEHOLDER = "__ESCAPED_BACKSLASH_PLACEHOLDER_xF3zQ9__";
       return decoded
         .replace(/\\\\/g, BACKSLASH_PLACEHOLDER) // Placeholder for escaped backslashes
         .replace(/\\"/g, '"')

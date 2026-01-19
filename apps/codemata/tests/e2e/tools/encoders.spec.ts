@@ -116,13 +116,18 @@ test.describe("Encoder Tools", () => {
             .first();
           await expect(encodeButton).toBeEnabled({ timeout: 5000 });
           await encodeButton.click();
-          await page.waitForTimeout(1000);
+
+          // Wait for encoding to complete by checking right editor has content
+          const rightEditor = page.locator(".cm-content").last();
+          await expect(rightEditor).not.toBeEmpty({ timeout: 5000 });
 
           // Step 2: Decode
           const decodeButton = page.getByRole("button", { name: /decode/i });
           await expect(decodeButton).toBeEnabled({ timeout: 5000 });
           await decodeButton.click();
-          await page.waitForTimeout(1000);
+
+          // Wait for decoding to complete by checking left editor content restored
+          await expect(leftEditor).not.toBeEmpty({ timeout: 5000 });
 
           // Verify we get back the original text
           const decodedText = await leftEditor.textContent();
@@ -144,12 +149,14 @@ test.describe("Encoder Tools", () => {
           const leftEditor = page.locator(".cm-content").first();
           await leftEditor.click();
           await leftEditor.fill(sample.plain);
-          await page.waitForTimeout(500);
 
-          // Click left copy button using aria-label
+          // Wait for copy button to be enabled
           const leftCopyButton = page.getByRole("button", {
             name: "Copy left editor content",
           });
+          await expect(leftCopyButton).toBeEnabled({ timeout: 5000 });
+
+          // Click left copy button
           await leftCopyButton.click();
 
           // Verify toast appears
@@ -166,18 +173,16 @@ test.describe("Encoder Tools", () => {
           const leftEditor = page.locator(".cm-content").first();
           await leftEditor.click();
           await leftEditor.fill("");
-          await page.waitForTimeout(500);
 
           const rightEditor = page.locator(".cm-content").last();
           await rightEditor.click();
           await rightEditor.fill("");
-          await page.waitForTimeout(500);
 
           // Both editors now empty - encode button should be disabled
           const encodeButton = page
             .getByRole("button", { name: /encode/i })
             .first();
-          await expect(encodeButton).toBeDisabled();
+          await expect(encodeButton).toBeDisabled({ timeout: 5000 });
 
           // Decode button should also be disabled
           const decodeButton = page.getByRole("button", { name: /decode/i });
@@ -244,7 +249,6 @@ test.describe("Encoder Tools", () => {
 
           // Click Decode button
           await decodeButton.click();
-          await page.waitForTimeout(1000);
 
           // Verify error toast appears
           const errorToast = page.locator("[data-sonner-toast]");
@@ -272,7 +276,10 @@ test.describe("Encoder Tools", () => {
           await expect(decodeButton).toBeEnabled({ timeout: 5000 });
 
           await decodeButton.click();
-          await page.waitForTimeout(1500);
+
+          // Wait for right editor to have decoded content
+          const rightEditor = page.locator(".cm-content").last();
+          await expect(rightEditor).not.toBeEmpty({ timeout: 5000 });
 
           // Click right copy button using aria-label
           const rightCopyButton = page.getByRole("button", {

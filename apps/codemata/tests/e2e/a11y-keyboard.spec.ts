@@ -151,9 +151,6 @@ test.describe("Keyboard Navigation", () => {
     // Note: The cmdk library listens for this shortcut
     await page.keyboard.press("Meta+KeyK");
 
-    // Wait a moment for the dialog to open
-    await page.waitForTimeout(500);
-
     // Dialog should open
     const dialog = page.locator('[role="dialog"]');
     await expect(dialog).toBeVisible({ timeout: 10000 });
@@ -162,7 +159,6 @@ test.describe("Keyboard Navigation", () => {
   test("should close command menu with Escape", async ({ page }) => {
     await page.goto("/");
     await page.keyboard.press("Meta+KeyK");
-    await page.waitForTimeout(500);
 
     // Verify opened
     await expect(page.locator('[role="dialog"]')).toBeVisible({
@@ -180,9 +176,15 @@ test.describe("Keyboard Navigation", () => {
     await page.goto("/");
     await page.keyboard.press("Meta+K");
 
-    // Type search
+    // Wait for dialog to be visible
+    await expect(page.locator('[role="dialog"]')).toBeVisible({
+      timeout: 10000,
+    });
+
+    // Type search and wait for results to appear
     await page.keyboard.type("formatter");
-    await page.waitForTimeout(300);
+    const searchResults = page.locator("[cmdk-item]");
+    await expect(searchResults.first()).toBeVisible({ timeout: 5000 });
 
     // Arrow down through results
     await page.keyboard.press("ArrowDown");
@@ -200,7 +202,6 @@ test.describe("Keyboard Navigation", () => {
 
     // Open command menu with keyboard shortcut
     await page.keyboard.press("Meta+KeyK");
-    await page.waitForTimeout(500);
 
     // Verify dialog is open
     await expect(page.locator('[role="dialog"]')).toBeVisible({
@@ -210,7 +211,6 @@ test.describe("Keyboard Navigation", () => {
     // Tab through dialog elements multiple times
     for (let i = 0; i < 5; i++) {
       await page.keyboard.press("Tab");
-      await page.waitForTimeout(100);
     }
 
     // Focus should stay within dialog (not escape to page)
@@ -292,10 +292,12 @@ test.describe("Encoder Tool Keyboard Navigation", () => {
 
     // Press Enter to activate encode
     await page.keyboard.press("Enter");
-    await page.waitForTimeout(1500);
+
+    // Wait for right editor to have encoded content
+    const rightEditor = page.locator(".cm-content").last();
+    await expect(rightEditor).not.toBeEmpty({ timeout: 5000 });
 
     // Verify right editor has encoded content
-    const rightEditor = page.locator(".cm-content").last();
     const output = await rightEditor.textContent();
     expect(output?.length).toBeGreaterThan(0);
     expect(output).toContain("SGVsbG8g"); // Base64 starts with this
@@ -319,10 +321,12 @@ test.describe("Encoder Tool Keyboard Navigation", () => {
 
     // Press Space to activate decode (testing alternate key)
     await page.keyboard.press("Space");
-    await page.waitForTimeout(1500);
+
+    // Wait for left editor to have decoded content
+    const leftEditor = page.locator(".cm-content").first();
+    await expect(leftEditor).not.toBeEmpty({ timeout: 5000 });
 
     // Verify left editor has decoded content
-    const leftEditor = page.locator(".cm-content").first();
     const output = await leftEditor.textContent();
     expect(output).toContain("Hello World");
   });
@@ -345,10 +349,12 @@ test.describe("Encoder Tool Keyboard Navigation", () => {
 
     // Activate with Enter key
     await page.keyboard.press("Enter");
-    await page.waitForTimeout(1000);
+
+    // Wait for encoding to complete
+    const rightEditor = page.locator(".cm-content").last();
+    await expect(rightEditor).not.toBeEmpty({ timeout: 5000 });
 
     // Verify encoding worked
-    const rightEditor = page.locator(".cm-content").last();
     const rightContent = await rightEditor.textContent();
     expect(rightContent).toContain("Test%20Content");
 
@@ -360,7 +366,9 @@ test.describe("Encoder Tool Keyboard Navigation", () => {
 
     // Activate with Space key (alternate activation method)
     await page.keyboard.press("Space");
-    await page.waitForTimeout(1000);
+
+    // Wait for decoding to complete
+    await expect(leftEditor).not.toBeEmpty({ timeout: 5000 });
 
     // Verify decoding worked
     const leftContent = await leftEditor.textContent();
@@ -390,7 +398,10 @@ test.describe("Encoder Tool Keyboard Navigation", () => {
     const decodeButton = page.getByRole("button", { name: /decode/i });
     await decodeButton.focus();
     await page.keyboard.press("Enter");
-    await page.waitForTimeout(2000);
+
+    // Wait for right editor to have decoded content
+    const rightEditor = page.locator(".cm-content").last();
+    await expect(rightEditor).not.toBeEmpty({ timeout: 5000 });
 
     // Focus on right copy button using aria-label
     const copyButton = page.getByRole("button", {

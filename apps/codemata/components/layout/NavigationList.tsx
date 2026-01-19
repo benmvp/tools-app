@@ -15,7 +15,11 @@ export function NavigationList({ onItemClick }: NavigationListProps) {
   const pathname = usePathname();
   const activeItemRef = useRef<HTMLAnchorElement>(null);
 
-  // Scroll to active item on mount
+  // Scroll to active item on mount only.
+  // We intentionally use an empty dependency array because:
+  // - When pathname changes, the entire page navigates and this component remounts
+  // - On remount, activeItemRef.current points to the new active item
+  // - This ensures scroll happens once per page load, not on every state change
   useEffect(() => {
     if (activeItemRef.current) {
       activeItemRef.current.scrollIntoView({
