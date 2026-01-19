@@ -10,6 +10,10 @@ export async function encodeBase64(
   input: string,
   mode: EncoderMode,
 ): Promise<string> {
+  if (!input || input.trim() === "") {
+    throw new Error("Input cannot be empty");
+  }
+
   try {
     if (mode === "encode") {
       return Buffer.from(input, "utf-8").toString("base64");
@@ -32,6 +36,10 @@ export async function encodeUrl(
   input: string,
   mode: EncoderMode,
 ): Promise<string> {
+  if (!input || input.trim() === "") {
+    throw new Error("Input cannot be empty");
+  }
+
   try {
     if (mode === "encode") {
       return encodeURIComponent(input);
@@ -55,6 +63,10 @@ export async function encodeHtmlEntity(
   input: string,
   mode: EncoderMode,
 ): Promise<string> {
+  if (!input || input.trim() === "") {
+    throw new Error("Input cannot be empty");
+  }
+
   try {
     if (mode === "encode") {
       // Encode HTML entities manually
@@ -92,6 +104,10 @@ export async function encodeJsString(
   input: string,
   mode: EncoderMode,
 ): Promise<string> {
+  if (!input || input.trim() === "") {
+    throw new Error("Input cannot be empty");
+  }
+
   try {
     if (mode === "encode") {
       // Encode: Escape special characters and wrap in quotes
@@ -116,11 +132,11 @@ export async function encodeJsString(
       ) {
         decoded = decoded.slice(1, -1);
       }
-      // Unescape special characters
+      // Unescape special characters (process \\\\ first to preserve literal backslashes)
       return decoded
+        .replace(/\\\\/g, "\\")
         .replace(/\\"/g, '"')
         .replace(/\\'/g, "'")
-        .replace(/\\\\/g, "\\")
         .replace(/\\n/g, "\n")
         .replace(/\\r/g, "\r")
         .replace(/\\t/g, "\t")
@@ -142,6 +158,10 @@ export async function encodeJsString(
  * Returns nested JSON structure with header and payload
  */
 export async function decodeJwt(input: string): Promise<string> {
+  if (!input || input.trim() === "") {
+    throw new Error("JWT token cannot be empty");
+  }
+
   try {
     const decoded = jwt.decode(input, { complete: true });
 

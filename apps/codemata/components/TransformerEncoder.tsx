@@ -27,21 +27,20 @@ export function TransformerEncoder({
   const [loading, setLoading] = useState(false);
   const [copiedLeft, setCopiedLeft] = useState(false);
   const [copiedRight, setCopiedRight] = useState(false);
-  const [lastAction, setLastAction] = useState<"encode" | "decode" | null>(
-    null,
-  );
 
   // Determine if this is a bidirectional tool or decode-only
   const isBidirectional = modes !== undefined;
 
+  // Helper to check if input is truly empty (after trimming)
+  const isEmpty = (value: string) => !value || value.trim() === "";
+
   const handleEncode = async () => {
-    if (!leftValue) return;
+    if (isEmpty(leftValue)) return;
 
     setLoading(true);
     try {
       const result = await (action as EncoderAction)(leftValue, "encode");
       setRightValue(result);
-      setLastAction("encode");
       toast.success("Encoded!", {
         description: "Content encoded successfully",
       });
@@ -57,13 +56,12 @@ export function TransformerEncoder({
   const handleDecode = async () => {
     if (isBidirectional) {
       // Bidirectional: decode from right to left
-      if (!rightValue) return;
+      if (isEmpty(rightValue)) return;
 
       setLoading(true);
       try {
         const result = await (action as EncoderAction)(rightValue, "decode");
         setLeftValue(result);
-        setLastAction("decode");
         toast.success("Decoded!", {
           description: "Content decoded successfully",
         });
@@ -77,13 +75,12 @@ export function TransformerEncoder({
       }
     } else {
       // Decode-only (JWT): decode from left to right
-      if (!leftValue) return;
+      if (isEmpty(leftValue)) return;
 
       setLoading(true);
       try {
         const result = await (action as JwtDecoderAction)(leftValue);
         setRightValue(result);
-        setLastAction("decode");
         toast.success("Decoded!", {
           description: "Token decoded successfully",
         });
@@ -99,7 +96,7 @@ export function TransformerEncoder({
   };
 
   const handleCopyLeft = async () => {
-    if (!leftValue) return;
+    if (isEmpty(leftValue)) return;
 
     await navigator.clipboard.writeText(leftValue);
     setCopiedLeft(true);
@@ -110,7 +107,7 @@ export function TransformerEncoder({
   };
 
   const handleCopyRight = async () => {
-    if (!rightValue) return;
+    if (isEmpty(rightValue)) return;
 
     await navigator.clipboard.writeText(rightValue);
     setCopiedRight(true);
@@ -120,16 +117,13 @@ export function TransformerEncoder({
     setTimeout(() => setCopiedRight(false), 2000);
   };
 
-  // Dynamic labels based on last action
+  // Dynamic labels based on tool type
   const getLeftLabel = () => {
     if (!isBidirectional) {
       // JWT decoder: left is always input token
       return toolName.includes("JWT") ? "JWT Token" : "Input";
     }
-    // Bidirectional: swap based on last action
-    if (lastAction === "decode") {
-      return "Plain Text";
-    }
+    // Bidirectional: left is always plain text
     return "Plain Text";
   };
 
@@ -138,10 +132,7 @@ export function TransformerEncoder({
       // JWT decoder: right is always decoded output
       return toolName.includes("JWT") ? "Decoded JSON" : "Output";
     }
-    // Bidirectional: swap based on last action
-    if (lastAction === "decode") {
-      return "Encoded";
-    }
+    // Bidirectional: right is always encoded
     return "Encoded";
   };
 
@@ -160,8 +151,11 @@ export function TransformerEncoder({
           />
           <div className="flex gap-2">
             {isBidirectional && (
-              <Button onClick={handleEncode} disabled={!leftValue || loading}>
-                {loading && lastAction === null ? (
+              <Button
+                onClick={handleEncode}
+                disabled={isEmpty(leftValue) || loading}
+              >
+                {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Encoding...
@@ -175,7 +169,10 @@ export function TransformerEncoder({
               </Button>
             )}
             {!isBidirectional && (
-              <Button onClick={handleDecode} disabled={!leftValue || loading}>
+              <Button
+                onClick={handleDecode}
+                disabled={isEmpty(leftValue) || loading}
+              >
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -192,7 +189,7 @@ export function TransformerEncoder({
             <Button
               variant="outline"
               onClick={handleCopyLeft}
-              disabled={!leftValue}
+              disabled={isEmpty(leftValue)}
               size="icon"
               aria-label="Copy left editor content"
             >
@@ -216,8 +213,11 @@ export function TransformerEncoder({
           />
           <div className="flex gap-2">
             {isBidirectional && (
-              <Button onClick={handleDecode} disabled={!rightValue || loading}>
-                {loading && lastAction === "decode" ? (
+              <Button
+                onClick={handleDecode}
+                disabled={isEmpty(rightValue) || loading}
+              >
+                {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Decoding...
@@ -233,7 +233,7 @@ export function TransformerEncoder({
             <Button
               variant="outline"
               onClick={handleCopyRight}
-              disabled={!rightValue}
+              disabled={isEmpty(rightValue)}
               size="icon"
               aria-label="Copy right editor content"
             >

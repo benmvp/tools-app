@@ -26,6 +26,15 @@ describe("encodeBase64", () => {
     const decoded = await encodeBase64(encoded, "decode");
     expect(decoded).toBe(original);
   });
+
+  it("throws error on empty input", async () => {
+    await expect(encodeBase64("", "encode")).rejects.toThrow(
+      "Input cannot be empty",
+    );
+    await expect(encodeBase64("   ", "encode")).rejects.toThrow(
+      "Input cannot be empty",
+    );
+  });
 });
 
 describe("encodeUrl", () => {
@@ -52,6 +61,12 @@ describe("encodeUrl", () => {
     const input = "%E0%A4%A"; // Invalid percent encoding
     await expect(encodeUrl(input, "decode")).rejects.toThrow();
   });
+
+  it("throws error on empty input", async () => {
+    await expect(encodeUrl("", "encode")).rejects.toThrow(
+      "Input cannot be empty",
+    );
+  });
 });
 
 describe("encodeHtmlEntity", () => {
@@ -76,6 +91,12 @@ describe("encodeHtmlEntity", () => {
     const encoded = await encodeHtmlEntity(original, "encode");
     const decoded = await encodeHtmlEntity(encoded, "decode");
     expect(decoded).toBe(original);
+  });
+
+  it("throws error on empty input", async () => {
+    await expect(encodeHtmlEntity("", "encode")).rejects.toThrow(
+      "Input cannot be empty",
+    );
   });
 });
 
@@ -105,6 +126,12 @@ describe("encodeJsString", () => {
     const input = "Hello World";
     const result = await encodeJsString(input, "decode");
     expect(result).toBe("Hello World");
+  });
+
+  it("throws error on empty input", async () => {
+    await expect(encodeJsString("", "encode")).rejects.toThrow(
+      "Input cannot be empty",
+    );
   });
 });
 
@@ -145,5 +172,9 @@ describe("decodeJwt", () => {
   it("throws error on malformed JWT", async () => {
     const malformedToken = "invalid";
     await expect(decodeJwt(malformedToken)).rejects.toThrow();
+  });
+
+  it("throws error on empty JWT", async () => {
+    await expect(decodeJwt("")).rejects.toThrow("JWT token cannot be empty");
   });
 });
