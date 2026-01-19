@@ -74,6 +74,9 @@ test.describe("Encoder Tools", () => {
           // Enter encoded text in right editor
           await rightEditor.fill(sample.encoded);
 
+          // On mobile, verify editor content actually changed before checking button
+          await expect(rightEditor).toHaveText(sample.encoded, { timeout: 5000 });
+
           // Wait for decode button to be enabled (after React state updates)
           const decodeButton = page.getByRole("button", { name: /decode/i });
           await expect(decodeButton).toBeEnabled({ timeout: 5000 });
@@ -174,9 +177,15 @@ test.describe("Encoder Tools", () => {
           await leftEditor.click();
           await leftEditor.fill("");
 
+          // Verify left editor is actually empty
+          await expect(leftEditor).toBeEmpty({ timeout: 5000 });
+
           const rightEditor = page.locator(".cm-content").last();
           await rightEditor.click();
           await rightEditor.fill("");
+
+          // Verify right editor is actually empty
+          await expect(rightEditor).toBeEmpty({ timeout: 5000 });
 
           // Both editors now empty - encode button should be disabled
           const encodeButton = page
