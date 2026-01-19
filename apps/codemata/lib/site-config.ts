@@ -87,5 +87,10 @@ export const SITE_CONFIG = {
       description:
         "Free online code minifiers for JavaScript, TypeScript, JSON, CSS, HTML, SVG, and XML. Compress and optimize your code for production deployment.",
     },
+    encoders: {
+      title: "Encoders & Decoders | Codemata",
+      description:
+        "Free online encoders and decoders for Base64, URL, HTML entities, JavaScript strings, and JWT tokens. Encode and decode data instantly.",
+    },
   },
 } as const;

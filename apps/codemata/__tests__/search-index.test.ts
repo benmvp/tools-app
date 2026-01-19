@@ -15,7 +15,7 @@ describe("Search Index", () => {
 
       expect(formatters.length).toBe(9);
       expect(minifiers.length).toBe(6);
-      expect(SEARCH_INDEX.length).toBe(15);
+      expect(SEARCH_INDEX.length).toBe(20); // 9 formatters + 6 minifiers + 5 encoders
     });
 
     it("creates proper searchText with name and keywords", () => {
@@ -71,8 +71,10 @@ describe("Search Index", () => {
         expect(item.id).toBeTruthy();
         expect(item.name).toBeTruthy();
         expect(item.description).toBeTruthy();
-        expect(item.url).toMatch(/^\/(formatters|minifiers)\//);
-        expect(["Formatters", "Minifiers"]).toContain(item.category);
+        expect(item.url).toMatch(/^\/(formatters|minifiers|encoders)\//);
+        expect(["Formatters", "Minifiers", "Encoders"]).toContain(
+          item.category,
+        );
         expect(Array.isArray(item.keywords)).toBe(true);
         expect(item.searchText).toBeTruthy();
       }

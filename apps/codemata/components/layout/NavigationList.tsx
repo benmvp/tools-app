@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useRef } from "react";
 import { Badge } from "@/components/ui/badge";
-import { ALL_FORMATTERS, ALL_MINIFIERS } from "@/lib/tools-data";
+import { ALL_ENCODERS, ALL_FORMATTERS, ALL_MINIFIERS } from "@/lib/tools-data";
 import { shouldPrefetch } from "@/lib/utils";
 
 interface NavigationListProps {
@@ -12,6 +13,17 @@ interface NavigationListProps {
 
 export function NavigationList({ onItemClick }: NavigationListProps) {
   const pathname = usePathname();
+  const activeItemRef = useRef<HTMLAnchorElement>(null);
+
+  // Scroll to active item on mount
+  useEffect(() => {
+    if (activeItemRef.current) {
+      activeItemRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  }, [pathname]);
 
   // Data-driven categories configuration
   const categories = [
@@ -26,6 +38,12 @@ export function NavigationList({ onItemClick }: NavigationListProps) {
       singular: "Minifier",
       href: "/minifiers",
       tools: ALL_MINIFIERS,
+    },
+    {
+      name: "Encoders",
+      singular: "Encoder",
+      href: "/encoders",
+      tools: ALL_ENCODERS,
     },
   ];
 
@@ -45,6 +63,7 @@ export function NavigationList({ onItemClick }: NavigationListProps) {
             {tools.map((tool) => (
               <li key={tool.id}>
                 <Link
+                  ref={pathname === tool.url ? activeItemRef : null}
                   href={tool.url}
                   prefetch={shouldPrefetch()}
                   title={`${tool.name} ${singular}`}

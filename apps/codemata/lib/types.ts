@@ -62,6 +62,24 @@ export type SqlFormatterAction = (
 export type MinifierAction = (input: string) => Promise<string>;
 
 /**
+ * Mode for encoder/decoder tools
+ */
+export type EncoderMode = "encode" | "decode";
+
+/**
+ * Server action function signature for encoders/decoders
+ */
+export type EncoderAction = (
+  input: string,
+  mode: EncoderMode,
+) => Promise<string>;
+
+/**
+ * Server action function signature for JWT decoder (decode-only)
+ */
+export type JwtDecoderAction = (input: string) => Promise<string>;
+
+/**
  * Base Tool interface for all tools (formatters, minifiers, converters, etc.)
  */
 export interface Tool {
@@ -109,4 +127,15 @@ export interface MinifierTool extends Tool {
   action: MinifierAction;
   example: string;
   language: "typescript" | "javascript" | "json" | "css" | "html" | "xml";
+}
+
+/**
+ * Encoder Tool interface with mode support
+ */
+export interface EncoderTool extends Tool {
+  action: EncoderAction | JwtDecoderAction;
+  modes?: { value: EncoderMode; label: string }[];
+  defaultMode?: EncoderMode;
+  example: string;
+  language: "typescript" | "javascript" | "json" | "text" | "html" | "xml";
 }

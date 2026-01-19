@@ -265,3 +265,186 @@ test.describe("Keyboard Navigation", () => {
     }
   });
 });
+
+test.describe("Encoder Tool Keyboard Navigation", () => {
+  // Skip on mobile - keyboard navigation is for desktop users
+  test.beforeEach(async ({ page: _page }, testInfo) => {
+    if (testInfo.project.name === "iphone-13") {
+      test.skip();
+    }
+  });
+
+  test("should encode with keyboard only (Base64)", async ({ page }) => {
+    await page.goto("/encoders/base64-encoder");
+
+    // Type content in left editor
+    const leftEditor = page.locator(".cm-content").first();
+    await leftEditor.click();
+    await leftEditor.fill("Hello World");
+
+    // Focus on Encode button using role selector
+    const encodeButton = page.getByRole("button", { name: /encode/i });
+    await encodeButton.focus();
+
+    // Verify button is focused
+    const buttonText = await page.locator(":focus").textContent();
+    expect(buttonText?.toLowerCase()).toContain("encode");
+
+    // Press Enter to activate encode
+    await page.keyboard.press("Enter");
+    await page.waitForTimeout(1500);
+
+    // Verify right editor has encoded content
+    const rightEditor = page.locator(".cm-content").last();
+    const output = await rightEditor.textContent();
+    expect(output?.length).toBeGreaterThan(0);
+    expect(output).toContain("SGVsbG8g"); // Base64 starts with this
+  });
+
+  test("should decode with keyboard only (Base64)", async ({ page }) => {
+    await page.goto("/encoders/base64-encoder");
+
+    // Add encoded content to right editor
+    const rightEditor = page.locator(".cm-content").last();
+    await rightEditor.click();
+    await rightEditor.fill("SGVsbG8gV29ybGQ="); // "Hello World" in Base64
+
+    // Focus on Decode button using role selector
+    const decodeButton = page.getByRole("button", { name: /decode/i });
+    await decodeButton.focus();
+
+    // Verify button is focused
+    const buttonText = await page.locator(":focus").textContent();
+    expect(buttonText?.toLowerCase()).toContain("decode");
+
+    // Press Space to activate decode (testing alternate key)
+    await page.keyboard.press("Space");
+    await page.waitForTimeout(1500);
+
+    // Verify left editor has decoded content
+    const leftEditor = page.locator(".cm-content").first();
+    const output = await leftEditor.textContent();
+    expect(output).toContain("Hello World");
+  });
+
+  test("should navigate between encode/decode buttons with keyboard", async ({
+    page,
+  }) => {
+    await page.goto("/encoders/url-encoder");
+
+    // Add content to enable buttons
+    const leftEditor = page.locator(".cm-content").first();
+    await leftEditor.click();
+    await leftEditor.fill("Test Content");
+
+    // Test 1: Verify Encode button is keyboard-accessible
+    const encodeButton = page.getByRole("button", { name: /encode/i });
+    await encodeButton.focus();
+    let focusedText = await page.locator(":focus").textContent();
+    expect(focusedText?.toLowerCase()).toContain("encode");
+
+    // Activate with Enter key
+    await page.keyboard.press("Enter");
+    await page.waitForTimeout(1000);
+
+    // Verify encoding worked
+    const rightEditor = page.locator(".cm-content").last();
+    const rightContent = await rightEditor.textContent();
+    expect(rightContent).toContain("Test%20Content");
+
+    // Test 2: Verify Decode button is keyboard-accessible
+    const decodeButton = page.getByRole("button", { name: /decode/i });
+    await decodeButton.focus();
+    focusedText = await page.locator(":focus").textContent();
+    expect(focusedText?.toLowerCase()).toContain("decode");
+
+    // Activate with Space key (alternate activation method)
+    await page.keyboard.press("Space");
+    await page.waitForTimeout(1000);
+
+    // Verify decoding worked
+    const leftContent = await leftEditor.textContent();
+    expect(leftContent).toContain("Test Content");
+
+    // Test 3: Verify both buttons remain focusable and can be toggled
+    await encodeButton.focus();
+    expect(await page.locator(":focus").textContent()).toContain("Encode");
+
+    await decodeButton.focus();
+    expect(await page.locator(":focus").textContent()).toContain("Decode");
+  });
+
+  test("should use copy buttons with keyboard (JWT Decoder)", async ({
+    page,
+  }) => {
+    await page.goto("/encoders/jwt-decoder");
+
+    // Add JWT token
+    const leftEditor = page.locator(".cm-content").first();
+    await leftEditor.click();
+    await leftEditor.fill(
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+    );
+
+    // Focus and activate Decode button using keyboard
+    const decodeButton = page.getByRole("button", { name: /decode/i });
+    await decodeButton.focus();
+    await page.keyboard.press("Enter");
+    await page.waitForTimeout(2000);
+
+    // Focus on right copy button using aria-label
+    const copyButton = page.getByRole("button", {
+      name: "Copy right editor content",
+    });
+    await copyButton.focus();
+
+    // Verify button is focused
+    await expect(page.locator(":focus")).toHaveAttribute(
+      "aria-label",
+      "Copy right editor content",
+    );
+
+    // Press Enter to copy
+    await page.keyboard.press("Enter");
+
+    // Verify toast appears
+    const successToast = page.locator("[data-sonner-toast]");
+    await expect(successToast.first()).toBeVisible({ timeout: 3000 });
+  });
+
+  test("should have visible focus on encode/decode buttons", async ({
+    page,
+  }) => {
+    await page.goto("/encoders/html-entity-encoder");
+
+    // Add content to enable buttons
+    const leftEditor = page.locator(".cm-content").first();
+    await leftEditor.click();
+    await leftEditor.fill("Hello & World");
+
+    // Focus on Encode button
+    const encodeButton = page.getByRole("button", { name: /encode/i });
+    await encodeButton.focus();
+
+    // Check that focused button has visible outline or ring
+    const focusedButton = page.locator(":focus");
+    await expect(focusedButton).toBeVisible();
+
+    const styles = await focusedButton.evaluate((el) => {
+      const computed = window.getComputedStyle(el);
+      return {
+        outline: computed.outline,
+        outlineWidth: computed.outlineWidth,
+        outlineColor: computed.outlineColor,
+        boxShadow: computed.boxShadow,
+      };
+    });
+
+    // Should have some focus indicator (outline or box-shadow)
+    // Browsers provide default focus styles even if not explicitly set
+    const hasFocusIndicator =
+      styles.outlineWidth !== "0px" ||
+      (styles.boxShadow !== "none" && styles.boxShadow !== "");
+    expect(hasFocusIndicator).toBe(true);
+  });
+});

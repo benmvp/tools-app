@@ -36,7 +36,8 @@ Tools App is a suite of three web applications providing free, high-quality deve
 
    - Code formatters (8 languages/formats)
    - Code minifiers (6 languages/formats)
-   - Future: Viewers, validators, encoders, generators, converters
+   - Encoders/decoders (5 tools: JWT, Base64, URL, HTML Entity, JS String)
+   - Future: Viewers, validators, generators, converters
 
 2. **Moni** (moni.benmvp.com) - Financial calculators and planning tools
 
@@ -3704,40 +3705,51 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 
 ---
 
-### Phase 8: Expand Codemata - Encoders/Decoders (Size: L)
+### Phase 8: Expand Codemata - Encoders/Decoders (Size: L) ✅
 
 **Goal:** Add high-traffic encoder/decoder tools
 
 #### Tools to Build
 
-- [ ] JWT Decoder (very high traffic potential)
-- [ ] Base64 Encoder/Decoder
-- [ ] URL Encoder/Decoder
-- [ ] HTML Entity Encoder/Decoder
-- [ ] JS String Encoder/Decoder
+- [x] JWT Decoder (very high traffic potential) ✅
+- [x] Base64 Encoder/Decoder ✅
+- [x] URL Encoder/Decoder ✅
+- [x] HTML Entity Encoder/Decoder ✅
+- [x] JS String Encoder/Decoder ✅
 
 #### Tasks
 
-**8.1 Implement Tools**
+**8.1 Implement Tools** ✅
 
-- [ ] Create encoder/decoder pages
-- [ ] Implement server actions for each
-- [ ] Build appropriate UI (may differ from transformer pattern)
-- [ ] Write tests
+- [x] Create encoder/decoder pages ✅
+- [x] Implement server actions for each ✅
+- [x] Build appropriate UI (TransformerEncoder component with bidirectional buttons) ✅
+- [x] Write tests (unit tests, e2e, a11y & lighthouse tests) ✅
+  - [x] Unit tests: 18 tests for all encoder actions ✅
+  - [x] E2E tests: 26 tests for encode/decode/round-trip/copy/disabled states ✅
+  - [x] A11y compliance: 5 tests (WCAG 2.0/2.1 Level AA) ✅
+  - [x] Keyboard navigation: 5 tests for encoder-specific interactions ✅
+  - [x] Lighthouse tests: Performance/accessibility benchmarks ✅
 
-**8.2 AI Content & SEO**
+**8.2 AI Content & SEO** ✅
 
-- [ ] Generate AI content for each tool
-- [ ] Optimize for high-traffic keywords
-- [ ] Update sitemap
+- [x] Generate AI content for each tool ✅
+- [x] Optimize for high-traffic keywords ✅
+- [x] Update sitemap ✅
+- [x] Fix AI content list formatting (added explicit markdown formatting rules) ✅
 
-**8.3 Deploy & Monitor**
+**8.3 UX Improvements** ✅
 
-- [ ] Deploy to production
+- [x] Auto-scroll navigation to selected tool ✅
+- [x] Bidirectional encoder UI with mode buttons ✅
+
+**8.4 Deploy & Monitor**
+
+- [ ] Deploy to production ⏳ (ready for deployment)
 - [ ] Monitor analytics for these tools
 - [ ] Track revenue impact
 
-**Deliverable:** Codemata with 20 tools (15 existing + 5 encoders/decoders)
+**Deliverable:** 5 additional encoders/decoders tools
 
 ---
 
@@ -3946,17 +3958,19 @@ Extract shared code when:
 | 1     | S    | Codemata with 1 formatter (deployed)         | ✅ Complete |
 | 2     | M    | All 8 formatters                             | ✅ Complete |
 | 3     | M    | All 6 minifiers (14 total tools)             | ✅ Complete |
-| 4     | M    | AI content + build optimization              | 🔄 Next     |
-| 5     | M    | Polish and public launch                     | ⏳ Pending  |
-| 6     | S    | SQL Formatter (high-traffic addition)        | ⏳ Pending  |
-| 7     | S    | Analytics and ads (monetization)             | ⏳ Pending  |
-| 8     | L    | Encoders/Decoders (5 tools)                  | ⏳ Pending  |
+| 4     | M    | AI content + build optimization              | ✅ Complete |
+| 5     | M    | Polish and public launch                     | ✅ Complete |
+| 6     | S    | SQL Formatter (high-traffic addition)        | ✅ Complete |
+| 7     | S    | Analytics and ads (monetization)             | ✅ Complete |
+| 8     | L    | Encoders/Decoders (5 tools, 19 total)        | ✅ Complete |
 | 9     | L    | Validators/Checkers (8+ tools)               | ⏳ Pending  |
 | 10+   | Varies | Remaining Codemata categories (40+ tools)  | ⏳ Pending  |
 | 11    | L    | Convertly app launch                         | ⏳ Pending  |
 | 12    | XL   | Moni app launch                              | ⏳ Pending  |
 
-**Key Strategy:** Launch Codemata publicly, add analytics/ads, then expand based on traffic data before building other apps. Extract shared code only when duplication hurts.
+**Current Status:** Codemata live with **19 tools** (8 formatters + 6 minifiers + 5 encoders/decoders), analytics, and monetization. Ready to expand based on traffic data.
+
+**Key Strategy:** Continue expanding Codemata with high-traffic tools identified through analytics before building other apps. Extract shared code only when duplication hurts.
 
 ---
 
