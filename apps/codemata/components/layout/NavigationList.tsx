@@ -23,7 +23,8 @@ export function NavigationList({ onItemClick }: NavigationListProps) {
         block: "center",
       });
     }
-  }, [pathname]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Data-driven categories configuration
   const categories = [
