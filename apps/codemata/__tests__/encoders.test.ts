@@ -122,6 +122,18 @@ describe("encodeJsString", () => {
     expect(decoded).toBe(original);
   });
 
+  it("correctly handles escaped backslashes with escape sequences", async () => {
+    // Test case from code review: \\n should decode to \n (backslash + n), not newline
+    const input = '"\\\\n"'; // Represents the string with escaped backslash: \\n
+    const result = await encodeJsString(input, "decode");
+    expect(result).toBe("\\n"); // Should be literal backslash + n, not newline character
+
+    // Additional test: \\t should decode to \t (backslash + t), not tab
+    const input2 = '"\\\\t"';
+    const result2 = await encodeJsString(input2, "decode");
+    expect(result2).toBe("\\t");
+  });
+
   it("handles strings without quotes (decodes anyway)", async () => {
     const input = "Hello World";
     const result = await encodeJsString(input, "decode");

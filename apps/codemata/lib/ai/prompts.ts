@@ -59,7 +59,7 @@ function getFaqSectionFormat(): string {
 - **heading**: "Frequently Asked Questions"
 - **content**: 3-5 common questions and concise answers
   - Format as markdown with **Q:** and **A:**
-  - **CRITICAL:** Each Q&A pair MUST be on separate lines as bulleted lists
+  - **CRITICAL:** Each Q&A pair is a single bullet point with blank line between pairs
   - **CORRECT Format:**
     \`\`\`markdown
     - **Q: Question here?** **A:** Answer here.

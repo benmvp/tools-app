@@ -132,9 +132,11 @@ export async function encodeJsString(
       ) {
         decoded = decoded.slice(1, -1);
       }
-      // Unescape special characters (process \\\\ first to preserve literal backslashes)
+      // Unescape special characters
+      // Use placeholder strategy to preserve literal backslashes (using Unicode private use character)
+      const BACKSLASH_PLACEHOLDER = "\uE000";
       return decoded
-        .replace(/\\\\/g, "\\")
+        .replace(/\\\\/g, BACKSLASH_PLACEHOLDER) // Placeholder for escaped backslashes
         .replace(/\\"/g, '"')
         .replace(/\\'/g, "'")
         .replace(/\\n/g, "\n")
@@ -142,7 +144,8 @@ export async function encodeJsString(
         .replace(/\\t/g, "\t")
         .replace(/\\f/g, "\f")
         .replace(/\\v/g, "\v")
-        .replace(/\\0/g, "\0");
+        .replace(/\\0/g, "\0")
+        .replace(new RegExp(BACKSLASH_PLACEHOLDER, "g"), "\\"); // Restore literal backslashes
     }
   } catch (error) {
     throw new Error(
