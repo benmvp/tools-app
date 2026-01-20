@@ -1,14 +1,24 @@
 import {
   Braces,
+  Code,
   Database,
   FileCode,
   FileCode2,
   FileText,
   Globe,
   Image as ImageIcon,
+  Link,
   Palette,
   Settings,
+  Shield,
 } from "lucide-react";
+import {
+  decodeJwt,
+  encodeBase64,
+  encodeHtmlEntity,
+  encodeJsString,
+  encodeUrl,
+} from "../app/encoders/actions";
 import {
   formatCss,
   formatGraphql,
@@ -28,7 +38,7 @@ import {
   minifyTypescript,
   minifyXml,
 } from "../app/minifiers/actions";
-import type { FormatterTool, MinifierTool } from "./types";
+import type { EncoderTool, FormatterTool, MinifierTool } from "./types";
 
 /**
  * Formatter Tools - Record-based structure for O(1) lookups
@@ -472,11 +482,153 @@ const sum = doubled.reduce((acc, val) => acc + val, 0);
 };
 
 /**
+ * Encoder Tools - Record-based structure for O(1) lookups
+ * Key is the URL slug (e.g., "base64-encoder")
+ */
+export const ENCODER_TOOLS: Record<string, EncoderTool> = {
+  "base64-encoder": {
+    id: "base64",
+    name: "Base64 Encoder/Decoder",
+    description: "Encode and decode Base64 strings",
+    url: "/encoders/base64-encoder",
+    icon: FileCode2,
+    comingSoon: false,
+    action: encodeBase64,
+    modes: [
+      { value: "encode", label: "Encode" },
+      { value: "decode", label: "Decode" },
+    ],
+    defaultMode: "encode",
+    example: "Hello, World!",
+    language: "text",
+    keywords: ["base64", "encode", "decode", "base64encode", "base64decode"],
+    metadata: {
+      title: "Base64 Encoder/Decoder",
+      description:
+        "Encode and decode Base64 strings instantly. Free online Base64 encoder and decoder for text, binary data, and more.",
+    },
+  },
+  "url-encoder": {
+    id: "url",
+    name: "URL Encoder/Decoder",
+    description: "Encode and decode URL-encoded strings",
+    url: "/encoders/url-encoder",
+    icon: Link,
+    comingSoon: false,
+    action: encodeUrl,
+    modes: [
+      { value: "encode", label: "Encode" },
+      { value: "decode", label: "Decode" },
+    ],
+    defaultMode: "encode",
+    example: "Hello World!",
+    language: "text",
+    keywords: ["url", "encode", "decode", "urlencode", "urldecode", "percent"],
+    metadata: {
+      title: "URL Encoder/Decoder",
+      description:
+        "Encode and decode URL-encoded strings. Free online URL encoder and decoder for percent-encoding special characters.",
+    },
+  },
+  "html-entity-encoder": {
+    id: "html-entity",
+    name: "HTML Entity Encoder/Decoder",
+    description: "Encode and decode HTML entities",
+    url: "/encoders/html-entity-encoder",
+    icon: Code,
+    comingSoon: false,
+    action: encodeHtmlEntity,
+    modes: [
+      { value: "encode", label: "Encode" },
+      { value: "decode", label: "Decode" },
+    ],
+    defaultMode: "encode",
+    example: "Hello & World",
+    language: "text",
+    keywords: [
+      "html",
+      "entity",
+      "encode",
+      "decode",
+      "htmlentities",
+      "escape",
+      "unescape",
+    ],
+    metadata: {
+      title: "HTML Entity Encoder/Decoder",
+      description:
+        "Encode and decode HTML entities. Free online HTML entity encoder and decoder for escaping special characters in HTML.",
+    },
+  },
+  "js-string-encoder": {
+    id: "js-string",
+    name: "JavaScript String Encoder/Decoder",
+    description: "Encode and decode JavaScript string literals",
+    url: "/encoders/js-string-encoder",
+    icon: FileText,
+    comingSoon: false,
+    action: encodeJsString,
+    modes: [
+      { value: "encode", label: "Encode" },
+      { value: "decode", label: "Decode" },
+    ],
+    defaultMode: "encode",
+    example: 'Hello "World"!\nNew line',
+    language: "javascript",
+    keywords: [
+      "javascript",
+      "js",
+      "string",
+      "encode",
+      "decode",
+      "escape",
+      "unescape",
+      "literal",
+    ],
+    metadata: {
+      title: "JavaScript String Encoder/Decoder",
+      description:
+        "Encode and decode JavaScript string literals. Free online JavaScript string encoder and decoder for escaping special characters.",
+    },
+  },
+  "jwt-decoder": {
+    id: "jwt",
+    name: "JWT Decoder",
+    description: "Decode JWT tokens and view header and payload",
+    url: "/encoders/jwt-decoder",
+    icon: Shield,
+    comingSoon: false,
+    action: decodeJwt,
+    modes: undefined, // Decode-only, no mode toggle
+    defaultMode: undefined,
+    example:
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+    language: "json",
+    keywords: [
+      "jwt",
+      "json",
+      "web",
+      "token",
+      "decode",
+      "decoder",
+      "header",
+      "payload",
+    ],
+    metadata: {
+      title: "JWT Decoder",
+      description:
+        "Decode JWT tokens and view header and payload. Free online JWT decoder for inspecting JSON Web Token structure.",
+    },
+  },
+};
+
+/**
  * Helper arrays for navigation components
  * Use Object.values() to get arrays from Records
  */
 export const ALL_FORMATTERS: FormatterTool[] = Object.values(FORMATTER_TOOLS);
 export const ALL_MINIFIERS: MinifierTool[] = Object.values(MINIFIER_TOOLS);
+export const ALL_ENCODERS: EncoderTool[] = Object.values(ENCODER_TOOLS);
 
 /**
  * Centralized tool registry for dynamic counting and category lookups.
@@ -485,6 +637,7 @@ export const ALL_MINIFIERS: MinifierTool[] = Object.values(MINIFIER_TOOLS);
 export const ALL_TOOLS = {
   formatters: ALL_FORMATTERS,
   minifiers: ALL_MINIFIERS,
+  encoders: ALL_ENCODERS,
 } as const;
 
 /**
@@ -492,4 +645,5 @@ export const ALL_TOOLS = {
  */
 export type FormatterSlug = keyof typeof FORMATTER_TOOLS;
 export type MinifierSlug = keyof typeof MINIFIER_TOOLS;
-export type ToolSlug = FormatterSlug | MinifierSlug;
+export type EncoderSlug = keyof typeof ENCODER_TOOLS;
+export type ToolSlug = FormatterSlug | MinifierSlug | EncoderSlug;

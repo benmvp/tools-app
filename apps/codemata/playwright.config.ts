@@ -42,6 +42,7 @@ export default defineConfig({
         ...devices["Desktop Firefox"],
         viewport: { width: 1280, height: 720 },
       },
+      testIgnore: /mobile\.spec\.ts$/, // Skip mobile-only tests
     },
     {
       name: "iphone-13",
@@ -49,6 +50,11 @@ export default defineConfig({
         ...devices["iPhone 13"],
         // iPhone 13 viewport: 390×844 (iOS Safari)
       },
+      testIgnore: [
+        /a11y-keyboard\.spec\.ts$/, // Skip keyboard tests on touchscreen
+        /a11y-screen-reader\.spec\.ts$/, // Skip screen reader tests (different on mobile)
+        /navigation-desktop\.spec\.ts$/, // Skip desktop-only navigation tests
+      ],
     },
   ],
 

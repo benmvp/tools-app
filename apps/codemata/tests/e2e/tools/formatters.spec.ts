@@ -5,21 +5,19 @@ import { FORMATTER_SAMPLES } from "../../fixtures/samples";
 test.describe("Formatter Tools", () => {
   // Auto-generate tests for all formatters
   for (const [, tool] of Object.entries(FORMATTER_TOOLS)) {
+    // Get sample data for this tool
+    const sampleKey = tool.id as keyof typeof FORMATTER_SAMPLES;
+    const sample = FORMATTER_SAMPLES[sampleKey];
+
+    // Only create test suite if fixture exists
+    if (!sample) continue;
+
     test.describe(tool.name, () => {
       test("should format valid code successfully", async ({ page }) => {
         await page.goto(tool.url);
 
         // Verify page loaded - check metadata title, not display name
         await expect(page).toHaveTitle(new RegExp(tool.metadata.title, "i"));
-
-        // Get sample data for this tool
-        const sampleKey = tool.id as keyof typeof FORMATTER_SAMPLES;
-        const sample = FORMATTER_SAMPLES[sampleKey];
-
-        if (!sample) {
-          test.skip(true, `No test fixture for ${tool.id}`);
-          return;
-        }
 
         // Find input editor and paste code
         const inputEditor = page.locator(".cm-content").first();
@@ -39,14 +37,6 @@ test.describe("Formatter Tools", () => {
 
       test("should handle configuration changes", async ({ page }) => {
         await page.goto(tool.url);
-
-        const sampleKey = tool.id as keyof typeof FORMATTER_SAMPLES;
-        const sample = FORMATTER_SAMPLES[sampleKey];
-
-        if (!sample) {
-          test.skip(true, `No test fixture for ${tool.id}`);
-          return;
-        }
 
         // Enter code
         const inputEditor = page.locator(".cm-content").first();
@@ -73,30 +63,24 @@ test.describe("Formatter Tools", () => {
         }
       });
 
-      test("should show error for invalid code", async ({ page }) => {
-        await page.goto(tool.url);
+      if ("invalid" in sample && sample.invalid) {
+        test("should show error for invalid code", async ({ page }) => {
+          await page.goto(tool.url);
 
-        const sampleKey = tool.id as keyof typeof FORMATTER_SAMPLES;
-        const sample = FORMATTER_SAMPLES[sampleKey];
+          // Enter invalid code
+          const inputEditor = page.locator(".cm-content").first();
+          await inputEditor.click();
+          await inputEditor.fill(sample.invalid);
 
-        if (!sample || !("invalid" in sample) || !sample.invalid) {
-          test.skip(true, `No invalid fixture for ${tool.id}`);
-          return;
-        }
+          // Click Format button
+          await page.getByRole("button", { name: /format/i }).click();
+          await page.waitForTimeout(1000);
 
-        // Enter invalid code
-        const inputEditor = page.locator(".cm-content").first();
-        await inputEditor.click();
-        await inputEditor.fill(sample.invalid);
-
-        // Click Format button
-        await page.getByRole("button", { name: /format/i }).click();
-        await page.waitForTimeout(1000);
-
-        // Verify error toast appears (Sonner toast library)
-        const errorToast = page.locator("[data-sonner-toast]");
-        await expect(errorToast).toBeVisible({ timeout: 5000 });
-      });
+          // Verify error toast appears (Sonner toast library)
+          const errorToast = page.locator("[data-sonner-toast]");
+          await expect(errorToast).toBeVisible({ timeout: 5000 });
+        });
+      }
 
       test("should handle empty input gracefully", async ({ page }) => {
         await page.goto(tool.url);

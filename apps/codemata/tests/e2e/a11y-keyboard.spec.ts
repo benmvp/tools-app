@@ -12,13 +12,6 @@ import { ALL_FORMATTERS } from "../../lib/tools-data";
  */
 
 test.describe("Keyboard Navigation", () => {
-  // Skip on mobile - keyboard navigation is for desktop users
-  test.beforeEach(async ({ page: _page }, testInfo) => {
-    if (testInfo.project.name === "iphone-13") {
-      test.skip();
-    }
-  });
-
   test("should navigate through page with Tab key", async ({ page }) => {
     await page.goto("/");
 
@@ -151,9 +144,6 @@ test.describe("Keyboard Navigation", () => {
     // Note: The cmdk library listens for this shortcut
     await page.keyboard.press("Meta+KeyK");
 
-    // Wait a moment for the dialog to open
-    await page.waitForTimeout(500);
-
     // Dialog should open
     const dialog = page.locator('[role="dialog"]');
     await expect(dialog).toBeVisible({ timeout: 10000 });
@@ -162,7 +152,6 @@ test.describe("Keyboard Navigation", () => {
   test("should close command menu with Escape", async ({ page }) => {
     await page.goto("/");
     await page.keyboard.press("Meta+KeyK");
-    await page.waitForTimeout(500);
 
     // Verify opened
     await expect(page.locator('[role="dialog"]')).toBeVisible({
@@ -178,11 +167,24 @@ test.describe("Keyboard Navigation", () => {
 
   test("should navigate command menu with arrow keys", async ({ page }) => {
     await page.goto("/");
-    await page.keyboard.press("Meta+K");
 
-    // Type search
+    // Try Meta+K first, wait briefly for dialog
+    await page.keyboard.press("Meta+k");
+
+    // Wait for dialog to be visible (with shorter timeout for first attempt)
+    const dialog = page.locator('[role="dialog"]');
+    try {
+      await expect(dialog).toBeVisible({ timeout: 2000 });
+    } catch {
+      // If Meta+k didn't work (Firefox sometimes has issues), try Control+k
+      await page.keyboard.press("Control+k");
+      await expect(dialog).toBeVisible({ timeout: 10000 });
+    }
+
+    // Type search and wait for results to appear
     await page.keyboard.type("formatter");
-    await page.waitForTimeout(300);
+    const searchResults = page.locator("[cmdk-item]");
+    await expect(searchResults.first()).toBeVisible({ timeout: 5000 });
 
     // Arrow down through results
     await page.keyboard.press("ArrowDown");
@@ -200,7 +202,6 @@ test.describe("Keyboard Navigation", () => {
 
     // Open command menu with keyboard shortcut
     await page.keyboard.press("Meta+KeyK");
-    await page.waitForTimeout(500);
 
     // Verify dialog is open
     await expect(page.locator('[role="dialog"]')).toBeVisible({
@@ -210,7 +211,6 @@ test.describe("Keyboard Navigation", () => {
     // Tab through dialog elements multiple times
     for (let i = 0; i < 5; i++) {
       await page.keyboard.press("Tab");
-      await page.waitForTimeout(100);
     }
 
     // Focus should stay within dialog (not escape to page)

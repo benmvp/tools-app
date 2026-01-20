@@ -3,6 +3,7 @@ import { getCachedContent, setCachedContent } from "./cache";
 import { callGeminiWithRetry } from "./client";
 import {
   buildUserPrompt,
+  getEncoderSystemPrompt,
   getFormatterSystemPrompt,
   getMinifierSystemPrompt,
 } from "./prompts";
@@ -60,13 +61,13 @@ function processContentNewlines(content: ToolContent): ToolContent {
 }
 
 /**
- * Generate AI content for a tool (formatter or minifier)
+ * Generate AI content for a tool (formatter, minifier, or encoder)
  * Returns undefined if generation fails (graceful degradation)
  */
 export async function generateToolContent(
   toolId: string,
   toolName: string,
-  toolType: "formatter" | "minifier",
+  toolType: "formatter" | "minifier" | "encoder",
   availableTools: Array<{ displayName: string; url: string }>,
 ): Promise<ToolContent | undefined> {
   // Skip AI generation based on environment mode
@@ -93,7 +94,9 @@ export async function generateToolContent(
     const systemPrompt =
       toolType === "formatter"
         ? getFormatterSystemPrompt()
-        : getMinifierSystemPrompt();
+        : toolType === "minifier"
+          ? getMinifierSystemPrompt()
+          : getEncoderSystemPrompt();
 
     // Build user prompt with tool context
     const userPrompt = buildUserPrompt(toolName, toolType, availableTools);

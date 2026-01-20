@@ -2,7 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ToolCard } from "@/components/ToolCard";
 import { SITE_CONFIG } from "@/lib/site-config";
-import { ALL_FORMATTERS, ALL_MINIFIERS, ALL_TOOLS } from "@/lib/tools-data";
+import {
+  ALL_ENCODERS,
+  ALL_FORMATTERS,
+  ALL_MINIFIERS,
+  ALL_TOOLS,
+} from "@/lib/tools-data";
 import { getAppUrl, getOgImageUrl } from "@/lib/utils";
 
 const totalCount = Object.values(ALL_TOOLS).flat(2).length;
@@ -50,8 +55,8 @@ export default function HomePage() {
           {SITE_CONFIG.tagline}
         </h1>
         <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-          Format, minify, and beautify your code instantly with our free online
-          tools. No sign-up required.
+          Format, minify, encode, and decode your code instantly with our free
+          online tools. No sign-up required.
         </p>
       </section>
 
@@ -73,7 +78,7 @@ export default function HomePage() {
       </section>
 
       {/* Minifiers */}
-      <section>
+      <section className="mb-16">
         <Link href="/minifiers">
           <h2 className="text-3xl font-bold mb-6 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer">
             Minifiers
@@ -84,6 +89,24 @@ export default function HomePage() {
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {ALL_MINIFIERS.map((tool) => (
+            <ToolCard key={tool.id} {...tool} />
+          ))}
+        </div>
+      </section>
+
+      {/* Encoders */}
+      <section>
+        <Link href="/encoders">
+          <h2 className="text-3xl font-bold mb-6 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer">
+            Encoders & Decoders
+          </h2>
+        </Link>
+        <p className="text-slate-600 dark:text-slate-400 mb-6">
+          Encode and decode data for Base64, URL, HTML entities, JavaScript
+          strings, and JWT tokens
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {ALL_ENCODERS.map((tool) => (
             <ToolCard key={tool.id} {...tool} />
           ))}
         </div>

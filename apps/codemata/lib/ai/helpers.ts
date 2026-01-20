@@ -1,10 +1,10 @@
 import { cache } from "react";
 import { generateToolContent } from "@/lib/ai/generate";
-import { ALL_FORMATTERS, ALL_MINIFIERS } from "@/lib/tools-data";
+import { ALL_ENCODERS, ALL_FORMATTERS, ALL_MINIFIERS } from "@/lib/tools-data";
 
 /**
  * Helper to get all available tools for recommendation context
- * Combines formatters and minifiers from centralized tool data
+ * Combines formatters, minifiers, and encoders from centralized tool data
  */
 export function getAllAvailableTools() {
   const formatters = ALL_FORMATTERS.map((tool) => ({
@@ -17,7 +17,12 @@ export function getAllAvailableTools() {
     url: tool.url,
   }));
 
-  return [...formatters, ...minifiers];
+  const encoders = ALL_ENCODERS.map((tool) => ({
+    displayName: tool.name,
+    url: tool.url,
+  }));
+
+  return [...formatters, ...minifiers, ...encoders];
 }
 
 /**
@@ -39,5 +44,16 @@ export const getMinifierContent = cache(
   async (toolId: string, toolName: string) => {
     const availableTools = getAllAvailableTools();
     return generateToolContent(toolId, toolName, "minifier", availableTools);
+  },
+);
+
+/**
+ * Generate encoder content with all available tools context
+ * Wrapped in React cache() to deduplicate requests within same render
+ */
+export const getEncoderContent = cache(
+  async (toolId: string, toolName: string) => {
+    const availableTools = getAllAvailableTools();
+    return generateToolContent(toolId, toolName, "encoder", availableTools);
   },
 );

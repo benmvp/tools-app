@@ -4,16 +4,6 @@ import { ALL_FORMATTERS } from "../../lib/tools-data";
 // Mobile tests should only run on firefox-mobile project
 // Skip if running on desktop viewport
 test.describe("Mobile Experience", () => {
-  test.beforeEach(async ({ page }) => {
-    const viewport = page.viewportSize();
-    if (!viewport || viewport.width > 500) {
-      test.skip(
-        true,
-        "Mobile tests require mobile viewport (run with --project=firefox-mobile)",
-      );
-    }
-  });
-
   test("should show mobile menu button", async ({ page }) => {
     await page.goto("/");
 

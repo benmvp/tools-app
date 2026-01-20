@@ -5,24 +5,22 @@ import { MINIFIER_SAMPLES } from "../../fixtures/samples";
 test.describe("Minifier Tools", () => {
   // Auto-generate tests for all minifiers
   for (const [, tool] of Object.entries(MINIFIER_TOOLS)) {
+    // Get sample data for this tool
+    const sampleKey = tool.id.replace(
+      "-min",
+      "",
+    ) as keyof typeof MINIFIER_SAMPLES;
+    const sample = MINIFIER_SAMPLES[sampleKey];
+
+    // Only create test suite if fixture exists
+    if (!sample) continue;
+
     test.describe(tool.name, () => {
       test("should minify valid code successfully", async ({ page }) => {
         await page.goto(tool.url);
 
         // Verify page loaded - check metadata title
         await expect(page).toHaveTitle(new RegExp(tool.metadata.title, "i"));
-
-        // Get sample data for this tool
-        const sampleKey = tool.id.replace(
-          "-min",
-          "",
-        ) as keyof typeof MINIFIER_SAMPLES;
-        const sample = MINIFIER_SAMPLES[sampleKey];
-
-        if (!sample) {
-          test.skip(true, `No test fixture for ${tool.id}`);
-          return;
-        }
 
         // Find input editor and paste code
         const inputEditor = page.locator(".cm-content").first();
@@ -46,17 +44,6 @@ test.describe("Minifier Tools", () => {
 
       test("should show file size reduction", async ({ page }) => {
         await page.goto(tool.url);
-
-        const sampleKey = tool.id.replace(
-          "-min",
-          "",
-        ) as keyof typeof MINIFIER_SAMPLES;
-        const sample = MINIFIER_SAMPLES[sampleKey];
-
-        if (!sample) {
-          test.skip(true, `No test fixture for ${tool.id}`);
-          return;
-        }
 
         // Enter code
         const inputEditor = page.locator(".cm-content").first();
@@ -86,35 +73,26 @@ test.describe("Minifier Tools", () => {
         expect(outputText?.trim()).toBe("");
       });
 
-      test("should preserve code with comments removed", async ({ page }) => {
-        await page.goto(tool.url);
+      if ("withComments" in sample && sample.withComments) {
+        test("should preserve code with comments removed", async ({ page }) => {
+          await page.goto(tool.url);
 
-        const sampleKey = tool.id.replace(
-          "-min",
-          "",
-        ) as keyof typeof MINIFIER_SAMPLES;
-        const sample = MINIFIER_SAMPLES[sampleKey];
+          // Enter code with comments
+          const inputEditor = page.locator(".cm-content").first();
+          await inputEditor.click();
+          await inputEditor.fill(sample.withComments);
 
-        if (!sample || !("withComments" in sample) || !sample.withComments) {
-          test.skip(true, `No comments fixture for ${tool.id}`);
-          return;
-        }
+          // Click Minify button
+          await page.getByRole("button", { name: /minify/i }).click();
+          await page.waitForTimeout(1500);
 
-        // Enter code with comments
-        const inputEditor = page.locator(".cm-content").first();
-        await inputEditor.click();
-        await inputEditor.fill(sample.withComments);
-
-        // Click Minify button
-        await page.getByRole("button", { name: /minify/i }).click();
-        await page.waitForTimeout(1500);
-
-        // Verify output has content (comments removed)
-        const outputEditor = page.locator(".cm-content").last();
-        const outputText = await outputEditor.textContent();
-        expect(outputText).toBeTruthy();
-        expect(outputText?.length).toBeGreaterThan(0);
-      });
+          // Verify output has content (comments removed)
+          const outputEditor = page.locator(".cm-content").last();
+          const outputText = await outputEditor.textContent();
+          expect(outputText).toBeTruthy();
+          expect(outputText?.length).toBeGreaterThan(0);
+        });
+      }
     });
   }
 });

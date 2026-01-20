@@ -85,3 +85,31 @@ export const MINIFIER_SAMPLES = {
     empty: "",
   },
 };
+
+export const ENCODER_SAMPLES = {
+  base64: {
+    plain: "Hello, World!",
+    encoded: "SGVsbG8sIFdvcmxkIQ==",
+    invalid: "Invalid!!!Base64@@@",
+  },
+  url: {
+    plain: "Hello World!",
+    encoded: "Hello%20World!",
+    invalid: "%E0%A4%A", // Invalid percent encoding
+  },
+  "html-entity": {
+    plain: "Hello & World <tag>",
+    encoded: "Hello &amp; World &lt;tag&gt;",
+    invalid: "&invalid;", // Not a real entity, but won't error - just passes through
+  },
+  "js-string": {
+    plain: 'Hello "World"',
+    encoded: '"Hello \\"World\\""',
+    invalid: "", // JS string decoder is forgiving
+  },
+  jwt: {
+    valid:
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+    invalid: "not.a.jwt.token",
+  },
+};

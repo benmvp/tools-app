@@ -13,9 +13,12 @@ import { EditorView } from "@codemirror/view";
 import CodeMirror from "@uiw/react-codemirror";
 import { useTheme } from "next-themes";
 import { useEffect, useMemo, useState } from "react";
-import type { FormatterTool, MinifierTool } from "@/lib/types";
+import type { EncoderTool, FormatterTool, MinifierTool } from "@/lib/types";
 
-type CodeEditorLanguage = FormatterTool["language"] | MinifierTool["language"];
+type CodeEditorLanguage =
+  | FormatterTool["language"]
+  | MinifierTool["language"]
+  | EncoderTool["language"];
 
 interface CodeEditorProps {
   value: string;
@@ -48,6 +51,9 @@ function getLanguageExtension(language: CodeEditorLanguage): Extension {
     case "graphql":
       // GraphQL uses javascript for now as a fallback
       return javascript();
+    case "text":
+      // Plain text - no syntax highlighting
+      return [];
     default:
       return javascript({ jsx: true, typescript: true });
   }
