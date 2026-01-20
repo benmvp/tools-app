@@ -98,7 +98,7 @@ function getResourcesSectionFormat(): string {
 /**
  * Shared contextual tips format
  */
-function getTipsSectionFormat(): string {
+function getTipsSectionInstructions(): string {
   return `### Contextual Tips (tips)
 
 - Generate exactly 3-5 tips, facts, or best practices
@@ -234,7 +234,7 @@ ${getResourcesSectionFormat()}
   - Style guides
   - Npm packages (Prettier, Biome, etc.)
 
-${getTipsSectionFormat()}
+${getTipsSectionInstructions()}
 - **Examples:**
   - **tip**: "Use \`jq\` in your terminal for quick JSON formatting without opening a browser"
   - **fact**: "JSON was originally specified by Douglas Crockford and is now described by RFC 7159"
@@ -348,7 +348,7 @@ ${getResourcesSectionFormat()}
   - Minification libraries (Terser, clean-css, etc.)
   - Build tool documentation
 
-${getTipsSectionFormat()}
+${getTipsSectionInstructions()}
 - **Examples:**
   - **tip**: "Always keep original source files - minified code is for production only"
   - **fact**: "Minification can reduce JavaScript file size by 30-40% on average"
@@ -462,7 +462,7 @@ ${getResourcesSectionFormat()}
   - Security best practices
   - Related libraries and tools
 
-${getTipsSectionFormat()}
+${getTipsSectionInstructions()}
 - **Examples:**
   - **tip**: "Always validate Base64 strings before decoding to avoid errors"
   - **fact**: "Base64 encoding increases data size by approximately 33%"

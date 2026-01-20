@@ -20,11 +20,15 @@ export function NavigationList({ onItemClick }: NavigationListProps) {
   useEffect(() => {
     // Only scroll if pathname has changed and we haven't scrolled to this path yet
     if (activeItemRef.current && hasScrolledRef.current !== pathname) {
-      activeItemRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
+      // Small delay to ensure sidebar is fully rendered before scrolling
+      const timeoutId = setTimeout(() => {
+        activeItemRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }, 100);
       hasScrolledRef.current = pathname;
+      return () => clearTimeout(timeoutId);
     }
   }, [pathname]);
 

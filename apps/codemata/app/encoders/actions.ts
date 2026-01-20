@@ -138,8 +138,21 @@ export async function encodeJsString(
         decoded = decoded.slice(1, -1);
       }
 
+      /**
+       * CRITICAL: Escape sequence processing order
+       *
+       * Problem: Escaped backslashes (\\) must be handled carefully to avoid
+       * misinterpreting sequences like \\n (backslash + n) as \n (newline).
+       *
+       * Solution: Use placeholder strategy
+       * 1. Replace \\\\ with placeholder (protects literal backslashes)
+       * 2. Process all other escape sequences (\n, \t, etc.)
+       * 3. Restore placeholder back to single backslash
+       *
+       * Example: "\\\\n" → placeholder+"n" → placeholder+"n" → "\\n" (backslash+n, NOT newline)
+       */
       return decoded
-        .replace(/\\\\/g, BACKSLASH_PLACEHOLDER) // Placeholder for escaped backslashes
+        .replace(/\\\\/g, BACKSLASH_PLACEHOLDER) // Step 1: Protect escaped backslashes
         .replace(/\\"/g, '"')
         .replace(/\\'/g, "'")
         .replace(/\\n/g, "\n")
@@ -148,7 +161,7 @@ export async function encodeJsString(
         .replace(/\\f/g, "\f")
         .replace(/\\v/g, "\v")
         .replace(/\\0/g, "\0")
-        .replace(new RegExp(BACKSLASH_PLACEHOLDER, "g"), "\\"); // Restore literal backslashes
+        .replace(new RegExp(BACKSLASH_PLACEHOLDER, "g"), "\\"); // Step 3: Restore literal backslashes
     }
   } catch (error) {
     throw new Error(

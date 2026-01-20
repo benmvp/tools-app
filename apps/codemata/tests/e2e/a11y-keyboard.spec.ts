@@ -169,15 +169,15 @@ test.describe("Keyboard Navigation", () => {
     await page.goto("/");
 
     // Try Meta+K first, wait briefly for dialog
-    await page.keyboard.press("Meta+K");
+    await page.keyboard.press("Meta+k");
 
     // Wait for dialog to be visible (with shorter timeout for first attempt)
     const dialog = page.locator('[role="dialog"]');
     try {
       await expect(dialog).toBeVisible({ timeout: 2000 });
     } catch {
-      // If Meta+K didn't work (Firefox sometimes has issues), try Control+K
-      await page.keyboard.press("Control+KeyK");
+      // If Meta+k didn't work (Firefox sometimes has issues), try Control+k
+      await page.keyboard.press("Control+k");
       await expect(dialog).toBeVisible({ timeout: 10000 });
     }
 
