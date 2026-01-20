@@ -240,12 +240,7 @@ test.describe("Screen Reader Compatibility", () => {
 
   test("sidebar navigation should have proper ARIA structure", async ({
     page,
-  }, testInfo) => {
-    // Skip on mobile - sidebar is hidden
-    if (testInfo.project.name === "iphone-13") {
-      test.skip();
-    }
-
+  }) => {
     await page.goto("/");
 
     // Sidebar should be a nav element

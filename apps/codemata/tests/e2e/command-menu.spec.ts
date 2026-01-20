@@ -76,15 +76,7 @@ test.describe("Command Menu", () => {
     await expect(dialog).not.toBeVisible();
   });
 
-  test("should show recent tools in command menu", async ({
-    page,
-  }, testInfo) => {
-    // Skip on mobile - command menu layout differs
-    test.skip(
-      testInfo.project.name === "iphone-13",
-      "Command menu layout differs on mobile",
-    );
-
+  test("should show recent tools in command menu", async ({ page }) => {
     // Visit a couple tools
     await page.goto(ALL_FORMATTERS[0].url);
     await page.waitForTimeout(500);
