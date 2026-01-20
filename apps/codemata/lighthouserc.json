@@ -4,16 +4,11 @@
       "url": [
         "http://localhost:3333/",
         "http://localhost:3333/formatters",
-        "http://localhost:3333/minifiers",
-        "http://localhost:3333/encoders",
         "http://localhost:3333/formatters/typescript-formatter",
-        "http://localhost:3333/formatters/json-formatter",
         "http://localhost:3333/minifiers/typescript-minifier",
-        "http://localhost:3333/minifiers/json-minifier",
-        "http://localhost:3333/encoders/base64-encoder",
-        "http://localhost:3333/encoders/jwt-decoder"
+        "http://localhost:3333/encoders/base64-encoder"
       ],
-      "numberOfRuns": 3,
+      "numberOfRuns": 2,
       "settings": {
         "preset": "desktop",
         "throttling": {

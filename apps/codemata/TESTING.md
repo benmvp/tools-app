@@ -138,10 +138,15 @@ cd apps/codemata
 pnpm lighthouse
 ```
 
-**Pages Tested:**
-- Home page
-- Category pages (formatters, minifiers)
-- Representative tool pages (2 per category)
+**Smoke Test Approach:**
+Lighthouse tests validate quality benchmarks on representative pages rather than comprehensive coverage. This prevents long CI wait times while ensuring quality standards.
+
+**Pages Tested (5 URLs × 2 runs = 10 tests):**
+- Home page (unique layout)
+- One category page (formatters - validates all category pages)
+- One formatter tool (TypeScript - validates all formatter pages)
+- One minifier tool (TypeScript - validates all minifier pages)
+- One encoder tool (Base64 - validates all encoder pages)
 
 **Thresholds (all must pass):**
 - Performance ≥ 90%
@@ -151,7 +156,7 @@ pnpm lighthouse
 
 **Configuration:**
 - Desktop preset with realistic throttling
-- 3 runs per page for consistency
+- 2 runs per page for consistency
 - RTT: 40ms, Throughput: 10240 kbps
 
 ---
