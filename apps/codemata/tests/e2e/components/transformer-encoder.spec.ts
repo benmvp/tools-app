@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { ENCODER_SAMPLES } from "../../fixtures/samples";
 
 /**
  * TransformerEncoder Component Tests
@@ -101,9 +102,8 @@ test.describe("TransformerEncoder Component - Decode Only", () => {
   }) => {
     await page.goto(REPRESENTATIVE_TOOL);
 
-    // Valid JWT token (sample)
-    const validJwt =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
+    // Use JWT from test fixtures
+    const validJwt = ENCODER_SAMPLES.jwt.valid;
 
     // Enter JWT
     const leftEditor = page.locator(".cm-content").first();

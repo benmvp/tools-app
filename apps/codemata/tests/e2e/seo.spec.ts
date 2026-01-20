@@ -93,6 +93,7 @@ test.describe("SEO & Metadata", () => {
     const twitterImage = page.locator('meta[name="twitter:image"]');
     const twitterImageUrl = await twitterImage.getAttribute("content");
     expect(twitterImageUrl).toBeTruthy();
+    expect(twitterImageUrl).toMatch(/^https?:\/\/.+/);
   });
 
   test("OpenGraph images should load successfully", async ({ page }) => {
