@@ -166,7 +166,14 @@ it("formats with 2-space indentation", async () => {
 - Accessibility: @axe-core/playwright (WCAG 2.0/2.1 Level AA)
 - Performance: Lighthouse CI
 
-**See [TESTING.md](apps/codemata/TESTING.md) for comprehensive documentation.**
+**E2E Test Strategy:**
+This project uses a **sample-based testing approach** to prevent linear test growth. When adding a new tool:
+- ✅ Add unit tests for the server action (always required)
+- ✅ Add tool to `FORMATTER_TOOLS/MINIFIER_TOOLS/ENCODER_TOOLS` in `lib/tools-data.ts`
+- ❌ **DO NOT** add new e2e tests unless the tool introduces new component behavior
+- **Result:** 0-2 new e2e tests per tool (instead of 8-10)
+
+**See [TESTING.md](../apps/codemata/TESTING.md) for comprehensive testing documentation.**
 
 ### Linting & Formatting
 ```bash

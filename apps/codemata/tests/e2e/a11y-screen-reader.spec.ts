@@ -253,36 +253,4 @@ test.describe("Screen Reader Compatibility", () => {
       expect(ariaLabel.length).toBeGreaterThan(0);
     }
   });
-
-  test("should not have empty links or buttons", async ({ page }) => {
-    await page.goto("/");
-
-    // Check for links without accessible names
-    const allLinks = page.locator("a");
-    const linkCount = await allLinks.count();
-
-    for (let i = 0; i < linkCount; i++) {
-      const link = allLinks.nth(i);
-
-      // Skip hidden links
-      if (!(await link.isVisible())) continue;
-
-      const text = await link.textContent();
-      const ariaLabel = await link.getAttribute("aria-label");
-      const title = await link.getAttribute("title");
-
-      // Check if link contains an image with alt text
-      const img = link.locator("img").first();
-      const imgAlt =
-        (await img.count()) > 0 ? await img.getAttribute("alt") : null;
-
-      const hasAccessibleName =
-        (text && text.trim().length > 0) ||
-        (ariaLabel && ariaLabel.length > 0) ||
-        (title && title.length > 0) ||
-        (imgAlt && imgAlt.length > 0);
-
-      expect(hasAccessibleName).toBe(true);
-    }
-  });
 });

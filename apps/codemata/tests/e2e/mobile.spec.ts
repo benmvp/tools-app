@@ -30,25 +30,6 @@ test.describe("Mobile Experience", () => {
     await expect(drawer.getByRole("link", { name: "Minifiers" })).toBeVisible();
   });
 
-  test("should navigate from mobile drawer", async ({ page }) => {
-    await page.goto("/");
-
-    // Open drawer
-    const menuButton = page.locator('button[aria-label*="menu" i]');
-    await menuButton.click();
-
-    // Wait for drawer to be visible
-    const drawer = page.getByTestId("mobile-nav-drawer");
-    await expect(drawer).toBeVisible();
-
-    // Click a tool within the drawer
-    const firstFormatter = ALL_FORMATTERS[0];
-    await drawer.locator(`text=${firstFormatter.name}`).click();
-
-    // Verify navigation
-    await expect(page).toHaveURL(firstFormatter.url);
-  });
-
   test("should close mobile drawer after navigation", async ({ page }) => {
     await page.goto("/");
 

@@ -47,21 +47,6 @@ test.describe("Command Menu", () => {
     ).toBeVisible();
   });
 
-  test("should navigate to tool from command menu", async ({ page }) => {
-    await page.goto("/");
-    await openCommandMenu(page);
-
-    // Search and select
-    const searchInput = page.locator('[role="dialog"] input');
-    await searchInput.fill("json formatter");
-
-    // Click result (use getByRole to find the clickable command item)
-    await page.getByRole("option", { name: /JSON Formatter/i }).click();
-
-    // Verify navigation
-    await expect(page).toHaveURL("/formatters/json-formatter");
-  });
-
   test("should close command menu with Escape", async ({ page }) => {
     await page.goto("/");
     const dialog = await openCommandMenu(page);

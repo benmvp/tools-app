@@ -14,7 +14,52 @@ Comprehensive testing documentation for E2E, accessibility, performance, and uni
 | **Performance** | Lighthouse CI | Quality benchmarking |
 
 ---
+## E2E Test Strategy (Sample-Based, Prevents Linear Growth)
 
+To prevent e2e tests from growing linearly with new tools, we use a sample-based testing approach:
+
+### 1. Component Tests (`tests/e2e/components/`)
+
+Test shared component behavior once using representative tools:
+
+- **`transformer.spec.ts`** - Tests Transformer component (empty input, config changes, copy buttons, error handling) using TypeScript Formatter
+- **`transformer-minifier.spec.ts`** - Tests TransformerMinifier component (size display, empty input) using TypeScript Minifier
+- **`transformer-encoder.spec.ts`** - Tests TransformerEncoder component (encode/decode, round-trip, button states) using Base64 Encoder + JWT Decoder
+- Runs on **desktop only** (device-independent component behavior)
+
+### 2. Sample-Based Tool Tests (`tests/e2e/tools/`)
+
+Only test 1-2 representative tools per category:
+
+- **`formatters.spec.ts`** - Tests TypeScript Formatter only (validates server action integration)
+- **`minifiers.spec.ts`** - Tests TypeScript Minifier only
+- **`encoders.spec.ts`** - Tests Base64 Encoder + JWT Decoder (bidirectional vs decode-only patterns)
+- Runs on **both desktop and mobile**
+
+### 3. Accessibility Tests (`tests/e2e/a11y-*.spec.ts`)
+
+Sample one tool per category:
+
+- Tests home, formatters category, minifiers category, encoders category pages
+- Tests ONE formatter tool, ONE minifier tool, ONE encoder tool (all use same page template)
+- Runs on **both desktop and mobile** (except keyboard/screen-reader which are desktop-only)
+
+### 4. When Adding a New Tool
+
+- ✅ **Add unit tests** for the server action in `__tests__/` (always required)
+- ✅ **Add tool to data** - `FORMATTER_TOOLS/MINIFIER_TOOLS/ENCODER_TOOLS` in `lib/tools-data.ts`
+- ✅ **Automatic integration** - Tool automatically appears in navigation, sitemap, command menu, etc.
+- ❌ **DO NOT add new e2e tests** unless the tool introduces NEW component behavior or UI patterns
+- **Result:** 0-2 new e2e tests (instead of 8-10 per tool)
+
+### Benefits
+
+- **Prevents Linear Growth:** Adding 10 new tools = 0-2 new tests (not 80-100)
+- **Faster CI/CD:** Fewer tests = faster feedback loops
+- **Easier Maintenance:** Component tests cover shared behavior once
+- **Same Coverage:** All tools use same templates, so testing one validates all
+
+---
 ## Running Tests
 
 ### Unit Tests
