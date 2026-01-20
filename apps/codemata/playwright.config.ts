@@ -53,6 +53,7 @@ export default defineConfig({
       testIgnore: [
         /a11y-keyboard\.spec\.ts$/, // Skip keyboard tests on touchscreen
         /a11y-screen-reader\.spec\.ts$/, // Skip screen reader tests (different on mobile)
+        /navigation-desktop\.spec\.ts$/, // Skip desktop-only navigation tests
       ],
     },
   ],

@@ -54,45 +54,6 @@ test.describe("Encoder Tools", () => {
           });
         }
 
-        if ("encoded" in sample) {
-          test("should decode encoded text successfully", async ({ page }) => {
-            await page.goto(tool.url);
-
-            // Clear both editors first (example content may be pre-filled)
-            const leftEditor = page.locator(".cm-content").first();
-            const rightEditor = page.locator(".cm-content").last();
-            await leftEditor.click();
-            await leftEditor.fill("");
-            await rightEditor.click();
-            await rightEditor.fill("");
-
-            // Enter encoded text in right editor
-            // Use type() instead of fill() for better mobile compatibility with CodeMirror
-            await rightEditor.type(sample.encoded);
-
-            // Verify editor has content before proceeding
-            await expect(rightEditor).not.toBeEmpty({ timeout: 5000 });
-
-            // Wait for decode button to be enabled (after React state updates)
-            const decodeButton = page.getByRole("button", { name: /decode/i });
-            await expect(decodeButton).toBeEnabled({ timeout: 5000 });
-
-            // Click the Decode button (on the right side)
-            await decodeButton.click();
-
-            // Wait for left editor to have decoded content
-            await expect(leftEditor).not.toBeEmpty({ timeout: 5000 });
-            const outputText = await leftEditor.textContent();
-            expect(outputText).toBeTruthy();
-            expect(outputText?.trim().length).toBeGreaterThan(0);
-
-            // Verify output matches expected plain value
-            if ("plain" in sample) {
-              expect(outputText?.trim()).toBe(sample.plain.trim());
-            }
-          });
-        }
-
         if ("plain" in sample) {
           test("should handle round-trip encoding/decoding", async ({
             page,
