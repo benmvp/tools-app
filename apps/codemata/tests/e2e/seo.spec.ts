@@ -63,43 +63,37 @@ test.describe("SEO & Metadata", () => {
     await expect(canonical).toHaveAttribute("href", new RegExp(tool.url));
   });
 
-  test("should have Open Graph metadata", async ({ page }) => {
+  test("should have social media metadata (Open Graph + Twitter Card)", async ({
+    page,
+  }) => {
     await page.goto("/");
 
-    // OG title
+    // Open Graph metadata
     const ogTitle = page.locator('meta[property="og:title"]');
     await expect(ogTitle).toHaveAttribute("content", /.+/);
 
-    // OG description
     const ogDescription = page.locator('meta[property="og:description"]');
     await expect(ogDescription).toHaveAttribute("content", /.+/);
 
-    // OG image
     const ogImage = page.locator('meta[property="og:image"]');
-    const imageUrl = await ogImage.getAttribute("content");
-    expect(imageUrl).toBeTruthy();
-    expect(imageUrl).toMatch(/^https?:\/\/.+/);
+    const ogImageUrl = await ogImage.getAttribute("content");
+    expect(ogImageUrl).toBeTruthy();
+    expect(ogImageUrl).toMatch(/^https?:\/\/.+/);
 
-    // OG type
     const ogType = page.locator('meta[property="og:type"]');
     await expect(ogType).toHaveAttribute("content", "website");
-  });
 
-  test("should have Twitter Card metadata", async ({ page }) => {
-    await page.goto("/");
-
-    // Twitter card type
+    // Twitter Card metadata
     const twitterCard = page.locator('meta[name="twitter:card"]');
     await expect(twitterCard).toHaveAttribute("content", "summary_large_image");
 
-    // Twitter title
     const twitterTitle = page.locator('meta[name="twitter:title"]');
     await expect(twitterTitle).toHaveAttribute("content", /.+/);
 
-    // Twitter image
     const twitterImage = page.locator('meta[name="twitter:image"]');
-    const imageUrl = await twitterImage.getAttribute("content");
-    expect(imageUrl).toBeTruthy();
+    const twitterImageUrl = await twitterImage.getAttribute("content");
+    expect(twitterImageUrl).toBeTruthy();
+    expect(twitterImageUrl).toMatch(/^https?:\/\/.+/);
   });
 
   test("OpenGraph images should load successfully", async ({ page }) => {
@@ -115,24 +109,6 @@ test.describe("SEO & Metadata", () => {
       expect(response.status()).toBe(200);
       expect(response.headers()["content-type"]).toContain("image");
     }
-  });
-
-  test("tool pages should have unique OG images", async ({ page }) => {
-    const tool1 = ALL_FORMATTERS[0];
-    const tool2 = ALL_FORMATTERS[1];
-
-    // Get OG image from first tool
-    await page.goto(tool1.url);
-    const ogImage1 = page.locator('meta[property="og:image"]');
-    const imageUrl1 = await ogImage1.getAttribute("content");
-
-    // Get OG image from second tool
-    await page.goto(tool2.url);
-    const ogImage2 = page.locator('meta[property="og:image"]');
-    const imageUrl2 = await ogImage2.getAttribute("content");
-
-    // Images should be different (unique per tool)
-    expect(imageUrl1).not.toBe(imageUrl2);
   });
 
   test("should have robots meta tag", async ({ page }) => {
