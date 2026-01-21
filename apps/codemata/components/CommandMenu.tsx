@@ -168,6 +168,46 @@ export function CommandMenu({ open, onOpenChange }: CommandMenuProps) {
                 },
               )}
             </CommandGroup>
+
+            {/* Encoders group */}
+            <CommandGroup heading="Encoders">
+              {SEARCH_INDEX.filter((item) => item.category === "Encoders").map(
+                (tool) => {
+                  const Icon = getToolIcon(tool);
+
+                  return (
+                    <CommandItem
+                      key={tool.url}
+                      value={tool.searchText}
+                      onSelect={() => handleSelect(tool.url)}
+                    >
+                      {Icon && <Icon className="mr-2 h-4 w-4" />}
+                      <span>{tool.name}</span>
+                    </CommandItem>
+                  );
+                },
+              )}
+            </CommandGroup>
+
+            {/* Validators group */}
+            <CommandGroup heading="Validators">
+              {SEARCH_INDEX.filter(
+                (item) => item.category === "Validators",
+              ).map((tool) => {
+                const Icon = getToolIcon(tool);
+
+                return (
+                  <CommandItem
+                    key={tool.url}
+                    value={tool.searchText}
+                    onSelect={() => handleSelect(tool.url)}
+                  >
+                    {Icon && <Icon className="mr-2 h-4 w-4" />}
+                    <span>{tool.name}</span>
+                  </CommandItem>
+                );
+              })}
+            </CommandGroup>
           </>
         )}
       </CommandList>

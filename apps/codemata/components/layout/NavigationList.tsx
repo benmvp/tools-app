@@ -4,7 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { Badge } from "@/components/ui/badge";
-import { ALL_ENCODERS, ALL_FORMATTERS, ALL_MINIFIERS } from "@/lib/tools-data";
+import {
+  ALL_ENCODERS,
+  ALL_FORMATTERS,
+  ALL_MINIFIERS,
+  ALL_VALIDATORS,
+} from "@/lib/tools-data";
 import { shouldPrefetch } from "@/lib/utils";
 
 interface NavigationListProps {
@@ -51,6 +56,12 @@ export function NavigationList({ onItemClick }: NavigationListProps) {
       singular: "Encoder",
       href: "/encoders",
       tools: ALL_ENCODERS,
+    },
+    {
+      name: "Validators",
+      singular: "Validator",
+      href: "/validators",
+      tools: ALL_VALIDATORS,
     },
   ];
 

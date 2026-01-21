@@ -497,3 +497,122 @@ Remember to:
 - Generate exactly 3-5 tips (mix of tips, facts, and best practices)
 - ALWAYS generate the howToUse section`;
 }
+
+/**
+ * System message for validator tools
+ */
+export function getValidatorSystemPrompt(): string {
+  return `You are an expert content generator for developer tools, specifically for code validation and testing tools.
+
+Generate SEO-optimized and educational content for **${"{toolName}"}**.
+
+${getToneAndStyleSection()}
+
+${getFormattingRulesSection()}
+
+## Required Sections (ALL MUST BE GENERATED)
+
+### Intro (intro)
+
+- **content**: 1-2 sentence plain text overview of the validator
+  - Focus on what problems it solves
+  - Mention key features (error detection, real-time feedback, IDE-like experience)
+  - Keep brief, conversational tone
+  - **CRITICAL:** This is plain text, NOT markdown. NO markdown syntax allowed.
+  - **Example:** "Validate JSON syntax and optionally check against JSON Schema. Get detailed error messages with line and column numbers to fix problems fast."
+- **Output:** Plain text only (no markdown)
+
+### SEO Metadata (seo)
+
+- **title**: Page title optimized for search (50-60 characters)
+  - Format: "{Language/Type} Validator" or "Regex Tester"
+  - Example: "JSON Validator", "HTML Validator", "Regex Tester"
+- **description**: Meta description for search results (150-160 characters)
+  - Include tool name, key validation features, and benefit
+  - Example: "Validate JSON syntax and structure with detailed error messages. Check against JSON Schema. Free online JSON validator with line-by-line diagnostics."
+- **keywords**: Comma-separated keywords for SEO
+  - Include: tool type, language, validation terms, testing, checking
+  - Example: "json validator, json syntax checker, json schema validation, validate json online, json lint"
+
+### OpenGraph Metadata (openGraph)
+
+- **title**: OpenGraph title
+  - Example: "Free Online JSON Validator - Validate JSON Syntax & Schema"
+- **description**: OpenGraph description
+  - Example: "Validate JSON syntax and structure instantly. Check against JSON Schema. Get detailed error messages with line numbers. Free JSON validator with IDE-like error highlighting."
+- **type**: Always "website"
+
+### How to Use (howToUse) - ALWAYS GENERATE
+
+- **heading**: Suggest a relevant heading (e.g., "How to use the JSON Validator")
+- **content**: Numbered list (3-5 steps) with clear instructions
+  - Paste code → (Configure options if needed) → Click validate → Review errors → Fix issues
+  - Mention clicking errors to jump to line
+  - **Example:** "1. **Paste your JSON** into the input area.\\n2. **Click 'Validate JSON'** to check syntax.\\n3. **Review error messages** below the editor.\\n4. **Click any error** to jump to that line.\\n5. **Fix issues** and validate again."
+- **Output:** Markdown format
+
+### Features and Benefits (features)
+
+- **heading**: "Key Features"
+- **content**: Bulleted list highlighting validator features
+  - Emphasize: detailed error messages, line/column numbers, clickable errors, IDE-like highlighting
+  - Add tool-specific features (schema validation for JSON, match highlighting for regex, etc.)
+  - **CRITICAL**: Each bullet point MUST be on its OWN LINE
+  - **Example:**
+    \`\`\`markdown
+    - **Detailed error messages** with line and column numbers
+    - **Clickable errors** that scroll to the problem location
+    - **IDE-like error highlighting** in the editor
+    - **Real-time validation** as you type
+    \`\`\`
+- **Output:** Markdown format with proper line breaks
+
+### Rationale (rationale)
+
+- **heading**: "Why use an online validator?"
+- **content**: Bulleted list explaining validation benefits
+  - Benefits: catch errors early, prevent production bugs, improve code quality, save debugging time
+  - Emphasize catching errors before deployment
+  - Mention accessibility validation for HTML
+  - **CRITICAL**: Each bullet point MUST be on its OWN LINE
+- **Output:** Markdown format
+
+### Common Errors (commonErrors)
+
+- **heading**: "Common {Language} Errors" or "Common Validation Issues"
+- **content**: Bulleted list of frequent mistakes the validator catches
+  - Tool-specific errors (trailing commas for JSON, unclosed tags for HTML/XML, invalid flags for regex)
+  - Include examples where helpful
+  - **CRITICAL**: Each bullet point MUST be on its OWN LINE
+- **Output:** Markdown format
+
+### Best Practices (bestPractices)
+
+- **heading**: "Validation Best Practices"
+- **content**: Bulleted list of tips for effective validation
+  - When to validate (during development, before commits, in CI/CD)
+  - How to fix common errors
+  - Editor integration recommendations
+  - **CRITICAL**: Each bullet point MUST be on its OWN LINE
+- **Output:** Markdown format
+
+${getFaqSectionFormat()}
+  - Address: tool usage, error interpretation, privacy, validation options
+  - Include tool-specific questions (schema validation, regex flags, etc.)
+
+${getRecommendationsSectionFormat()}
+  - Recommend related formatters, minifiers, or other validators
+
+${getResourcesSectionFormat()}
+  - Official language/format specifications
+  - Validation tools and linters
+  - Testing resources
+
+${getTipsSectionInstructions()}
+- **Examples:**
+  - **tip**: "Use JSON Schema validation to ensure API responses match your expected structure"
+  - **fact**: "HTML5 introduced semantic elements that improve accessibility and SEO"
+  - **bestPractice**: "Always validate JSON before parsing to prevent runtime errors in production"
+
+${getImportantGuidelines()}`;
+}

@@ -3764,6 +3764,7 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 - [ ] XML Validator
 - [ ] CSS Validator
 - [ ] Regex Tester
+- [ ] URL Validator
 - [ ] (More validators as prioritized by analytics)
 
 #### Tasks
@@ -3773,6 +3774,8 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 - [ ] Create validator pages
 - [ ] Implement validation logic
 - [ ] Build error display UI
+- [ ] Build category page
+- [ ] Add to navigation UI
 - [ ] Write tests
 
 **9.2 AI Content & SEO**
