@@ -10,7 +10,8 @@ async function openCommandMenu(page: Page) {
   const isDialogVisible = await dialog.isVisible().catch(() => false);
 
   if (!isDialogVisible) {
-    const searchButton = page.getByRole("button", { name: /search/i });
+    // Click the sidebar search button (desktop has "Search tools..." text)
+    const searchButton = page.getByRole("button", { name: /search tools/i });
     await searchButton.click();
   }
 

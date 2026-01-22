@@ -16,12 +16,14 @@ import {
   SEARCH_INDEX,
   type SearchableToolItem,
 } from "@/lib/search-index";
-import { FORMATTER_TOOLS, MINIFIER_TOOLS } from "@/lib/tools-data";
+import { ALL_TOOLS } from "@/lib/tools-data";
 
 interface CommandMenuProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
+
+const ALL_TOOLS_FLAT = Object.values(ALL_TOOLS).flat();
 
 export function CommandMenu({ open, onOpenChange }: CommandMenuProps) {
   const router = useRouter();
@@ -66,10 +68,10 @@ export function CommandMenu({ open, onOpenChange }: CommandMenuProps) {
   // Get tool icon from the tools data
   const getToolIcon = (tool: SearchableToolItem) => {
     const slug = tool.url.split("/").pop() || "";
-    if (tool.category === "Formatters") {
-      return FORMATTER_TOOLS[slug]?.icon;
-    }
-    return MINIFIER_TOOLS[slug]?.icon;
+    // Search through all tool categories
+    const matchingTool = ALL_TOOLS_FLAT.find((t) => t.url === tool.url);
+
+    return matchingTool?.icon;
   };
 
   return (
@@ -167,6 +169,46 @@ export function CommandMenu({ open, onOpenChange }: CommandMenuProps) {
                   );
                 },
               )}
+            </CommandGroup>
+
+            {/* Encoders group */}
+            <CommandGroup heading="Encoders">
+              {SEARCH_INDEX.filter((item) => item.category === "Encoders").map(
+                (tool) => {
+                  const Icon = getToolIcon(tool);
+
+                  return (
+                    <CommandItem
+                      key={tool.url}
+                      value={tool.searchText}
+                      onSelect={() => handleSelect(tool.url)}
+                    >
+                      {Icon && <Icon className="mr-2 h-4 w-4" />}
+                      <span>{tool.name}</span>
+                    </CommandItem>
+                  );
+                },
+              )}
+            </CommandGroup>
+
+            {/* Validators group */}
+            <CommandGroup heading="Validators">
+              {SEARCH_INDEX.filter(
+                (item) => item.category === "Validators",
+              ).map((tool) => {
+                const Icon = getToolIcon(tool);
+
+                return (
+                  <CommandItem
+                    key={tool.url}
+                    value={tool.searchText}
+                    onSelect={() => handleSelect(tool.url)}
+                  >
+                    {Icon && <Icon className="mr-2 h-4 w-4" />}
+                    <span>{tool.name}</span>
+                  </CommandItem>
+                );
+              })}
             </CommandGroup>
           </>
         )}

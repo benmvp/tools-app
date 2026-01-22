@@ -63,6 +63,18 @@ test.describe("Accessibility Compliance - WCAG AA", () => {
     expect(accessibilityScanResults.violations).toEqual([]);
   });
 
+  test("validators category page should pass axe-core scan", async ({
+    page,
+  }) => {
+    await page.goto("/validators");
+
+    const accessibilityScanResults = await new AxeBuilder({ page })
+      .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
+      .analyze();
+
+    expect(accessibilityScanResults.violations).toEqual([]);
+  });
+
   // Test one representative tool per category (all use same page template)
   test("formatter tool page should pass axe-core scan", async ({ page }) => {
     await page.goto(ALL_FORMATTERS[0].url);

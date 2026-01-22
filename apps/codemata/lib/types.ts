@@ -139,3 +139,12 @@ export interface EncoderTool extends Tool {
   example: string;
   language: "typescript" | "javascript" | "json" | "text" | "html" | "xml";
 }
+
+/**
+ * Validator Tool interface (no action yet - Phase 9.1 scaffolding only)
+ */
+export interface ValidatorTool extends Tool {
+  action?: never; // No action in Phase 9.1
+  example: string;
+  language: "json" | "html" | "css" | "xml" | "text";
+}

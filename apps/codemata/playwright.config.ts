@@ -26,7 +26,10 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: 0, // No retries - catch flakiness early
   workers: process.env.CI ? 2 : 1, // Sequential locally (more stable), 2 workers in CI
-  reporter: process.env.CI ? [["html"], ["github"]] : [["html"], ["list"]],
+  // HTML report: CI opens always, locally only on success (prevents hanging prompt)
+  reporter: process.env.CI
+    ? [["html"], ["github"]]
+    : [["html", { open: "never" }], ["list"]],
 
   use: {
     baseURL: BASE_URL,

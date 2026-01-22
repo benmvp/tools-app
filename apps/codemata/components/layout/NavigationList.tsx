@@ -4,7 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { Badge } from "@/components/ui/badge";
-import { ALL_ENCODERS, ALL_FORMATTERS, ALL_MINIFIERS } from "@/lib/tools-data";
+import {
+  ALL_ENCODERS,
+  ALL_FORMATTERS,
+  ALL_MINIFIERS,
+  ALL_VALIDATORS,
+} from "@/lib/tools-data";
 import { shouldPrefetch } from "@/lib/utils";
 
 interface NavigationListProps {
@@ -52,6 +57,12 @@ export function NavigationList({ onItemClick }: NavigationListProps) {
       href: "/encoders",
       tools: ALL_ENCODERS,
     },
+    {
+      name: "Validators",
+      singular: "Validator",
+      href: "/validators",
+      tools: ALL_VALIDATORS,
+    },
   ];
 
   return (
@@ -85,11 +96,11 @@ export function NavigationList({ onItemClick }: NavigationListProps) {
                     pathname === tool.url
                       ? "bg-slate-100 font-medium dark:bg-slate-800"
                       : ""
-                  } ${tool.comingSoon ? "cursor-not-allowed opacity-60" : ""}`}
+                  } ${tool.comingSoon ? "cursor-not-allowed" : ""}`}
                 >
                   <span>{tool.name}</span>
                   {tool.comingSoon && (
-                    <Badge variant="secondary" className="text-xs">
+                    <Badge variant="destructive" className="text-xs">
                       Soon
                     </Badge>
                   )}

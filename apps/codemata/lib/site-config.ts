@@ -92,5 +92,20 @@ export const SITE_CONFIG = {
       description:
         "Free online encoders and decoders for Base64, URL, HTML entities, JavaScript strings, and JWT tokens. Encode and decode data instantly.",
     },
+    validators: {
+      title: "Validators | Codemata",
+      description:
+        "Professional validation tools for JSON, HTML, CSS, XML, and more. Test regex patterns, validate schemas, and catch errors before deployment.",
+      keywords: [
+        "validator",
+        "validate",
+        "regex tester",
+        "json validator",
+        "html validator",
+        "css validator",
+        "xml validator",
+        "code validation",
+      ],
+    },
   },
 } as const;

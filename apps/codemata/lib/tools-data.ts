@@ -2,13 +2,16 @@ import {
   Braces,
   Code,
   Database,
+  FileCheck,
   FileCode,
   FileCode2,
   FileText,
+  FileX,
   Globe,
   Image as ImageIcon,
   Link,
   Palette,
+  Search,
   Settings,
   Shield,
 } from "lucide-react";
@@ -38,7 +41,12 @@ import {
   minifyTypescript,
   minifyXml,
 } from "../app/minifiers/actions";
-import type { EncoderTool, FormatterTool, MinifierTool } from "./types";
+import type {
+  EncoderTool,
+  FormatterTool,
+  MinifierTool,
+  ValidatorTool,
+} from "./types";
 
 /**
  * Formatter Tools - Record-based structure for O(1) lookups
@@ -623,12 +631,152 @@ export const ENCODER_TOOLS: Record<string, EncoderTool> = {
 };
 
 /**
+ * Validator Tools - Record-based structure for O(1) lookups
+ * Key is the URL slug (e.g., "json-validator")
+ * Phase 9.1: Coming Soon badges, no actions yet
+ */
+export const VALIDATOR_TOOLS: Record<string, ValidatorTool> = {
+  "json-validator": {
+    id: "json-validator",
+    name: "JSON Validator",
+    description:
+      "Validate JSON syntax and optionally check against JSON Schema",
+    url: "/validators/json-validator",
+    icon: FileCheck,
+    comingSoon: true,
+    language: "json",
+    keywords: [
+      "json",
+      "validate",
+      "validator",
+      "syntax",
+      "schema",
+      "check",
+      "lint",
+    ],
+    example: "", // Will populate in Phase 9.2
+    metadata: {
+      title: "JSON Validator | Codemata",
+      description:
+        "Validate JSON syntax and structure. Check against JSON Schema. Free online JSON validator with detailed error messages.",
+    },
+  },
+  "regex-tester": {
+    id: "regex-tester",
+    name: "Regex Tester",
+    description: "Test regular expressions and see matches in real-time",
+    url: "/validators/regex-tester",
+    icon: Search,
+    comingSoon: true,
+    language: "text",
+    keywords: [
+      "regex",
+      "regexp",
+      "regular",
+      "expression",
+      "pattern",
+      "match",
+      "test",
+      "tester",
+    ],
+    example: "",
+    metadata: {
+      title: "Regex Tester | Codemata",
+      description:
+        "Test regular expressions with match highlighting and capture groups. Free online regex tester with real-time results.",
+    },
+  },
+  "html-validator": {
+    id: "html-validator",
+    name: "HTML Validator",
+    description: "Validate HTML syntax and check for accessibility issues",
+    url: "/validators/html-validator",
+    icon: Code,
+    comingSoon: true,
+    language: "html",
+    keywords: [
+      "html",
+      "validate",
+      "validator",
+      "syntax",
+      "check",
+      "lint",
+      "accessibility",
+      "a11y",
+    ],
+    example: "",
+    metadata: {
+      title: "HTML Validator | Codemata",
+      description:
+        "Validate HTML syntax and structure. Check for accessibility issues. Free online HTML validator with detailed diagnostics.",
+    },
+  },
+  "css-validator": {
+    id: "css-validator",
+    name: "CSS Validator",
+    description: "Validate CSS syntax and catch common errors",
+    url: "/validators/css-validator",
+    icon: Palette,
+    comingSoon: true,
+    language: "css",
+    keywords: ["css", "validate", "validator", "syntax", "check", "lint"],
+    example: "",
+    metadata: {
+      title: "CSS Validator | Codemata",
+      description:
+        "Validate CSS syntax and catch common errors. Free online CSS validator with detailed error messages.",
+    },
+  },
+  "xml-validator": {
+    id: "xml-validator",
+    name: "XML Validator",
+    description: "Validate XML structure and check for well-formedness",
+    url: "/validators/xml-validator",
+    icon: FileX,
+    comingSoon: true,
+    language: "xml",
+    keywords: [
+      "xml",
+      "validate",
+      "validator",
+      "syntax",
+      "check",
+      "well-formed",
+      "lint",
+    ],
+    example: "",
+    metadata: {
+      title: "XML Validator | Codemata",
+      description:
+        "Validate XML structure and check for well-formedness. Free online XML validator with detailed error messages.",
+    },
+  },
+  "url-validator": {
+    id: "url-validator",
+    name: "URL Validator",
+    description: "Validate URL syntax and structure",
+    url: "/validators/url-validator",
+    icon: Link,
+    comingSoon: true,
+    language: "text",
+    keywords: ["url", "uri", "link", "validate", "validator", "check"],
+    example: "",
+    metadata: {
+      title: "URL Validator | Codemata",
+      description:
+        "Validate URL syntax and structure. Free online URL validator with detailed parsing.",
+    },
+  },
+};
+
+/**
  * Helper arrays for navigation components
  * Use Object.values() to get arrays from Records
  */
 export const ALL_FORMATTERS: FormatterTool[] = Object.values(FORMATTER_TOOLS);
 export const ALL_MINIFIERS: MinifierTool[] = Object.values(MINIFIER_TOOLS);
 export const ALL_ENCODERS: EncoderTool[] = Object.values(ENCODER_TOOLS);
+export const ALL_VALIDATORS: ValidatorTool[] = Object.values(VALIDATOR_TOOLS);
 
 /**
  * Centralized tool registry for dynamic counting and category lookups.
@@ -638,6 +786,7 @@ export const ALL_TOOLS = {
   formatters: ALL_FORMATTERS,
   minifiers: ALL_MINIFIERS,
   encoders: ALL_ENCODERS,
+  validators: ALL_VALIDATORS,
 } as const;
 
 /**
@@ -646,4 +795,9 @@ export const ALL_TOOLS = {
 export type FormatterSlug = keyof typeof FORMATTER_TOOLS;
 export type MinifierSlug = keyof typeof MINIFIER_TOOLS;
 export type EncoderSlug = keyof typeof ENCODER_TOOLS;
-export type ToolSlug = FormatterSlug | MinifierSlug | EncoderSlug;
+export type ValidatorSlug = keyof typeof VALIDATOR_TOOLS;
+export type ToolSlug =
+  | FormatterSlug
+  | MinifierSlug
+  | EncoderSlug
+  | ValidatorSlug;
