@@ -637,7 +637,7 @@ export const ENCODER_TOOLS: Record<string, EncoderTool> = {
  */
 export const VALIDATOR_TOOLS: Record<string, ValidatorTool> = {
   "json-validator": {
-    id: "json",
+    id: "json-validator",
     name: "JSON Validator",
     description:
       "Validate JSON syntax and optionally check against JSON Schema",
@@ -662,7 +662,7 @@ export const VALIDATOR_TOOLS: Record<string, ValidatorTool> = {
     },
   },
   "regex-tester": {
-    id: "regex",
+    id: "regex-tester",
     name: "Regex Tester",
     description: "Test regular expressions and see matches in real-time",
     url: "/validators/regex-tester",
@@ -687,7 +687,7 @@ export const VALIDATOR_TOOLS: Record<string, ValidatorTool> = {
     },
   },
   "html-validator": {
-    id: "html",
+    id: "html-validator",
     name: "HTML Validator",
     description: "Validate HTML syntax and check for accessibility issues",
     url: "/validators/html-validator",
@@ -712,7 +712,7 @@ export const VALIDATOR_TOOLS: Record<string, ValidatorTool> = {
     },
   },
   "css-validator": {
-    id: "css",
+    id: "css-validator",
     name: "CSS Validator",
     description: "Validate CSS syntax and catch common errors",
     url: "/validators/css-validator",
@@ -728,7 +728,7 @@ export const VALIDATOR_TOOLS: Record<string, ValidatorTool> = {
     },
   },
   "xml-validator": {
-    id: "xml",
+    id: "xml-validator",
     name: "XML Validator",
     description: "Validate XML structure and check for well-formedness",
     url: "/validators/xml-validator",
@@ -752,7 +752,7 @@ export const VALIDATOR_TOOLS: Record<string, ValidatorTool> = {
     },
   },
   "url-validator": {
-    id: "url",
+    id: "url-validator",
     name: "URL Validator",
     description: "Validate URL syntax and structure",
     url: "/validators/url-validator",

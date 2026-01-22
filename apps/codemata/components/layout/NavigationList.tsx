@@ -96,11 +96,11 @@ export function NavigationList({ onItemClick }: NavigationListProps) {
                     pathname === tool.url
                       ? "bg-slate-100 font-medium dark:bg-slate-800"
                       : ""
-                  } ${tool.comingSoon ? "cursor-not-allowed opacity-60" : ""}`}
+                  } ${tool.comingSoon ? "cursor-not-allowed" : ""}`}
                 >
                   <span>{tool.name}</span>
                   {tool.comingSoon && (
-                    <Badge variant="secondary" className="text-xs">
+                    <Badge variant="destructive" className="text-xs">
                       Soon
                     </Badge>
                   )}

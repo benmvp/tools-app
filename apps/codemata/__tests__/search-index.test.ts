@@ -3,7 +3,7 @@ import { POPULAR_TOOLS, SEARCH_INDEX } from "../lib/search-index";
 
 describe("Search Index", () => {
   describe("buildSearchIndex", () => {
-    it("includes all formatters and minifiers", () => {
+    it("includes all formatters, minifiers, encoders, and validators", () => {
       expect(SEARCH_INDEX.length).toBeGreaterThan(0);
 
       const formatters = SEARCH_INDEX.filter(
@@ -12,10 +12,18 @@ describe("Search Index", () => {
       const minifiers = SEARCH_INDEX.filter(
         (item) => item.category === "Minifiers",
       );
+      const encoders = SEARCH_INDEX.filter(
+        (item) => item.category === "Encoders",
+      );
+      const validators = SEARCH_INDEX.filter(
+        (item) => item.category === "Validators",
+      );
 
       expect(formatters.length).toBe(9);
       expect(minifiers.length).toBe(6);
-      expect(SEARCH_INDEX.length).toBe(20); // 9 formatters + 6 minifiers + 5 encoders
+      expect(encoders.length).toBe(5);
+      expect(validators.length).toBe(6);
+      expect(SEARCH_INDEX.length).toBe(26); // 9 formatters + 6 minifiers + 5 encoders + 6 validators
     });
 
     it("creates proper searchText with name and keywords", () => {
@@ -71,8 +79,10 @@ describe("Search Index", () => {
         expect(item.id).toBeTruthy();
         expect(item.name).toBeTruthy();
         expect(item.description).toBeTruthy();
-        expect(item.url).toMatch(/^\/(formatters|minifiers|encoders)\//);
-        expect(["Formatters", "Minifiers", "Encoders"]).toContain(
+        expect(item.url).toMatch(
+          /^\/(formatters|minifiers|encoders|validators)\//,
+        );
+        expect(["Formatters", "Minifiers", "Encoders", "Validators"]).toContain(
           item.category,
         );
         expect(Array.isArray(item.keywords)).toBe(true);

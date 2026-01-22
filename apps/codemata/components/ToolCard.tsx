@@ -14,7 +14,7 @@ export function ToolCard({
     <div
       className={`group h-full rounded-lg border bg-card p-6 transition-all duration-300 ${
         comingSoon
-          ? "cursor-not-allowed opacity-60"
+          ? "cursor-not-allowed"
           : "hover:scale-[1.02] hover:shadow-xl hover:border-blue-300 dark:hover:border-blue-700"
       }`}
     >
@@ -32,7 +32,7 @@ export function ToolCard({
           />
         </div>
         {comingSoon && (
-          <Badge variant="secondary" className="text-xs">
+          <Badge variant="destructive" className="text-xs">
             Coming Soon
           </Badge>
         )}
