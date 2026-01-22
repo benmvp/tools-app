@@ -94,6 +94,7 @@ function ErrorItem({
     <button
       type="button"
       onClick={onClick}
+      aria-label={`${error.severity === "error" ? "Error" : "Warning"} at line ${error.line}, column ${error.column}: ${error.message}`}
       className="w-full text-left p-3 rounded-md border hover:bg-muted/50 transition-colors"
     >
       <div className="flex items-start gap-2">

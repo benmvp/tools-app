@@ -8,7 +8,7 @@ import type { ValidationError } from "./types";
  */
 function lineColToPos(doc: Text, line: number, column: number): number {
   const lineObj = doc.line(line);
-  return lineObj.from + Math.min(column - 1, lineObj.length);
+  return lineObj.from + Math.min(column - 1, lineObj.text.length);
 }
 
 /**
