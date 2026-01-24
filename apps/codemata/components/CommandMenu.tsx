@@ -67,7 +67,6 @@ export function CommandMenu({ open, onOpenChange }: CommandMenuProps) {
 
   // Get tool icon from the tools data
   const getToolIcon = (tool: SearchableToolItem) => {
-    const slug = tool.url.split("/").pop() || "";
     // Search through all tool categories
     const matchingTool = ALL_TOOLS_FLAT.find((t) => t.url === tool.url);
 

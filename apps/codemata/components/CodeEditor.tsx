@@ -54,6 +54,10 @@ function getLanguageExtension(language: CodeEditorLanguage): Extension {
     case "graphql":
       // GraphQL uses javascript for now as a fallback
       return javascript();
+    case "javascript":
+      return javascript();
+    case "typescript":
+      return javascript({ jsx: true, typescript: true });
     case "text":
       // Plain text - no syntax highlighting
       return [];

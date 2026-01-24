@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { VALIDATOR_TOOLS } from "@/lib/tools-data";
-import { JsonValidator } from "@/components/validators/JsonValidator";
-import { VALIDATOR_EXAMPLES } from "@/lib/validators/examples";
 import { CategoryBackLink } from "@/components/CategoryBackLink";
+import { JsonValidator } from "@/components/validators/JsonValidator";
+import { VALIDATOR_TOOLS } from "@/lib/tools-data";
+import { VALIDATOR_EXAMPLES } from "@/lib/validators/examples";
 
 // ISR revalidation - 24 hours
 export const revalidate = 86400;

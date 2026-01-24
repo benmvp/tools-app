@@ -2,17 +2,19 @@
 
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
-import type { ValidationResult, ValidationError } from "@/lib/validators/types";
+import type { ValidationError, ValidationResult } from "@/lib/validators/types";
 
 /**
  * Parse JSON syntax errors and extract line/column
  */
-function parseSyntaxError(input: string, error: Error): ValidationError {
+function parseSyntaxError(input: string, error: unknown): ValidationError {
+  const errorMessage = error instanceof Error ? error.message : String(error);
+
   // Try to extract position from error message
-  const posMatch = error.message.match(/position (\d+)/);
+  const posMatch = errorMessage.match(/position (\d+)/);
 
   if (posMatch) {
-    const pos = Number.parseInt(posMatch[1]);
+    const pos = Number.parseInt(posMatch[1], 10);
     const lines = input.slice(0, pos).split("\n");
     const line = lines.length;
     const column = lines[lines.length - 1].length + 1;
@@ -20,7 +22,7 @@ function parseSyntaxError(input: string, error: Error): ValidationError {
     return {
       line,
       column,
-      message: error.message.replace(/^JSON\.parse: /, ""),
+      message: errorMessage.replace(/^JSON\.parse: /, ""),
       severity: "error",
     };
   }
@@ -29,7 +31,7 @@ function parseSyntaxError(input: string, error: Error): ValidationError {
   return {
     line: 1,
     column: 1,
-    message: error.message,
+    message: errorMessage,
     severity: "error",
   };
 }
@@ -37,22 +39,28 @@ function parseSyntaxError(input: string, error: Error): ValidationError {
 /**
  * Convert ajv validation errors to our format
  */
-function convertAjvErrors(errors: any[]): ValidationError[] {
-  return errors.map((err) => ({
-    line: 1, // ajv doesn't provide line numbers
-    column: 1,
-    message: `${err.instancePath || "/"}: ${err.message}`,
-    severity: "error" as const,
-  }));
+function convertAjvErrors(errors: unknown[]): ValidationError[] {
+  return errors.map((err) => {
+    const error = err as { instancePath?: string; message?: string };
+    return {
+      line: 1, // ajv doesn't provide line numbers
+      column: 1,
+      message: `${error.instancePath || "/"}: ${error.message || "validation error"}`,
+      severity: "error" as const,
+    };
+  });
 }
 
 /**
  * Calculate metadata about valid JSON
  */
-function calculateMetadata(parsed: any, input: string): Record<string, any> {
+function calculateMetadata(
+  parsed: unknown,
+  input: string,
+): Record<string, unknown> {
   const type = Array.isArray(parsed) ? "array" : typeof parsed;
 
-  const metadata: Record<string, any> = {
+  const metadata: Record<string, unknown> = {
     type,
     bytes: new TextEncoder().encode(input).length,
   };
@@ -78,10 +86,10 @@ export async function validateJson(
   const errors: ValidationError[] = [];
 
   // Step 1: Syntax validation
-  let parsed;
+  let parsed: unknown;
   try {
     parsed = JSON.parse(input);
-  } catch (e: any) {
+  } catch (e: unknown) {
     return {
       valid: false,
       errors: [parseSyntaxError(input, e)],
@@ -90,7 +98,7 @@ export async function validateJson(
   }
 
   // Step 2: Schema validation (if provided)
-  if (schema && schema.trim()) {
+  if (schema?.trim()) {
     try {
       const schemaObj = JSON.parse(schema);
       const ajv = new Ajv({ allErrors: true, strict: false });
@@ -101,11 +109,15 @@ export async function validateJson(
       if (!validate(parsed)) {
         errors.push(...convertAjvErrors(validate.errors || []));
       }
-    } catch (schemaError: any) {
+    } catch (schemaError: unknown) {
+      const errorMessage =
+        schemaError instanceof Error
+          ? schemaError.message
+          : String(schemaError);
       errors.push({
         line: 1,
         column: 1,
-        message: `Invalid JSON Schema: ${schemaError.message}`,
+        message: `Invalid JSON Schema: ${errorMessage}`,
         severity: "error",
       });
     }

@@ -1,19 +1,19 @@
 "use client";
 
+import type { EditorView } from "@codemirror/view";
+import { ChevronDown, ChevronUp, Settings } from "lucide-react";
 import { useState } from "react";
-import { Settings, ChevronDown, ChevronUp } from "lucide-react";
+import { validateJson } from "@/app/validators/actions";
+import { CodeEditor } from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { CodeEditor } from "@/components/CodeEditor";
-import { ValidationResults } from "./ValidationResults";
 import { createLinter, scrollToError } from "@/lib/validators/diagnostics";
-import { validateJson } from "@/app/validators/actions";
-import type { ValidationResult, ValidationError } from "@/lib/validators/types";
-import type { EditorView } from "@codemirror/view";
+import type { ValidationError, ValidationResult } from "@/lib/validators/types";
+import { ValidationResults } from "./ValidationResults";
 
 interface JsonValidatorProps {
   example: string;
