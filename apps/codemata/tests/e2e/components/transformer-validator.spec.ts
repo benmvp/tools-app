@@ -132,6 +132,9 @@ test.describe("JSON Validator Component", () => {
     await inputEditor.press("Meta+A"); // Select all
     await inputEditor.press("Backspace");
 
+    // Wait for editor to be empty (state update)
+    await expect(inputEditor).toBeEmpty();
+
     // Validate button should be disabled when input is empty
     const validateButton = page.locator('button:has-text("Validate JSON")');
     await expect(validateButton).toBeDisabled();
