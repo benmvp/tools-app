@@ -4,10 +4,12 @@ import { ALL_FORMATTERS, ALL_MINIFIERS } from "../../lib/tools-data";
 // Helper to open command menu (tries keyboard shortcut, falls back to button)
 async function openCommandMenu(page: Page) {
   await page.keyboard.press("Meta+K");
-  await page.waitForTimeout(300);
 
+  // Wait for dialog to appear (or timeout)
   const dialog = page.locator('[role="dialog"]');
-  const isDialogVisible = await dialog.isVisible().catch(() => false);
+  const isDialogVisible = await dialog
+    .isVisible({ timeout: 1000 })
+    .catch(() => false);
 
   if (!isDialogVisible) {
     // Click the sidebar search button (desktop has "Search tools..." text)
@@ -65,9 +67,9 @@ test.describe("Command Menu", () => {
   test("should show recent tools in command menu", async ({ page }) => {
     // Visit a couple tools to populate recent tools
     await page.goto(ALL_FORMATTERS[0].url);
-    await page.waitForTimeout(500);
+    await page.waitForLoadState("networkidle");
     await page.goto(ALL_MINIFIERS[0].url);
-    await page.waitForTimeout(500);
+    await page.waitForLoadState("networkidle");
 
     await openCommandMenu(page);
 

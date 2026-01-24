@@ -123,6 +123,10 @@ test.describe("JSON Validator Component", () => {
   });
 
   test("handles empty input gracefully", async ({ page }) => {
+    // Validate button should initially be enabled with example data
+    const validateButton = page.locator('button:has-text("Validate JSON")');
+    await expect(validateButton).toBeEnabled();
+
     // Input editor should be visible (first CodeMirror on page)
     const inputEditor = page.locator(".cm-content").first();
     await expect(inputEditor).toBeVisible();
@@ -132,11 +136,7 @@ test.describe("JSON Validator Component", () => {
     await inputEditor.press("Meta+A"); // Select all
     await inputEditor.press("Backspace");
 
-    // Wait for editor to be empty (state update)
-    await expect(inputEditor).toBeEmpty();
-
-    // Validate button should be disabled when input is empty
-    const validateButton = page.locator('button:has-text("Validate JSON")');
+    // Validate button should become disabled when input is empty
     await expect(validateButton).toBeDisabled();
   });
 
@@ -204,11 +204,12 @@ test.describe("JSON Validator Component", () => {
     // Enter a schema (second CodeMirror editor)
     const schemaEditor = page.locator(".cm-content").nth(1);
     await schemaEditor.click();
-    const schemaValue = JSON.stringify({
-      type: "object",
-      required: ["name"],
-    });
-    await schemaEditor.fill(schemaValue);
+    await schemaEditor.fill(
+      JSON.stringify({
+        type: "object",
+        required: ["name"],
+      }),
+    );
 
     // Collapse
     await expandButton.click();
@@ -216,8 +217,19 @@ test.describe("JSON Validator Component", () => {
     // Expand again
     await expandButton.click();
 
-    // Schema should still be there
-    await expect(schemaEditor).toHaveText(schemaValue);
+    // Verify schema still works by testing validation behavior
+    // Enter JSON missing required field (first CodeMirror editor)
+    const inputEditor = page.locator(".cm-content").first();
+    await inputEditor.click();
+    await inputEditor.fill('{"value": 123}');
+
+    // Click validate button
+    const validateButton = page.locator('button:has-text("Validate JSON")');
+    await validateButton.click();
+
+    // Schema should still be active - should show error about missing "name"
+    const errorButton = page.locator('button[aria-label*="Error at line"]');
+    await expect(errorButton).toContainText(/required.*name/i);
   });
 
   test("handles invalid schema gracefully", async ({ page }) => {

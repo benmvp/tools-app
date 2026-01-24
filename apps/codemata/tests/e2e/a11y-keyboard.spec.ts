@@ -237,11 +237,11 @@ test.describe("Keyboard Navigation", () => {
 
       // Press Enter to toggle
       await page.keyboard.press("Enter");
-      await page.waitForTimeout(300);
 
-      // Check aria-expanded state changed
-      const expanded = await formattersButton.getAttribute("aria-expanded");
-      expect(expanded).toBeTruthy();
+      // Wait for aria-expanded to change (collapsible expanded)
+      await expect(formattersButton).toHaveAttribute("aria-expanded", "true", {
+        timeout: 1000,
+      });
     }
   });
 

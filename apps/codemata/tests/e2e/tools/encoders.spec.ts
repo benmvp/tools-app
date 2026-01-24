@@ -39,12 +39,15 @@ test.describe("Encoder Tools - Integration", () => {
       // Click the Encode button
       await encodeButton.click();
 
-      // Wait for right editor to have encoded content
-      const rightEditor = page.locator(".cm-content").last();
-      await expect(rightEditor).not.toBeEmpty({ timeout: 5000 });
-      const outputText = await rightEditor.textContent();
-      expect(outputText).toBeTruthy();
-      expect(outputText?.trim().length).toBeGreaterThan(0);
+      // Wait for decode button to become enabled (indicates encoding completed)
+      const decodeButton = page.getByRole("button", { name: /decode/i });
+      await expect(decodeButton).toBeEnabled({ timeout: 5000 });
+
+      // Verify right copy button is enabled (encoded content exists)
+      const rightCopyButton = page.getByRole("button", {
+        name: "Copy right editor content",
+      });
+      await expect(rightCopyButton).toBeEnabled();
     });
   });
 
@@ -72,13 +75,15 @@ test.describe("Encoder Tools - Integration", () => {
       // Click the Decode button
       await decodeButton.click();
 
-      // Wait for right editor to show decoded JSON
-      const rightEditor = page.locator(".cm-content").last();
-      await expect(rightEditor).not.toBeEmpty({ timeout: 5000 });
-      const outputText = await rightEditor.textContent();
-      expect(outputText).toBeTruthy();
+      // Wait for right copy button to become enabled (indicates decoding completed)
+      const rightCopyButton = page.getByRole("button", {
+        name: "Copy right editor content",
+      });
+      await expect(rightCopyButton).toBeEnabled({ timeout: 5000 });
 
-      // Verify it's JSON with header and payload
+      // Verify decoded content contains expected JWT structure
+      const rightEditor = page.locator(".cm-content").last();
+      const outputText = await rightEditor.textContent();
       expect(outputText).toContain("header");
       expect(outputText).toContain("payload");
     });

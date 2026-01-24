@@ -492,22 +492,118 @@ pnpm test:e2e:ui  # Interactive mode
 
 ### Test Flakiness
 
-**Causes:**
-- Race conditions (use `waitFor` instead of fixed delays)
+**Common Causes:**
+- Using `waitForTimeout()` instead of waiting for actual conditions
+- Checking CodeMirror's internal DOM state (`.toBeEmpty()`, `.textContent()`)
+- Testing implementation details instead of user-facing behavior
+- Race conditions between state updates and assertions
 - Network timing issues
 - State pollution between tests
-- Browser caching
 
 **Solutions:**
-- Add explicit waits for elements
-- Use `waitForLoadState('networkidle')`
-- Clear state between tests
-- Increase timeout for specific actions
-- Add retry logic for flaky assertions
+- **Replace `waitForTimeout()`** with behavior checks (`toBeVisible()`, `toBeEnabled()`, `toHaveAttribute()`)
+- **Avoid CodeMirror internals** - Test button states, toasts, and badges instead
+- **Use `waitForLoadState('networkidle')`** after navigation
+- **Use `expect.poll()`** for values that change over time
+- **Wait for toasts/badges** to indicate operations completed
+- **Clear state between tests** - Use `await page.goto()` with fresh context
+- **Use keyboard shortcuts** to clear editors (`Meta+A` + `Backspace`)
+
+**Pattern Replacements:**
+```typescript
+// Before (flaky) → After (robust)
+await page.waitForTimeout(1000) → await expect(toast).toBeVisible()
+await expect(editor).toBeEmpty() → await expect(button).toBeDisabled()
+const text = await editor.textContent() → await expect(copyButton).toBeEnabled()
+await editor.fill("") → await editor.press("Meta+A"); await editor.press("Backspace")
+```
 
 ---
 
 ## Best Practices
+
+### Avoiding Flaky Tests
+
+**Test Behavior, Not Implementation:**
+The most important principle for robust E2E tests is to test user-facing behavior rather than internal implementation details.
+
+```typescript
+// ❌ BAD: Testing CodeMirror's internal DOM state
+await inputEditor.fill("");
+await expect(inputEditor).toBeEmpty();
+
+// ✅ GOOD: Testing the resulting behavior
+await inputEditor.press("Meta+A");
+await inputEditor.press("Backspace");
+await expect(formatButton).toBeDisabled();
+```
+
+**Avoid Fixed Timeouts:**
+Never use `waitForTimeout()` - it's the primary cause of flaky tests. Always wait for actual conditions.
+
+```typescript
+// ❌ BAD: Fixed delays
+await page.waitForTimeout(1000);
+const text = await element.textContent();
+
+// ✅ GOOD: Wait for actual state changes
+await expect(successToast).toBeVisible();
+await expect(copyButton).toBeEnabled();
+```
+
+**Don't Check CodeMirror's Internal State:**
+CodeMirror's DOM structure is complex and changes asynchronously. Never use `.toBeEmpty()` or `.textContent()` to check if editors are empty.
+
+```typescript
+// ❌ BAD: Checking editor emptiness
+const text = await inputEditor.textContent();
+expect(text?.trim()).toBe("");
+
+// ✅ GOOD: Check button states that reflect editor state
+await expect(formatButton).toBeDisabled(); // Button knows if editor is empty
+```
+
+**Wait for User-Facing Outcomes:**
+Instead of checking DOM state, wait for things users would notice.
+
+```typescript
+// ❌ BAD: Checking if output editor has content
+await expect(outputEditor).not.toBeEmpty();
+
+// ✅ GOOD: Wait for indicators that operation completed
+await expect(successToast).toBeVisible();    // User sees success message
+await expect(copyButton).toBeEnabled();      // Copy button becomes available
+await expect(sizeBadge).toBeVisible();       // Size badge appears
+```
+
+**Use Dynamic Polling for Async Values:**
+For values that change over time (like scroll position), use `expect.poll()`.
+
+```typescript
+// ❌ BAD: Fixed timeout + direct assertion
+await page.waitForTimeout(500);
+const scrollY = await page.evaluate(() => window.scrollY);
+expect(scrollY).toBeLessThan(100);
+
+// ✅ GOOD: Poll until condition is met
+await expect.poll(
+  async () => await page.evaluate(() => window.scrollY),
+  { timeout: 3000 }
+).toBeLessThan(100);
+```
+
+**Clear Editors with Keyboard Shortcuts:**
+Using `.fill("")` on CodeMirror can be unreliable. Use keyboard shortcuts instead.
+
+```typescript
+// ❌ BAD: Using fill to clear
+await inputEditor.fill("");
+
+// ✅ GOOD: Use keyboard shortcuts
+await inputEditor.click();
+await inputEditor.press("Meta+A");
+await inputEditor.press("Backspace");
+```
 
 ### Writing E2E Tests
 

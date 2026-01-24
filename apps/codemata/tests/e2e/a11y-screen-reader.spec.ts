@@ -28,11 +28,10 @@ test.describe("Screen Reader Compatibility", () => {
   test("should have proper ARIA roles on dialog", async ({ page }) => {
     await page.goto("/");
     await page.keyboard.press("Meta+KeyK");
-    await page.waitForTimeout(500);
 
-    // Command menu should have role="dialog"
+    // Command menu should have role="dialog" and be visible
     const dialog = page.locator('[role="dialog"]');
-    await expect(dialog).toBeVisible({ timeout: 10000 });
+    await expect(dialog).toBeVisible({ timeout: 3000 });
 
     // Dialog should have aria-label or aria-labelledby
     const hasLabel =
@@ -140,10 +139,10 @@ test.describe("Screen Reader Compatibility", () => {
   test("command menu should announce search results", async ({ page }) => {
     await page.goto("/");
     await page.keyboard.press("Meta+KeyK");
-    await page.waitForTimeout(500);
-    await expect(page.locator('[role="dialog"]')).toBeVisible({
-      timeout: 10000,
-    });
+
+    // Wait for dialog to be visible
+    const dialog = page.locator('[role="dialog"]');
+    await expect(dialog).toBeVisible({ timeout: 3000 });
 
     // Search input should have aria-label
     const searchInput = page.locator('[role="dialog"] input');

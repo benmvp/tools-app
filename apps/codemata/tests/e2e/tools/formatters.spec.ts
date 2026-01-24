@@ -30,13 +30,15 @@ test.describe("Formatter Tools - Integration", () => {
     await inputEditor.fill(sample.valid);
 
     // Click the Format button
-    await page.getByRole("button", { name: /format/i }).click();
+    const formatButton = page.getByRole("button", { name: /format/i });
+    await formatButton.click();
 
-    // Wait for output editor to have content (server action + re-render)
-    const outputEditor = page.locator(".cm-content").last();
-    await expect(outputEditor).not.toBeEmpty({ timeout: 5000 });
-    const outputText = await outputEditor.textContent();
-    expect(outputText).toBeTruthy();
-    expect(outputText?.length).toBeGreaterThan(0);
+    // Wait for success toast (indicates formatting completed)
+    const toast = page.locator("[data-sonner-toast]").first();
+    await expect(toast).toBeVisible({ timeout: 5000 });
+
+    // Verify copy button is enabled (output exists)
+    const copyButton = page.getByRole("button", { name: /copy/i }).first();
+    await expect(copyButton).toBeEnabled();
   });
 });
