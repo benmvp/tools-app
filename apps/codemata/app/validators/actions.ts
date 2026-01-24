@@ -15,6 +15,15 @@ function parseSyntaxError(input: string, error: unknown): ValidationError {
 
   if (posMatch) {
     const pos = Number.parseInt(posMatch[1], 10);
+    // Guard against invalid positions
+    if (pos <= 0 || pos > input.length) {
+      return {
+        line: 1,
+        column: 1,
+        message: errorMessage.replace(/^JSON\.parse: /, ""),
+        severity: "error",
+      };
+    }
     const lines = input.slice(0, pos).split("\n");
     const line = lines.length;
     const column = lines[lines.length - 1].length + 1;

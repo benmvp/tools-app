@@ -2,7 +2,7 @@
 
 import type { EditorView } from "@codemirror/view";
 import { ChevronDown, ChevronUp, Settings } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { validateJson } from "@/app/validators/actions";
 import { CodeEditor } from "@/components/CodeEditor";
 import { Button } from "@/components/ui/button";
@@ -64,6 +64,11 @@ export function JsonValidator({
     }
   };
 
+  // Memoize extensions to prevent unnecessary CodeMirror reconfiguration
+  const editorExtensions = useMemo(() => {
+    return result ? [createLinter([...result.errors, ...result.warnings])] : [];
+  }, [result]);
+
   return (
     <div className="space-y-4">
       {/* JSON Input */}
@@ -75,9 +80,7 @@ export function JsonValidator({
           value={input}
           onChange={setInput}
           language="json"
-          extensions={
-            result ? [createLinter([...result.errors, ...result.warnings])] : []
-          }
+          extensions={editorExtensions}
           onViewUpdate={setEditorView}
           label="JSON Input"
         />

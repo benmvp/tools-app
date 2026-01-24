@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   CommandDialog,
   CommandEmpty,
@@ -65,12 +65,14 @@ export function CommandMenu({ open, onOpenChange }: CommandMenuProps) {
     .filter((item): item is SearchableToolItem => item !== undefined)
     .filter((tool) => !recentUrls.has(tool.url));
 
+  // Create icon map for O(1) lookup (memoized per component instance)
+  const iconMap = useMemo(() => {
+    return new Map(ALL_TOOLS_FLAT.map((t) => [t.url, t.icon]));
+  }, []);
+
   // Get tool icon from the tools data
   const getToolIcon = (tool: SearchableToolItem) => {
-    // Search through all tool categories
-    const matchingTool = ALL_TOOLS_FLAT.find((t) => t.url === tool.url);
-
-    return matchingTool?.icon;
+    return iconMap.get(tool.url);
   };
 
   return (

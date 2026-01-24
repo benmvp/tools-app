@@ -228,7 +228,9 @@ test.describe("JSON Validator Component", () => {
     await validateButton.click();
 
     // Schema should still be active - should show error about missing "name"
-    const errorButton = page.locator('button[aria-label*="Error at line"]');
+    const errorButton = page
+      .locator('button[aria-label*="Error at line"]')
+      .first();
     await expect(errorButton).toContainText(/required.*name/i);
   });
 
