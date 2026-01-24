@@ -27,13 +27,16 @@ interface CodeEditorProps {
   label: string;
   language?: CodeEditorLanguage;
   lineWrapping?: boolean;
+	extensions?: Extension[];
+	placeholder?: string;
+	onViewUpdate?: (view: EditorView) => void;
 }
 
+/**
+ * Get language support extension for CodeMirror based on language type
+ */
 function getLanguageExtension(language: CodeEditorLanguage): Extension {
   switch (language) {
-    case "typescript":
-    case "javascript":
-      return javascript({ jsx: true, typescript: true });
     case "json":
       return json();
     case "yaml":
@@ -66,39 +69,59 @@ export function CodeEditor({
   label,
   language = "typescript",
   lineWrapping = false,
+	extensions: customExtensions = [],
+	placeholder,
+	onViewUpdate,
 }: CodeEditorProps) {
-  const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  const editorId = `code-editor-${label.toLowerCase().replace(/\s+/g, "-")}`;
+	const { resolvedTheme } = useTheme();
+	const [mounted, setMounted] = useState(false);
+	const [view, setView] = useState<EditorView | null>(null);
+	const editorId = `code-editor-${label.toLowerCase().replace(/\s+/g, "-")}`;
 
-  // Avoid hydration mismatch by only rendering theme after mount
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+	// Avoid hydration mismatch by only rendering theme after mount
+	useEffect(() => {
+		setMounted(true);
+	}, []);
 
-  const extensions = useMemo(() => {
-    const exts: Extension[] = [getLanguageExtension(language)];
-    if (lineWrapping) {
-      exts.push(EditorView.lineWrapping);
-    }
-    return exts;
-  }, [language, lineWrapping]);
+	// Notify parent of view updates
+	useEffect(() => {
+		if (view && onViewUpdate) {
+			onViewUpdate(view);
+		}
+	}, [view, onViewUpdate]);
 
-  return (
-    <div className="space-y-2">
-      <span id={editorId} className="sr-only">
-        {label || (readOnly ? "Output" : "Input")}
-      </span>
-      <section
-        className="border rounded-md overflow-hidden"
-        aria-labelledby={editorId}
-      >
+	const extensions = useMemo(() => {
+		const exts: Extension[] = [getLanguageExtension(language)];
+		if (lineWrapping) {
+			exts.push(EditorView.lineWrapping);
+		}
+		// Add custom extensions (like linter for validators)
+		if (customExtensions.length > 0) {
+			exts.push(...customExtensions);
+		}
+		return exts;
+	}, [language, lineWrapping, customExtensions]);
+
+	return (
+		<div className="w-full">
+			<label
+				htmlFor={editorId}
+				className="text-sm font-medium mb-2 block sr-only"
+			>
+				{label}
+			</label>
+			<section
+				className="border rounded-md overflow-hidden"
+				aria-labelledby={editorId}
+			>
         <CodeMirror
           value={value}
           height="400px"
           extensions={extensions}
           onChange={onChange}
+          onCreateEditor={(view) => setView(view)}
           readOnly={readOnly}
+          placeholder={placeholder}
           theme={mounted && resolvedTheme === "dark" ? "dark" : "light"}
           className="text-sm font-mono"
           data-gramm="false"

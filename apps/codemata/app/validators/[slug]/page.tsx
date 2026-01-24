@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { VALIDATOR_TOOLS } from "@/lib/tools-data";
+import { JsonValidator } from "@/components/validators/JsonValidator";
+import { VALIDATOR_EXAMPLES } from "@/lib/validators/examples";
+import { CategoryBackLink } from "@/components/CategoryBackLink";
 
 // ISR revalidation - 24 hours
 export const revalidate = 86400;
@@ -51,12 +54,32 @@ export default async function ValidatorPage({
     notFound();
   }
 
-  // Phase 9.2+: Render validator components here
-  // For now, this returns 404 for all validators
-  return (
-    <div className="max-w-7xl mx-auto px-4 py-6 md:py-12">
-      <h1>{tool.name}</h1>
-      <p>Validator implementation coming in Phase 9.2+</p>
-    </div>
-  );
+	// JSON Validator
+	if (slug === "json-validator") {
+		return (
+			<div className="max-w-7xl mx-auto px-4 py-6 md:py-12">
+				<div className="flex flex-col gap-6">
+					<CategoryBackLink href="/validators" label="Validators" />
+					<div>
+						<h1 className="text-3xl md:text-4xl font-bold mb-2">
+							{tool.name}
+						</h1>
+						<p className="text-muted-foreground text-lg">{tool.description}</p>
+					</div>
+					<JsonValidator
+						example={VALIDATOR_EXAMPLES.json}
+						exampleSchema={VALIDATOR_EXAMPLES.jsonSchema}
+					/>
+				</div>
+			</div>
+		);
+	}
+
+	// Phase 9.3+: Other validators
+	return (
+		<div className="max-w-7xl mx-auto px-4 py-6 md:py-12">
+			<h1>{tool.name}</h1>
+			<p>Validator implementation coming in Phase 9.3+</p>
+		</div>
+	);
 }
