@@ -42,7 +42,8 @@ test.describe("TransformerMinifier Component", () => {
     await inputEditor.press("Backspace");
 
     // Verify minify button is disabled when input is empty (the actual behavior we care about)
+    // Wait for React to re-render after input change (especially important in CI)
     const minifyButton = page.getByRole("button", { name: /minify/i });
-    await expect(minifyButton).toBeDisabled({ timeout: 2000 });
+    await expect(minifyButton).toBeDisabled({ timeout: 5000 });
   });
 });

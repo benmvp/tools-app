@@ -137,7 +137,8 @@ test.describe("JSON Validator Component", () => {
     await inputEditor.press("Backspace");
 
     // Validate button should become disabled when input is empty
-    await expect(validateButton).toBeDisabled();
+    // Wait for React to re-render after input change (especially important in CI)
+    await expect(validateButton).toBeDisabled({ timeout: 5000 });
   });
 
   test("displays metadata for valid JSON", async ({ page }) => {

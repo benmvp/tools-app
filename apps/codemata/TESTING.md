@@ -124,7 +124,6 @@ pnpm test:e2e --project=iphone-13
 - `iphone-13` (390×844) - iOS Safari mobile testing
 
 **Configuration:**
-- Workers: 1 locally (sequential), 2 in CI (parallel)
 - BaseURL: http://localhost:3333 (production build via `next start`)
 - Video: Retained on failure for debugging
 - Location: `tests/e2e/**/*.spec.ts`
@@ -496,7 +495,6 @@ pnpm test:e2e:ui  # Interactive mode
 - Using `waitForTimeout()` instead of waiting for actual conditions
 - Checking CodeMirror's internal DOM state (`.toBeEmpty()`, `.textContent()`)
 - Testing implementation details instead of user-facing behavior
-- Race conditions between state updates and assertions
 - Network timing issues
 - State pollution between tests
 

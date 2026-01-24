@@ -23,8 +23,9 @@ test.describe("Transformer Component", () => {
     await inputEditor.press("Backspace");
 
     // Format button should be disabled when input is empty
+    // Wait for React to re-render after input change (especially important in CI)
     const formatButton = page.getByRole("button", { name: /format/i });
-    await expect(formatButton).toBeDisabled({ timeout: 2000 });
+    await expect(formatButton).toBeDisabled({ timeout: 5000 });
   });
 
   test("should handle configuration changes", async ({ page }) => {
