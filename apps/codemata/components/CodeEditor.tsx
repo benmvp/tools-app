@@ -29,6 +29,10 @@ interface CodeEditorProps {
   lineWrapping?: boolean;
   extensions?: Extension[];
   placeholder?: string;
+  /**
+   * Callback invoked when the editor view is updated.
+   * Should be memoized with useCallback to prevent unnecessary re-renders.
+   */
   onViewUpdate?: (view: EditorView) => void;
 }
 
@@ -109,12 +113,14 @@ export function CodeEditor({
   return (
     <div className="w-full">
       <label
+        id={editorId}
         htmlFor={editorId}
         className="text-sm font-medium mb-2 block sr-only"
       >
         {label}
       </label>
       <section
+        role="region"
         className="border rounded-md overflow-hidden"
         aria-labelledby={editorId}
       >

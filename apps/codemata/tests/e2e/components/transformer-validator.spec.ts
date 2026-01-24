@@ -34,10 +34,7 @@ test.describe("JSON Validator Component", () => {
     const validateButton = page.locator('button:has-text("Validate JSON")');
     await validateButton.click();
 
-    // Wait a moment for validation
-    await page.waitForTimeout(500);
-
-    // Should show error (looking for "Errors" heading or error text)
+    // Wait for error to appear (instead of fixed timeout)
     const errorIndicator = page.locator("text=/error/i").first();
     await expect(errorIndicator).toBeVisible();
   });
@@ -55,10 +52,7 @@ test.describe("JSON Validator Component", () => {
     const validateButton = page.locator('button:has-text("Validate JSON")');
     await validateButton.click();
 
-    // Wait a moment for validation
-    await page.waitForTimeout(500);
-
-    // Should show success message
+    // Wait for success message to appear
     const successText = page.locator("text=Valid!");
     await expect(successText).toBeVisible();
 
@@ -119,10 +113,7 @@ test.describe("JSON Validator Component", () => {
     const validateButton = page.locator('button:has-text("Validate JSON")');
     await validateButton.click();
 
-    // Wait for validation
-    await page.waitForTimeout(500);
-
-    // Should show schema validation error (heading includes count)
+    // Wait for error heading to appear
     const errorHeading = page.locator('h3:has-text("Errors (")');
     await expect(errorHeading).toBeVisible();
 
@@ -156,10 +147,7 @@ test.describe("JSON Validator Component", () => {
     const validateButton = page.locator('button:has-text("Validate JSON")');
     await validateButton.click();
 
-    // Wait for validation
-    await page.waitForTimeout(500);
-
-    // Should show success with metadata
+    // Wait for success message to appear
     const successText = page.locator("text=Valid!");
     await expect(successText).toBeVisible();
 
@@ -187,10 +175,7 @@ test.describe("JSON Validator Component", () => {
     const validateButton = page.locator('button:has-text("Validate JSON")');
     await validateButton.click();
 
-    // Wait for validation
-    await page.waitForTimeout(500);
-
-    // Should show error
+    // Wait for error heading to appear
     const errorHeading = page.locator('h3:has-text("Errors (")');
     await expect(errorHeading).toBeVisible();
 
@@ -253,10 +238,7 @@ test.describe("JSON Validator Component", () => {
     const validateButton = page.locator('button:has-text("Validate JSON")');
     await validateButton.click();
 
-    // Wait for validation
-    await page.waitForTimeout(500);
-
-    // Should show error (heading includes count)
+    // Wait for error heading to appear
     const errorHeading = page.locator('h3:has-text("Errors (")');
     await expect(errorHeading).toBeVisible();
   });

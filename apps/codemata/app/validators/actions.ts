@@ -52,12 +52,27 @@ function convertAjvErrors(errors: unknown[]): ValidationError[] {
 }
 
 /**
+ * Check if value is a plain object (not null, not array)
+ */
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+/**
  * Calculate metadata about valid JSON
  */
 function calculateMetadata(
   parsed: unknown,
   input: string,
 ): Record<string, unknown> {
+  // Handle null specially (typeof null === 'object' in JavaScript)
+  if (parsed === null) {
+    return {
+      type: "null",
+      bytes: new TextEncoder().encode(input).length,
+    };
+  }
+
   const type = Array.isArray(parsed) ? "array" : typeof parsed;
 
   const metadata: Record<string, unknown> = {
@@ -65,7 +80,7 @@ function calculateMetadata(
     bytes: new TextEncoder().encode(input).length,
   };
 
-  if (typeof parsed === "object" && parsed !== null && !Array.isArray(parsed)) {
+  if (isPlainObject(parsed)) {
     metadata.properties = Object.keys(parsed).length;
   }
 

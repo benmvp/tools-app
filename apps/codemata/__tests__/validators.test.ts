@@ -65,7 +65,7 @@ describe("validateJson", () => {
       const result = await validateJson("null");
 
       expect(result.valid).toBe(true);
-      expect(result.metadata?.type).toBe("object");
+      expect(result.metadata?.type).toBe("null");
     });
   });
 
