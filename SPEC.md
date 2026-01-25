@@ -3757,12 +3757,12 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 
 **Goal:** Add validation and checking tools
 
-**Status:** 🚧 In Progress (Phase 9.1 complete, 9.2 starting)
+**Status:** 🚧 In Progress (Phase 9.1-9.4 complete - JSON & HTML validators live)
 
 #### Tools to Build
 
 - [x] JSON Validator (with schema support)
-- [ ] HTML Validator
+- [x] HTML Validator
 - [ ] XML Validator
 - [ ] CSS Validator
 - [ ] Regex Tester
@@ -3783,8 +3783,8 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 **9.2 Implement Validators** 🚧 In Progress
 
 - [x] JSON Validator
+- [x] HTML Validator (with html-validate, a11y checks, 65/35 layout)
 - [ ] Regex Tester
-- [ ] HTML Validator
 - [ ] CSS Validator
 - [ ] XML Validator
 

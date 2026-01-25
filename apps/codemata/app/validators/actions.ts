@@ -2,6 +2,7 @@
 
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
+import { HtmlValidate } from "html-validate";
 import type { ValidationError, ValidationResult } from "@/lib/validators/types";
 
 /**
@@ -58,46 +59,6 @@ function convertAjvErrors(errors: unknown[]): ValidationError[] {
       severity: "error" as const,
     };
   });
-}
-
-/**
- * Check if value is a plain object (not null, not array)
- */
-function isPlainObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
-/**
- * Calculate metadata about valid JSON
- */
-function calculateMetadata(
-  parsed: unknown,
-  input: string,
-): Record<string, unknown> {
-  // Handle null specially (typeof null === 'object' in JavaScript)
-  if (parsed === null) {
-    return {
-      type: "null",
-      bytes: new TextEncoder().encode(input).length,
-    };
-  }
-
-  const type = Array.isArray(parsed) ? "array" : typeof parsed;
-
-  const metadata: Record<string, unknown> = {
-    type,
-    bytes: new TextEncoder().encode(input).length,
-  };
-
-  if (isPlainObject(parsed)) {
-    metadata.properties = Object.keys(parsed).length;
-  }
-
-  if (Array.isArray(parsed)) {
-    metadata.items = parsed.length;
-  }
-
-  return metadata;
 }
 
 /**
@@ -160,6 +121,45 @@ export async function validateJson(
     valid: true,
     errors: [],
     warnings: [],
-    metadata: calculateMetadata(parsed, input),
+    metadata: { toolName: "JSON" },
+  };
+}
+
+/**
+ * Validate HTML structure, accessibility, and best practices
+ */
+export async function validateHtml(input: string): Promise<ValidationResult> {
+  const htmlvalidate = new HtmlValidate({
+    extends: ["html-validate:recommended"],
+  });
+
+  const report = await htmlvalidate.validateString(input);
+
+  // Extract errors (severity 2) and warnings (severity 1)
+  const messages = report.results?.[0]?.messages || [];
+
+  const errors: ValidationError[] = messages
+    .filter((msg: { severity: number }) => msg.severity === 2)
+    .map((msg: { line?: number; column?: number; message: string }) => ({
+      line: msg.line ?? 1,
+      column: msg.column ?? 1,
+      message: msg.message,
+      severity: "error" as const,
+    }));
+
+  const warnings: ValidationError[] = messages
+    .filter((msg: { severity: number }) => msg.severity === 1)
+    .map((msg: { line?: number; column?: number; message: string }) => ({
+      line: msg.line ?? 1,
+      column: msg.column ?? 1,
+      message: msg.message,
+      severity: "warning" as const,
+    }));
+
+  return {
+    valid: errors.length === 0 && warnings.length === 0,
+    errors,
+    warnings,
+    metadata: { toolName: "HTML" },
   };
 }

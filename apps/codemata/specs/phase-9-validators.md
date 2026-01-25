@@ -1256,7 +1256,18 @@ function MatchDetails({ match, index }: { match: RegexMatch; index: number }) {
 
 ---
 
-### Phase 9.4: HTML Validator (Day 7-8)
+### Phase 9.4: HTML Validator (Day 7-8) ✅ **COMPLETE**
+
+**Completed:** January 25, 2026
+
+**Key Features Implemented:**
+- html-validate with recommended preset
+- Severity mapping (2→errors, 1→warnings)
+- 65/35 horizontal layout (desktop), stacked (mobile)
+- Conditional layout (full-width before validation, split after)
+- Simplified success messages ("Looking good! Your HTML is valid.")
+- Sticky results panel on desktop
+- Full test coverage (28 passing tests)
 
 #### Server Action
 
