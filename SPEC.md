@@ -37,7 +37,8 @@ Tools App is a suite of three web applications providing free, high-quality deve
    - Code formatters (8 languages/formats)
    - Code minifiers (6 languages/formats)
    - Encoders/decoders (5 tools: JWT, Base64, URL, HTML Entity, JS String)
-   - Future: Viewers, validators, generators, converters
+   - Validators (3 tools: JSON, HTML, CSS) - **NEW**
+   - Future: More validators, viewers, generators, converters
 
 2. **Moni** (moni.benmvp.com) - Financial calculators and planning tools
 
@@ -3757,14 +3758,14 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 
 **Goal:** Add validation and checking tools
 
-**Status:** 🚧 In Progress (Phase 9.1-9.4 complete - JSON & HTML validators live)
+**Status:** 🚧 In Progress (Phase 9.1-9.5 complete - JSON, HTML & CSS validators live)
 
 #### Tools to Build
 
 - [x] JSON Validator (with schema support)
 - [x] HTML Validator
+- [x] CSS Validator
 - [ ] XML Validator
-- [ ] CSS Validator
 - [ ] Regex Tester
 - [ ] URL Validator
 - [ ] (More validators as prioritized by analytics)
@@ -3784,9 +3785,9 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 
 - [x] JSON Validator
 - [x] HTML Validator (with html-validate, a11y checks, 65/35 layout)
-- [ ] Regex Tester
-- [ ] CSS Validator
+- [x] CSS Validator (css-tree, strict syntax validation, 65/35 layout)
 - [ ] XML Validator
+- [ ] Regex Tester
 
 **9.3 AI Content & SEO**
 

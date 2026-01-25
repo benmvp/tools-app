@@ -1,6 +1,6 @@
 # Phase 9: Validators/Checkers - Implementation Specification
 
-**Status:** Planning Complete
+**Status:** 🚧 In Progress (Phase 9.1-9.5 complete - JSON, HTML, CSS validators live)
 
 ---
 
@@ -23,15 +23,15 @@
 Add 5-6 professional validation tools to Codemata with IDE-like validation UX featuring inline error highlighting and detailed error panels.
 
 ### Current State
-- **Total Tools:** 19 (8 formatters + 6 minifiers + 5 encoders)
+- **Total Tools:** 21 (8 formatters + 6 minifiers + 5 encoders + 2 validators)
 - **Target:** 24-25 tools (add 5-6 validators)
 
 ### Tools to Build
 
-1. **JSON Validator** ⭐ (with schema support via ajv)
+1. ✅ **JSON Validator** (with schema support via ajv) - **COMPLETE**
 2. **Regex Tester** ⭐ (with match highlighting)
-3. **HTML Validator** (using html-validate, full-throttle)
-4. **CSS Validator** (syntax + linting)
+3. ✅ **HTML Validator** (using html-validate, full-throttle) - **COMPLETE**
+4. ✅ **CSS Validator** (syntax validation using css-tree) - **COMPLETE**
 5. **XML Validator** (structural validation)
 6. **URL Validator** (bonus - optional quick win)
 
@@ -82,9 +82,10 @@ Add 5-6 professional validation tools to Codemata with IDE-like validation UX fe
 - **Example:** 2-3 errors (structural + a11y)
 
 #### CSS Validator
-- **Library:** PostCSS with safe parser
-- **Focus:** Syntax errors + basic linting
-- **Example:** Missing semicolon
+- **Library:** `css-tree` (strict CSS parser with onParseError callback)
+- **Focus:** Strict syntax validation (catches missing semicolons, colons, invalid properties)
+- **Example:** 2 syntax errors (missing semicolon on line 3, missing colon on line 9)
+- **Note:** PostCSS was too lenient (auto-fixes errors), css-tree provides proper validation
 
 #### XML Validator
 - **Library:** `xml2js` with strict mode
@@ -1610,19 +1611,19 @@ test.describe("JSON Validator", () => {
 
 ## Timeline
 
-| Phase | Duration | Deliverable |
-|-------|----------|-------------|
-| **9.1 Foundation** | 2 days | Shared utilities + structure |
-| **9.2 JSON Validator** | 2 days | Full JSON validator with schema |
-| **9.3 Regex Tester** | 2 days | Regex tester with highlighting |
-| **9.4 HTML Validator** | 2 days | HTML validator with html-validate |
-| **9.5 CSS Validator** | 1 day | CSS syntax validator |
-| **9.6 XML Validator** | 1 day | XML structure validator |
-| **9.7 Integration** | 2 days | Site integration + data updates |
-| **9.8 AI Content** | 1 day | Generate AI content for all tools |
-| **9.9 Testing** | 2 days | Unit + E2E + accessibility tests |
-| **9.10 Deploy** | 1 day | Production deployment + monitoring |
-| **Total** | **16 days** | **5-6 validators live** |
+| Phase | Duration | Deliverable | Status |
+|-------|----------|-------------|--------|
+| **9.1 Foundation** | 2 days | Shared utilities + structure | ✅ Complete |
+| **9.2 JSON Validator** | 2 days | Full JSON validator with schema | ✅ Complete |
+| **9.3 Regex Tester** | 2 days | Regex tester with highlighting | 📋 Planned |
+| **9.4 HTML Validator** | 2 days | HTML validator with html-validate | ✅ Complete |
+| **9.5 CSS Validator** | 1 day | CSS syntax validator (css-tree) | ✅ Complete |
+| **9.6 XML Validator** | 1 day | XML structure validator | 📋 Next |
+| **9.7 Integration** | 2 days | Site integration + data updates | 🔄 Ongoing |
+| **9.8 AI Content** | 1 day | Generate AI content for all tools | 📋 Planned |
+| **9.9 Testing** | 2 days | Unit + E2E + accessibility tests | 🔄 Ongoing |
+| **9.10 Deploy** | 1 day | Production deployment + monitoring | 📋 Planned |
+| **Total** | **16 days** | **5-6 validators live** | **3/6 done** |
 
 **Buffer for unknowns:** +2 days = **18 days total**
 
@@ -1638,8 +1639,7 @@ test.describe("JSON Validator", () => {
     "@codemirror/lint": "^6.x",
     "ajv": "^8.x",
     "html-validate": "^8.x",
-    "postcss": "^8.x",
-    "postcss-safe-parser": "^6.x",
+    "css-tree": "^3.x",
     "xml2js": "^0.6.x"
   },
   "devDependencies": {
@@ -1647,6 +1647,8 @@ test.describe("JSON Validator", () => {
   }
 }
 ```
+
+**Note:** PostCSS was evaluated but found too lenient for validation - css-tree provides strict syntax checking.
 
 ### CodeMirror Extensions
 
