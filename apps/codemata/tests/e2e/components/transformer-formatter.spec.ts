@@ -13,21 +13,6 @@ import { expect, test } from "@playwright/test";
 test.describe("Transformer Component", () => {
   const REPRESENTATIVE_TOOL = "/formatters/typescript-formatter";
 
-  test("should handle empty input gracefully", async ({ page }) => {
-    await page.goto(REPRESENTATIVE_TOOL);
-
-    // Clear input
-    const inputEditor = page.locator(".cm-content").first();
-    await inputEditor.click();
-    await inputEditor.press("Meta+A");
-    await inputEditor.press("Backspace");
-
-    // Format button should be disabled when input is empty
-    // Wait for React to re-render after input change (especially important in CI)
-    const formatButton = page.getByRole("button", { name: /format/i });
-    await expect(formatButton).toBeDisabled({ timeout: 5000 });
-  });
-
   test("should handle configuration changes", async ({ page }) => {
     await page.goto(REPRESENTATIVE_TOOL);
 

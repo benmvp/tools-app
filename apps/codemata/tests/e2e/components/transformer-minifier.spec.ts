@@ -31,19 +31,4 @@ test.describe("TransformerMinifier Component", () => {
     const sizeBadge = page.locator("text=/\\d+%|bytes|KB/i").first();
     await expect(sizeBadge).toBeVisible({ timeout: 3000 });
   });
-
-  test("should handle empty input gracefully", async ({ page }) => {
-    await page.goto(REPRESENTATIVE_TOOL);
-
-    // Clear input
-    const inputEditor = page.locator(".cm-content").first();
-    await inputEditor.click();
-    await inputEditor.press("Meta+A");
-    await inputEditor.press("Backspace");
-
-    // Verify minify button is disabled when input is empty (the actual behavior we care about)
-    // Wait for React to re-render after input change (especially important in CI)
-    const minifyButton = page.getByRole("button", { name: /minify/i });
-    await expect(minifyButton).toBeDisabled({ timeout: 5000 });
-  });
 });

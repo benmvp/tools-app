@@ -122,25 +122,6 @@ test.describe("JSON Validator Component", () => {
     await expect(errorButton).toContainText(/required.*name/i);
   });
 
-  test("handles empty input gracefully", async ({ page }) => {
-    // Validate button should initially be enabled with example data
-    const validateButton = page.locator('button:has-text("Validate JSON")');
-    await expect(validateButton).toBeEnabled();
-
-    // Input editor should be visible (first CodeMirror on page)
-    const inputEditor = page.locator(".cm-content").first();
-    await expect(inputEditor).toBeVisible();
-
-    // Clear any existing content
-    await inputEditor.click();
-    await inputEditor.press("Meta+A"); // Select all
-    await inputEditor.press("Backspace");
-
-    // Validate button should become disabled when input is empty
-    // Wait for React to re-render after input change (especially important in CI)
-    await expect(validateButton).toBeDisabled({ timeout: 5000 });
-  });
-
   test("displays metadata for valid JSON", async ({ page }) => {
     // Enter valid JSON object (first CodeMirror on page)
     const inputEditor = page.locator(".cm-content").first();

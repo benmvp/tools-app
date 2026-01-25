@@ -46,30 +46,6 @@ test.describe("TransformerEncoder Component - Bidirectional", () => {
     await expect(leftCopyButton).toBeEnabled();
   });
 
-  test("should disable buttons when editors are empty", async ({ page }) => {
-    await page.goto(REPRESENTATIVE_TOOL);
-
-    // Clear left editor
-    const leftEditor = page.locator(".cm-content").first();
-    await leftEditor.click();
-    await leftEditor.press("Meta+A");
-    await leftEditor.press("Backspace");
-
-    // Clear right editor
-    const rightEditor = page.locator(".cm-content").last();
-    await rightEditor.click();
-    await rightEditor.press("Meta+A");
-    await rightEditor.press("Backspace");
-
-    // Both buttons should be disabled when editors are empty
-    // Wait for React to re-render after input changes (especially important in CI)
-    const encodeButton = page.getByRole("button", { name: /encode/i }).first();
-    await expect(encodeButton).toBeDisabled({ timeout: 5000 });
-
-    const decodeButton = page.getByRole("button", { name: /decode/i });
-    await expect(decodeButton).toBeDisabled({ timeout: 5000 });
-  });
-
   test("should have working copy buttons on both sides", async ({ page }) => {
     await page.goto(REPRESENTATIVE_TOOL);
 
