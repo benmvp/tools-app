@@ -127,17 +127,13 @@ function ValidationSuccess({
         <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-500 flex-shrink-0 mt-0.5" />
         <div>
           <h3 className="font-semibold text-green-600 dark:text-green-500 mb-1">
-            Valid!
+            Looking good!
           </h3>
-          {metadata && (
-            <ul className="text-sm text-muted-foreground space-y-1">
-              {Object.entries(metadata).map(([key, value]) => (
-                <li key={key}>
-                  {key}: {String(value)}
-                </li>
-              ))}
-            </ul>
-          )}
+          <p className="text-sm text-muted-foreground">
+            {metadata?.toolName
+              ? `Your ${metadata.toolName} is valid.`
+              : "No errors found."}
+          </p>
         </div>
       </div>
     </div>

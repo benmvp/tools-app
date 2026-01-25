@@ -27,11 +27,10 @@ export const VALIDATOR_EXAMPLES = {
 <html>
   <head><title>Test Page</title>
   <body>
-    <div>
-      <p>Unclosed paragraph
-      <span>Mismatched nesting</div>
-    </span>
-  </body>`,
+    <img src="test.jpg">
+    <p>Unclosed paragraph
+  </body>
+</html>`,
 
   css: `.container {
   color: #ff0000;

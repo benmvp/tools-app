@@ -41,6 +41,7 @@ import {
   minifyTypescript,
   minifyXml,
 } from "../app/minifiers/actions";
+import { validateHtml } from "../app/validators/actions";
 import type {
   EncoderTool,
   FormatterTool,
@@ -692,7 +693,7 @@ export const VALIDATOR_TOOLS: Record<string, ValidatorTool> = {
     description: "Validate HTML syntax and check for accessibility issues",
     url: "/validators/html-validator",
     icon: Code,
-    comingSoon: true,
+    comingSoon: false,
     language: "html",
     keywords: [
       "html",
@@ -705,6 +706,7 @@ export const VALIDATOR_TOOLS: Record<string, ValidatorTool> = {
       "a11y",
     ],
     example: "",
+    action: validateHtml,
     metadata: {
       title: "HTML Validator | Codemata",
       description:

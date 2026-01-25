@@ -53,12 +53,8 @@ test.describe("JSON Validator Component", () => {
     await validateButton.click();
 
     // Wait for success message to appear
-    const successText = page.locator("text=Valid!");
+    const successText = page.locator("text=/Looking good.*valid/i");
     await expect(successText).toBeVisible();
-
-    // Should show metadata
-    const metadataText = page.locator("text=/Type:/i");
-    await expect(metadataText).toBeVisible();
   });
 
   test("expands and collapses schema editor", async ({ page }) => {
@@ -120,28 +116,6 @@ test.describe("JSON Validator Component", () => {
     // Error should mention required field (select from error button, not schema editor)
     const errorButton = page.locator('button[aria-label*="Error at line"]');
     await expect(errorButton).toContainText(/required.*name/i);
-  });
-
-  test("displays metadata for valid JSON", async ({ page }) => {
-    // Enter valid JSON object (first CodeMirror on page)
-    const inputEditor = page.locator(".cm-content").first();
-    await inputEditor.click();
-    await inputEditor.fill('{"name": "test", "items": [1, 2, 3]}');
-
-    // Click validate button
-    const validateButton = page.locator('button:has-text("Validate JSON")');
-    await validateButton.click();
-
-    // Wait for success message to appear
-    const successText = page.locator("text=Valid!");
-    await expect(successText).toBeVisible();
-
-    // Should show metadata (properties count and type)
-    const typeText = page.locator("text=/Type:.*object/i");
-    await expect(typeText).toBeVisible();
-
-    const propertiesText = page.locator("text=/Properties:.*2/i");
-    await expect(propertiesText).toBeVisible();
   });
 
   test("scrolls to error when clicking error message", async ({ page }) => {

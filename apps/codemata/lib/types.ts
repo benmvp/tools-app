@@ -1,4 +1,5 @@
 import type { LucideIcon } from "lucide-react";
+import type { ValidationResult } from "./validators/types";
 
 export type Indentation = "two-spaces" | "four-spaces" | "tabs";
 
@@ -141,10 +142,18 @@ export interface EncoderTool extends Tool {
 }
 
 /**
- * Validator Tool interface (no action yet - Phase 9.1 scaffolding only)
+ * Validator Tool interface
  */
 export interface ValidatorTool extends Tool {
-  action?: never; // No action in Phase 9.1
+  action?: ValidatorAction;
   example: string;
   language: "json" | "html" | "css" | "xml" | "text";
 }
+
+/**
+ * Validator action type
+ */
+export type ValidatorAction = (
+  input: string,
+  options?: Record<string, unknown>,
+) => Promise<ValidationResult>;
