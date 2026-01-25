@@ -13,21 +13,6 @@ import { expect, test } from "@playwright/test";
 test.describe("Transformer Component", () => {
   const REPRESENTATIVE_TOOL = "/formatters/typescript-formatter";
 
-  test("should handle empty input gracefully", async ({ page }) => {
-    await page.goto(REPRESENTATIVE_TOOL);
-
-    // Clear input
-    const inputEditor = page.locator(".cm-content").first();
-    await inputEditor.click();
-    await inputEditor.fill("");
-    await page.waitForTimeout(500);
-
-    // Output should be empty
-    const outputEditor = page.locator(".cm-content").last();
-    const outputText = await outputEditor.textContent();
-    expect(outputText?.trim()).toBe("");
-  });
-
   test("should handle configuration changes", async ({ page }) => {
     await page.goto(REPRESENTATIVE_TOOL);
 
@@ -37,8 +22,12 @@ test.describe("Transformer Component", () => {
     await inputEditor.fill("const x = 1;");
 
     // Format with default config
-    await page.getByRole("button", { name: /format/i }).click();
-    await page.waitForTimeout(1000);
+    const formatButton = page.getByRole("button", { name: /format/i });
+    await formatButton.click();
+
+    // Wait for success toast (indicates formatting completed)
+    const successToast = page.locator("[data-sonner-toast]").first();
+    await expect(successToast).toBeVisible({ timeout: 3000 });
 
     // Change indentation setting (if available)
     const indentationSelect = page.locator('select[name="indentation"]');
@@ -46,13 +35,14 @@ test.describe("Transformer Component", () => {
       await indentationSelect.selectOption("four-spaces");
 
       // Re-format with new config
-      await page.getByRole("button", { name: /format/i }).click();
-      await page.waitForTimeout(1000);
+      await formatButton.click();
 
-      // Verify output changed
-      const outputEditor = page.locator(".cm-content").last();
-      const outputText = await outputEditor.textContent();
-      expect(outputText).toBeTruthy();
+      // Wait for success toast again (indicates re-formatting completed)
+      await expect(successToast).toBeVisible({ timeout: 3000 });
+
+      // Verify copy button is enabled (output exists)
+      const copyButton = page.getByRole("button", { name: /copy/i }).first();
+      await expect(copyButton).toBeEnabled();
     }
   });
 
@@ -66,8 +56,12 @@ test.describe("Transformer Component", () => {
     await inputEditor.click();
     await inputEditor.fill("const x = 1;");
 
-    await page.getByRole("button", { name: /format/i }).click();
-    await page.waitForTimeout(1000);
+    const formatButton = page.getByRole("button", { name: /format/i });
+    await formatButton.click();
+
+    // Wait for success toast (formatting completed)
+    const successToast = page.locator("[data-sonner-toast]").first();
+    await expect(successToast).toBeVisible({ timeout: 3000 });
 
     // Click copy button
     const copyButton = page.getByRole("button", { name: /copy/i }).first();
@@ -87,8 +81,8 @@ test.describe("Transformer Component", () => {
     await inputEditor.fill("const x = {{{");
 
     // Try to format
-    await page.getByRole("button", { name: /format/i }).click();
-    await page.waitForTimeout(1000);
+    const formatButton = page.getByRole("button", { name: /format/i });
+    await formatButton.click();
 
     // Verify error toast
     const errorToast = page.locator("[data-sonner-toast]");

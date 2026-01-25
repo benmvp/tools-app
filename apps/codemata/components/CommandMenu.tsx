@@ -24,6 +24,7 @@ interface CommandMenuProps {
 }
 
 const ALL_TOOLS_FLAT = Object.values(ALL_TOOLS).flat();
+const ICON_MAP = new Map(ALL_TOOLS_FLAT.map((t) => [t.url, t.icon]));
 
 export function CommandMenu({ open, onOpenChange }: CommandMenuProps) {
   const router = useRouter();
@@ -65,13 +66,9 @@ export function CommandMenu({ open, onOpenChange }: CommandMenuProps) {
     .filter((item): item is SearchableToolItem => item !== undefined)
     .filter((tool) => !recentUrls.has(tool.url));
 
-  // Get tool icon from the tools data
+  // Get tool icon from the static map
   const getToolIcon = (tool: SearchableToolItem) => {
-    const slug = tool.url.split("/").pop() || "";
-    // Search through all tool categories
-    const matchingTool = ALL_TOOLS_FLAT.find((t) => t.url === tool.url);
-
-    return matchingTool?.icon;
+    return ICON_MAP.get(tool.url);
   };
 
   return (

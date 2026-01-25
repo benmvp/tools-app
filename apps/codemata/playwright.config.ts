@@ -10,7 +10,6 @@ import { defineConfig, devices } from "@playwright/test";
  * - CI: Headless mode
  *
  * Test Coverage:
- * - All tool pages (9 formatters + 6 minifiers = 15 tools)
  * - Navigation (sidebar, command menu, category pages)
  * - Mobile responsive behavior
  * - Accessibility compliance (separate a11y tests)
@@ -25,7 +24,6 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: 0, // No retries - catch flakiness early
-  workers: process.env.CI ? 2 : 1, // Sequential locally (more stable), 2 workers in CI
   // HTML report: CI opens always, locally only on success (prevents hanging prompt)
   reporter: process.env.CI
     ? [["html"], ["github"]]

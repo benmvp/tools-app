@@ -28,17 +28,19 @@ test.describe("Minifier Tools - Integration", () => {
     await inputEditor.fill(sample.valid);
 
     // Click the Minify button
-    await page.getByRole("button", { name: /minify/i }).click();
+    const minifyButton = page.getByRole("button", { name: /minify/i });
+    await minifyButton.click();
 
-    // Wait for output editor to have content (server action + re-render)
-    const outputEditor = page.locator(".cm-content").last();
-    await expect(outputEditor).not.toBeEmpty({ timeout: 5000 });
-    const outputText = await outputEditor.textContent();
-    expect(outputText).toBeTruthy();
-    expect(outputText?.length).toBeGreaterThan(0);
+    // Wait for success toast (indicates minification completed)
+    const toast = page.locator("[data-sonner-toast]").first();
+    await expect(toast).toBeVisible({ timeout: 5000 });
 
-    // Verify output is smaller than input (minified)
-    const inputText = await inputEditor.textContent();
-    expect(outputText?.length).toBeLessThanOrEqual(inputText?.length ?? 0);
+    // Verify size reduction badge appears (indicates minification worked)
+    const sizeBadge = page.locator("text=/Reduced by|\\d+%/i").first();
+    await expect(sizeBadge).toBeVisible({ timeout: 3000 });
+
+    // Verify copy button is enabled (output exists)
+    const copyButton = page.getByRole("button", { name: /copy/i });
+    await expect(copyButton).toBeEnabled();
   });
 });

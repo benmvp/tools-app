@@ -122,19 +122,21 @@ test.describe("Mobile Experience", () => {
       window.scrollTo({ top: 350, behavior: "instant" }),
     );
 
-    // Wait a bit longer for the FAB to appear
-    await page.waitForTimeout(1000);
-
-    // FAB should appear
+    // FAB should appear after scrolling
     const fab = page.locator('button[aria-label*="top" i]');
     await expect(fab).toBeVisible({ timeout: 3000 });
 
     // Click FAB
     await fab.click();
-    await page.waitForTimeout(500);
 
-    // Should scroll to top
-    const scrollY = await page.evaluate(() => window.scrollY);
-    expect(scrollY).toBeLessThan(100);
+    // Wait for scroll to complete by polling scroll position
+    await expect
+      .poll(
+        async () => {
+          return await page.evaluate(() => window.scrollY);
+        },
+        { timeout: 3000 },
+      )
+      .toBeLessThan(100);
   });
 });

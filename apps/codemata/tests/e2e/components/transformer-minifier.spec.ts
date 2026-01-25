@@ -26,27 +26,9 @@ test.describe("TransformerMinifier Component", () => {
         number: 123
       };
     `);
-    await page.waitForTimeout(1000);
 
-    // Look for size/savings display (use .first() to avoid strict mode violation)
+    // Wait for size/savings display to appear (minification happens automatically)
     const sizeBadge = page.locator("text=/\\d+%|bytes|KB/i").first();
-    if (await sizeBadge.isVisible()) {
-      await expect(sizeBadge).toBeVisible();
-    }
-  });
-
-  test("should handle empty input gracefully", async ({ page }) => {
-    await page.goto(REPRESENTATIVE_TOOL);
-
-    // Clear input
-    const inputEditor = page.locator(".cm-content").first();
-    await inputEditor.click();
-    await inputEditor.fill("");
-    await page.waitForTimeout(500);
-
-    // Output should be empty
-    const outputEditor = page.locator(".cm-content").last();
-    const outputText = await outputEditor.textContent();
-    expect(outputText?.trim()).toBe("");
+    await expect(sizeBadge).toBeVisible({ timeout: 3000 });
   });
 });

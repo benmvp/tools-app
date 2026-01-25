@@ -643,7 +643,7 @@ export const VALIDATOR_TOOLS: Record<string, ValidatorTool> = {
       "Validate JSON syntax and optionally check against JSON Schema",
     url: "/validators/json-validator",
     icon: FileCheck,
-    comingSoon: true,
+    comingSoon: false,
     language: "json",
     keywords: [
       "json",
