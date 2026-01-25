@@ -41,7 +41,7 @@ import {
   minifyTypescript,
   minifyXml,
 } from "../app/minifiers/actions";
-import { validateHtml } from "../app/validators/actions";
+import { validateCss, validateHtml } from "../app/validators/actions";
 import type {
   EncoderTool,
   FormatterTool,
@@ -719,7 +719,8 @@ export const VALIDATOR_TOOLS: Record<string, ValidatorTool> = {
     description: "Validate CSS syntax and catch common errors",
     url: "/validators/css-validator",
     icon: Palette,
-    comingSoon: true,
+    comingSoon: false,
+    action: validateCss,
     language: "css",
     keywords: ["css", "validate", "validator", "syntax", "check", "lint"],
     example: "",

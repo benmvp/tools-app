@@ -25,10 +25,10 @@ export const VALIDATOR_EXAMPLES = {
 
   html: `<!DOCTYPE html>
 <html>
-  <head><title>Test Page</title>
+  <head><title>Test Page</title></head>
   <body>
-    <img src="test.jpg">
     <p>Unclosed paragraph
+    <span>Content</div>
   </body>
 </html>`,
 

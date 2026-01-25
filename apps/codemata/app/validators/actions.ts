@@ -2,6 +2,7 @@
 
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
+import * as csstree from "css-tree";
 import { HtmlValidate } from "html-validate";
 import type { ValidationError, ValidationResult } from "@/lib/validators/types";
 
@@ -162,4 +163,57 @@ export async function validateHtml(input: string): Promise<ValidationResult> {
     warnings,
     metadata: { toolName: "HTML" },
   };
+}
+
+/**
+ * Validate CSS syntax using css-tree parser
+ */
+export async function validateCss(input: string): Promise<ValidationResult> {
+  const errors: ValidationError[] = [];
+  const warnings: ValidationError[] = [];
+
+  try {
+    // Parse CSS with css-tree (strict parser that catches syntax errors)
+    csstree.parse(input, {
+      onParseError: (error) => {
+        errors.push({
+          line: error.line,
+          column: error.column,
+          message: error.message,
+          severity: "error",
+        });
+      },
+    });
+
+    return {
+      valid: errors.length === 0 && warnings.length === 0,
+      errors,
+      warnings,
+      metadata: { toolName: "CSS" },
+    };
+  } catch (error: unknown) {
+    // Fallback for unexpected errors
+    if (error instanceof Error) {
+      errors.push({
+        line: 1,
+        column: 1,
+        message: error.message,
+        severity: "error",
+      });
+    } else {
+      errors.push({
+        line: 1,
+        column: 1,
+        message: String(error),
+        severity: "error",
+      });
+    }
+
+    return {
+      valid: false,
+      errors,
+      warnings,
+      metadata: { toolName: "CSS" },
+    };
+  }
 }

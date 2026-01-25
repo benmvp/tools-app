@@ -438,7 +438,9 @@ async function main() {
   }
 
   // Print results
-  if (validationResults.length === 0) {
+  if (allMetadata.length === 0) {
+    console.log("❌ No pages could be fetched! Is the dev server running?\n");
+  } else if (validationResults.length === 0) {
     console.log("✅ All pages passed validation!\n");
   } else {
     console.log(
@@ -458,12 +460,17 @@ async function main() {
   console.log(`Total pages checked: ${allMetadata.length}`);
   console.log(`Pages with issues: ${validationResults.length}`);
   console.log(`Total issues found: ${totalIssues}`);
-  console.log(
-    `Pass rate: ${Math.round(((allMetadata.length - validationResults.length) / allMetadata.length) * 100)}%\n`,
-  );
 
-  // Exit with error code if issues found
-  if (validationResults.length > 0) {
+  if (allMetadata.length > 0) {
+    console.log(
+      `Pass rate: ${Math.round(((allMetadata.length - validationResults.length) / allMetadata.length) * 100)}%\n`,
+    );
+  } else {
+    console.log("Pass rate: N/A (no pages fetched)\n");
+  }
+
+  // Exit with error code if issues found OR no pages fetched
+  if (validationResults.length > 0 || allMetadata.length === 0) {
     process.exit(1);
   }
 }

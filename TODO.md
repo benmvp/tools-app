@@ -38,10 +38,10 @@ Examples
 
 ### Checkers/Validators (HIGH PRIORITY)
 
-- [ ] JSON (`JSON.parse()` for basic validation, `ajv` for schema validation) - HIGH VALUE
-- [ ] HTML (`html-validate`)
+- [x] JSON (`JSON.parse()` for basic validation, `ajv` for schema validation) - HIGH VALUE ✅
+- [x] HTML (`html-validate`) ✅
+- [x] CSS (`css-tree` for strict syntax validation) ✅
 - [ ] XML (`xml2js`, potentially a schema validator)
-- [ ] CSS (`css-validator`)
 - [ ] Regex Tester (Potentially a library for visual representation of matches) - HIGH TRAFFIC
 - [ ] Favicon (Fetch favicon using a Server Action, parse HTML for `<link rel="icon">`, check image format, size, etc.)
 - [ ] SEO (Libraries/APIs for analyzing meta tags, etc.)

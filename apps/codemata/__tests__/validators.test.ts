@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { validateHtml, validateJson } from "../app/validators/actions";
+import {
+  validateCss,
+  validateHtml,
+  validateJson,
+} from "../app/validators/actions";
 
 describe("validateJson", () => {
   describe("Syntax Validation", () => {
@@ -194,7 +198,7 @@ describe("validateHtml", () => {
     it("detects unclosed tags", async () => {
       const html = `<!DOCTYPE html>
 <html>
-  <head><title>Test</title>
+  <head><title>Test</title></head>
   <body>
     <p>Unclosed paragraph
   </body>
@@ -223,7 +227,7 @@ describe("validateHtml", () => {
     it("provides line and column information", async () => {
       const html = `<!DOCTYPE html>
 <html>
-  <head><title>Test</title>
+  <head><title>Test</title></head>
   <body>
     <p>Invalid
   </body>
@@ -244,7 +248,7 @@ describe("validateHtml", () => {
 <html>
   <head><title>Test</title></head>
   <body>
-    <img src="test.jpg">
+    <p>Test content</p>
   </body>
 </html>`;
       const result = await validateHtml(html);
@@ -272,10 +276,10 @@ describe("validateHtml", () => {
     it("properly categorizes errors and warnings", async () => {
       const html = `<!DOCTYPE html>
 <html>
-  <head><title>Test</title>
+  <head><title>Test</title></head>
   <body>
-    <img src="test.jpg">
     <p>Unclosed
+    <span>Content</div>
   </body>
 </html>`;
       const result = await validateHtml(html);
@@ -293,6 +297,171 @@ describe("validateHtml", () => {
       for (const warning of result.warnings) {
         expect(warning.severity).toBe("warning");
       }
+    });
+  });
+});
+
+describe("validateCss", () => {
+  describe("Valid CSS", () => {
+    it("validates correct CSS", async () => {
+      const css = `.container {
+  color: #ff0000;
+  background: blue;
+  padding: 20px;
+}`;
+      const result = await validateCss(css);
+
+      expect(result).toHaveProperty("valid");
+      expect(result.errors).toBeInstanceOf(Array);
+      expect(result.warnings).toBeInstanceOf(Array);
+      expect(result.metadata?.toolName).toBe("CSS");
+    });
+
+    it("validates minimal CSS", async () => {
+      const css = ".test { color: red; }";
+      const result = await validateCss(css);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("validates CSS with modern properties", async () => {
+      const css = `.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}`;
+      const result = await validateCss(css);
+
+      expect(result.valid).toBe(true);
+      expect(result.metadata?.toolName).toBe("CSS");
+    });
+
+    it("validates CSS with custom properties", async () => {
+      const css = `:root {
+  --primary: #007bff;
+  --secondary: #6c757d;
+}
+
+.button {
+  background: var(--primary);
+}`;
+      const result = await validateCss(css);
+
+      expect(result.valid).toBe(true);
+    });
+  });
+
+  describe("Syntax Errors", () => {
+    it("detects missing semicolons", async () => {
+      const css = `.container {
+  color: red
+  padding: 10px;
+}`;
+      const result = await validateCss(css);
+
+      // Should be invalid with errors
+      expect(result.valid).toBe(false);
+      expect(result.errors.length).toBeGreaterThan(0);
+      expect(result.errors[0].message).toMatch(
+        /unexpected|semicolon|Missed semicolon/i,
+      );
+      expect(result.errors[0].line).toBe(3); // Error on line 3 (padding line)
+    });
+
+    it("detects missing colons", async () => {
+      const css = `.header {
+  font-weight bold;
+}`;
+      const result = await validateCss(css);
+
+      // Should be invalid with errors
+      expect(result.valid).toBe(false);
+      expect(result.errors.length).toBeGreaterThan(0);
+      expect(result.errors[0].line).toBe(2); // Error on line 2
+    });
+
+    it("provides line and column information", async () => {
+      const css = `.test {
+  color: red
+  background: blue;
+}`;
+      const result = await validateCss(css);
+
+      expect(result.valid).toBe(false);
+      expect(result.errors.length).toBeGreaterThan(0);
+      expect(result.errors[0].line).toBeGreaterThan(1); // Should point to error line
+      expect(result.errors[0].column).toBeGreaterThan(0);
+    });
+
+    it("detects the example CSS errors", async () => {
+      // The actual example from VALIDATOR_EXAMPLES.css
+      const css = `.container {
+  color: #ff0000;
+  background: blue
+  padding: 20px;
+}
+
+.header {
+  font-size: 24px;
+  font-weight bold;
+}`;
+      const result = await validateCss(css);
+
+      // Should detect at least 2 errors (missing semicolon + missing colon)
+      expect(result.valid).toBe(false);
+      expect(result.errors.length).toBeGreaterThanOrEqual(1);
+
+      // Should have line numbers
+      for (const error of result.errors) {
+        expect(error.line).toBeGreaterThan(0);
+        expect(error.column).toBeGreaterThan(0);
+      }
+    });
+  });
+
+  describe("Empty Input", () => {
+    it("handles empty string", async () => {
+      const result = await validateCss("");
+
+      expect(result).toHaveProperty("valid");
+      expect(result.errors).toBeInstanceOf(Array);
+      expect(result.warnings).toBeInstanceOf(Array);
+    });
+
+    it("handles whitespace only", async () => {
+      const result = await validateCss("   \n\n   ");
+
+      expect(result.valid).toBe(true);
+      expect(result.metadata?.toolName).toBe("CSS");
+    });
+  });
+
+  describe("Severity Mapping", () => {
+    it("categorizes syntax errors as errors (not warnings)", async () => {
+      const css = `.test {
+  color: red
+  background: blue;
+}`;
+      const result = await validateCss(css);
+
+      // Should have errors, not warnings
+      expect(result.valid).toBe(false);
+      expect(result.errors.length).toBeGreaterThan(0);
+
+      // All errors should have severity "error"
+      for (const error of result.errors) {
+        expect(error.severity).toBe("error");
+      }
+    });
+  });
+
+  describe("Metadata", () => {
+    it("includes toolName in metadata", async () => {
+      const result = await validateCss(".test { color: red; }");
+
+      expect(result.valid).toBe(true);
+      expect(result.metadata?.toolName).toBe("CSS");
     });
   });
 });
