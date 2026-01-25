@@ -78,22 +78,14 @@ export function JsonValidator({
       {/* Left Column: Input + Button + Schema */}
       <div className="space-y-4">
         {/* JSON Input */}
-        <div>
-          <label
-            htmlFor="json-input"
-            className="text-sm font-medium mb-2 block"
-          >
-            JSON Input
-          </label>
-          <CodeEditor
-            value={input}
-            onChange={setInput}
-            language="json"
-            extensions={editorExtensions}
-            onViewUpdate={setEditorView}
-            label="JSON Input"
-          />
-        </div>
+        <CodeEditor
+          value={input}
+          onChange={setInput}
+          language="json"
+          extensions={editorExtensions}
+          onViewUpdate={setEditorView}
+          label="JSON Input"
+        />
 
         {/* Validate Button */}
         <div className="flex gap-2">

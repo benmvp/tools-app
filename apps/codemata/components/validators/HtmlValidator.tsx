@@ -62,22 +62,14 @@ export function HtmlValidator({ example }: HtmlValidatorProps) {
     >
       {/* Left Column: Editor + Button */}
       <div className="space-y-4">
-        <div>
-          <label
-            htmlFor="html-input"
-            className="text-sm font-medium mb-2 block"
-          >
-            HTML Input
-          </label>
-          <CodeEditor
-            value={input}
-            onChange={setInput}
-            language="html"
-            extensions={editorExtensions}
-            onViewUpdate={setEditorView}
-            label="HTML Input"
-          />
-        </div>
+        <CodeEditor
+          value={input}
+          onChange={setInput}
+          language="html"
+          extensions={editorExtensions}
+          onViewUpdate={setEditorView}
+          label="HTML Input"
+        />
 
         {/* Validate Button */}
         <div className="flex gap-2">
