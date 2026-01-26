@@ -397,26 +397,26 @@ function checkUniqueness(allMetadata: PageMetadata[]): ValidationResult[] {
 async function main() {
   console.log("🔍 Starting metadata verification...\n");
 
-  // Build list of pages to check
+  // Build list of pages to check (exclude coming-soon tools without actual pages)
   const pages = [
     { url: getAppUrl(), name: "Home" },
     { url: getAppUrl("/formatters"), name: "Formatters" },
     { url: getAppUrl("/minifiers"), name: "Minifiers" },
     { url: getAppUrl("/encoders"), name: "Encoders" },
     { url: getAppUrl("/validators"), name: "Validators" },
-    ...ALL_FORMATTERS.map((tool) => ({
+    ...ALL_FORMATTERS.filter((tool) => !tool.comingSoon).map((tool) => ({
       url: getToolUrl(tool),
       name: tool.name,
     })),
-    ...ALL_MINIFIERS.map((tool) => ({
+    ...ALL_MINIFIERS.filter((tool) => !tool.comingSoon).map((tool) => ({
       url: getToolUrl(tool),
       name: tool.name,
     })),
-    ...ALL_ENCODERS.map((tool) => ({
+    ...ALL_ENCODERS.filter((tool) => !tool.comingSoon).map((tool) => ({
       url: getToolUrl(tool),
       name: tool.name,
     })),
-    ...ALL_VALIDATORS.map((tool) => ({
+    ...ALL_VALIDATORS.filter((tool) => !tool.comingSoon).map((tool) => ({
       url: getToolUrl(tool),
       name: tool.name,
     })),
