@@ -3,9 +3,9 @@
 /**
  * Metadata Verification Script
  *
- * Fetches all pages and validates metadata completeness:
+ * Fetches all pages from the configured URL and validates metadata completeness:
  * - Title length (20-70 chars acceptable, 50-60 chars ideal for SEO)
- * - Description length (80-200 chars acceptable, 150-160 chars ideal)
+ * - Description length (80-200 chars acceptable, 120-160 chars ideal for SEO)
  * - Uniqueness across all pages
  * - Canonical URLs presence
  * - OpenGraph tags (og:title, og:description, og:url, og:type, og:image)
