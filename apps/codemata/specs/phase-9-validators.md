@@ -1535,6 +1535,27 @@ Create validator-specific AI prompts that cover:
 
 Generate content for all 5-6 validators using existing AI system patterns.
 
+#### Re-enable Validators in Metadata Verification
+
+Once all validator metadata is properly implemented (canonical URLs, dynamic OG images, structured data), remove the temporary exclusion from `scripts/verify-metadata.ts`:
+
+```typescript
+// Remove comment markers to re-enable validators
+const pages = [
+  { url: getAppUrl(), name: "Home" },
+  { url: getAppUrl("/formatters"), name: "Formatters" },
+  { url: getAppUrl("/minifiers"), name: "Minifiers" },
+  { url: getAppUrl("/encoders"), name: "Encoders" },
+  { url: getAppUrl("/validators"), name: "Validators" }, // Re-enable
+  ...ALL_FORMATTERS.filter((tool) => !tool.comingSoon).map((tool) => ({...})),
+  ...ALL_MINIFIERS.filter((tool) => !tool.comingSoon).map((tool) => ({...})),
+  ...ALL_ENCODERS.filter((tool) => !tool.comingSoon).map((tool) => ({...})),
+  ...ALL_VALIDATORS.filter((tool) => !tool.comingSoon).map((tool) => ({...})), // Re-enable
+];
+```
+
+This ensures CI validates all validator pages for proper SEO metadata, OG images, and structured data.
+
 ---
 
 ### Phase 9.9: Testing & Polish (Day 14-15)

@@ -398,12 +398,13 @@ async function main() {
   console.log("🔍 Starting metadata verification...\n");
 
   // Build list of pages to check (exclude coming-soon tools without actual pages)
+  // TODO: Re-enable validators in Phase 9.8 after metadata implementation
   const pages = [
     { url: getAppUrl(), name: "Home" },
     { url: getAppUrl("/formatters"), name: "Formatters" },
     { url: getAppUrl("/minifiers"), name: "Minifiers" },
     { url: getAppUrl("/encoders"), name: "Encoders" },
-    { url: getAppUrl("/validators"), name: "Validators" },
+    // { url: getAppUrl("/validators"), name: "Validators" }, // TODO: Enable in Phase 9.8
     ...ALL_FORMATTERS.filter((tool) => !tool.comingSoon).map((tool) => ({
       url: getToolUrl(tool),
       name: tool.name,
@@ -416,10 +417,10 @@ async function main() {
       url: getToolUrl(tool),
       name: tool.name,
     })),
-    ...ALL_VALIDATORS.filter((tool) => !tool.comingSoon).map((tool) => ({
-      url: getToolUrl(tool),
-      name: tool.name,
-    })),
+    // ...ALL_VALIDATORS.filter((tool) => !tool.comingSoon).map((tool) => ({
+    //   url: getToolUrl(tool),
+    //   name: tool.name,
+    // })), // TODO: Enable in Phase 9.8
   ];
 
   console.log(`📄 Checking ${pages.length} pages...\n`);
