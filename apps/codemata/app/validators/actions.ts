@@ -3,6 +3,7 @@
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
 import * as csstree from "css-tree";
+import { XMLValidator } from "fast-xml-parser";
 import { HtmlValidate } from "html-validate";
 import type { ValidationError, ValidationResult } from "@/lib/validators/types";
 
@@ -214,6 +215,114 @@ export async function validateCss(input: string): Promise<ValidationResult> {
       errors,
       warnings,
       metadata: { toolName: "CSS" },
+    };
+  }
+}
+
+/**
+ * Format XML error messages to be more user-friendly
+ */
+function formatXmlErrorMessage(message: string): string {
+  // Convert technical messages to user-friendly language
+  if (message.includes("Expected closing tag")) {
+    // Extract tag names from message like:
+    // "Expected closing tag 'mismatched' (opened in line 4, col 3) instead of closing tag 'wrong'."
+    const match = message.match(
+      /Expected closing tag '([^']+)'.*instead of closing tag '([^']+)'/,
+    );
+    if (match) {
+      return `Mismatched tag: expected </${match[1]}>, found </${match[2]}>`;
+    }
+  }
+
+  if (
+    message.includes("Closing tag") &&
+    message.includes("doesn't have matching Opening tag")
+  ) {
+    const match = message.match(/Closing tag '([^']+)'/);
+    if (match) {
+      return `Unexpected closing tag </${match[1]}> without matching opening tag`;
+    }
+  }
+
+  if (message.includes("Unclosed tag")) {
+    const match = message.match(/Unclosed tag '([^']+)'/);
+    if (match) {
+      return `Missing closing tag for <${match[1]}>`;
+    }
+  }
+
+  // Return original message if no pattern matches
+  return message;
+}
+
+/**
+ * Validate XML structure and well-formedness
+ */
+export async function validateXml(input: string): Promise<ValidationResult> {
+  const errors: ValidationError[] = [];
+  const warnings: ValidationError[] = [];
+
+  if (!input.trim()) {
+    errors.push({
+      line: 1,
+      column: 1,
+      message: "XML input is empty",
+      severity: "error",
+    });
+
+    return {
+      valid: false,
+      errors,
+      warnings,
+      metadata: { toolName: "XML" },
+    };
+  }
+
+  try {
+    // Validate with fast-xml-parser (provides excellent line/column info)
+    const validationResult = XMLValidator.validate(input, {
+      allowBooleanAttributes: true,
+    });
+
+    if (validationResult === true) {
+      return {
+        valid: true,
+        errors: [],
+        warnings: [],
+        metadata: { toolName: "XML" },
+      };
+    }
+
+    // Extract error with line/column info
+    const error = validationResult.err;
+    errors.push({
+      line: error.line || 1,
+      column: error.col || 1,
+      message: formatXmlErrorMessage(error.msg),
+      severity: "error",
+    });
+
+    return {
+      valid: false,
+      errors,
+      warnings,
+      metadata: { toolName: "XML" },
+    };
+  } catch (error: unknown) {
+    // Handle unexpected failures
+    errors.push({
+      line: 1,
+      column: 1,
+      message: error instanceof Error ? error.message : "Validation failed",
+      severity: "error",
+    });
+
+    return {
+      valid: false,
+      errors,
+      warnings,
+      metadata: { toolName: "XML" },
     };
   }
 }

@@ -14,5 +14,10 @@ declare module "css-tree" {
     onParseError?: (error: ParseError) => void;
   }
 
-  export function parse(input: string, options?: ParseOptions): any;
+  export interface CssNode {
+    type: string;
+    [key: string]: unknown;
+  }
+
+  export function parse(input: string, options?: ParseOptions): CssNode;
 }

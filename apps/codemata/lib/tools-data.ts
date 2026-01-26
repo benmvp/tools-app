@@ -41,13 +41,18 @@ import {
   minifyTypescript,
   minifyXml,
 } from "../app/minifiers/actions";
-import { validateCss, validateHtml } from "../app/validators/actions";
+import {
+  validateCss,
+  validateHtml,
+  validateXml,
+} from "../app/validators/actions";
 import type {
   EncoderTool,
   FormatterTool,
   MinifierTool,
   ValidatorTool,
 } from "./types";
+import { VALIDATOR_EXAMPLES } from "./validators/examples";
 
 /**
  * Formatter Tools - Record-based structure for O(1) lookups
@@ -736,7 +741,8 @@ export const VALIDATOR_TOOLS: Record<string, ValidatorTool> = {
     description: "Validate XML structure and check for well-formedness",
     url: "/validators/xml-validator",
     icon: FileX,
-    comingSoon: true,
+    comingSoon: false,
+    action: validateXml,
     language: "xml",
     keywords: [
       "xml",
@@ -747,7 +753,7 @@ export const VALIDATOR_TOOLS: Record<string, ValidatorTool> = {
       "well-formed",
       "lint",
     ],
-    example: "",
+    example: VALIDATOR_EXAMPLES.xml,
     metadata: {
       title: "XML Validator | Codemata",
       description:
