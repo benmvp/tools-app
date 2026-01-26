@@ -3,21 +3,27 @@
 /**
  * Metadata Verification Script
  *
- * Fetches all pages from localhost and validates metadata completeness:
+ * Fetches all pages from the configured URL and validates metadata completeness:
  * - Title length (20-70 chars acceptable, 50-60 chars ideal for SEO)
- * - Description length (80-200 chars acceptable, 150-160 chars ideal)
+ * - Description length (80-200 chars acceptable, 120-160 chars ideal for SEO)
  * - Uniqueness across all pages
  * - Canonical URLs presence
- * - OpenGraph tags (og:title, og:description, og:url, og:type)
+ * - OpenGraph tags (og:title, og:description, og:url, og:type, og:image)
  * - Twitter Card tags
  * - Structured data (JSON-LD)
+ * - OpenGraph image accessibility and PNG validation
  *
  * Usage:
- *   1. Start dev server: pnpm dev (in apps/codemata)
- *   2. Run script: pnpm verify-metadata
+ *   # Local dev (default - uses localhost:3001)
+ *   pnpm dev
+ *   pnpm verify-metadata
  *
- * Requirements:
- *   - pnpm add -D cheerio @types/cheerio @next/env
+ *   # Local production build (uses localhost:3333)
+ *   pnpm build && pnpm start
+ *   VERCEL_PROJECT_PRODUCTION_URL=localhost:3333 pnpm verify-metadata
+ *
+ *   # CI (GitHub Actions)
+ *   Automatically runs against production build on port 3333
  */
 
 import { dirname, join } from "node:path";
@@ -30,7 +36,13 @@ const projectDir = join(__dirname, "..");
 loadEnvConfig(projectDir);
 
 import { load } from "cheerio";
-import { ALL_FORMATTERS, ALL_MINIFIERS, ALL_TOOLS } from "../lib/tools-data";
+import {
+  ALL_ENCODERS,
+  ALL_FORMATTERS,
+  ALL_MINIFIERS,
+  ALL_TOOLS,
+  ALL_VALIDATORS,
+} from "../lib/tools-data";
 import { getAppUrl, getToolUrl } from "../lib/utils";
 
 interface PageMetadata {
@@ -311,7 +323,9 @@ function validateMetadata(metadata: PageMetadata): string[] {
   // Structured Data (only for tool pages, not home/category pages)
   if (
     metadata.url.includes("/formatters/") ||
-    metadata.url.includes("/minifiers/")
+    metadata.url.includes("/minifiers/") ||
+    metadata.url.includes("/encoders/") ||
+    metadata.url.includes("/validators/")
   ) {
     if (!metadata.structuredData) {
       issues.push("Missing JSON-LD structured data");
@@ -383,19 +397,30 @@ function checkUniqueness(allMetadata: PageMetadata[]): ValidationResult[] {
 async function main() {
   console.log("🔍 Starting metadata verification...\n");
 
-  // Build list of pages to check
+  // Build list of pages to check (exclude coming-soon tools without actual pages)
+  // TODO: Re-enable validators in Phase 9.8 after metadata implementation
   const pages = [
     { url: getAppUrl(), name: "Home" },
     { url: getAppUrl("/formatters"), name: "Formatters" },
     { url: getAppUrl("/minifiers"), name: "Minifiers" },
-    ...ALL_FORMATTERS.map((tool) => ({
+    { url: getAppUrl("/encoders"), name: "Encoders" },
+    // { url: getAppUrl("/validators"), name: "Validators" }, // TODO: Enable in Phase 9.8
+    ...ALL_FORMATTERS.filter((tool) => !tool.comingSoon).map((tool) => ({
       url: getToolUrl(tool),
       name: tool.name,
     })),
-    ...ALL_MINIFIERS.map((tool) => ({
+    ...ALL_MINIFIERS.filter((tool) => !tool.comingSoon).map((tool) => ({
       url: getToolUrl(tool),
       name: tool.name,
     })),
+    ...ALL_ENCODERS.filter((tool) => !tool.comingSoon).map((tool) => ({
+      url: getToolUrl(tool),
+      name: tool.name,
+    })),
+    // ...ALL_VALIDATORS.filter((tool) => !tool.comingSoon).map((tool) => ({
+    //   url: getToolUrl(tool),
+    //   name: tool.name,
+    // })), // TODO: Enable in Phase 9.8
   ];
 
   console.log(`📄 Checking ${pages.length} pages...\n`);
@@ -439,7 +464,12 @@ async function main() {
 
   // Print results
   if (allMetadata.length === 0) {
-    console.log("❌ No pages could be fetched! Is the dev server running?\n");
+    console.log("❌ No pages could be fetched!\n");
+    console.log(`   Target URL: ${getAppUrl()}`);
+    console.log("   Is the server running?");
+    console.log(
+      "   For production build: VERCEL_PROJECT_PRODUCTION_URL=localhost:3333\n",
+    );
   } else if (validationResults.length === 0) {
     console.log("✅ All pages passed validation!\n");
   } else {
