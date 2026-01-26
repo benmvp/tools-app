@@ -3,6 +3,7 @@ import {
   validateCss,
   validateHtml,
   validateJson,
+  validateXml,
 } from "../app/validators/actions";
 
 describe("validateJson", () => {
@@ -462,6 +463,241 @@ describe("validateCss", () => {
 
       expect(result.valid).toBe(true);
       expect(result.metadata?.toolName).toBe("CSS");
+    });
+  });
+});
+
+describe("validateXml", () => {
+  describe("Valid XML", () => {
+    it("validates correct XML with declaration", async () => {
+      const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<root>
+  <item id="1">First Item</item>
+</root>`;
+      const result = await validateXml(xml);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+      expect(result.metadata?.toolName).toBe("XML");
+    });
+
+    it("validates XML without declaration", async () => {
+      const xml = `<root>
+  <item>Value</item>
+</root>`;
+      const result = await validateXml(xml);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("validates minimal XML", async () => {
+      const xml = "<root></root>";
+      const result = await validateXml(xml);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("validates self-closing tags", async () => {
+      const xml = `<root>
+  <item />
+  <item id="2" />
+</root>`;
+      const result = await validateXml(xml);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("validates nested structures", async () => {
+      const xml = `<?xml version="1.0"?>
+<root>
+  <parent>
+    <child>
+      <grandchild>Deep value</grandchild>
+    </child>
+  </parent>
+</root>`;
+      const result = await validateXml(xml);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("validates XML with attributes", async () => {
+      const xml = `<root version="1.0" type="test">
+  <item id="1" name="test" enabled="true">Content</item>
+</root>`;
+      const result = await validateXml(xml);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("validates XML with CDATA sections", async () => {
+      const xml = `<root>
+  <content><![CDATA[Some <tag> content]]></content>
+</root>`;
+      const result = await validateXml(xml);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("validates XML with comments", async () => {
+      const xml = `<root>
+  <!-- This is a comment -->
+  <item>Value</item>
+</root>`;
+      const result = await validateXml(xml);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+  });
+
+  describe("Structural Errors", () => {
+    it("detects mismatched tags", async () => {
+      const xml = `<root>
+  <item></wrong>
+</root>`;
+      const result = await validateXml(xml);
+
+      expect(result.valid).toBe(false);
+      expect(result.errors.length).toBeGreaterThan(0);
+      expect(result.errors[0].severity).toBe("error");
+      expect(result.errors[0].message).toContain("Mismatched tag");
+    });
+
+    it("detects unclosed tags", async () => {
+      const xml = `<root>
+  <item>Unclosed
+</root>`;
+      const result = await validateXml(xml);
+
+      expect(result.valid).toBe(false);
+      expect(result.errors.length).toBeGreaterThan(0);
+    });
+
+    it("detects missing closing root tag", async () => {
+      const xml = `<root>
+  <item>Value</item>`;
+      const result = await validateXml(xml);
+
+      expect(result.valid).toBe(false);
+      expect(result.errors.length).toBeGreaterThan(0);
+    });
+
+    it("detects extra closing tags", async () => {
+      const xml = `<root>
+  <item>Value</item>
+  </extra>
+</root>`;
+      const result = await validateXml(xml);
+
+      expect(result.valid).toBe(false);
+      expect(result.errors.length).toBeGreaterThan(0);
+    });
+
+    it("provides line and column information", async () => {
+      const xml = `<?xml version="1.0"?>
+<root>
+  <item></wrong>
+</root>`;
+      const result = await validateXml(xml);
+
+      expect(result.valid).toBe(false);
+      expect(result.errors.length).toBeGreaterThan(0);
+      expect(result.errors[0].line).toBeGreaterThan(0);
+      expect(result.errors[0].column).toBeGreaterThan(0);
+      expect(result.errors[0].severity).toBe("error");
+    });
+
+    it("detects invalid characters in tag names", async () => {
+      const xml = `<root>
+  <item@invalid>Value</item@invalid>
+</root>`;
+      const result = await validateXml(xml);
+
+      expect(result.valid).toBe(false);
+      expect(result.errors.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe("Empty Input", () => {
+    it("handles empty string", async () => {
+      const result = await validateXml("");
+
+      expect(result.valid).toBe(false);
+      expect(result.errors).toBeInstanceOf(Array);
+      expect(result.errors.length).toBeGreaterThan(0);
+      expect(result.errors[0].message).toContain("empty");
+    });
+
+    it("handles whitespace-only input", async () => {
+      const result = await validateXml("   \n  \t  ");
+
+      expect(result.valid).toBe(false);
+      expect(result.errors.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe("Edge Cases", () => {
+    it("validates very large XML documents", async () => {
+      const items = Array.from(
+        { length: 1000 },
+        (_, i) => `  <item id="${i}">Value ${i}</item>`,
+      ).join("\n");
+      const xml = `<root>\n${items}\n</root>`;
+
+      const result = await validateXml(xml);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("validates deeply nested XML", async () => {
+      let xml = "<root>";
+      for (let i = 0; i < 50; i++) {
+        xml += `<level${i}>`;
+      }
+      xml += "Deep content";
+      for (let i = 49; i >= 0; i--) {
+        xml += `</level${i}>`;
+      }
+      xml += "</root>";
+
+      const result = await validateXml(xml);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("handles special XML entities", async () => {
+      const xml = `<root>
+  <content>&lt;tag&gt; &amp; &quot;quotes&quot;</content>
+</root>`;
+      const result = await validateXml(xml);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+  });
+
+  describe("Metadata", () => {
+    it("includes toolName in metadata", async () => {
+      const result = await validateXml("<root></root>");
+
+      expect(result.valid).toBe(true);
+      expect(result.metadata?.toolName).toBe("XML");
+    });
+
+    it("includes toolName even on error", async () => {
+      const result = await validateXml("<root><item></wrong></root>");
+
+      expect(result.valid).toBe(false);
+      expect(result.metadata?.toolName).toBe("XML");
     });
   });
 });

@@ -4,6 +4,7 @@ import { CategoryBackLink } from "@/components/CategoryBackLink";
 import { CssValidator } from "@/components/validators/CssValidator";
 import { HtmlValidator } from "@/components/validators/HtmlValidator";
 import { JsonValidator } from "@/components/validators/JsonValidator";
+import { XmlValidator } from "@/components/validators/XmlValidator";
 import { VALIDATOR_TOOLS } from "@/lib/tools-data";
 import { VALIDATOR_EXAMPLES } from "@/lib/validators/examples";
 
@@ -102,6 +103,22 @@ export default async function ValidatorPage({
             <p className="text-muted-foreground text-lg">{tool.description}</p>
           </div>
           <CssValidator example={VALIDATOR_EXAMPLES.css} />
+        </div>
+      </div>
+    );
+  }
+
+  // XML Validator
+  if (slug === "xml-validator") {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-6 md:py-12">
+        <div className="flex flex-col gap-6">
+          <CategoryBackLink href="/validators" label="Validators" />
+          <div>
+            <h1 className="text-3xl md:text-4xl font-bold mb-2">{tool.name}</h1>
+            <p className="text-muted-foreground text-lg">{tool.description}</p>
+          </div>
+          <XmlValidator example={VALIDATOR_EXAMPLES.xml} />
         </div>
       </div>
     );

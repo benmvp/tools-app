@@ -46,10 +46,7 @@ export const VALIDATOR_EXAMPLES = {
   xml: `<?xml version="1.0" encoding="UTF-8"?>
 <root>
   <item id="1">First Item</item>
-  <item id="2">
-    <name>Second Item
-    <value>Missing closing tag
-  </item>
+  <item id="2">Second Item</item>
   <mismatched></wrong>
 </root>`,
 
