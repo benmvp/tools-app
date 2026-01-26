@@ -218,3 +218,42 @@ jobs:
           name: lighthouse-reports
           path: apps/codemata/.lighthouseci/
           retention-days: 30
+
+  verify-metadata:
+    needs: [build]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: codemata-build
+          path: apps/codemata/.next
+
+      - name: Start production server
+        working-directory: apps/codemata
+        run: |
+          pnpm start &
+          sleep 5
+          curl --retry 10 --retry-delay 2 --retry-connrefused http://localhost:3333
+
+      - name: Run metadata verification
+        working-directory: apps/codemata
+        env:
+          VERCEL_PROJECT_PRODUCTION_URL: localhost:3333
+        run: pnpm verify-metadata

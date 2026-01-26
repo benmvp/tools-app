@@ -140,6 +140,42 @@ pnpm lighthouse
 **Smoke Test Approach:**
 Lighthouse tests validate quality benchmarks on representative pages rather than comprehensive coverage. This prevents long CI wait times while ensuring quality standards.
 
+### Metadata Verification
+
+Validates SEO metadata, OpenGraph images, and structured data across all pages:
+
+```bash
+cd apps/codemata
+
+# Local dev (default - uses localhost:3001)
+pnpm dev  # Terminal 1
+pnpm verify-metadata  # Terminal 2
+
+# Local production build (uses localhost:3333)
+pnpm build && pnpm start  # Terminal 1
+VERCEL_PROJECT_PRODUCTION_URL=localhost:3333 pnpm verify-metadata  # Terminal 2
+```
+
+**Comprehensive Coverage:**
+Unlike Lighthouse's smoke test approach, metadata verification checks **all pages** (31+ pages):
+- Home page
+- All category pages (formatters, minifiers, encoders, validators)
+- All tool pages across all categories
+
+**Validations:**
+- Title length (20-70 chars, SEO ideal 50-60)
+- Description length (80-200 chars, SEO ideal 120-160)
+- Uniqueness (no duplicate titles/descriptions)
+- Canonical URLs
+- OpenGraph tags (title, description, image, type, url)
+- OpenGraph image accessibility (validates PNG format)
+- Twitter Card tags
+- Structured data (JSON-LD for tool pages)
+
+**Exit Codes:**
+- `0` - All pages passed validation
+- `1` - Validation failures or no pages fetched
+
 **Pages Tested (5 URLs × 2 runs = 10 tests):**
 - Home page (unique layout)
 - One category page (formatters - validates all category pages)
@@ -363,6 +399,7 @@ CI runs on all PRs and pushes to `main` via `.github/workflows/ci.yml` with a hy
 **Stage 3 (Parallel) - Comprehensive Validation:**
 - E2E tests (`playwright test`)
 - Lighthouse CI (quality thresholds)
+- Metadata verification (validates SEO metadata, OG images, structured data)
 
 **Branch Protection:**
 - All checks must pass before merging to `main`
