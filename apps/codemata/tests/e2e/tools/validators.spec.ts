@@ -96,11 +96,19 @@ not a url at all`);
     await expect(page.locator("text=/Port.*8080/i")).toBeVisible();
     await expect(page.locator("text=/Path.*/api/users/i")).toBeVisible();
     await expect(page.locator("text=/Hash/i")).toBeVisible();
-    await expect(page.locator("text=/results/i")).toBeVisible();
+    // Hash value appears after "Hash:" label, check it exists in metadata section
+    await expect(
+      page
+        .locator("div")
+        .filter({ hasText: /^Hash:/ })
+        .locator("text=results"),
+    ).toBeVisible();
 
     // Verify query params table
-    await expect(page.locator("text=/Query Parameters/i")).toBeVisible();
-    await expect(page.locator("text=/page/i")).toBeVisible();
-    await expect(page.locator("text=/sort/i")).toBeVisible();
+    const queryParamsSection = page.locator("text=/Query Parameters/i");
+    await expect(queryParamsSection).toBeVisible();
+    // Check query param keys exist in the table (avoid URL text matches)
+    await expect(page.locator('span.font-mono:has-text("page")')).toBeVisible();
+    await expect(page.locator('span.font-mono:has-text("sort")')).toBeVisible();
   });
 });
