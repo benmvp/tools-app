@@ -41,7 +41,6 @@ import {
   ALL_FORMATTERS,
   ALL_MINIFIERS,
   ALL_TOOLS,
-  ALL_VALIDATORS,
 } from "../lib/tools-data";
 import { getAppUrl, getToolUrl } from "../lib/utils";
 

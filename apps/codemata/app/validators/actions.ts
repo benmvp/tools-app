@@ -326,3 +326,170 @@ export async function validateXml(input: string): Promise<ValidationResult> {
     };
   }
 }
+
+/**
+ * Parse query parameters from URLSearchParams, handling array values
+ */
+function parseQueryParams(
+  searchParams: URLSearchParams,
+): Array<{ key: string; value: string | string[] }> {
+  const params: Array<{ key: string; value: string | string[] }> = [];
+  const processedKeys = new Set<string>();
+
+  for (const key of searchParams.keys()) {
+    if (processedKeys.has(key)) continue;
+    processedKeys.add(key);
+
+    const values = searchParams.getAll(key);
+    params.push({
+      key,
+      value: values.length === 1 ? values[0] : values,
+    });
+  }
+
+  return params;
+}
+
+/**
+ * Get default port for a protocol
+ */
+function getDefaultPort(protocol: string): string | null {
+  const defaults: Record<string, string> = {
+    "http:": "80",
+    "https:": "443",
+    "ftp:": "21",
+    "ws:": "80",
+    "wss:": "443",
+  };
+  return defaults[protocol] || null;
+}
+
+/**
+ * Validate URLs (multiple URLs, one per line)
+ * Returns parsed URL components and validation errors
+ */
+export async function validateUrl(input: string): Promise<{
+  validCount: number;
+  errorCount: number;
+  urls: Array<{
+    line: number;
+    url: string;
+    valid: boolean;
+    error?: string;
+    parsed?: {
+      protocol: string;
+      hostname: string;
+      port?: string;
+      pathname?: string;
+      query?: Array<{ key: string; value: string | string[] }>;
+      hash?: string;
+      username?: string;
+      password?: string;
+    };
+  }>;
+}> {
+  const lines = input.split("\n");
+  const urls: Array<{
+    line: number;
+    url: string;
+    valid: boolean;
+    error?: string;
+    parsed?: {
+      protocol: string;
+      hostname: string;
+      port?: string;
+      pathname?: string;
+      query?: Array<{ key: string; value: string | string[] }>;
+      hash?: string;
+      username?: string;
+      password?: string;
+    };
+  }> = [];
+  let validCount = 0;
+  let errorCount = 0;
+
+  for (const [index, line] of lines.entries()) {
+    const trimmed = line.trim();
+
+    // Skip empty lines
+    if (!trimmed) continue;
+
+    const lineNumber = index + 1;
+
+    try {
+      const parsed = new URL(trimmed);
+
+      // Extract smart metadata
+      const port = parsed.port;
+      const defaultPort = getDefaultPort(parsed.protocol);
+      const hasNonDefaultPort = port && port !== defaultPort;
+
+      const pathname = parsed.pathname !== "/" ? parsed.pathname : undefined;
+      const query = parsed.search
+        ? parseQueryParams(parsed.searchParams)
+        : undefined;
+      const hash = parsed.hash
+        ? decodeURIComponent(parsed.hash.slice(1))
+        : undefined;
+      const username = parsed.username || undefined;
+      const password = parsed.password ? "[redacted]" : undefined;
+
+      urls.push({
+        line: lineNumber,
+        url: trimmed,
+        valid: true,
+        parsed: {
+          protocol: parsed.protocol.slice(0, -1), // Remove trailing ":"
+          hostname: parsed.hostname,
+          port: hasNonDefaultPort ? port : undefined,
+          pathname,
+          query,
+          hash,
+          username,
+          password,
+        },
+      });
+
+      validCount++;
+    } catch (error) {
+      let errorMessage = "Invalid URL";
+
+      if (error instanceof TypeError) {
+        const msg = error.message.toLowerCase();
+
+        // Detect common errors and provide helpful messages
+        if (msg.includes("invalid url")) {
+          if (!trimmed.includes("://")) {
+            errorMessage = `Missing protocol (try https://${trimmed})`;
+          } else if (trimmed.startsWith("/")) {
+            errorMessage = "Not a valid URL (must include protocol and domain)";
+          } else {
+            // Extract protocol if malformed
+            const protocolMatch = trimmed.match(/^(\w+):\/\//);
+            if (protocolMatch) {
+              const protocol = protocolMatch[1];
+              errorMessage = `Invalid URL: Unknown protocol '${protocol}' (try http://)`;
+            } else {
+              errorMessage = "Invalid URL syntax";
+            }
+          }
+        }
+      }
+
+      urls.push({
+        line: lineNumber,
+        url: trimmed,
+        valid: false,
+        error: errorMessage,
+      });
+
+      errorCount++;
+    }
+  }
+
+  return {
+    validCount,
+    errorCount,
+    urls,
+  };
+}
