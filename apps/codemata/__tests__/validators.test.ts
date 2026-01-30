@@ -3,6 +3,7 @@ import {
   validateCss,
   validateHtml,
   validateJson,
+  validateUrl,
   validateXml,
 } from "../app/validators/actions";
 
@@ -698,6 +699,285 @@ describe("validateXml", () => {
 
       expect(result.valid).toBe(false);
       expect(result.metadata?.toolName).toBe("XML");
+    });
+  });
+});
+
+describe("validateUrl", () => {
+  describe("Single URL Validation", () => {
+    it("validates a single correct URL", async () => {
+      const result = await validateUrl("https://example.com/api");
+
+      expect(result.validCount).toBe(1);
+      expect(result.errorCount).toBe(0);
+      expect(result.urls[0].valid).toBe(true);
+      expect(result.urls[0].parsed?.protocol).toBe("https");
+      expect(result.urls[0].parsed?.hostname).toBe("example.com");
+    });
+
+    it("validates http URLs", async () => {
+      const result = await validateUrl("http://test.org");
+
+      expect(result.validCount).toBe(1);
+      expect(result.urls[0].parsed?.protocol).toBe("http");
+    });
+
+    it("validates ftp URLs", async () => {
+      const result = await validateUrl("ftp://files.com/pub");
+
+      expect(result.validCount).toBe(1);
+      expect(result.urls[0].parsed?.protocol).toBe("ftp");
+    });
+
+    it("accepts localhost URLs", async () => {
+      const result = await validateUrl("http://localhost:3000/dev");
+
+      expect(result.validCount).toBe(1);
+      expect(result.urls[0].parsed?.hostname).toBe("localhost");
+    });
+
+    it("accepts IP address URLs", async () => {
+      const result = await validateUrl("https://192.168.1.1/admin");
+
+      expect(result.validCount).toBe(1);
+      expect(result.urls[0].parsed?.hostname).toBe("192.168.1.1");
+    });
+  });
+
+  describe("Multiple URL Validation", () => {
+    it("validates multiple URLs", async () => {
+      const input = `https://example.com
+http://test.org
+ftp://files.com`;
+      const result = await validateUrl(input);
+
+      expect(result.validCount).toBe(3);
+      expect(result.errorCount).toBe(0);
+      expect(result.urls).toHaveLength(3);
+    });
+
+    it("reports line numbers correctly", async () => {
+      const input = `https://example.com
+invalid
+http://test.org`;
+      const result = await validateUrl(input);
+
+      expect(result.urls[0].line).toBe(1);
+      expect(result.urls[1].line).toBe(2);
+      expect(result.urls[2].line).toBe(3);
+    });
+
+    it("skips empty lines", async () => {
+      const input = `https://example.com
+
+http://test.org`;
+      const result = await validateUrl(input);
+
+      expect(result.urls).toHaveLength(2);
+    });
+  });
+
+  describe("Error Detection", () => {
+    it("detects invalid protocol - accepts any scheme", async () => {
+      // Note: Node's URL constructor accepts any protocol scheme (htp, xyz, etc.)
+      // This is actually valid per URL spec, so it won't error
+      const result = await validateUrl("htp://broken.com");
+
+      // URL is technically valid with custom protocol
+      expect(result.validCount).toBe(1);
+      expect(result.errorCount).toBe(0);
+    });
+
+    it("detects missing protocol", async () => {
+      const result = await validateUrl("example.com");
+
+      expect(result.validCount).toBe(0);
+      expect(result.errorCount).toBe(1);
+      expect(result.urls[0].error).toContain("Missing protocol");
+      expect(result.urls[0].error).toContain("https://example.com");
+    });
+
+    it("rejects relative URLs", async () => {
+      const result = await validateUrl("/api/users");
+
+      expect(result.validCount).toBe(0);
+      expect(result.errorCount).toBe(1);
+      expect(result.urls[0].error).toContain("Missing protocol");
+    });
+  });
+
+  describe("Port Handling", () => {
+    it("shows non-default ports", async () => {
+      const result = await validateUrl("https://example.com:8080/api");
+
+      expect(result.urls[0].parsed?.port).toBe("8080");
+    });
+
+    it("hides default HTTPS port (443)", async () => {
+      const result = await validateUrl("https://example.com:443/api");
+
+      expect(result.urls[0].parsed?.port).toBeUndefined();
+    });
+
+    it("hides default HTTP port (80)", async () => {
+      const result = await validateUrl("http://example.com:80/api");
+
+      expect(result.urls[0].parsed?.port).toBeUndefined();
+    });
+
+    it("hides default FTP port (21)", async () => {
+      const result = await validateUrl("ftp://files.com:21/pub");
+
+      expect(result.urls[0].parsed?.port).toBeUndefined();
+    });
+  });
+
+  describe("Query Parameter Parsing", () => {
+    it("parses single query parameter", async () => {
+      const result = await validateUrl("https://example.com?page=1");
+
+      expect(result.urls[0].parsed?.query).toHaveLength(1);
+      expect(result.urls[0].parsed?.query?.[0]).toEqual({
+        key: "page",
+        value: "1",
+      });
+    });
+
+    it("parses multiple query parameters", async () => {
+      const result = await validateUrl("https://example.com?page=1&limit=10");
+
+      expect(result.urls[0].parsed?.query).toHaveLength(2);
+      expect(result.urls[0].parsed?.query?.[0]).toEqual({
+        key: "page",
+        value: "1",
+      });
+      expect(result.urls[0].parsed?.query?.[1]).toEqual({
+        key: "limit",
+        value: "10",
+      });
+    });
+
+    it("handles array query parameters", async () => {
+      const result = await validateUrl(
+        "https://example.com?tags=a&tags=b&tags=c",
+      );
+
+      expect(result.urls[0].parsed?.query).toHaveLength(1);
+      expect(result.urls[0].parsed?.query?.[0].key).toBe("tags");
+      expect(result.urls[0].parsed?.query?.[0].value).toEqual(["a", "b", "c"]);
+    });
+
+    it("decodes query parameter values", async () => {
+      const result = await validateUrl("https://example.com?q=%E2%9C%93");
+
+      expect(result.urls[0].parsed?.query?.[0].value).toBe("✓");
+    });
+
+    it("decodes URL-encoded spaces", async () => {
+      const result = await validateUrl("https://example.com?name=John%20Doe");
+
+      expect(result.urls[0].parsed?.query?.[0].value).toBe("John Doe");
+    });
+
+    it("handles empty query parameters", async () => {
+      const result = await validateUrl("https://example.com?key=");
+
+      expect(result.urls[0].parsed?.query?.[0]).toEqual({
+        key: "key",
+        value: "",
+      });
+    });
+  });
+
+  describe("Path Handling", () => {
+    it("only shows pathname if not root", async () => {
+      const result1 = await validateUrl("https://example.com/");
+      expect(result1.urls[0].parsed?.pathname).toBeUndefined();
+
+      const result2 = await validateUrl("https://example.com/api");
+      expect(result2.urls[0].parsed?.pathname).toBe("/api");
+    });
+
+    it("includes deep paths", async () => {
+      const result = await validateUrl("https://example.com/api/v2/users/123");
+
+      expect(result.urls[0].parsed?.pathname).toBe("/api/v2/users/123");
+    });
+  });
+
+  describe("Hash Fragment Parsing", () => {
+    it("parses hash fragments without #", async () => {
+      const result = await validateUrl("https://example.com#section");
+
+      expect(result.urls[0].parsed?.hash).toBe("section");
+    });
+
+    it("decodes hash fragments", async () => {
+      const result = await validateUrl("https://example.com#section%202");
+
+      expect(result.urls[0].parsed?.hash).toBe("section 2");
+    });
+
+    it("does not show hash if absent", async () => {
+      const result = await validateUrl("https://example.com/api");
+
+      expect(result.urls[0].parsed?.hash).toBeUndefined();
+    });
+  });
+
+  describe("Authentication Handling", () => {
+    it("extracts username from FTP URLs", async () => {
+      const result = await validateUrl("ftp://user@files.com/pub");
+
+      expect(result.urls[0].parsed?.username).toBe("user");
+    });
+
+    it("redacts passwords", async () => {
+      const result = await validateUrl("ftp://user:pass123@files.com/pub");
+
+      expect(result.urls[0].parsed?.password).toBe("[redacted]");
+    });
+
+    it("does not show username if absent", async () => {
+      const result = await validateUrl("https://example.com");
+
+      expect(result.urls[0].parsed?.username).toBeUndefined();
+    });
+
+    it("does not show password if absent", async () => {
+      const result = await validateUrl("ftp://user@files.com/pub");
+
+      expect(result.urls[0].parsed?.password).toBeUndefined();
+    });
+  });
+
+  describe("Complex URL Parsing", () => {
+    it("parses URL with all components", async () => {
+      const result = await validateUrl(
+        "https://example.com:8080/api/users?page=1&limit=10#results",
+      );
+
+      const parsed = result.urls[0].parsed;
+      expect(parsed?.protocol).toBe("https");
+      expect(parsed?.hostname).toBe("example.com");
+      expect(parsed?.port).toBe("8080");
+      expect(parsed?.pathname).toBe("/api/users");
+      expect(parsed?.query).toHaveLength(2);
+      expect(parsed?.hash).toBe("results");
+    });
+
+    it("parses FTP URL with credentials and port", async () => {
+      const result = await validateUrl(
+        "ftp://user:pass@files.company.com:21/assets",
+      );
+
+      const parsed = result.urls[0].parsed;
+      expect(parsed?.protocol).toBe("ftp");
+      expect(parsed?.hostname).toBe("files.company.com");
+      expect(parsed?.username).toBe("user");
+      expect(parsed?.password).toBe("[redacted]");
+      expect(parsed?.port).toBeUndefined(); // 21 is default for FTP
+      expect(parsed?.pathname).toBe("/assets");
     });
   });
 });

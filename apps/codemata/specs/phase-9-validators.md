@@ -1,6 +1,6 @@
 # Phase 9: Validators/Checkers - Implementation Specification
 
-**Status:** 🚧 In Progress (Phase 9.1-9.6 complete - JSON, HTML, CSS, XML validators live)
+**Status:** 🚧 In Progress (Phase 9.1-9.7 complete - JSON, HTML, CSS, XML, URL validators live)
 
 ---
 
@@ -23,7 +23,7 @@
 Add 5-6 professional validation tools to Codemata with IDE-like validation UX featuring inline error highlighting and detailed error panels.
 
 ### Current State
-- **Total Tools:** 22 (8 formatters + 6 minifiers + 5 encoders + 3 validators)
+- **Total Tools:** 23 (8 formatters + 6 minifiers + 5 encoders + 4 validators)
 - **Target:** 24-25 tools (add 5-6 validators)
 
 ### Tools to Build
@@ -33,7 +33,7 @@ Add 5-6 professional validation tools to Codemata with IDE-like validation UX fe
 3. ✅ **HTML Validator** (using html-validate, full-throttle) - **COMPLETE**
 4. ✅ **CSS Validator** (syntax validation using css-tree) - **COMPLETE**
 5. ✅ **XML Validator** (structural validation using fast-xml-parser) - **COMPLETE**
-6. **URL Validator** (bonus - optional quick win)
+6. ✅ **URL Validator** (Node.js URL constructor) - **COMPLETE**
 
 ### Key Features
 
@@ -1442,7 +1442,27 @@ function formatUserFriendlyMessage(message: string): string {
 
 ---
 
-### Phase 9.7: Integration & Data (Day 11-12)
+### Phase 9.7: URL Validator (Day 11) ✅ **COMPLETE**
+
+**Completed:** January 30, 2026
+
+**Key Features Implemented:**
+- Node.js built-in URL constructor (no external validation libraries)
+- Permissive validation (accepts any protocol including localhost, IPs)
+- Smart metadata display (only shows non-default ports, optional fields)
+- Query parameter parsing with array support (URLSearchParams.getAll())
+- Security: Password redaction for FTP URLs
+- Decoded values (URLs, query params, hash fragments)
+- 65/35 horizontal layout (desktop), stacked (mobile)
+- Conditional layout (full-width before validation, split after)
+- Collapsible URL metadata cards
+- Striped query param table
+- Full test coverage (32 URL validator tests, 93 total passing)
+- E2E test coverage
+
+---
+
+### Phase 9.8: Integration & Data (Day 12-13)
 
 #### Add to `lib/tools-data.ts`
 

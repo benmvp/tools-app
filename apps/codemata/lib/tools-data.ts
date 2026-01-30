@@ -763,17 +763,28 @@ export const VALIDATOR_TOOLS: Record<string, ValidatorTool> = {
   "url-validator": {
     id: "url-validator",
     name: "URL Validator",
-    description: "Validate URL syntax and structure",
+    description:
+      "Validate URLs and parse their components (protocol, host, query params)",
     url: "/validators/url-validator",
     icon: Link,
-    comingSoon: true,
+    comingSoon: false,
     language: "text",
-    keywords: ["url", "uri", "link", "validate", "validator", "check"],
-    example: "",
+    keywords: [
+      "url",
+      "uri",
+      "link",
+      "validate",
+      "validator",
+      "check",
+      "parse",
+      "query",
+      "params",
+    ],
+    example: VALIDATOR_EXAMPLES.url,
     metadata: {
       title: "URL Validator | Codemata",
       description:
-        "Validate URL syntax and structure. Free online URL validator with detailed parsing.",
+        "Validate URLs and parse components. Free online URL validator with query param parsing.",
     },
   },
 };

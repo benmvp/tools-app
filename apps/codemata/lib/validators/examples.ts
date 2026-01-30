@@ -50,5 +50,10 @@ export const VALIDATOR_EXAMPLES = {
   <mismatched></wrong>
 </root>`,
 
-  url: `https://example.com/path/to/resource?param=value#section`,
+  url: `https://example.com/api/users?page=1&limit=10
+example.com
+ftp://user:pass@files.company.com:21/assets
+http://localhost:3000
+
+https://192.168.1.1/admin#settings`,
 };
