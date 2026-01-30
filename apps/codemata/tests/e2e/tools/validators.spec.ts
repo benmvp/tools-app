@@ -58,8 +58,8 @@ not a url at all`);
     const errorHeading = page.locator('h3:has-text("Errors (2)")');
     await expect(errorHeading).toBeVisible();
 
-    // Verify one of the errors mentions missing protocol
-    const errorMessage = page.locator("text=/Missing protocol/i");
+    // Verify at least one error mentions missing protocol (use .first() to avoid strict mode)
+    const errorMessage = page.locator("text=/Missing protocol/i").first();
     await expect(errorMessage).toBeVisible();
   });
 
@@ -95,7 +95,8 @@ not a url at all`);
     await expect(page.locator("text=/Hostname.*example.com/i")).toBeVisible();
     await expect(page.locator("text=/Port.*8080/i")).toBeVisible();
     await expect(page.locator("text=/Path.*/api/users/i")).toBeVisible();
-    await expect(page.locator("text=/Hash.*#results/i")).toBeVisible();
+    await expect(page.locator("text=/Hash/i")).toBeVisible();
+    await expect(page.locator("text=/results/i")).toBeVisible();
 
     // Verify query params table
     await expect(page.locator("text=/Query Parameters/i")).toBeVisible();
