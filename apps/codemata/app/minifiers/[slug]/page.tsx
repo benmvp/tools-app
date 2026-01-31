@@ -12,7 +12,12 @@ import { VisitTracker } from "@/components/VisitTracker";
 import { getMinifierContent } from "@/lib/ai/helpers";
 import { MINIFIER_TOOLS } from "@/lib/tools-data";
 import type { MinifierAction } from "@/lib/types";
-import { getAppUrl, getOgImageUrl, isProductionBuild } from "@/lib/utils";
+import {
+  getAppUrl,
+  getOgImageUrl,
+  getToolStructuredData,
+  isProductionBuild,
+} from "@/lib/utils";
 
 // ISR: Revalidate every 24 hours
 export const revalidate = 86400;
@@ -123,20 +128,10 @@ export default async function MinifierPage({
     notFound();
   }
 
-  // Structured data for SEO
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    name: minifier.name,
-    applicationCategory: "DeveloperApplication",
-    operatingSystem: "Web browser",
-    offers: {
-      "@type": "Offer",
-      price: "0",
-      priceCurrency: "USD",
-    },
-    url: getAppUrl(`/minifiers/${slug}`),
-  };
+  const structuredData = getToolStructuredData(
+    `/minifiers/${slug}`,
+    minifier.name,
+  );
 
   return (
     <>

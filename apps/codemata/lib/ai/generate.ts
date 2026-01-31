@@ -6,6 +6,7 @@ import {
   getEncoderSystemPrompt,
   getFormatterSystemPrompt,
   getMinifierSystemPrompt,
+  getValidatorSystemPrompt,
 } from "./prompts";
 import { type ToolContent, toolContentSchema } from "./schema";
 
@@ -61,13 +62,13 @@ function processContentNewlines(content: ToolContent): ToolContent {
 }
 
 /**
- * Generate AI content for a tool (formatter, minifier, or encoder)
+ * Generate AI content for a tool (formatter, minifier, encoder, or validator)
  * Returns undefined if generation fails (graceful degradation)
  */
 export async function generateToolContent(
   toolId: string,
   toolName: string,
-  toolType: "formatter" | "minifier" | "encoder",
+  toolType: "formatter" | "minifier" | "encoder" | "validator",
   availableTools: Array<{ displayName: string; url: string }>,
 ): Promise<ToolContent | undefined> {
   // Skip AI generation based on environment mode
@@ -96,7 +97,9 @@ export async function generateToolContent(
         ? getFormatterSystemPrompt()
         : toolType === "minifier"
           ? getMinifierSystemPrompt()
-          : getEncoderSystemPrompt();
+          : toolType === "encoder"
+            ? getEncoderSystemPrompt()
+            : getValidatorSystemPrompt();
 
     // Build user prompt with tool context
     const userPrompt = buildUserPrompt(toolName, toolType, availableTools);

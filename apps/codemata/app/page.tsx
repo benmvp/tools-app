@@ -11,7 +11,9 @@ import {
 } from "@/lib/tools-data";
 import { getAppUrl, getOgImageUrl } from "@/lib/utils";
 
-const totalCount = Object.values(ALL_TOOLS).flat(2).length;
+const totalCount = Object.values(ALL_TOOLS)
+  .flat()
+  .filter((tool) => !tool.comingSoon).length;
 
 const ogImageUrl = getOgImageUrl(
   `${totalCount} Free Developer Tools`,

@@ -14,59 +14,48 @@ Comprehensive testing documentation for E2E, accessibility, performance, and uni
 | **Performance** | Lighthouse CI | Quality benchmarking |
 
 ---
-## E2E Test Strategy (Sample-Based, Prevents Linear Growth)
 
-To prevent e2e tests from growing linearly with new tools, we use a sample-based testing approach:
+## Code Quality Checks (Run After Large Changes)
 
-### 1. Component Tests (`tests/e2e/components/`)
-
-Test shared component behavior once using representative tools:
-
-- **`transformer.spec.ts`** - Tests Transformer component (empty input, config changes, copy buttons, error handling) using TypeScript Formatter
-- **`transformer-minifier.spec.ts`** - Tests TransformerMinifier component (size display, empty input) using TypeScript Minifier
-- **`transformer-encoder.spec.ts`** - Tests TransformerEncoder component (encode/decode, round-trip, button states) using Base64 Encoder + JWT Decoder
-- Runs on **desktop only** (device-independent component behavior)
-
-### 2. Sample-Based Tool Tests (`tests/e2e/tools/`)
-
-Only test 1-2 representative tools per category:
-
-- **`formatters.spec.ts`** - Tests TypeScript Formatter only (validates server action integration)
-- **`minifiers.spec.ts`** - Tests TypeScript Minifier only
-- **`encoders.spec.ts`** - Tests Base64 Encoder + JWT Decoder (bidirectional vs decode-only patterns)
-- Runs on **both desktop and mobile**
-
-### 3. Accessibility Tests (`tests/e2e/a11y-*.spec.ts`)
-
-Sample one tool per category:
-
-- Tests home, formatters category, minifiers category, encoders category pages
-- Tests ONE formatter tool, ONE minifier tool, ONE encoder tool (all use same page template)
-- Runs on **both desktop and mobile** (except keyboard/screen-reader which are desktop-only)
-
-### 4. When Adding a New Tool
-
-- ✅ **Add unit tests** for the server action in `__tests__/` (always required)
-- ✅ **Add tool to data** - `FORMATTER_TOOLS/MINIFIER_TOOLS/ENCODER_TOOLS` in `lib/tools-data.ts`
-- ✅ **Automatic integration** - Tool automatically appears in navigation, sitemap, command menu, etc.
-- ❌ **DO NOT add new e2e tests** unless the tool introduces NEW component behavior or UI patterns
-- **Result:** 0-2 new e2e tests (instead of 8-10 per tool)
-
-### Benefits
-
-- **Prevents Linear Growth:** Adding 10 new tools = 0-2 new tests (not 80-100)
-- **Faster CI/CD:** Fewer tests = faster feedback loops
-- **Easier Maintenance:** Component tests cover shared behavior once
-- **Same Coverage:** All tools use same templates, so testing one validates all
-
----
-## Running Tests
-
-### Unit Tests
+After making significant changes (refactoring, adding features, data consolidation), always run all checks:
 
 ```bash
 cd apps/codemata
 
+# 1. Auto-fix formatting issues
+pnpm format
+
+# 2. Check for code quality issues
+pnpm lint
+
+# 3. Verify TypeScript compilation
+pnpm type-check
+
+# 4. Run unit tests
+pnpm test
+```
+
+All checks must pass before committing. This ensures no regressions and maintains code quality.
+
+---
+
+## Running Tests Locally
+
+All test commands should be run from the `apps/codemata/` directory:
+
+```bash
+cd apps/codemata
+```
+
+> **⚠️ Important:** E2E, Lighthouse, and production-mode metadata tests run against a **production build**. After changing source code, rebuild before running these tests:
+
+```bash
+  pnpm build:test
+```
+
+### Unit Tests
+
+```bash
 # Run once
 pnpm test
 
@@ -91,22 +80,23 @@ it("formats with 2-space indentation", async () => {
 ```
 
 **Coverage:**
+
 - Formatter tests (`__tests__/formatters.test.ts`)
 - Minifier tests (`__tests__/minifiers.test.ts`)
+- Encoder tests (`__tests__/encoders.test.ts`)
+- Validator tests (`__tests__/validators.test.ts`)
 - Recent tools tests (`__tests__/recent-tools.test.ts`)
 - Search index tests (`__tests__/search-index.test.ts`)
 
 ### E2E Tests
 
-E2E tests run against a **production build** (not dev server):
+E2E tests run against a **production build** (not dev server) on **localhost:3333**:
 
 ```bash
-cd apps/codemata
-
 # Run E2E tests (headless)
 pnpm test:e2e
 
-# Run with Playwright UI (debug mode - recommended)
+# Run with Playwright UI (debug mode - recommended for manual testing)
 pnpm test:e2e --ui
 
 # Run specific test file
@@ -120,40 +110,73 @@ pnpm test:e2e --project=iphone-13
 ```
 
 **Test Projects:**
+
 - `firefox-desktop` (1920×1080) - Full desktop experience
 - `iphone-13` (390×844) - iOS Safari mobile testing
 
 **Configuration:**
+
 - BaseURL: http://localhost:3333 (production build via `next start`)
+- Auto-starts server via Playwright's webServer config
 - Video: Retained on failure for debugging
 - Location: `tests/e2e/**/*.spec.ts`
 
 ### Lighthouse CI
 
-Performance and quality benchmarking:
+Performance and quality benchmarking on **localhost:3333** (requires production build):
 
 ```bash
-cd apps/codemata
+# Terminal 1: Build and start production server
+pnpm build:test && pnpm start
+
+# Terminal 2: Run Lighthouse
 pnpm lighthouse
 ```
 
 **Smoke Test Approach:**
 Lighthouse tests validate quality benchmarks on representative pages rather than comprehensive coverage. This prevents long CI wait times while ensuring quality standards.
 
+**Thresholds (all must pass):**
+- Performance ≥ 90%
+- Accessibility ≥ 93%
+- Best Practices ≥ 90%
+- SEO ≥ 95%
+
+**Pages Tested (5 URLs × 2 runs = 10 tests):**
+- Home page (unique layout)
+- One category page (formatters - validates all category pages)
+- One formatter tool (TypeScript - validates all formatter pages)
+- One minifier tool (TypeScript - validates all minifier pages)
+- One encoder tool (Base64 - validates all encoder pages)
+
+**Configuration:**
+- Desktop preset with realistic throttling
+- 2 runs per page for consistency
+- RTT: 40ms, Throughput: 10240 kbps
+
 ### Metadata Verification
 
-Validates SEO metadata, OpenGraph images, and structured data across all pages:
+Validates SEO metadata, OpenGraph images, and structured data across all pages.
+
+**Dev Mode (localhost:3001)** - Default, no build required:
 
 ```bash
-cd apps/codemata
+# Terminal 1: Start dev server
+pnpm dev
 
-# Local dev (default - uses localhost:3001)
-pnpm dev  # Terminal 1
-pnpm verify-metadata  # Terminal 2
+# Terminal 2: Run verification
+pnpm verify-metadata
+```
 
-# Local production build (uses localhost:3333)
-pnpm build && pnpm start  # Terminal 1
-VERCEL_PROJECT_PRODUCTION_URL=localhost:3333 pnpm verify-metadata  # Terminal 2
+**Production Mode (localhost:3333)** - Requires production build:
+
+```bash
+# Terminal 1: Build and start production server
+VERCEL_PROJECT_PRODUCTION_URL=localhost:3333 pnpm build:test
+pnpm start  # Runs on port 3333
+
+# Terminal 2: Run verification
+VERCEL_PROJECT_PRODUCTION_URL=localhost:3333 pnpm verify-metadata
 ```
 
 **Comprehensive Coverage:**
@@ -176,27 +199,73 @@ Unlike Lighthouse's smoke test approach, metadata verification checks **all page
 - `0` - All pages passed validation
 - `1` - Validation failures or no pages fetched
 
-**Pages Tested (5 URLs × 2 runs = 10 tests):**
-- Home page (unique layout)
-- One category page (formatters - validates all category pages)
-- One formatter tool (TypeScript - validates all formatter pages)
-- One minifier tool (TypeScript - validates all minifier pages)
-- One encoder tool (Base64 - validates all encoder pages)
+### Full Test Suite
 
-**Thresholds (all must pass):**
-- Performance ≥ 90%
-- Accessibility ≥ 93%
-- Best Practices ≥ 90%
-- SEO ≥ 95%
+Run all tests (unit + e2e + lighthouse + metadata) for comprehensive validation:
 
-**Configuration:**
-- Desktop preset with realistic throttling
-- 2 runs per page for consistency
-- RTT: 40ms, Throughput: 10240 kbps
+```bash
+# Terminal 1: Build and start production server
+pnpm build:test && pnpm start
+
+# Terminal 2: Run all tests sequentially
+pnpm test           # Unit tests
+pnpm test:e2e       # E2E tests (auto-starts server)
+pnpm lighthouse     # Lighthouse benchmarks
+
+# Verify metadata (can run against dev or production)
+pnpm verify-metadata
+```
 
 ---
 
-## E2E Test Coverage
+## E2E Test Strategy & Coverage
+
+### Sample-Based Testing Approach (Prevents Linear Growth)
+
+To prevent e2e tests from growing linearly with new tools, we use a sample-based testing approach:
+
+#### 1. Component Tests (`tests/e2e/components/`)
+
+Test shared component behavior once using representative tools:
+
+- **`transformer.spec.ts`** - Tests Transformer component (empty input, config changes, copy buttons, error handling) using TypeScript Formatter
+- **`transformer-minifier.spec.ts`** - Tests TransformerMinifier component (size display, empty input) using TypeScript Minifier
+- **`transformer-encoder.spec.ts`** - Tests TransformerEncoder component (encode/decode, round-trip, button states) using Base64 Encoder + JWT Decoder
+- Runs on **desktop only** (device-independent component behavior)
+
+#### 2. Sample-Based Tool Tests (`tests/e2e/tools/`)
+
+Only test 1-2 representative tools per category:
+
+- **`formatters.spec.ts`** - Tests TypeScript Formatter only (validates server action integration)
+- **`minifiers.spec.ts`** - Tests TypeScript Minifier only
+- **`encoders.spec.ts`** - Tests Base64 Encoder + JWT Decoder (bidirectional vs decode-only patterns)
+- Runs on **both desktop and mobile**
+
+#### 3. Accessibility Tests (`tests/e2e/a11y-*.spec.ts`)
+
+Sample one tool per category:
+
+- Tests home, formatters category, minifiers category, encoders category pages
+- Tests ONE formatter tool, ONE minifier tool, ONE encoder tool (all use same page template)
+- Runs on **both desktop and mobile** (except keyboard/screen-reader which are desktop-only)
+
+#### 4. When Adding a New Tool
+
+- ✅ **Add unit tests** for the server action in `__tests__/` (always required)
+- ✅ **Add tool to data** - `FORMATTER_TOOLS/MINIFIER_TOOLS/ENCODER_TOOLS` in `lib/tools-data.ts`
+- ✅ **Automatic integration** - Tool automatically appears in navigation, sitemap, command menu, etc.
+- ❌ **DO NOT add new e2e tests** unless the tool introduces NEW component behavior or UI patterns
+- **Result:** 0-2 new e2e tests (instead of 8-10 per tool)
+
+#### Benefits
+
+- **Prevents Linear Growth:** Adding 10 new tools = 0-2 new tests (not 80-100)
+- **Faster CI/CD:** Fewer tests = faster feedback loops
+- **Easier Maintenance:** Component tests cover shared behavior once
+- **Same Coverage:** All tools use same templates, so testing one validates all
+
+---
 
 ### Desktop Tests
 
@@ -347,74 +416,68 @@ Unlike Lighthouse's smoke test approach, metadata verification checks **all page
 
 ---
 
-## Running All Quality Checks
+## Accessibility Compliance
 
-Before committing major changes, run the full quality suite:
+✅ **WCAG 2.0/2.1 Level AA** compliance achieved across all pages
 
-```bash
-cd apps/codemata
+### Standards Met
 
-# 1. Format code
-pnpm format
+- **Color Contrast:** 4.5:1 minimum ratio for all text
+- **Touch Targets:** 44px minimum (mobile)
+- **Semantic HTML:** `<section>`, `<nav>`, `<main>`, etc.
+- **Keyboard Navigation:** All features accessible without mouse
+- **Screen Reader Compatible:** Proper ARIA labels and roles
+- **Focus Indicators:** Visible on all interactive elements
 
-# 2. Lint code
-pnpm lint
+### Component Accessibility
 
-# 3. Type check
-pnpm type-check
+**Button Touch Targets:**
+- 44px minimum via `size="icon-touch"` variant
+- Meets WCAG 2.5.5 Target Size requirement
 
-# 4. Unit tests
-pnpm test
+**Mobile Header:**
+- All buttons properly labeled:
+  - "Open navigation menu"
+  - "Search tools"
+  - "Toggle theme"
 
-# 5. Metadata validation
-pnpm verify-metadata
+**Code Editor:**
+- Semantic `<section>` element
+- Unique IDs with aria-labelledby
+- Screen reader announces editor purpose
 
-# 6. E2E tests
-pnpm test:e2e
+**Command Menu:**
+- Input labeled "Search tools"
+- Focus trap when open
+- Escape to close
 
-# 7. Lighthouse CI
-pnpm lighthouse
-```
+**Navigation:**
+- All links have accessible names (text/aria-label/img alt)
+- Proper heading hierarchy
+- Skip links available
 
-All checks must pass to ensure production-ready code quality.
+**Color Contrast:**
+- CategoryBackLink: 5.5+:1 ratio
+- NavigationList: 5.5+:1 ratio (dark mode)
+- All text exceeds 4.5:1 minimum
 
----
+### CodeMirror Handling
 
-## Continuous Integration
+**Approach:**
+- 3rd-party library internals excluded from axe scans
+- Wrapper uses semantic `<section>` element
+- Proper ARIA labeling via aria-labelledby
+- Keyboard navigation fully functional
+- Accessible to screen readers
 
-### GitHub Actions Workflow
-
-CI runs on all PRs and pushes to `main` via `.github/workflows/ci.yml` with a hybrid 3-stage approach:
-
-**Stage 1 (Parallel) - Fast Quality Checks:**
-- Type checking (`tsc --noEmit`)
-- Linting (`biome check`)
-- Code formatting validation (`biome format`)
-
-**Stage 2 (Sequential) - Build & Unit Tests:**
-- Build production bundle (`next build`)
-- Upload build artifact for Stage 3
-- Run unit tests (`vitest run`)
-
-**Stage 3 (Parallel) - Comprehensive Validation:**
-- E2E tests (`playwright test`)
-- Lighthouse CI (quality thresholds)
-- Metadata verification (validates SEO metadata, OG images, structured data)
-
-**Branch Protection:**
-- All checks must pass before merging to `main`
-- Ensures production deployments are always validated
-
-### CI Configuration
-
-- **Workers:** Parallel quality checks (Stage 1), sequential build (Stage 2), parallel validation (Stage 3)
-- **Caching:** pnpm dependencies, Next.js build cache, Playwright browsers
-- **Artifacts:** Build output shared between jobs
-- **Timeouts:** 10 minutes per job (adjustable if needed)
+**Why Exclude Internals:**
+- CodeMirror manages its own ARIA attributes
+- Scanning internals causes false positives
+- Wrapper provides sufficient accessibility context
 
 ---
 
-## Troubleshooting
+## Best Practices
 
 ### E2E Test Failures
 
@@ -714,7 +777,146 @@ render(<Transformer />);
 
 ---
 
-## Test Maintenance
+## Troubleshooting
+
+### E2E Test Failures
+
+**Test Videos:**
+- Check `test-results/` folder for videos (saved on failure)
+- Videos show exact user flow and failure point
+
+**Interactive Debugging:**
+```bash
+pnpm test:e2e --ui
+```
+- Step through tests
+- Pause execution
+- Inspect elements
+- View console logs
+
+**Production Build:**
+```bash
+# Verify build exists
+ls -la .next/
+
+# Verify server running
+curl http://localhost:3333
+
+# Rebuild if needed
+pnpm build && PORT=3333 pnpm start
+```
+
+### Port Already in Use
+
+**Kill Process:**
+```bash
+lsof -ti:3333 | xargs kill
+```
+
+**Or Change Port:**
+Edit `playwright.config.ts` baseURL to use different port
+
+### Timeout Issues
+
+**Increase Timeouts:**
+- Edit `playwright.config.ts` if tests fail on slow machines
+- Check network tab for slow API calls
+- Verify no unnecessary network requests
+
+**Common Causes:**
+- Slow build process
+- Heavy AI content generation (should be disabled in tests)
+- Network issues
+- Resource-intensive operations
+
+### Mobile Test Issues
+
+**Keyboard Tests:**
+- Automatically skipped on mobile (touch devices don't have keyboards)
+- This is expected behavior
+
+**Sidebar Tests:**
+- Skipped on mobile (hidden by default)
+- Mobile uses navigation drawer instead
+
+**Touch Target Failures:**
+- Verify buttons use `size="icon-touch"` (44px minimum)
+- Check mobile viewport configuration
+
+### Accessibility Violations
+
+**Debug Locally:**
+```bash
+pnpm test:e2e:ui  # Interactive mode
+```
+
+**Browser Extension:**
+- Install axe DevTools browser extension
+- Run manual scans on failing pages
+- View detailed violation reports
+
+**Common Issues:**
+- **Color Contrast:** Check with browser DevTools color picker
+- **Missing Labels:** Verify aria-label or aria-labelledby
+- **Focus Indicators:** Ensure visible focus states
+- **Heading Hierarchy:** Don't skip levels (h1 → h2 → h3)
+
+**CodeMirror:**
+- Remember: Internals (.cm-content, .cm-scroller) are excluded
+- Wrapper must have proper ARIA labeling
+- Check section element has aria-labelledby
+
+### Lighthouse Failures
+
+**Performance Issues:**
+- Check bundle size (`pnpm analyze`)
+- Verify images optimized
+- Check for large 3rd-party scripts
+
+**Accessibility Score:**
+- Run E2E accessibility tests first
+- Lighthouse may catch different issues
+- Manual testing recommended
+
+**Best Practices:**
+- Console errors/warnings
+- HTTP/HTTPS mixed content
+- Browser errors
+
+**SEO Score:**
+- Missing meta descriptions
+- Missing title tags
+- Robots.txt issues
+- Canonical URL problems
+
+### Test Flakiness
+
+**Common Causes:**
+- Using `waitForTimeout()` instead of waiting for actual conditions
+- Checking CodeMirror's internal DOM state (`.toBeEmpty()`, `.textContent()`)
+- Testing implementation details instead of user-facing behavior
+- Network timing issues
+- State pollution between tests
+
+**Solutions:**
+- **Replace `waitForTimeout()`** with behavior checks (`toBeVisible()`, `toBeEnabled()`, `toHaveAttribute()`)
+- **Avoid CodeMirror internals** - Test button states, toasts, and badges instead
+- **Use `waitForLoadState('networkidle')`** after navigation
+- **Use `expect.poll()`** for values that change over time
+- **Wait for toasts/badges** to indicate operations completed
+- **Clear state between tests** - Use `await page.goto()` with fresh context
+- **Use keyboard shortcuts** to clear editors (`Meta+A` + `Backspace`)
+
+**Pattern Replacements:**
+```typescript
+// Before (flaky) → After (robust)
+await page.waitForTimeout(1000) → await expect(toast).toBeVisible()
+await expect(editor).toBeEmpty() → await expect(button).toBeDisabled()
+const text = await editor.textContent() → await expect(copyButton).toBeEnabled()
+await editor.fill("") → await editor.press("Meta+A"); await editor.press("Backspace")
+```
+
+---
 
 ### When to Update Tests
 
@@ -772,6 +974,18 @@ tests/e2e/
 - `*.test.ts` for unit tests
 - Descriptive names that match feature
 - Group related tests in describe blocks
+
+---
+
+## Continuous Integration
+
+All tests run automatically in CI via `.github/workflows/ci.yml`. The workflow uses a 3-stage approach for optimal performance:
+
+**Stage 1 (Parallel)** - Fast quality checks (format, lint, type-check)
+**Stage 2 (Sequential)** - Build production bundle + unit tests
+**Stage 3 (Parallel)** - E2E tests, Lighthouse CI, metadata verification
+
+See `.github/workflows/ci.yml` for complete configuration details.
 
 ---
 

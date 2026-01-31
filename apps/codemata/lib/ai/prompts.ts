@@ -477,7 +477,7 @@ ${getImportantGuidelines()}
  */
 export function buildUserPrompt(
   toolName: string,
-  toolType: "formatter" | "minifier" | "encoder",
+  toolType: "formatter" | "minifier" | "encoder" | "validator",
   availableTools: Array<{ displayName: string; url: string }>,
 ): string {
   const availableToolsList = availableTools
@@ -597,8 +597,9 @@ ${getFormattingRulesSection()}
 - **Output:** Markdown format
 
 ${getFaqSectionFormat()}
-  - Address: tool usage, error interpretation, privacy, validation options
+  - Address: tool usage, error interpretation, validation options
   - Include tool-specific questions (schema validation, regex flags, etc.)
+  - **IMPORTANT:** Do NOT claim that validation happens "locally in the browser" or mention data privacy/security. All processing uses Server Actions.
 
 ${getRecommendationsSectionFormat()}
   - Recommend related formatters, minifiers, or other validators
