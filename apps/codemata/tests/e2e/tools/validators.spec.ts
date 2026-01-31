@@ -13,6 +13,51 @@ import { expect, test } from "@playwright/test";
  * - All validators use same page template, so testing these validates all
  */
 
+// Test data constants
+const TEST_JSON = {
+  INVALID_TRAILING_COMMA: `{
+  "name": "Test",
+  "value": 123,
+}`,
+  VALID_PERSON: `{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "age": 30
+}`,
+  MISSING_REQUIRED_FIELD: `{
+  "name": "John Doe",
+  "age": 30
+}`,
+  VALID_SIMPLE: `{
+  "name": "Test",
+  "value": 123
+}`,
+  INVALID_SIMPLE: `{"test": 123,}`,
+  VALID_FIXED: `{"test": 123}`,
+};
+
+const TEST_SCHEMA = {
+  PERSON_REQUIRED_EMAIL: `{
+  "type": "object",
+  "required": ["name", "email"],
+  "properties": {
+    "name": {"type": "string"},
+    "email": {"type": "string"},
+    "age": {"type": "number"}
+  }
+}`,
+};
+
+const TEST_URLS = {
+  VALID_MULTIPLE: `https://example.com
+http://localhost:3000
+https://api.github.com/users`,
+  MIXED_VALID_INVALID: `https://example.com
+example.com
+not a url at all`,
+  WITH_METADATA: "https://example.com:8080/api/users?page=1&sort=name#results",
+};
+
 test.describe("JSON Validator", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/validators/json-validator");
@@ -25,10 +70,7 @@ test.describe("JSON Validator", () => {
 
     // Enter invalid JSON (trailing comma)
     await inputEditor.click();
-    await inputEditor.fill(`{
-  "name": "Test",
-  "value": 123,
-}`);
+    await inputEditor.fill(TEST_JSON.INVALID_TRAILING_COMMA);
 
     // Click validate button
     const validateButton = page.locator('button:has-text("Validate JSON")');
@@ -49,10 +91,7 @@ test.describe("JSON Validator", () => {
 
     // Enter invalid JSON with error on specific line
     await inputEditor.click();
-    await inputEditor.fill(`{
-  "name": "Test",
-  "value": 123,
-}`);
+    await inputEditor.fill(TEST_JSON.INVALID_TRAILING_COMMA);
 
     // Click validate button
     const validateButton = page.locator('button:has-text("Validate JSON")');
@@ -87,23 +126,11 @@ test.describe("JSON Validator", () => {
 
     // Enter valid JSON
     await inputEditor.click();
-    await inputEditor.fill(`{
-  "name": "John Doe",
-  "email": "john@example.com",
-  "age": 30
-}`);
+    await inputEditor.fill(TEST_JSON.VALID_PERSON);
 
     // Enter schema
     await schemaEditor.click();
-    await schemaEditor.fill(`{
-  "type": "object",
-  "required": ["name", "email"],
-  "properties": {
-    "name": {"type": "string"},
-    "email": {"type": "string"},
-    "age": {"type": "number"}
-  }
-}`);
+    await schemaEditor.fill(TEST_SCHEMA.PERSON_REQUIRED_EMAIL);
 
     // Click validate button
     const validateButton = page.locator('button:has-text("Validate JSON")');
@@ -130,22 +157,11 @@ test.describe("JSON Validator", () => {
 
     // Enter JSON missing required field
     await inputEditor.click();
-    await inputEditor.fill(`{
-  "name": "John Doe",
-  "age": 30
-}`);
+    await inputEditor.fill(TEST_JSON.MISSING_REQUIRED_FIELD);
 
     // Enter schema requiring email
     await schemaEditor.click();
-    await schemaEditor.fill(`{
-  "type": "object",
-  "required": ["name", "email"],
-  "properties": {
-    "name": {"type": "string"},
-    "email": {"type": "string"},
-    "age": {"type": "number"}
-  }
-}`);
+    await schemaEditor.fill(TEST_SCHEMA.PERSON_REQUIRED_EMAIL);
 
     // Click validate button
     const validateButton = page.locator('button:has-text("Validate JSON")');
@@ -162,10 +178,7 @@ test.describe("JSON Validator", () => {
 
     // Enter valid JSON
     await inputEditor.click();
-    await inputEditor.fill(`{
-  "name": "Test",
-  "value": 123
-}`);
+    await inputEditor.fill(TEST_JSON.VALID_SIMPLE);
 
     // Click validate button
     const validateButton = page.locator('button:has-text("Validate JSON")');
@@ -186,7 +199,7 @@ test.describe("JSON Validator", () => {
 
     // Enter invalid JSON and validate
     await inputEditor.click();
-    await inputEditor.fill(`{"test": 123,}`);
+    await inputEditor.fill(TEST_JSON.INVALID_SIMPLE);
 
     const validateButton = page.locator('button:has-text("Validate JSON")');
     await validateButton.click();
@@ -198,7 +211,7 @@ test.describe("JSON Validator", () => {
 
     // Clear and enter valid JSON using fill() which is more reliable than keyboard shortcuts
     await inputEditor.click();
-    await inputEditor.fill('{"test": 123}');
+    await inputEditor.fill(TEST_JSON.VALID_FIXED);
 
     // Wait for validate button to be enabled
     await expect(validateButton).toBeEnabled({ timeout: 5000 });
@@ -225,9 +238,7 @@ test.describe("URL Validator", () => {
 
     // Enter multiple valid URLs
     await inputEditor.click();
-    await inputEditor.fill(`https://example.com
-http://localhost:3000
-https://api.github.com/users`);
+    await inputEditor.fill(TEST_URLS.VALID_MULTIPLE);
 
     // Click validate button
     const validateButton = page.locator('button:has-text("Validate URLs")');
@@ -244,9 +255,7 @@ https://api.github.com/users`);
 
     // Enter mix of valid and invalid URLs
     await inputEditor.click();
-    await inputEditor.fill(`https://example.com
-example.com
-not a url at all`);
+    await inputEditor.fill(TEST_URLS.MIXED_VALID_INVALID);
 
     // Click validate button
     const validateButton = page.locator('button:has-text("Validate URLs")');
@@ -271,9 +280,7 @@ not a url at all`);
 
     // Enter URL with metadata
     await inputEditor.click();
-    await inputEditor.fill(
-      "https://example.com:8080/api/users?page=1&sort=name#results",
-    );
+    await inputEditor.fill(TEST_URLS.WITH_METADATA);
 
     // Click validate button
     const validateButton = page.locator('button:has-text("Validate URLs")');

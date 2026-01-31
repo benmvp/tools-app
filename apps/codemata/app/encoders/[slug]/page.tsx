@@ -11,7 +11,12 @@ import { TransformerEncoder } from "@/components/TransformerEncoder";
 import { VisitTracker } from "@/components/VisitTracker";
 import { getEncoderContent } from "@/lib/ai/helpers";
 import { ENCODER_TOOLS } from "@/lib/tools-data";
-import { getAppUrl, getOgImageUrl, isProductionBuild } from "@/lib/utils";
+import {
+  getAppUrl,
+  getOgImageUrl,
+  getToolStructuredData,
+  isProductionBuild,
+} from "@/lib/utils";
 
 // ISR: Revalidate every 24 hours
 export const revalidate = 86400;
@@ -119,20 +124,10 @@ export default async function EncoderPage({
     notFound();
   }
 
-  // Structured data for SEO
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    name: encoder.name,
-    applicationCategory: "DeveloperApplication",
-    operatingSystem: "Web browser",
-    offers: {
-      "@type": "Offer",
-      price: "0",
-      priceCurrency: "USD",
-    },
-    url: getAppUrl(`/encoders/${slug}`),
-  };
+  const structuredData = getToolStructuredData(
+    `/encoders/${slug}`,
+    encoder.name,
+  );
 
   return (
     <>

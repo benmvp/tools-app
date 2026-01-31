@@ -12,7 +12,12 @@ import { VisitTracker } from "@/components/VisitTracker";
 import { getFormatterContent } from "@/lib/ai/helpers";
 import { FORMATTER_TOOLS } from "@/lib/tools-data";
 import type { FormatterAction } from "@/lib/types";
-import { getAppUrl, getOgImageUrl, isProductionBuild } from "@/lib/utils";
+import {
+  getAppUrl,
+  getOgImageUrl,
+  getToolStructuredData,
+  isProductionBuild,
+} from "@/lib/utils";
 
 // ISR: Revalidate every 24 hours
 export const revalidate = 86400;
@@ -193,20 +198,10 @@ export default async function FormatterPage({
     notFound();
   }
 
-  // Structured data for SEO
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    name: formatter.name,
-    applicationCategory: "DeveloperApplication",
-    operatingSystem: "Web browser",
-    offers: {
-      "@type": "Offer",
-      price: "0",
-      priceCurrency: "USD",
-    },
-    url: getAppUrl(`/formatters/${slug}`),
-  };
+  const structuredData = getToolStructuredData(
+    `/formatters/${slug}`,
+    formatter.name,
+  );
 
   return (
     <>

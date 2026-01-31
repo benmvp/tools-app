@@ -145,3 +145,30 @@ export function getOgImageUrl(title: string, description: string): string {
 
   return getAppUrl(`/api/og?${searchParams.toString()}`);
 }
+
+/**
+ * Generates structured data (JSON-LD) for SEO.
+ * Used across all tool category pages (formatters, minifiers, encoders, validators).
+ *
+ * Usage:
+ * - getToolStructuredData("/formatters/json-formatter", "JSON Formatter")
+ *
+ * @param path - Full path including category (e.g., "/formatters/json-formatter")
+ * @param toolName - Display name of the tool
+ * @returns Structured data object for JSON-LD
+ */
+export function getToolStructuredData(path: string, toolName: string) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: toolName,
+    applicationCategory: "DeveloperApplication",
+    operatingSystem: "Web browser",
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+    },
+    url: getAppUrl(path),
+  };
+}

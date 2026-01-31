@@ -14,7 +14,12 @@ import { UrlValidator } from "@/components/validators/UrlValidator";
 import { XmlValidator } from "@/components/validators/XmlValidator";
 import { getValidatorContent } from "@/lib/ai/helpers";
 import { VALIDATOR_TOOLS } from "@/lib/tools-data";
-import { getAppUrl, getOgImageUrl, isProductionBuild } from "@/lib/utils";
+import {
+  getAppUrl,
+  getOgImageUrl,
+  getToolStructuredData,
+  isProductionBuild,
+} from "@/lib/utils";
 import { VALIDATOR_EXAMPLES } from "@/lib/validators/examples";
 
 // ISR revalidation - 24 hours
@@ -134,20 +139,10 @@ export default async function ValidatorPage({
 
   // JSON Validator
   if (slug === "json-validator") {
-    // Structured data for SEO
-    const structuredData = {
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      name: tool.name,
-      applicationCategory: "DeveloperApplication",
-      operatingSystem: "Web browser",
-      offers: {
-        "@type": "Offer",
-        price: "0",
-        priceCurrency: "USD",
-      },
-      url: getAppUrl(`/validators/${slug}`),
-    };
+    const structuredData = getToolStructuredData(
+      `/validators/${slug}`,
+      tool.name,
+    );
 
     return (
       <>
@@ -193,20 +188,10 @@ export default async function ValidatorPage({
 
   // HTML Validator
   if (slug === "html-validator") {
-    // Structured data for SEO
-    const structuredData = {
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      name: tool.name,
-      applicationCategory: "DeveloperApplication",
-      operatingSystem: "Web browser",
-      offers: {
-        "@type": "Offer",
-        price: "0",
-        priceCurrency: "USD",
-      },
-      url: getAppUrl(`/validators/${slug}`),
-    };
+    const structuredData = getToolStructuredData(
+      `/validators/${slug}`,
+      tool.name,
+    );
 
     return (
       <>
@@ -249,20 +234,10 @@ export default async function ValidatorPage({
 
   // CSS Validator
   if (slug === "css-validator") {
-    // Structured data for SEO
-    const structuredData = {
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      name: tool.name,
-      applicationCategory: "DeveloperApplication",
-      operatingSystem: "Web browser",
-      offers: {
-        "@type": "Offer",
-        price: "0",
-        priceCurrency: "USD",
-      },
-      url: getAppUrl(`/validators/${slug}`),
-    };
+    const structuredData = getToolStructuredData(
+      `/validators/${slug}`,
+      tool.name,
+    );
 
     return (
       <>
@@ -305,20 +280,10 @@ export default async function ValidatorPage({
 
   // XML Validator
   if (slug === "xml-validator") {
-    // Structured data for SEO
-    const structuredData = {
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      name: tool.name,
-      applicationCategory: "DeveloperApplication",
-      operatingSystem: "Web browser",
-      offers: {
-        "@type": "Offer",
-        price: "0",
-        priceCurrency: "USD",
-      },
-      url: getAppUrl(`/validators/${slug}`),
-    };
+    const structuredData = getToolStructuredData(
+      `/validators/${slug}`,
+      tool.name,
+    );
 
     return (
       <>
@@ -361,20 +326,10 @@ export default async function ValidatorPage({
 
   // URL Validator
   if (slug === "url-validator") {
-    // Structured data for SEO
-    const structuredData = {
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      name: tool.name,
-      applicationCategory: "DeveloperApplication",
-      operatingSystem: "Web browser",
-      offers: {
-        "@type": "Offer",
-        price: "0",
-        priceCurrency: "USD",
-      },
-      url: getAppUrl(`/validators/${slug}`),
-    };
+    const structuredData = getToolStructuredData(
+      `/validators/${slug}`,
+      tool.name,
+    );
 
     return (
       <>
