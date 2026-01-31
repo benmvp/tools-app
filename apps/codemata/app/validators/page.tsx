@@ -5,8 +5,10 @@ import { SITE_CONFIG } from "@/lib/site-config";
 import { ALL_VALIDATORS } from "@/lib/tools-data";
 import { getAppUrl, getOgImageUrl } from "@/lib/utils";
 
+const validatorCount = ALL_VALIDATORS.filter((t) => !t.comingSoon).length;
+
 const ogImageUrl = getOgImageUrl(
-  `${ALL_VALIDATORS.length} Validators`,
+  `${validatorCount} Validators`,
   SITE_CONFIG.pages.validators.description,
 );
 
@@ -23,7 +25,7 @@ export const metadata: Metadata = {
         url: ogImageUrl,
         width: 1200,
         height: 630,
-        alt: `Codemata - ${ALL_VALIDATORS.length} Validators`,
+        alt: `Codemata - ${validatorCount} Validators`,
       },
     ],
   },

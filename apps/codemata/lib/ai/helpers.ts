@@ -1,10 +1,15 @@
 import { cache } from "react";
 import { generateToolContent } from "@/lib/ai/generate";
-import { ALL_ENCODERS, ALL_FORMATTERS, ALL_MINIFIERS } from "@/lib/tools-data";
+import {
+  ALL_ENCODERS,
+  ALL_FORMATTERS,
+  ALL_MINIFIERS,
+  ALL_VALIDATORS,
+} from "@/lib/tools-data";
 
 /**
  * Helper to get all available tools for recommendation context
- * Combines formatters, minifiers, and encoders from centralized tool data
+ * Combines formatters, minifiers, encoders, and validators from centralized tool data
  */
 export function getAllAvailableTools() {
   const formatters = ALL_FORMATTERS.map((tool) => ({
@@ -22,7 +27,12 @@ export function getAllAvailableTools() {
     url: tool.url,
   }));
 
-  return [...formatters, ...minifiers, ...encoders];
+  const validators = ALL_VALIDATORS.map((tool) => ({
+    displayName: tool.name,
+    url: tool.url,
+  }));
+
+  return [...formatters, ...minifiers, ...encoders, ...validators];
 }
 
 /**
@@ -55,5 +65,16 @@ export const getEncoderContent = cache(
   async (toolId: string, toolName: string) => {
     const availableTools = getAllAvailableTools();
     return generateToolContent(toolId, toolName, "encoder", availableTools);
+  },
+);
+
+/**
+ * Generate validator content with all available tools context
+ * Wrapped in React cache() to deduplicate requests within same render
+ */
+export const getValidatorContent = cache(
+  async (toolId: string, toolName: string) => {
+    const availableTools = getAllAvailableTools();
+    return generateToolContent(toolId, toolName, "validator", availableTools);
   },
 );

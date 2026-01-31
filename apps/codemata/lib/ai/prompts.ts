@@ -477,7 +477,7 @@ ${getImportantGuidelines()}
  */
 export function buildUserPrompt(
   toolName: string,
-  toolType: "formatter" | "minifier" | "encoder",
+  toolType: "formatter" | "minifier" | "encoder" | "validator",
   availableTools: Array<{ displayName: string; url: string }>,
 ): string {
   const availableToolsList = availableTools
