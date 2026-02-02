@@ -10,7 +10,7 @@ Codemata is a Next.js web application providing high-quality code formatters and
 
 ## What is Codemata?
 
-Codemata offers **19 free developer tools** (as of Phase 9.7):
+Codemata offers **20 free developer tools** (as of Phase 10.1):
 
 ### Formatters (8 tools)
 - CSS/SCSS Formatter
@@ -36,6 +36,9 @@ Codemata offers **19 free developer tools** (as of Phase 9.7):
 - JSON Validator
 - URL Validator
 - XML Validator
+
+### Generators (1 tool)
+- .gitignore Generator
 
 ### Goals
 

@@ -157,3 +157,12 @@ export type ValidatorAction = (
   input: string,
   options?: Record<string, unknown>,
 ) => Promise<ValidationResult>;
+
+/**
+ * Generator Tool interface
+ * Generators have custom UIs and don't follow the standard transformer pattern
+ */
+export interface GeneratorTool extends Tool {
+  // Generators don't need action/language/example
+  // They have custom components and interactions
+}

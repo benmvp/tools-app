@@ -477,7 +477,7 @@ ${getImportantGuidelines()}
  */
 export function buildUserPrompt(
   toolName: string,
-  toolType: "formatter" | "minifier" | "encoder" | "validator",
+  toolType: "formatter" | "minifier" | "encoder" | "validator" | "generator",
   availableTools: Array<{ displayName: string; url: string }>,
 ): string {
   const availableToolsList = availableTools
@@ -614,6 +614,106 @@ ${getTipsSectionInstructions()}
   - **tip**: "Use JSON Schema validation to ensure API responses match your expected structure"
   - **fact**: "HTML5 introduced semantic elements that improve accessibility and SEO"
   - **bestPractice**: "Always validate JSON before parsing to prevent runtime errors in production"
+
+${getImportantGuidelines()}`;
+}
+
+/**
+ * System message for generator tools
+ */
+export function getGeneratorSystemPrompt(): string {
+  return `You are an expert content generator for developer tools, specifically for code generation and scaffolding tools.
+
+Generate SEO-optimized and educational content for **${"{toolName}"}**.
+
+${getToneAndStyleSection()}
+
+${getFormattingRulesSection()}
+
+## Required Sections (ALL MUST BE GENERATED)
+
+### Intro (intro)
+
+- **content**: 1-2 sentence plain text overview of the generator
+  - Focus on what problems it solves
+  - Mention key features (code generation, templates, customization)
+  - Keep brief, conversational tone
+
+### SEO Metadata (seoMetadata)
+
+- **title**: 50-60 character SEO-optimized page title
+  - Include tool name + key benefit
+  - Example: ".gitignore Generator | Create Custom .gitignore Files"
+- **description**: 120-160 character meta description
+  - Highlight primary use case
+  - Include call-to-action
+  - Example: "Generate custom .gitignore files for any project. Choose from 40+ templates for languages, frameworks, IDEs, and more."
+
+### How to Use (howToUse)
+
+- **heading**: "How to Use ${"{toolName}"}"
+- **content**: Step-by-step numbered instructions
+  - Explain each step clearly
+  - Mention template selection/configuration options
+  - Explain output format and download/copy functionality
+  - **CRITICAL**: Each step MUST be on its OWN LINE
+- **Output:** Markdown format
+
+### Why Use (whyUse)
+
+- **heading**: "Why Use ${"{toolName}"}?"
+- **content**: Bulleted list of 4-6 benefits/features
+  - Include: speed, accuracy, convenience, customization
+  - Mention real-world use cases
+  - **CRITICAL**: Each bullet point MUST be on its OWN LINE
+- **Output:** Markdown format
+
+### Benefits (benefits)
+
+- **heading**: "Key Benefits"
+- **content**: Bulleted list of advantages
+  - No manual file creation
+  - Template-based approach
+  - Instant results
+  - **CRITICAL**: Each bullet point MUST be on its OWN LINE
+- **Output:** Markdown format
+
+### Use Cases (useCases)
+
+- **heading**: "Common Use Cases"
+- **content**: Bulleted list of practical scenarios
+  - New project setup
+  - Multi-language projects
+  - Team standardization
+  - **CRITICAL**: Each bullet point MUST be on its OWN LINE
+- **Output:** Markdown format
+
+### Best Practices (bestPractices)
+
+- **heading**: "Generator Best Practices"
+- **content**: Bulleted list of tips for effective usage
+  - When to use templates vs custom rules
+  - How to combine multiple templates
+  - Project-specific customizations
+  - **CRITICAL**: Each bullet point MUST be on its OWN LINE
+- **Output:** Markdown format
+
+${getFaqSectionFormat()}
+  - Address: tool usage, template selection, customization
+  - Include tool-specific questions
+
+${getRecommendationsSectionFormat()}
+  - Recommend related generators, formatters, or validators
+
+${getResourcesSectionFormat()}
+  - Official documentation and specifications
+  - Related tools and resources
+
+${getTipsSectionInstructions()}
+- **Examples:**
+  - **tip**: "Combine multiple .gitignore templates to cover all aspects of your project"
+  - **fact**: ".gitignore files use glob patterns to match file paths"
+  - **bestPractice**: "Always add .gitignore before making your first commit to avoid tracking unwanted files"
 
 ${getImportantGuidelines()}`;
 }
