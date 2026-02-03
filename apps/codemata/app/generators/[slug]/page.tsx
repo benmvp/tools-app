@@ -7,8 +7,9 @@ import { GeneratorAIContent } from "@/components/GeneratorAIContent";
 import { GeneratorIntro } from "@/components/GeneratorIntro";
 import { GitignoreGenerator } from "@/components/GitignoreGenerator";
 import { JsonLd } from "@/components/JsonLd";
+import { SITE_CONFIG } from "@/lib/site-config";
 import { GENERATOR_TOOLS } from "@/lib/tools-data";
-import { getToolStructuredData } from "@/lib/utils";
+import { getAppUrl, getOgImageUrl, getToolStructuredData } from "@/lib/utils";
 import { generateGitignore } from "../actions";
 
 // ISR: Revalidate every 24 hours
@@ -29,10 +30,35 @@ export async function generateMetadata({
   const tool = GENERATOR_TOOLS[slug];
   if (!tool) return {};
 
+  const ogImageUrl = getOgImageUrl(tool.name, tool.metadata.description);
+
   return {
     title: tool.metadata.title,
     description: tool.metadata.description,
     keywords: tool.keywords as unknown as string[],
+    openGraph: {
+      title: tool.metadata.title,
+      description: tool.metadata.description,
+      type: SITE_CONFIG.openGraph.type,
+      url: getAppUrl(`/generators/${slug}`),
+      images: [
+        {
+          url: ogImageUrl,
+          width: 1200,
+          height: 630,
+          alt: `${tool.name} - ${tool.description}`,
+        },
+      ],
+    },
+    twitter: {
+      card: SITE_CONFIG.twitter.card,
+      title: tool.metadata.title,
+      description: tool.metadata.description,
+      images: [ogImageUrl],
+    },
+    alternates: {
+      canonical: getAppUrl(`/generators/${slug}`),
+    },
   };
 }
 

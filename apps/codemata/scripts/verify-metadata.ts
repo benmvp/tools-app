@@ -337,7 +337,8 @@ function validateMetadata(metadata: PageMetadata): string[] {
     metadata.url.includes("/formatters/") ||
     metadata.url.includes("/minifiers/") ||
     metadata.url.includes("/encoders/") ||
-    metadata.url.includes("/validators/")
+    metadata.url.includes("/validators/") ||
+    metadata.url.includes("/generators/")
   ) {
     if (!metadata.structuredData) {
       issues.push("Missing JSON-LD structured data");
@@ -416,6 +417,7 @@ async function main() {
     { url: getAppUrl("/minifiers"), name: "Minifiers" },
     { url: getAppUrl("/encoders"), name: "Encoders" },
     { url: getAppUrl("/validators"), name: "Validators" },
+    { url: getAppUrl("/generators"), name: "Generators" },
   ];
 
   // Add all tool pages dynamically from ALL_TOOLS

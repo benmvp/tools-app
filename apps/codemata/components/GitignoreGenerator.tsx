@@ -62,7 +62,9 @@ export function GitignoreGenerator({ action }: Props) {
     try {
       const result = await action(selectedIds);
       setOutput(result);
-    } catch (_error) {
+    } catch (error) {
+      console.error("Failed to generate .gitignore:", error);
+      toast.error("Failed to generate .gitignore. Please try again.");
     } finally {
       setIsGenerating(false);
     }

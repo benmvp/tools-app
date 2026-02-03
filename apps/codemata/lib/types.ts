@@ -160,9 +160,20 @@ export type ValidatorAction = (
 
 /**
  * Generator Tool interface
- * Generators have custom UIs and don't follow the standard transformer pattern
+ *
+ * Generators create boilerplate code, configuration files, and templates.
+ * Unlike formatters/minifiers/encoders, generators have bespoke UIs with custom
+ * interactions (e.g., template selection, form inputs, multi-step workflows).
+ *
+ * Key differences from other tool types:
+ * - No `action` property: Generators use custom server actions specific to their logic
+ * - No `language` property: Output format varies by generator (not tied to single language)
+ * - No `example` property: Generators use interactive UIs instead of pre-filled examples
+ *
+ * Examples: .gitignore Generator (template selection), UUID Generator (config options),
+ * QR Code Generator (input form + image output)
  */
 export interface GeneratorTool extends Tool {
-  // Generators don't need action/language/example
-  // They have custom components and interactions
+  // Intentionally minimal - generators have unique implementations
+  // See individual generator components for specific UI/logic patterns
 }
