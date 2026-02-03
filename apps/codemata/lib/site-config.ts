@@ -107,5 +107,18 @@ export const SITE_CONFIG = {
         "code validation",
       ],
     },
+    generators: {
+      title: "Code Generators | Codemata",
+      description:
+        "Generate boilerplate code, configuration files, and templates for your projects. Free online tools for developers.",
+      keywords: [
+        "generator",
+        "gitignore",
+        "template",
+        "config",
+        "boilerplate",
+        "code generation",
+      ],
+    },
   },
 } as const;

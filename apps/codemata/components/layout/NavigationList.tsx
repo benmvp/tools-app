@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   ALL_ENCODERS,
   ALL_FORMATTERS,
+  ALL_GENERATORS,
   ALL_MINIFIERS,
   ALL_VALIDATORS,
 } from "@/lib/tools-data";
@@ -62,6 +63,12 @@ export function NavigationList({ onItemClick }: NavigationListProps) {
       singular: "Validator",
       href: "/validators",
       tools: ALL_VALIDATORS,
+    },
+    {
+      name: "Generators",
+      singular: "Generator",
+      href: "/generators",
+      tools: ALL_GENERATORS,
     },
   ];
 

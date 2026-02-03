@@ -985,6 +985,11 @@ All tests run automatically in CI via `.github/workflows/ci.yml`. The workflow u
 **Stage 2 (Sequential)** - Build production bundle + unit tests
 **Stage 3 (Parallel)** - E2E tests, Lighthouse CI, metadata verification
 
+**Environment Variables:**
+- `VERCEL_PROJECT_PRODUCTION_URL=localhost:3333` is set during the build job (Stage 2)
+- This ensures OpenGraph URLs use the correct base URL for metadata generation
+- Required because OpenGraph protocol mandates absolute URLs
+
 See `.github/workflows/ci.yml` for complete configuration details.
 
 ---

@@ -56,6 +56,7 @@ Examples
 
 ### Generators
 
+- [x] .gitignore Generator (Template-based generator with 40+ official templates from GitHub) - HIGH TRAFFIC ✅
 - [ ] Hash (MD5, SHA) (Node.js: `crypto` module)
 - [ ] Lorem Ipsum (Use an existing npm package for generating Lorem Ipsum text)
 - [ ] UUID (`uuid`)

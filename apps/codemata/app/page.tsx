@@ -5,6 +5,7 @@ import { SITE_CONFIG } from "@/lib/site-config";
 import {
   ALL_ENCODERS,
   ALL_FORMATTERS,
+  ALL_GENERATORS,
   ALL_MINIFIERS,
   ALL_TOOLS,
   ALL_VALIDATORS,
@@ -116,7 +117,7 @@ export default function HomePage() {
       </section>
 
       {/* Validators */}
-      <section>
+      <section className="mb-16">
         <Link href="/validators">
           <h2 className="text-3xl font-bold mb-6 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer">
             Validators
@@ -128,6 +129,23 @@ export default function HomePage() {
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {ALL_VALIDATORS.map((tool) => (
+            <ToolCard key={tool.id} {...tool} />
+          ))}
+        </div>
+      </section>
+
+      {/* Generators */}
+      <section>
+        <Link href="/generators">
+          <h2 className="text-3xl font-bold mb-6 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer">
+            Generators
+          </h2>
+        </Link>
+        <p className="text-slate-600 dark:text-slate-400 mb-6">
+          Generate boilerplate code and configuration files for your projects
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {ALL_GENERATORS.map((tool) => (
             <ToolCard key={tool.id} {...tool} />
           ))}
         </div>

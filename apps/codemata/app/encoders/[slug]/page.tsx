@@ -9,14 +9,9 @@ import { JsonLd } from "@/components/JsonLd";
 import { ScrollToTopFab } from "@/components/ScrollToTopFab";
 import { TransformerEncoder } from "@/components/TransformerEncoder";
 import { VisitTracker } from "@/components/VisitTracker";
-import { getEncoderContent } from "@/lib/ai/helpers";
+import { generateToolMetadata } from "@/lib/metadata-helpers";
 import { ENCODER_TOOLS } from "@/lib/tools-data";
-import {
-  getAppUrl,
-  getOgImageUrl,
-  getToolStructuredData,
-  isProductionBuild,
-} from "@/lib/utils";
+import { getToolStructuredData, isProductionBuild } from "@/lib/utils";
 
 // ISR: Revalidate every 24 hours
 export const revalidate = 86400;
@@ -43,73 +38,12 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const encoder = ENCODER_TOOLS[slug];
-
-  if (!encoder) {
-    return {
-      title: "Encoder Not Found",
-    };
-  }
-
-  // Try to get AI-generated content for metadata
-  const aiContent = await getEncoderContent(slug, encoder.name);
-
-  if (aiContent) {
-    return {
-      title: aiContent.seo.title,
-      description: aiContent.seo.description,
-      keywords: aiContent.seo.keywords,
-      alternates: {
-        canonical: getAppUrl(`/encoders/${slug}`),
-      },
-      openGraph: {
-        title: aiContent.openGraph.title,
-        description: aiContent.openGraph.description,
-        type: aiContent.openGraph.type,
-        url: `/encoders/${slug}`,
-        images: [
-          {
-            url: getOgImageUrl(encoder.name, aiContent.openGraph.description),
-            width: 1200,
-            height: 630,
-            alt: `Codemata - ${encoder.name}`,
-          },
-        ],
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: aiContent.openGraph.title,
-        description: aiContent.openGraph.description,
-        images: [getOgImageUrl(encoder.name, aiContent.openGraph.description)],
-      },
-    };
-  }
-
-  // Fallback to static metadata if AI generation fails
-  return {
-    title: encoder.metadata.title,
-    description: encoder.metadata.description,
-    alternates: {
-      canonical: getAppUrl(`/encoders/${slug}`),
-    },
-    openGraph: {
-      title: encoder.metadata.title,
-      description: encoder.metadata.description,
-      url: `/encoders/${slug}`,
-      images: [
-        {
-          url: getOgImageUrl(encoder.name, encoder.metadata.description),
-          width: 1200,
-          height: 630,
-          alt: `Codemata - ${encoder.name}`,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      images: [getOgImageUrl(encoder.name, encoder.metadata.description)],
-    },
-  };
+  return generateToolMetadata({
+    slug,
+    category: "encoders",
+    tools: ENCODER_TOOLS,
+    toolType: "encoder",
+  });
 }
 
 export default async function EncoderPage({

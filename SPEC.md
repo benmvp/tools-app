@@ -37,8 +37,9 @@ Tools App is a suite of three web applications providing free, high-quality deve
    - Code formatters (8 languages/formats)
    - Code minifiers (6 languages/formats)
    - Encoders/decoders (5 tools: JWT, Base64, URL, HTML Entity, JS String)
-   - Validators (5 tools: JSON, HTML, CSS, XML, URL) - **NEW**
-   - Future: Regex Tester, more validators, viewers, generators, converters
+   - Validators (5 tools: JSON, HTML, CSS, XML, URL)
+   - Generators (1 tool: .gitignore Generator) - **NEW**
+   - Future: More generators, viewers, converters, AI tools
 
 2. **Moni** (moni.benmvp.com) - Financial calculators and planning tools
 
@@ -3811,8 +3812,10 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 
 #### Tool Categories (in priority order)
 
-1. **Git/DevOps** (Size: S) - HIGHEST PRIORITY
-   - .gitignore Generator (massive traffic), GitHub Markdown Preview, Dockerfile Linter
+1. **Git/DevOps Tools** (Size: S) - HIGHEST PRIORITY
+   - [x] **10.1:** `.gitignore` Generator (massive traffic) - Template-based generator for .gitignore files (new Generators category) ✅ **COMPLETE**
+   - [ ] **10.2:** GitHub Markdown Preview - Preview GitHub-flavored markdown with live rendering (new Viewers category)
+   - [ ] **10.3:** Dockerfile Linter - Validate Dockerfile syntax and best practices (existing Validators category)
 
 2. **CSS Generators** (Size: M) - VERY HIGH ENGAGEMENT
    - Box Shadow Generator, Border Radius, Flexbox Generator, CSS Grid Generator
@@ -3862,7 +3865,7 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 
 ---
 
-### Phase 11: Convertly App (Size: L)
+### Phase 11: Convertly App
 
 **Goal:** Build conversion tools app using learnings from Codemata
 
@@ -3880,10 +3883,6 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 - [ ] Length Converter
 - [ ] Weight/Mass Converter
 - [ ] Volume Converter
-- [ ] Temperature Converter
-- [ ] Data Size Converter
-- [ ] Time Zone Converter
-- [ ] Numeral System Converter
 - [ ] Area Converter
 
 **10.3 AI Content**
@@ -3897,11 +3896,18 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 - [ ] Deploy to convertly.benmvp.com
 - [ ] Add analytics and ads
 
+**10.5 Other Converters**
+
+- [ ] Temperature Converter
+- [ ] Time Zone Converter
+- [ ] Data Size Converter (bit, byte, KB, MB, GB, TB, etc.)
+- [ ] Numeral System Converter (decimal, binary, octal, hexadecimal)
+
 **Deliverable:** Convertly app launched with core converters
 
 ---
 
-### Phase 12: Moni App (Size: XL)
+### Phase 12: Moni App
 
 **Goal:** Build financial calculator app
 

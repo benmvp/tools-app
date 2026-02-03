@@ -49,6 +49,7 @@ import {
 import type {
   EncoderTool,
   FormatterTool,
+  GeneratorTool,
   MinifierTool,
   ValidatorTool,
 } from "./types";
@@ -799,6 +800,32 @@ export const ALL_ENCODERS: EncoderTool[] = Object.values(ENCODER_TOOLS);
 export const ALL_VALIDATORS: ValidatorTool[] = Object.values(VALIDATOR_TOOLS);
 
 /**
+ * Generator Tools - Record-based structure for O(1) lookups
+ * Key is the URL slug (e.g., "gitignore-generator")
+ */
+export const GENERATOR_TOOLS: Record<string, GeneratorTool> = {
+  "gitignore-generator": {
+    id: "gitignore",
+    name: ".gitignore Generator",
+    description: "Generate .gitignore files for any project stack",
+    url: "/generators/gitignore-generator",
+    icon: FileCode,
+    comingSoon: false,
+    keywords: ["gitignore", "git", "ignore", "template", "github", "vcs"],
+    metadata: {
+      title: ".gitignore Generator | Codemata",
+      description:
+        "Generate .gitignore files for any programming language, framework, IDE, or operating system. Free online tool with 40+ official templates.",
+    },
+  },
+};
+
+/**
+ * Helper array for navigation - uses Object.values for centralized updates
+ */
+export const ALL_GENERATORS = Object.values(GENERATOR_TOOLS);
+
+/**
  * Centralized tool registry for dynamic counting and category lookups.
  * Used by OG image generation to calculate tool counts automatically.
  */
@@ -807,6 +834,7 @@ export const ALL_TOOLS = {
   minifiers: ALL_MINIFIERS,
   encoders: ALL_ENCODERS,
   validators: ALL_VALIDATORS,
+  generators: ALL_GENERATORS,
 } as const;
 
 /**
@@ -816,8 +844,10 @@ export type FormatterSlug = keyof typeof FORMATTER_TOOLS;
 export type MinifierSlug = keyof typeof MINIFIER_TOOLS;
 export type EncoderSlug = keyof typeof ENCODER_TOOLS;
 export type ValidatorSlug = keyof typeof VALIDATOR_TOOLS;
+export type GeneratorSlug = keyof typeof GENERATOR_TOOLS;
 export type ToolSlug =
   | FormatterSlug
   | MinifierSlug
   | EncoderSlug
-  | ValidatorSlug;
+  | ValidatorSlug
+  | GeneratorSlug;

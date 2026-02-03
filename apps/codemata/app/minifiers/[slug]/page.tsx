@@ -9,15 +9,10 @@ import { MinifierIntro } from "@/components/MinifierIntro";
 import { ScrollToTopFab } from "@/components/ScrollToTopFab";
 import { TransformerMinifier } from "@/components/TransformerMinifier";
 import { VisitTracker } from "@/components/VisitTracker";
-import { getMinifierContent } from "@/lib/ai/helpers";
+import { generateToolMetadata } from "@/lib/metadata-helpers";
 import { MINIFIER_TOOLS } from "@/lib/tools-data";
 import type { MinifierAction } from "@/lib/types";
-import {
-  getAppUrl,
-  getOgImageUrl,
-  getToolStructuredData,
-  isProductionBuild,
-} from "@/lib/utils";
+import { getToolStructuredData, isProductionBuild } from "@/lib/utils";
 
 // ISR: Revalidate every 24 hours
 export const revalidate = 86400;
@@ -47,73 +42,12 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const minifier = MINIFIER_TOOLS[slug];
-
-  if (!minifier) {
-    return {
-      title: "Minifier Not Found",
-    };
-  }
-
-  // Try to get AI-generated content for metadata
-  const aiContent = await getMinifierContent(slug, minifier.name);
-
-  if (aiContent) {
-    return {
-      title: aiContent.seo.title,
-      description: aiContent.seo.description,
-      keywords: aiContent.seo.keywords,
-      alternates: {
-        canonical: getAppUrl(`/minifiers/${slug}`),
-      },
-      openGraph: {
-        title: aiContent.openGraph.title,
-        description: aiContent.openGraph.description,
-        type: aiContent.openGraph.type,
-        url: `/minifiers/${slug}`,
-        images: [
-          {
-            url: getOgImageUrl(minifier.name, aiContent.openGraph.description),
-            width: 1200,
-            height: 630,
-            alt: `Codemata - ${minifier.name} Minifier`,
-          },
-        ],
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: aiContent.openGraph.title,
-        description: aiContent.openGraph.description,
-        images: [getOgImageUrl(minifier.name, aiContent.openGraph.description)],
-      },
-    };
-  }
-
-  // Fallback to static metadata if AI generation fails
-  return {
-    title: minifier.metadata.title,
-    description: minifier.metadata.description,
-    alternates: {
-      canonical: getAppUrl(`/minifiers/${slug}`),
-    },
-    openGraph: {
-      title: minifier.metadata.title,
-      description: minifier.metadata.description,
-      url: `/minifiers/${slug}`,
-      images: [
-        {
-          url: getOgImageUrl(minifier.name, minifier.metadata.description),
-          width: 1200,
-          height: 630,
-          alt: `Codemata - ${minifier.name} Minifier`,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      images: [getOgImageUrl(minifier.name, minifier.metadata.description)],
-    },
-  };
+  return generateToolMetadata({
+    slug,
+    category: "minifiers",
+    tools: MINIFIER_TOOLS,
+    toolType: "minifier",
+  });
 }
 
 export default async function MinifierPage({

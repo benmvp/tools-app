@@ -1,6 +1,7 @@
 import {
   ENCODER_TOOLS,
   FORMATTER_TOOLS,
+  GENERATOR_TOOLS,
   MINIFIER_TOOLS,
   VALIDATOR_TOOLS,
 } from "./tools-data";
@@ -10,7 +11,12 @@ export interface SearchableToolItem {
   name: string;
   description: string;
   url: string;
-  category: "Formatters" | "Minifiers" | "Encoders" | "Validators";
+  category:
+    | "Formatters"
+    | "Minifiers"
+    | "Encoders"
+    | "Validators"
+    | "Generators";
   keywords: string[];
   // For fuzzy matching - combined searchable text
   searchText: string;
@@ -68,7 +74,25 @@ function buildSearchIndex(): SearchableToolItem[] {
     searchText: [tool.name, ...(tool.keywords || [])].join(" ").toLowerCase(),
   }));
 
-  return [...formatters, ...minifiers, ...encoders, ...validators];
+  const generators = Object.values(GENERATOR_TOOLS).map((tool) => ({
+    id: tool.id,
+    name: tool.name,
+    description: tool.description,
+    url: tool.url,
+    category: "Generators" as const,
+    keywords: tool.keywords || [],
+    // Only index name + keywords for more precise fuzzy matching
+    // Description creates too many false positives with cmdk fuzzy search
+    searchText: [tool.name, ...(tool.keywords || [])].join(" ").toLowerCase(),
+  }));
+
+  return [
+    ...formatters,
+    ...minifiers,
+    ...encoders,
+    ...validators,
+    ...generators,
+  ];
 }
 
 export const SEARCH_INDEX = buildSearchIndex();

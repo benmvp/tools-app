@@ -207,6 +207,26 @@ export function CommandMenu({ open, onOpenChange }: CommandMenuProps) {
                 );
               })}
             </CommandGroup>
+
+            {/* Generators group */}
+            <CommandGroup heading="Generators">
+              {SEARCH_INDEX.filter(
+                (item) => item.category === "Generators",
+              ).map((tool) => {
+                const Icon = getToolIcon(tool);
+
+                return (
+                  <CommandItem
+                    key={tool.url}
+                    value={tool.searchText}
+                    onSelect={() => handleSelect(tool.url)}
+                  >
+                    {Icon && <Icon className="mr-2 h-4 w-4" />}
+                    <span>{tool.name}</span>
+                  </CommandItem>
+                );
+              })}
+            </CommandGroup>
           </>
         )}
       </CommandList>
