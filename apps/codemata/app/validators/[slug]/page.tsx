@@ -13,13 +13,9 @@ import { JsonValidator } from "@/components/validators/JsonValidator";
 import { UrlValidator } from "@/components/validators/UrlValidator";
 import { XmlValidator } from "@/components/validators/XmlValidator";
 import { getValidatorContent } from "@/lib/ai/helpers";
+import { generateToolMetadata } from "@/lib/metadata-helpers";
 import { VALIDATOR_TOOLS } from "@/lib/tools-data";
-import {
-  getAppUrl,
-  getOgImageUrl,
-  getToolStructuredData,
-  isProductionBuild,
-} from "@/lib/utils";
+import { getToolStructuredData, isProductionBuild } from "@/lib/utils";
 import { VALIDATOR_EXAMPLES } from "@/lib/validators/examples";
 
 // ISR revalidation - 24 hours
@@ -37,74 +33,12 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const tool = VALIDATOR_TOOLS[slug];
-
-  if (!tool) {
-    return {
-      title: "Validator Not Found | Codemata",
-      description: "The requested validator tool could not be found.",
-    };
-  }
-
-  // Try to get AI-generated content for metadata
-  const aiContent = await getValidatorContent(slug, tool.name);
-
-  if (aiContent) {
-    return {
-      title: aiContent.seo.title,
-      description: aiContent.seo.description,
-      keywords: aiContent.seo.keywords,
-      alternates: {
-        canonical: getAppUrl(`/validators/${slug}`),
-      },
-      openGraph: {
-        title: aiContent.openGraph.title,
-        description: aiContent.openGraph.description,
-        type: aiContent.openGraph.type,
-        url: `/validators/${slug}`,
-        images: [
-          {
-            url: getOgImageUrl(tool.name, aiContent.openGraph.description),
-            width: 1200,
-            height: 630,
-            alt: `Codemata - ${tool.name}`,
-          },
-        ],
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: aiContent.openGraph.title,
-        description: aiContent.openGraph.description,
-        images: [getOgImageUrl(tool.name, aiContent.openGraph.description)],
-      },
-    };
-  }
-
-  // Fallback to static metadata if AI generation fails
-  return {
-    title: tool.metadata.title,
-    description: tool.metadata.description,
-    alternates: {
-      canonical: getAppUrl(`/validators/${slug}`),
-    },
-    openGraph: {
-      title: tool.metadata.title,
-      description: tool.metadata.description,
-      url: `/validators/${slug}`,
-      images: [
-        {
-          url: getOgImageUrl(tool.name, tool.metadata.description),
-          width: 1200,
-          height: 630,
-          alt: `Codemata - ${tool.name}`,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      images: [getOgImageUrl(tool.name, tool.metadata.description)],
-    },
-  };
+  return generateToolMetadata({
+    slug,
+    category: "validators",
+    tools: VALIDATOR_TOOLS,
+    aiContentGetter: getValidatorContent,
+  });
 }
 
 export function generateStaticParams() {

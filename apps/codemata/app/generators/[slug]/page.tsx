@@ -7,9 +7,10 @@ import { GeneratorAIContent } from "@/components/GeneratorAIContent";
 import { GeneratorIntro } from "@/components/GeneratorIntro";
 import { GitignoreGenerator } from "@/components/GitignoreGenerator";
 import { JsonLd } from "@/components/JsonLd";
-import { SITE_CONFIG } from "@/lib/site-config";
+import { getGeneratorContent } from "@/lib/ai/helpers";
+import { generateToolMetadata } from "@/lib/metadata-helpers";
 import { GENERATOR_TOOLS } from "@/lib/tools-data";
-import { getAppUrl, getOgImageUrl, getToolStructuredData } from "@/lib/utils";
+import { getToolStructuredData } from "@/lib/utils";
 import { generateGitignore } from "../actions";
 
 // ISR: Revalidate every 24 hours
@@ -27,39 +28,12 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const tool = GENERATOR_TOOLS[slug];
-  if (!tool) return {};
-
-  const ogImageUrl = getOgImageUrl(tool.name, tool.metadata.description);
-
-  return {
-    title: tool.metadata.title,
-    description: tool.metadata.description,
-    keywords: tool.keywords as unknown as string[],
-    openGraph: {
-      title: tool.metadata.title,
-      description: tool.metadata.description,
-      type: SITE_CONFIG.openGraph.type,
-      url: getAppUrl(`/generators/${slug}`),
-      images: [
-        {
-          url: ogImageUrl,
-          width: 1200,
-          height: 630,
-          alt: `${tool.name} - ${tool.description}`,
-        },
-      ],
-    },
-    twitter: {
-      card: SITE_CONFIG.twitter.card,
-      title: tool.metadata.title,
-      description: tool.metadata.description,
-      images: [ogImageUrl],
-    },
-    alternates: {
-      canonical: getAppUrl(`/generators/${slug}`),
-    },
-  };
+  return generateToolMetadata({
+    slug,
+    category: "generators",
+    tools: GENERATOR_TOOLS,
+    aiContentGetter: getGeneratorContent,
+  });
 }
 
 export default async function GeneratorPage({
