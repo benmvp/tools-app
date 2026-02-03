@@ -1,103 +1,61 @@
 import { cache } from "react";
 import { generateToolContent } from "@/lib/ai/generate";
-import {
-  ALL_ENCODERS,
-  ALL_FORMATTERS,
-  ALL_GENERATORS,
-  ALL_MINIFIERS,
-  ALL_VALIDATORS,
-} from "@/lib/tools-data";
+import { ALL_TOOLS } from "@/lib/tools-data";
 
 /**
  * Helper to get all available tools for recommendation context
- * Combines formatters, minifiers, encoders, validators, and generators from centralized tool data
  */
 export function getAllAvailableTools() {
-  const formatters = ALL_FORMATTERS.map((tool) => ({
-    displayName: tool.name,
-    url: tool.url,
-  }));
-
-  const minifiers = ALL_MINIFIERS.map((tool) => ({
-    displayName: tool.name,
-    url: tool.url,
-  }));
-
-  const encoders = ALL_ENCODERS.map((tool) => ({
-    displayName: tool.name,
-    url: tool.url,
-  }));
-
-  const validators = ALL_VALIDATORS.map((tool) => ({
-    displayName: tool.name,
-    url: tool.url,
-  }));
-
-  const generators = ALL_GENERATORS.map((tool) => ({
-    displayName: tool.name,
-    url: tool.url,
-  }));
-
-  return [
-    ...formatters,
-    ...minifiers,
-    ...encoders,
-    ...validators,
-    ...generators,
-  ];
+  return Object.values(ALL_TOOLS)
+    .flat()
+    .map((tool) => ({
+      displayName: tool.name,
+      url: tool.url,
+    }));
 }
 
 /**
- * Generate formatter content with all available tools context
+ * Generate content for any tool with automatic category-aware caching
  * Wrapped in React cache() to deduplicate requests within same render
+ * No category-specific functions needed - works for all tool types
+ */
+export const getToolContent = cache(
+  async (
+    toolId: string,
+    toolName: string,
+    toolType: "formatter" | "minifier" | "encoder" | "validator" | "generator",
+  ) => {
+    const availableTools = getAllAvailableTools();
+    return generateToolContent(toolId, toolName, toolType, availableTools);
+  },
+);
+
+/**
+ * Category-specific helper functions for backward compatibility
+ * These are thin wrappers that maintain existing component APIs
+ * All logic centralized in getToolContent above
  */
 export const getFormatterContent = cache(
-  async (toolId: string, toolName: string) => {
-    const availableTools = getAllAvailableTools();
-    return generateToolContent(toolId, toolName, "formatter", availableTools);
-  },
+  async (toolId: string, toolName: string) =>
+    getToolContent(toolId, toolName, "formatter"),
 );
 
-/**
- * Generate minifier content with all available tools context
- * Wrapped in React cache() to deduplicate requests within same render
- */
 export const getMinifierContent = cache(
-  async (toolId: string, toolName: string) => {
-    const availableTools = getAllAvailableTools();
-    return generateToolContent(toolId, toolName, "minifier", availableTools);
-  },
+  async (toolId: string, toolName: string) =>
+    getToolContent(toolId, toolName, "minifier"),
 );
 
-/**
- * Generate encoder content with all available tools context
- * Wrapped in React cache() to deduplicate requests within same render
- */
 export const getEncoderContent = cache(
-  async (toolId: string, toolName: string) => {
-    const availableTools = getAllAvailableTools();
-    return generateToolContent(toolId, toolName, "encoder", availableTools);
-  },
+  async (toolId: string, toolName: string) =>
+    getToolContent(toolId, toolName, "encoder"),
 );
 
-/**
- * Generate validator content with all available tools context
- * Wrapped in React cache() to deduplicate requests within same render
- */
 export const getValidatorContent = cache(
-  async (toolId: string, toolName: string) => {
-    const availableTools = getAllAvailableTools();
-    return generateToolContent(toolId, toolName, "validator", availableTools);
-  },
+  async (toolId: string, toolName: string) =>
+    getToolContent(toolId, toolName, "validator"),
 );
 
-/**
- * Generate generator content with all available tools context
- * Wrapped in React cache() to deduplicate requests within same render
- */
 export const getGeneratorContent = cache(
-  async (toolId: string, toolName: string) => {
-    const availableTools = getAllAvailableTools();
-    return generateToolContent(toolId, toolName, "generator", availableTools);
-  },
+  async (toolId: string, toolName: string) =>
+    getToolContent(toolId, toolName, "generator"),
 );

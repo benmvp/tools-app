@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getToolContent } from "./ai/helpers";
 import { SITE_CONFIG } from "./site-config";
 import type { Tool } from "./types";
 import { getAppUrl, getOgImageUrl } from "./utils";
@@ -7,8 +8,7 @@ export interface ToolMetadataParams {
   slug: string;
   category: string;
   tools: Record<string, Tool>;
-  // biome-ignore lint/suspicious/noExplicitAny: AI content structure varies by category
-  aiContentGetter: (slug: string, name: string) => Promise<any | undefined>;
+  toolType: "formatter" | "minifier" | "encoder" | "validator" | "generator";
 }
 
 /**
@@ -19,7 +19,7 @@ export async function generateToolMetadata({
   slug,
   category,
   tools,
-  aiContentGetter,
+  toolType,
 }: ToolMetadataParams): Promise<Metadata> {
   const tool = tools[slug];
 
@@ -30,7 +30,7 @@ export async function generateToolMetadata({
   }
 
   // Try AI-generated content first
-  const aiContent = await aiContentGetter(slug, tool.name);
+  const aiContent = await getToolContent(slug, tool.name, toolType);
 
   // Extract common values (single source of truth)
   const canonicalUrl = getAppUrl(`/${category}/${slug}`);

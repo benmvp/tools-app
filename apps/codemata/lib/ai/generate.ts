@@ -62,6 +62,15 @@ function processContentNewlines(content: ToolContent): ToolContent {
   };
 }
 
+// Get appropriate system prompt using lookup for readability
+const ALL_SYSTEM_PROMPTS = {
+  formatter: getFormatterSystemPrompt,
+  minifier: getMinifierSystemPrompt,
+  encoder: getEncoderSystemPrompt,
+  validator: getValidatorSystemPrompt,
+  generator: getGeneratorSystemPrompt,
+} as const;
+
 /**
  * Generate AI content for a tool (formatter, minifier, encoder, validator, or generator)
  * Returns undefined if generation fails (graceful degradation)
@@ -92,17 +101,7 @@ export async function generateToolContent(
   console.log(`Generating AI content for ${cacheKey}...`);
 
   try {
-    // Get appropriate system prompt
-    const systemPrompt =
-      toolType === "formatter"
-        ? getFormatterSystemPrompt()
-        : toolType === "minifier"
-          ? getMinifierSystemPrompt()
-          : toolType === "encoder"
-            ? getEncoderSystemPrompt()
-            : toolType === "validator"
-              ? getValidatorSystemPrompt()
-              : getGeneratorSystemPrompt();
+    const systemPrompt = ALL_SYSTEM_PROMPTS[toolType]();
 
     // Build user prompt with tool context
     const userPrompt = buildUserPrompt(toolName, toolType, availableTools);

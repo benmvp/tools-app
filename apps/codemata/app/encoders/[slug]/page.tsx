@@ -9,7 +9,6 @@ import { JsonLd } from "@/components/JsonLd";
 import { ScrollToTopFab } from "@/components/ScrollToTopFab";
 import { TransformerEncoder } from "@/components/TransformerEncoder";
 import { VisitTracker } from "@/components/VisitTracker";
-import { getEncoderContent } from "@/lib/ai/helpers";
 import { generateToolMetadata } from "@/lib/metadata-helpers";
 import { ENCODER_TOOLS } from "@/lib/tools-data";
 import { getToolStructuredData, isProductionBuild } from "@/lib/utils";
@@ -43,7 +42,7 @@ export async function generateMetadata({
     slug,
     category: "encoders",
     tools: ENCODER_TOOLS,
-    aiContentGetter: getEncoderContent,
+    toolType: "encoder",
   });
 }
 

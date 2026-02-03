@@ -304,6 +304,15 @@ function validateMetadata(metadata: PageMetadata): string[] {
           `Validators category OG image title should include validator count (expected "${count} Validators")`,
         );
       }
+    } else if (metadata.url.endsWith("/generators")) {
+      // Generators category: title should include generator count
+      const count = ALL_TOOLS.generators.filter((t) => !t.comingSoon).length;
+      const pluralized = count === 1 ? "Generator" : "Generators";
+      if (!metadata.ogImage.includes(`title=${count}+${pluralized}`)) {
+        issues.push(
+          `Generators category OG image title should include generator count (expected "${count} ${pluralized}")`,
+        );
+      }
     }
     // Tool pages use tool name in title for uniqueness, v= uses OG_IMAGE_VERSION
 

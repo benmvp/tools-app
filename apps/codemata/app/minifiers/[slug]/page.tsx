@@ -9,7 +9,6 @@ import { MinifierIntro } from "@/components/MinifierIntro";
 import { ScrollToTopFab } from "@/components/ScrollToTopFab";
 import { TransformerMinifier } from "@/components/TransformerMinifier";
 import { VisitTracker } from "@/components/VisitTracker";
-import { getMinifierContent } from "@/lib/ai/helpers";
 import { generateToolMetadata } from "@/lib/metadata-helpers";
 import { MINIFIER_TOOLS } from "@/lib/tools-data";
 import type { MinifierAction } from "@/lib/types";
@@ -47,7 +46,7 @@ export async function generateMetadata({
     slug,
     category: "minifiers",
     tools: MINIFIER_TOOLS,
-    aiContentGetter: getMinifierContent,
+    toolType: "minifier",
   });
 }
 

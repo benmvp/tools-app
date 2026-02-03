@@ -9,7 +9,6 @@ import { JsonLd } from "@/components/JsonLd";
 import { ScrollToTopFab } from "@/components/ScrollToTopFab";
 import { Transformer } from "@/components/Transformer";
 import { VisitTracker } from "@/components/VisitTracker";
-import { getFormatterContent } from "@/lib/ai/helpers";
 import { generateToolMetadata } from "@/lib/metadata-helpers";
 import { FORMATTER_TOOLS } from "@/lib/tools-data";
 import type { FormatterAction } from "@/lib/types";
@@ -115,7 +114,7 @@ export async function generateMetadata({
     slug,
     category: "formatters",
     tools: FORMATTER_TOOLS,
-    aiContentGetter: getFormatterContent,
+    toolType: "formatter",
   });
 }
 

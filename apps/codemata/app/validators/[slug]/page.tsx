@@ -12,7 +12,6 @@ import { HtmlValidator } from "@/components/validators/HtmlValidator";
 import { JsonValidator } from "@/components/validators/JsonValidator";
 import { UrlValidator } from "@/components/validators/UrlValidator";
 import { XmlValidator } from "@/components/validators/XmlValidator";
-import { getValidatorContent } from "@/lib/ai/helpers";
 import { generateToolMetadata } from "@/lib/metadata-helpers";
 import { VALIDATOR_TOOLS } from "@/lib/tools-data";
 import { getToolStructuredData, isProductionBuild } from "@/lib/utils";
@@ -37,7 +36,7 @@ export async function generateMetadata({
     slug,
     category: "validators",
     tools: VALIDATOR_TOOLS,
-    aiContentGetter: getValidatorContent,
+    toolType: "validator",
   });
 }
 

@@ -7,7 +7,6 @@ import { GeneratorAIContent } from "@/components/GeneratorAIContent";
 import { GeneratorIntro } from "@/components/GeneratorIntro";
 import { GitignoreGenerator } from "@/components/GitignoreGenerator";
 import { JsonLd } from "@/components/JsonLd";
-import { getGeneratorContent } from "@/lib/ai/helpers";
 import { generateToolMetadata } from "@/lib/metadata-helpers";
 import { GENERATOR_TOOLS } from "@/lib/tools-data";
 import { getToolStructuredData } from "@/lib/utils";
@@ -32,7 +31,7 @@ export async function generateMetadata({
     slug,
     category: "generators",
     tools: GENERATOR_TOOLS,
-    aiContentGetter: getGeneratorContent,
+    toolType: "generator",
   });
 }
 

@@ -4,11 +4,39 @@ import Link from "next/link";
 import { ToolCard } from "@/components/ToolCard";
 import { SITE_CONFIG } from "@/lib/site-config";
 import { ALL_GENERATORS } from "@/lib/tools-data";
+import { getAppUrl, getOgImageUrl } from "@/lib/utils";
+
+const ogImageUrl = getOgImageUrl(
+  `${ALL_GENERATORS.length} Generator${ALL_GENERATORS.length !== 1 ? "s" : ""}`,
+  SITE_CONFIG.pages.generators.description,
+);
 
 export const metadata: Metadata = {
   title: SITE_CONFIG.pages.generators.title,
   description: SITE_CONFIG.pages.generators.description,
   keywords: SITE_CONFIG.pages.generators.keywords as unknown as string[],
+  openGraph: {
+    title: SITE_CONFIG.pages.generators.title,
+    description: SITE_CONFIG.pages.generators.description,
+    url: getAppUrl("/generators"),
+    images: [
+      {
+        url: ogImageUrl,
+        width: 1200,
+        height: 630,
+        alt: `${SITE_CONFIG.name} - ${ALL_GENERATORS.length} Code Generator${ALL_GENERATORS.length !== 1 ? "s" : ""}`,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_CONFIG.pages.generators.title,
+    description: SITE_CONFIG.pages.generators.description,
+    images: [ogImageUrl],
+  },
+  alternates: {
+    canonical: getAppUrl("/generators"),
+  },
 };
 
 export default function GeneratorsPage() {
