@@ -1,98 +1,38 @@
-import {
-  ENCODER_TOOLS,
-  FORMATTER_TOOLS,
-  GENERATOR_TOOLS,
-  MINIFIER_TOOLS,
-  VALIDATOR_TOOLS,
-} from "./tools-data";
+import type { LucideIcon } from "lucide-react";
+import { ALL_TOOLS } from "./tools-data";
+import type { ToolCategoryId } from "./types";
 
 export interface SearchableToolItem {
   id: string;
   name: string;
   description: string;
   url: string;
-  category:
-    | "Formatters"
-    | "Minifiers"
-    | "Encoders"
-    | "Validators"
-    | "Generators";
+  category: ToolCategoryId;
   keywords: string[];
+  icon: LucideIcon;
   // For fuzzy matching - combined searchable text
   searchText: string;
 }
 
 /**
- * Build search index from all tools at module load time
+ * Build search index from ALL_TOOLS at module load time
+ * Automatically includes all categories - no manual updates needed
  */
 function buildSearchIndex(): SearchableToolItem[] {
-  const formatters = Object.values(FORMATTER_TOOLS).map((tool) => ({
-    id: tool.id,
-    name: tool.name,
-    description: tool.description,
-    url: tool.url,
-    category: "Formatters" as const,
-    keywords: tool.keywords || [],
-    // Only index name + keywords for more precise fuzzy matching
-    // Description creates too many false positives with cmdk fuzzy search
-    searchText: [tool.name, ...(tool.keywords || [])].join(" ").toLowerCase(),
-  }));
-
-  const minifiers = Object.values(MINIFIER_TOOLS).map((tool) => ({
-    id: tool.id,
-    name: tool.name,
-    description: tool.description,
-    url: tool.url,
-    category: "Minifiers" as const,
-    keywords: tool.keywords || [],
-    // Only index name + keywords for more precise fuzzy matching
-    // Description creates too many false positives with cmdk fuzzy search
-    searchText: [tool.name, ...(tool.keywords || [])].join(" ").toLowerCase(),
-  }));
-
-  const encoders = Object.values(ENCODER_TOOLS).map((tool) => ({
-    id: tool.id,
-    name: tool.name,
-    description: tool.description,
-    url: tool.url,
-    category: "Encoders" as const,
-    keywords: tool.keywords || [],
-    // Only index name + keywords for more precise fuzzy matching
-    // Description creates too many false positives with cmdk fuzzy search
-    searchText: [tool.name, ...(tool.keywords || [])].join(" ").toLowerCase(),
-  }));
-
-  const validators = Object.values(VALIDATOR_TOOLS).map((tool) => ({
-    id: tool.id,
-    name: tool.name,
-    description: tool.description,
-    url: tool.url,
-    category: "Validators" as const,
-    keywords: tool.keywords || [],
-    // Only index name + keywords for more precise fuzzy matching
-    // Description creates too many false positives with cmdk fuzzy search
-    searchText: [tool.name, ...(tool.keywords || [])].join(" ").toLowerCase(),
-  }));
-
-  const generators = Object.values(GENERATOR_TOOLS).map((tool) => ({
-    id: tool.id,
-    name: tool.name,
-    description: tool.description,
-    url: tool.url,
-    category: "Generators" as const,
-    keywords: tool.keywords || [],
-    // Only index name + keywords for more precise fuzzy matching
-    // Description creates too many false positives with cmdk fuzzy search
-    searchText: [tool.name, ...(tool.keywords || [])].join(" ").toLowerCase(),
-  }));
-
-  return [
-    ...formatters,
-    ...minifiers,
-    ...encoders,
-    ...validators,
-    ...generators,
-  ];
+  return Object.entries(ALL_TOOLS).flatMap(([categoryId, category]) =>
+    category.tools.map((tool) => ({
+      id: tool.id,
+      name: tool.name,
+      description: tool.description,
+      url: tool.url,
+      category: categoryId as ToolCategoryId,
+      keywords: tool.keywords || [],
+      icon: tool.icon,
+      // Only index name + keywords for more precise fuzzy matching
+      // Description creates too many false positives with cmdk fuzzy search
+      searchText: [tool.name, ...(tool.keywords || [])].join(" ").toLowerCase(),
+    })),
+  );
 }
 
 export const SEARCH_INDEX = buildSearchIndex();

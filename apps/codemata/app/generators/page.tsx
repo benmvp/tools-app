@@ -3,11 +3,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ToolCard } from "@/components/ToolCard";
 import { SITE_CONFIG } from "@/lib/site-config";
-import { ALL_GENERATORS } from "@/lib/tools-data";
+import { getCategoryById } from "@/lib/tools-data";
 import { getAppUrl, getOgImageUrl } from "@/lib/utils";
 
+const generatorCategory = getCategoryById("generators");
+const generatorCount = generatorCategory.tools.length;
+
 const ogImageUrl = getOgImageUrl(
-  `${ALL_GENERATORS.length} Generator${ALL_GENERATORS.length !== 1 ? "s" : ""}`,
+  `${generatorCount} ${generatorCategory.label}`,
   SITE_CONFIG.pages.generators.description,
 );
 
@@ -24,7 +27,7 @@ export const metadata: Metadata = {
         url: ogImageUrl,
         width: 1200,
         height: 630,
-        alt: `${SITE_CONFIG.name} - ${ALL_GENERATORS.length} Code Generator${ALL_GENERATORS.length !== 1 ? "s" : ""}`,
+        alt: `${SITE_CONFIG.name} - ${generatorCount} ${generatorCategory.label}`,
       },
     ],
   },
@@ -58,14 +61,14 @@ export default function GeneratorsPage() {
           {SITE_CONFIG.pages.generators.description}
         </p>
         <p className="text-sm text-muted-foreground">
-          {ALL_GENERATORS.length} generator
-          {ALL_GENERATORS.length !== 1 ? "s" : ""} available
+          {generatorCount} generator
+          {generatorCount !== 1 ? "s" : ""} available
         </p>
       </div>
 
       {/* Tool Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {ALL_GENERATORS.map((tool) => (
+        {generatorCategory.tools.map((tool) => (
           <ToolCard key={tool.id} {...tool} />
         ))}
       </div>

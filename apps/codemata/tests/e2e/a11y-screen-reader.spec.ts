@@ -1,5 +1,8 @@
 import { expect, test } from "@playwright/test";
-import { ALL_FORMATTERS } from "../../lib/tools-data";
+import { ALL_TOOLS } from "../../lib/tools-data";
+
+// Test-local convenience constant
+const formatters = ALL_TOOLS.formatters.tools;
 
 /**
  * Screen Reader Compatibility Tests
@@ -69,12 +72,12 @@ test.describe("Screen Reader Compatibility", () => {
   });
 
   test("tool page should have proper heading hierarchy", async ({ page }) => {
-    await page.goto(ALL_FORMATTERS[0].url);
+    await page.goto(formatters[0].url);
 
     // Tool name in h1
     const h1 = page.locator("h1");
     await expect(h1).toBeVisible();
-    await expect(h1).toContainText(ALL_FORMATTERS[0].name);
+    await expect(h1).toContainText(formatters[0].name);
 
     // Content sections should use h2 or h3
     const h2Count = await page.locator("h2").count();
@@ -82,7 +85,7 @@ test.describe("Screen Reader Compatibility", () => {
   });
 
   test("should have descriptive button labels", async ({ page }) => {
-    await page.goto(ALL_FORMATTERS[0].url);
+    await page.goto(formatters[0].url);
 
     // Copy button should have descriptive text
     const copyButton = page.locator('button:has-text("Copy")').first();
@@ -101,7 +104,7 @@ test.describe("Screen Reader Compatibility", () => {
   });
 
   test("form controls should have associated labels", async ({ page }) => {
-    await page.goto(ALL_FORMATTERS[0].url);
+    await page.goto(formatters[0].url);
 
     // Indentation select should have label
     const select = page.locator('select[name="indentation"]');
@@ -123,7 +126,7 @@ test.describe("Screen Reader Compatibility", () => {
   });
 
   test("should announce dynamic content changes", async ({ page }) => {
-    await page.goto(ALL_FORMATTERS[0].url);
+    await page.goto(formatters[0].url);
 
     // Look for aria-live regions for toast notifications
     const liveRegions = page.locator("[aria-live]");
@@ -216,7 +219,7 @@ test.describe("Screen Reader Compatibility", () => {
   test("collapsible sections should have proper ARIA attributes", async ({
     page,
   }) => {
-    await page.goto(ALL_FORMATTERS[0].url);
+    await page.goto(formatters[0].url);
 
     // Find collapsible content sections (if any)
     const collapsibleButtons = page.locator("button[aria-expanded]");

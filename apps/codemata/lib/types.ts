@@ -177,3 +177,33 @@ export interface GeneratorTool extends Tool {
   // Intentionally minimal - generators have unique implementations
   // See individual generator components for specific UI/logic patterns
 }
+
+/**
+ * Type-safe category identifiers
+ * Use this instead of loose strings for category references
+ */
+export type ToolCategoryId =
+  | "formatters"
+  | "minifiers"
+  | "encoders"
+  | "validators"
+  | "generators";
+
+/**
+ * Tool category metadata with nested tools
+ * Single source of truth for all category information
+ */
+export interface ToolCategory {
+  id: ToolCategoryId;
+  label: string; // Display name: "Formatters"
+  singular: string; // Singular form: "Formatter"
+  url: string; // Category page: "/formatters"
+  description: string; // SEO/meta description
+  order: number; // Display order (1, 2, 3...)
+  tools:
+    | FormatterTool[]
+    | MinifierTool[]
+    | EncoderTool[]
+    | ValidatorTool[]
+    | GeneratorTool[];
+}

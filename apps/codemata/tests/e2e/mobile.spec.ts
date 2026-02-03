@@ -1,5 +1,8 @@
 import { expect, test } from "@playwright/test";
-import { ALL_FORMATTERS } from "../../lib/tools-data";
+import { ALL_TOOLS } from "../../lib/tools-data";
+
+// Test-local convenience constant
+const formatters = ALL_TOOLS.formatters.tools;
 
 // Mobile tests should only run on firefox-mobile project
 // Skip if running on desktop viewport
@@ -42,7 +45,7 @@ test.describe("Mobile Experience", () => {
     await expect(drawer).toBeVisible();
 
     // Click a tool within the drawer
-    const firstFormatter = ALL_FORMATTERS[0];
+    const firstFormatter = formatters[0];
     await drawer.locator(`text=${firstFormatter.name}`).click();
 
     // Drawer should close automatically
@@ -53,8 +56,8 @@ test.describe("Mobile Experience", () => {
     await page.goto("/");
 
     // Verify tool cards stack vertically on mobile (1 column)
-    const firstCard = page.locator(`text=${ALL_FORMATTERS[0].name}`).first();
-    const secondCard = page.locator(`text=${ALL_FORMATTERS[1].name}`).first();
+    const firstCard = page.locator(`text=${formatters[0].name}`).first();
+    const secondCard = page.locator(`text=${formatters[1].name}`).first();
 
     await expect(firstCard).toBeVisible();
     await expect(secondCard).toBeVisible();
@@ -69,7 +72,7 @@ test.describe("Mobile Experience", () => {
   });
 
   test("should have touch-friendly button sizes", async ({ page }) => {
-    await page.goto(ALL_FORMATTERS[0].url);
+    await page.goto(formatters[0].url);
 
     // Check that interactive elements meet WCAG 2.5.5 target size (44x44px minimum)
     const menuButton = page.locator('button[aria-label*="menu" i]');

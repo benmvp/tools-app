@@ -1,17 +1,15 @@
 import { cache } from "react";
 import { generateToolContent } from "@/lib/ai/generate";
-import { ALL_TOOLS } from "@/lib/tools-data";
+import { getAllTools } from "@/lib/tools-data";
 
 /**
  * Helper to get all available tools for recommendation context
  */
 export function getAllAvailableTools() {
-  return Object.values(ALL_TOOLS)
-    .flat()
-    .map((tool) => ({
-      displayName: tool.name,
-      url: tool.url,
-    }));
+  return getAllTools().map((tool) => ({
+    displayName: tool.name,
+    url: tool.url,
+  }));
 }
 
 /**

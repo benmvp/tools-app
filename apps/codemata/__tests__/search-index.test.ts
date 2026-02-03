@@ -7,19 +7,19 @@ describe("Search Index", () => {
       expect(SEARCH_INDEX.length).toBeGreaterThan(0);
 
       const formatters = SEARCH_INDEX.filter(
-        (item) => item.category === "Formatters",
+        (item) => item.category === "formatters",
       );
       const minifiers = SEARCH_INDEX.filter(
-        (item) => item.category === "Minifiers",
+        (item) => item.category === "minifiers",
       );
       const encoders = SEARCH_INDEX.filter(
-        (item) => item.category === "Encoders",
+        (item) => item.category === "encoders",
       );
       const validators = SEARCH_INDEX.filter(
-        (item) => item.category === "Validators",
+        (item) => item.category === "validators",
       );
       const generators = SEARCH_INDEX.filter(
-        (item) => item.category === "Generators",
+        (item) => item.category === "generators",
       );
 
       expect(formatters.length).toBe(9);
@@ -28,6 +28,15 @@ describe("Search Index", () => {
       expect(validators.length).toBe(6);
       expect(generators.length).toBe(1);
       expect(SEARCH_INDEX.length).toBe(27); // 9 formatters + 6 minifiers + 5 encoders + 6 validators + 1 generator
+    });
+
+    it("should include all categories", () => {
+      const categories = new Set(SEARCH_INDEX.map((item) => item.category));
+      expect(categories.has("formatters")).toBe(true);
+      expect(categories.has("minifiers")).toBe(true);
+      expect(categories.has("encoders")).toBe(true);
+      expect(categories.has("validators")).toBe(true);
+      expect(categories.has("generators")).toBe(true);
     });
 
     it("creates proper searchText with name and keywords", () => {
@@ -87,11 +96,11 @@ describe("Search Index", () => {
           /^\/(formatters|minifiers|encoders|validators|generators)\//,
         );
         expect([
-          "Formatters",
-          "Minifiers",
-          "Encoders",
-          "Validators",
-          "Generators",
+          "formatters",
+          "minifiers",
+          "encoders",
+          "validators",
+          "generators",
         ]).toContain(item.category);
         expect(Array.isArray(item.keywords)).toBe(true);
         expect(item.searchText).toBeTruthy();

@@ -4,13 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { Badge } from "@/components/ui/badge";
-import {
-  ALL_ENCODERS,
-  ALL_FORMATTERS,
-  ALL_GENERATORS,
-  ALL_MINIFIERS,
-  ALL_VALIDATORS,
-} from "@/lib/tools-data";
+import { getCategoriesByOrder } from "@/lib/tools-data";
 import { shouldPrefetch } from "@/lib/utils";
 
 interface NavigationListProps {
@@ -38,60 +32,26 @@ export function NavigationList({ onItemClick }: NavigationListProps) {
     }
   }, [pathname]);
 
-  // Data-driven categories configuration
-  const categories = [
-    {
-      name: "Formatters",
-      singular: "Formatter",
-      href: "/formatters",
-      tools: ALL_FORMATTERS,
-    },
-    {
-      name: "Minifiers",
-      singular: "Minifier",
-      href: "/minifiers",
-      tools: ALL_MINIFIERS,
-    },
-    {
-      name: "Encoders",
-      singular: "Encoder",
-      href: "/encoders",
-      tools: ALL_ENCODERS,
-    },
-    {
-      name: "Validators",
-      singular: "Validator",
-      href: "/validators",
-      tools: ALL_VALIDATORS,
-    },
-    {
-      name: "Generators",
-      singular: "Generator",
-      href: "/generators",
-      tools: ALL_GENERATORS,
-    },
-  ];
-
   return (
     <div className="space-y-6">
-      {categories.map(({ name, singular, href, tools }) => (
-        <div key={name}>
+      {getCategoriesByOrder().map((category) => (
+        <div key={category.id}>
           <Link
-            href={href}
+            href={category.url}
             prefetch={shouldPrefetch()}
             onClick={onItemClick}
             className="mb-2 text-xs font-semibold uppercase text-slate-600 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300 transition-colors block"
           >
-            {name}
+            {category.label}
           </Link>
           <ul className="space-y-1">
-            {tools.map((tool) => (
+            {category.tools.map((tool) => (
               <li key={tool.id}>
                 <Link
                   ref={pathname === tool.url ? activeItemRef : null}
                   href={tool.url}
                   prefetch={shouldPrefetch()}
-                  title={`${tool.name} ${singular}`}
+                  title={tool.name}
                   onClick={(e) => {
                     if (tool.comingSoon) {
                       e.preventDefault();
@@ -99,15 +59,17 @@ export function NavigationList({ onItemClick }: NavigationListProps) {
                       onItemClick?.();
                     }
                   }}
-                  className={`flex items-center justify-between gap-2 rounded-md px-3 py-2 text-sm transition-colors hover:bg-slate-100 dark:hover:bg-slate-800 ${
+                  className={`block px-3 py-2 text-sm rounded-md transition-all ${
                     pathname === tool.url
-                      ? "bg-slate-100 font-medium dark:bg-slate-800"
-                      : ""
-                  } ${tool.comingSoon ? "cursor-not-allowed" : ""}`}
+                      ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-medium"
+                      : tool.comingSoon
+                        ? "text-slate-400 dark:text-slate-600 cursor-not-allowed"
+                        : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  }`}
                 >
-                  <span>{tool.name}</span>
+                  {tool.name}
                   {tool.comingSoon && (
-                    <Badge variant="destructive" className="text-xs">
+                    <Badge variant="secondary" className="ml-2 text-xs">
                       Soon
                     </Badge>
                   )}
