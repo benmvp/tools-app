@@ -24,8 +24,8 @@ test.describe("GitignoreGenerator Component", () => {
     });
     await expect(generateButton).toBeDisabled();
 
-    // Select a template (e.g., Node)
-    const nodeButton = page.getByRole("button", { name: "Node", exact: true });
+    // Select a template (e.g., Node.js)
+    const nodeButton = page.getByRole("button", { name: "Node.js" });
     await nodeButton.click();
 
     // Generate button should now be enabled
@@ -38,7 +38,10 @@ test.describe("GitignoreGenerator Component", () => {
     await page.goto(REPRESENTATIVE_TOOL);
 
     // Select first template
-    const nodeButton = page.getByRole("button", { name: "Node", exact: true });
+    const nodeButton = page.getByRole("button", {
+      name: "Node.js",
+      exact: true,
+    });
     await nodeButton.click();
 
     // Verify selected count shows 1
@@ -54,8 +57,11 @@ test.describe("GitignoreGenerator Component", () => {
     // Verify selected count shows 2
     await expect(page.locator("text=/Selected \\(2\\)/i")).toBeVisible();
 
-    // Deselect first template
-    await nodeButton.click();
+    // Deselect first template (click the badge remove button)
+    const removeNodeButton = page.getByRole("button", {
+      name: "Remove Node.js",
+    });
+    await removeNodeButton.click();
 
     // Verify selected count shows 1 again
     await expect(page.locator("text=/Selected \\(1\\)/i")).toBeVisible();
@@ -67,7 +73,7 @@ test.describe("GitignoreGenerator Component", () => {
     await page.goto(REPRESENTATIVE_TOOL);
 
     // Select a template
-    const nodeButton = page.getByRole("button", { name: "Node", exact: true });
+    const nodeButton = page.getByRole("button", { name: "Node.js" });
     await nodeButton.click();
 
     // Click generate
@@ -76,9 +82,8 @@ test.describe("GitignoreGenerator Component", () => {
     });
     await generateButton.click();
 
-    // Wait for generation to complete (success toast)
-    const toast = page.locator("[data-sonner-toast]").first();
-    await expect(toast).toBeVisible({ timeout: 5000 });
+    // Wait for generation to complete (button re-enabled)
+    await expect(generateButton).toBeEnabled({ timeout: 5000 });
 
     // Verify copy button is visible and enabled
     const copyButton = page.getByRole("button", {
@@ -92,7 +97,7 @@ test.describe("GitignoreGenerator Component", () => {
     await page.goto(REPRESENTATIVE_TOOL);
 
     // Select and generate
-    const nodeButton = page.getByRole("button", { name: "Node", exact: true });
+    const nodeButton = page.getByRole("button", { name: "Node.js" });
     await nodeButton.click();
 
     const generateButton = page.getByRole("button", {
@@ -100,9 +105,8 @@ test.describe("GitignoreGenerator Component", () => {
     });
     await generateButton.click();
 
-    // Wait for output
-    const toast = page.locator("[data-sonner-toast]").first();
-    await expect(toast).toBeVisible({ timeout: 5000 });
+    // Wait for generation to complete (button re-enabled)
+    await expect(generateButton).toBeEnabled({ timeout: 5000 });
 
     // Click clear button
     const clearButton = page.getByRole("button", { name: /clear/i });
@@ -131,8 +135,11 @@ test.describe("GitignoreGenerator Component", () => {
     });
     await expect(pythonButton).toBeVisible();
 
-    // Node button should NOT be visible
-    const nodeButton = page.getByRole("button", { name: "Node", exact: true });
+    // Node.js button should NOT be visible
+    const nodeButton = page.getByRole("button", {
+      name: "Node.js",
+      exact: true,
+    });
     await expect(nodeButton).not.toBeVisible();
   });
 });

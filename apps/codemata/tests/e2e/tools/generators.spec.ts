@@ -20,8 +20,8 @@ test.describe("Generator Tools - Integration", () => {
     // Verify page loaded (partial match to handle title variations)
     await expect(page).toHaveTitle(/gitignore.*generator/i);
 
-    // Select a template (Node)
-    const nodeButton = page.getByRole("button", { name: "Node", exact: true });
+    // Select a template (Node.js)
+    const nodeButton = page.getByRole("button", { name: "Node.js" });
     await nodeButton.click();
 
     // Click the Generate button
@@ -30,9 +30,8 @@ test.describe("Generator Tools - Integration", () => {
     });
     await generateButton.click();
 
-    // Wait for success toast (indicates generation completed)
-    const toast = page.locator("[data-sonner-toast]").first();
-    await expect(toast).toBeVisible({ timeout: 5000 });
+    // Wait for generation to complete (button re-enabled)
+    await expect(generateButton).toBeEnabled({ timeout: 5000 });
 
     // Verify copy button is enabled (output exists)
     const copyButton = page.getByRole("button", {
