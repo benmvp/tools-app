@@ -63,11 +63,6 @@ export function CommandMenu({ open, onOpenChange }: CommandMenuProps) {
     .filter((item): item is SearchableToolItem => item !== undefined)
     .filter((tool) => !recentUrls.has(tool.url));
 
-  // Get tool icon from SearchableToolItem (already includes icon)
-  const getToolIcon = (tool: SearchableToolItem) => {
-    return tool.icon;
-  };
-
   return (
     <CommandDialog open={open} onOpenChange={onOpenChange}>
       <CommandInput
@@ -86,7 +81,7 @@ export function CommandMenu({ open, onOpenChange }: CommandMenuProps) {
             {recentTools.length > 0 && (
               <CommandGroup heading="Recent Tools">
                 {recentTools.map((tool) => {
-                  const Icon = getToolIcon(tool);
+                  const Icon = tool.icon;
 
                   return (
                     <CommandItem
@@ -105,7 +100,7 @@ export function CommandMenu({ open, onOpenChange }: CommandMenuProps) {
             {/* Popular Tools section */}
             <CommandGroup heading="Popular Tools">
               {popularTools.map((tool) => {
-                const Icon = getToolIcon(tool);
+                const Icon = tool.icon;
 
                 return (
                   <CommandItem
@@ -128,7 +123,7 @@ export function CommandMenu({ open, onOpenChange }: CommandMenuProps) {
             <CommandGroup key={category.id} heading={category.label}>
               {SEARCH_INDEX.filter((item) => item.category === category.id).map(
                 (tool) => {
-                  const Icon = getToolIcon(tool);
+                  const Icon = tool.icon;
 
                   return (
                     <CommandItem

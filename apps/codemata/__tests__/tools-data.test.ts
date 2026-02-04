@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
   ALL_TOOLS,
-  CATEGORIES_BY_ORDER,
   getAllTools,
   getCategoriesByOrder,
   getCategoryById,
@@ -63,9 +62,10 @@ describe("Category-Driven Architecture", () => {
     }
   });
 
-  it("should have pre-computed CATEGORIES_BY_ORDER matching getCategoriesByOrder", () => {
-    const computed = getCategoriesByOrder();
-    expect(CATEGORIES_BY_ORDER).toEqual(computed);
+  it("should return same reference on multiple calls (cached/memoized)", () => {
+    const first = getCategoriesByOrder();
+    const second = getCategoriesByOrder();
+    expect(first).toBe(second); // Reference equality (not recalculated)
   });
 
   it("should get category by ID", () => {

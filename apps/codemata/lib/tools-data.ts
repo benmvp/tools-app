@@ -891,10 +891,10 @@ export function getAllTools(): Tool[] {
 }
 
 /**
- * Get categories sorted by display order
- * Pre-computed for performance (immutable data)
+ * Pre-computed sorted categories for performance
+ * Internal implementation detail - use getCategoriesByOrder() instead
  */
-export const CATEGORIES_BY_ORDER = Object.values(ALL_TOOLS).sort(
+const CATEGORIES_BY_ORDER = Object.values(ALL_TOOLS).sort(
   (a, b) => a.order - b.order,
 );
 
