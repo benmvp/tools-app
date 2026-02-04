@@ -1,5 +1,9 @@
 import { expect, test } from "@playwright/test";
-import { ALL_FORMATTERS, ALL_MINIFIERS } from "../../lib/tools-data";
+import { ALL_TOOLS } from "../../lib/tools-data";
+
+// Test-local convenience constants
+const formatters = ALL_TOOLS.formatters.tools;
+const minifiers = ALL_TOOLS.minifiers.tools;
 
 test.describe("Navigation", () => {
   test("should navigate from home to formatter via tool card", async ({
@@ -8,7 +12,7 @@ test.describe("Navigation", () => {
     await page.goto("/");
 
     // Click on first formatter tool card
-    const firstFormatter = ALL_FORMATTERS[0];
+    const firstFormatter = formatters[0];
     await page.locator(`text=${firstFormatter.name}`).first().click();
 
     // Verify navigation
@@ -24,7 +28,7 @@ test.describe("Navigation", () => {
     await page.goto("/");
 
     // Click on first minifier tool card
-    const firstMinifier = ALL_MINIFIERS[0];
+    const firstMinifier = minifiers[0];
     await page.locator(`text=${firstMinifier.name}`).first().click();
 
     // Verify navigation (partial match to handle title variations)
@@ -43,7 +47,7 @@ test.describe("Navigation", () => {
     await expect(page).toHaveTitle(/formatters/i);
 
     // Verify all formatter tools are listed
-    for (const tool of ALL_FORMATTERS) {
+    for (const tool of formatters) {
       await expect(page.locator(`text=${tool.name}`).first()).toBeVisible();
     }
   });
@@ -59,7 +63,7 @@ test.describe("Navigation", () => {
     await expect(page).toHaveTitle(/minifiers/i);
 
     // Verify all minifier tools are listed
-    for (const tool of ALL_MINIFIERS) {
+    for (const tool of minifiers) {
       await expect(page.locator(`text=${tool.name}`).first()).toBeVisible();
     }
   });

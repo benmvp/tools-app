@@ -2,19 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ToolCard } from "@/components/ToolCard";
 import { SITE_CONFIG } from "@/lib/site-config";
-import {
-  ALL_ENCODERS,
-  ALL_FORMATTERS,
-  ALL_GENERATORS,
-  ALL_MINIFIERS,
-  ALL_TOOLS,
-  ALL_VALIDATORS,
-} from "@/lib/tools-data";
+import { getCategoriesByOrder, getTotalToolCount } from "@/lib/tools-data";
 import { getAppUrl, getOgImageUrl } from "@/lib/utils";
 
-const totalCount = Object.values(ALL_TOOLS)
-  .flat()
-  .filter((tool) => !tool.comingSoon).length;
+const totalCount = getTotalToolCount();
 
 const ogImageUrl = getOgImageUrl(
   `${totalCount} Free Developer Tools`,
@@ -64,92 +55,23 @@ export default function HomePage() {
         </p>
       </section>
 
-      {/* Formatters */}
-      <section className="mb-16">
-        <Link href="/formatters">
-          <h2 className="text-3xl font-bold mb-6 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer">
-            Formatters
-          </h2>
-        </Link>
-        <p className="text-slate-600 dark:text-slate-400 mb-6">
-          Beautify and format your code with consistent styling
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {ALL_FORMATTERS.map((tool) => (
-            <ToolCard key={tool.id} {...tool} />
-          ))}
-        </div>
-      </section>
-
-      {/* Minifiers */}
-      <section className="mb-16">
-        <Link href="/minifiers">
-          <h2 className="text-3xl font-bold mb-6 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer">
-            Minifiers
-          </h2>
-        </Link>
-        <p className="text-slate-600 dark:text-slate-400 mb-6">
-          Compress your code by removing whitespace and optimizing
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {ALL_MINIFIERS.map((tool) => (
-            <ToolCard key={tool.id} {...tool} />
-          ))}
-        </div>
-      </section>
-
-      {/* Encoders */}
-      <section className="mb-16">
-        <Link href="/encoders">
-          <h2 className="text-3xl font-bold mb-6 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer">
-            Encoders & Decoders
-          </h2>
-        </Link>
-        <p className="text-slate-600 dark:text-slate-400 mb-6">
-          Encode and decode data for Base64, URL, HTML entities, JavaScript
-          strings, and JWT tokens
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {ALL_ENCODERS.map((tool) => (
-            <ToolCard key={tool.id} {...tool} />
-          ))}
-        </div>
-      </section>
-
-      {/* Validators */}
-      <section className="mb-16">
-        <Link href="/validators">
-          <h2 className="text-3xl font-bold mb-6 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer">
-            Validators
-          </h2>
-        </Link>
-        <p className="text-slate-600 dark:text-slate-400 mb-6">
-          Validate JSON, HTML, CSS, XML, and test regex patterns with detailed
-          error messages
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {ALL_VALIDATORS.map((tool) => (
-            <ToolCard key={tool.id} {...tool} />
-          ))}
-        </div>
-      </section>
-
-      {/* Generators */}
-      <section>
-        <Link href="/generators">
-          <h2 className="text-3xl font-bold mb-6 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer">
-            Generators
-          </h2>
-        </Link>
-        <p className="text-slate-600 dark:text-slate-400 mb-6">
-          Generate boilerplate code and configuration files for your projects
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {ALL_GENERATORS.map((tool) => (
-            <ToolCard key={tool.id} {...tool} />
-          ))}
-        </div>
-      </section>
+      {getCategoriesByOrder().map((category) => (
+        <section key={category.id} className="mb-16">
+          <Link href={category.url}>
+            <h2 className="text-3xl font-bold mb-6 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer">
+              {category.label}
+            </h2>
+          </Link>
+          <p className="text-slate-600 dark:text-slate-400 mb-6">
+            {category.description}
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {category.tools.map((tool) => (
+              <ToolCard key={tool.id} {...tool} />
+            ))}
+          </div>
+        </section>
+      ))}
     </div>
   );
 }

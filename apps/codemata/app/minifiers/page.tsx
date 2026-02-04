@@ -2,11 +2,14 @@ import type { Metadata } from "next";
 import { ScrollToTopFab } from "@/components/ScrollToTopFab";
 import { ToolCard } from "@/components/ToolCard";
 import { SITE_CONFIG } from "@/lib/site-config";
-import { ALL_MINIFIERS } from "@/lib/tools-data";
+import { getCategoryById } from "@/lib/tools-data";
 import { getAppUrl, getOgImageUrl } from "@/lib/utils";
 
+const minifiersCategory = getCategoryById("minifiers");
+const minifierCount = minifiersCategory.tools.length;
+
 const ogImageUrl = getOgImageUrl(
-  `${ALL_MINIFIERS.length} Minifiers`,
+  `${minifierCount} Minifiers`,
   SITE_CONFIG.pages.minifiers.description,
 );
 
@@ -22,7 +25,7 @@ export const metadata: Metadata = {
         url: ogImageUrl,
         width: 1200,
         height: 630,
-        alt: `Codemata - ${ALL_MINIFIERS.length} Code Minifiers`,
+        alt: `Codemata - ${minifierCount} Code Minifiers`,
       },
     ],
   },
@@ -52,7 +55,7 @@ export default function MinifiersPage() {
       {/* Tools Grid */}
       <section>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {ALL_MINIFIERS.map((tool) => (
+          {minifiersCategory.tools.map((tool) => (
             <ToolCard key={tool.id} {...tool} />
           ))}
         </div>

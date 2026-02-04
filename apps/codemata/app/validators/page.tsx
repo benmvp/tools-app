@@ -2,10 +2,13 @@ import type { Metadata } from "next";
 import { ScrollToTopFab } from "@/components/ScrollToTopFab";
 import { ToolCard } from "@/components/ToolCard";
 import { SITE_CONFIG } from "@/lib/site-config";
-import { ALL_VALIDATORS } from "@/lib/tools-data";
+import { getCategoryById } from "@/lib/tools-data";
 import { getAppUrl, getOgImageUrl } from "@/lib/utils";
 
-const validatorCount = ALL_VALIDATORS.filter((t) => !t.comingSoon).length;
+const validatorsCategory = getCategoryById("validators");
+const validatorCount = validatorsCategory.tools.filter(
+  (t) => !t.comingSoon,
+).length;
 
 const ogImageUrl = getOgImageUrl(
   `${validatorCount} Validators`,
@@ -61,7 +64,7 @@ export default function ValidatorsPage() {
       {/* Tools Grid */}
       <section>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {ALL_VALIDATORS.map((tool) => (
+          {validatorsCategory.tools.map((tool) => (
             <ToolCard key={tool.id} {...tool} />
           ))}
         </div>

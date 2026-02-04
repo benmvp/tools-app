@@ -36,7 +36,11 @@ const projectDir = join(__dirname, "..");
 loadEnvConfig(projectDir);
 
 import { load } from "cheerio";
-import { ALL_TOOLS } from "../lib/tools-data";
+import {
+  getAllTools,
+  getCategoriesByOrder,
+  getTotalToolCount,
+} from "../lib/tools-data";
 import { getAppUrl, getToolUrl } from "../lib/utils";
 
 interface PageMetadata {
@@ -262,9 +266,7 @@ function validateMetadata(metadata: PageMetadata): string[] {
     // Validate title parameter includes count for cache busting
     if (metadata.url === getAppUrl() || metadata.url === `${getAppUrl()}/`) {
       // Home page: title should include total count (e.g., "25 Free Developer Tools")
-      const totalCount = Object.values(ALL_TOOLS)
-        .flat()
-        .filter((tool) => !tool.comingSoon).length;
+      const totalCount = getTotalToolCount();
       if (
         !metadata.ogImage.includes(`title=${totalCount}+Free+Developer+Tools`)
       ) {
@@ -272,46 +274,37 @@ function validateMetadata(metadata: PageMetadata): string[] {
           `Home page OG image title should include total count (expected "${totalCount} Free Developer Tools")`,
         );
       }
-    } else if (metadata.url.endsWith("/formatters")) {
-      // Formatters category: title should include formatter count
-      const count = ALL_TOOLS.formatters.filter((t) => !t.comingSoon).length;
-      if (!metadata.ogImage.includes(`title=${count}+Formatters`)) {
-        issues.push(
-          `Formatters category OG image title should include formatter count (expected "${count} Formatters")`,
-        );
-      }
-    } else if (metadata.url.endsWith("/minifiers")) {
-      // Minifiers category: title should include minifier count
-      const count = ALL_TOOLS.minifiers.filter((t) => !t.comingSoon).length;
-      if (!metadata.ogImage.includes(`title=${count}+Minifiers`)) {
-        issues.push(
-          `Minifiers category OG image title should include minifier count (expected "${count} Minifiers")`,
-        );
-      }
-    } else if (metadata.url.endsWith("/encoders")) {
-      // Encoders category: title should include encoder count
-      const count = ALL_TOOLS.encoders.filter((t) => !t.comingSoon).length;
-      if (!metadata.ogImage.includes(`title=${count}+Encoders`)) {
-        issues.push(
-          `Encoders category OG image title should include encoder count (expected "${count} Encoders")`,
-        );
-      }
-    } else if (metadata.url.endsWith("/validators")) {
-      // Validators category: title should include validator count
-      const count = ALL_TOOLS.validators.filter((t) => !t.comingSoon).length;
-      if (!metadata.ogImage.includes(`title=${count}+Validators`)) {
-        issues.push(
-          `Validators category OG image title should include validator count (expected "${count} Validators")`,
-        );
-      }
-    } else if (metadata.url.endsWith("/generators")) {
-      // Generators category: title should include generator count
-      const count = ALL_TOOLS.generators.filter((t) => !t.comingSoon).length;
-      const pluralized = count === 1 ? "Generator" : "Generators";
-      if (!metadata.ogImage.includes(`title=${count}+${pluralized}`)) {
-        issues.push(
-          `Generators category OG image title should include generator count (expected "${count} ${pluralized}")`,
-        );
+    } else {
+      // Check if this is a category page
+      const category = getCategoriesByOrder().find(
+        (cat) =>
+          metadata.url === getAppUrl(cat.url) ||
+          metadata.url === `${getAppUrl(cat.url)}/`,
+      );
+
+      if (category) {
+        // Category page: validate count + label
+        const count = category.tools.filter((t) => !t.comingSoon).length;
+        // URL-encode the expected title properly (spaces become +, special chars encoded)
+        const expectedTitle = encodeURIComponent(
+          `${count} ${category.label}`,
+        ).replace(/%20/g, "+");
+
+        if (!metadata.ogImage.includes(`title=${expectedTitle}`)) {
+          // Extract actual title from OG image URL
+          const titleMatch = metadata.ogImage.match(/title=([^&]*)/);
+          const actualTitle = titleMatch
+            ? decodeURIComponent(titleMatch[1]).replace(/\+/g, " ")
+            : "not found";
+          const actualEncoded = titleMatch ? titleMatch[1] : "not found";
+
+          issues.push(
+            `${category.label} category OG image title should include ${category.label.toLowerCase()} count (expected "${count} ${category.label}", got "${actualTitle}")`,
+          );
+          issues.push(
+            `  → URL-encoded comparison: expected "title=${expectedTitle}", got "title=${actualEncoded}"`,
+          );
+        }
       }
     }
     // Tool pages use tool name in title for uniqueness, v= uses OG_IMAGE_VERSION
@@ -342,16 +335,14 @@ function validateMetadata(metadata: PageMetadata): string[] {
   }
 
   // Structured Data (only for tool pages, not home/category pages)
-  if (
-    metadata.url.includes("/formatters/") ||
-    metadata.url.includes("/minifiers/") ||
-    metadata.url.includes("/encoders/") ||
-    metadata.url.includes("/validators/") ||
-    metadata.url.includes("/generators/")
-  ) {
-    if (!metadata.structuredData) {
-      issues.push("Missing JSON-LD structured data");
-    }
+  const isToolPage = getAllTools().some(
+    (tool) =>
+      metadata.url === getToolUrl(tool) ||
+      metadata.url === `${getToolUrl(tool)}/`,
+  );
+
+  if (isToolPage && !metadata.structuredData) {
+    issues.push("Missing JSON-LD structured data");
   }
 
   return issues;
@@ -422,17 +413,15 @@ async function main() {
   // Build list of pages to check (exclude coming-soon tools without actual pages)
   const pages = [
     { url: getAppUrl(), name: "Home" },
-    { url: getAppUrl("/formatters"), name: "Formatters" },
-    { url: getAppUrl("/minifiers"), name: "Minifiers" },
-    { url: getAppUrl("/encoders"), name: "Encoders" },
-    { url: getAppUrl("/validators"), name: "Validators" },
-    { url: getAppUrl("/generators"), name: "Generators" },
+    ...getCategoriesByOrder().map((category) => ({
+      url: getAppUrl(category.url),
+      name: category.label,
+    })),
   ];
 
   // Add all tool pages dynamically from ALL_TOOLS
-  for (const [_category, tools] of Object.entries(ALL_TOOLS)) {
-    const filteredTools = tools.filter((tool) => !tool.comingSoon);
-    for (const tool of filteredTools) {
+  for (const tool of getAllTools()) {
+    if (!tool.comingSoon) {
       pages.push({
         url: getToolUrl(tool),
         name: tool.name,

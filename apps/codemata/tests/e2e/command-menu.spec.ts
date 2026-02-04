@@ -1,5 +1,9 @@
 import { expect, type Page, test } from "@playwright/test";
-import { ALL_FORMATTERS, ALL_MINIFIERS } from "../../lib/tools-data";
+import { ALL_TOOLS } from "../../lib/tools-data";
+
+// Test-local convenience constants
+const formatters = ALL_TOOLS.formatters.tools;
+const minifiers = ALL_TOOLS.minifiers.tools;
 
 // Helper to open command menu (tries keyboard shortcut, falls back to button)
 async function openCommandMenu(page: Page) {
@@ -66,9 +70,9 @@ test.describe("Command Menu", () => {
 
   test("should show recent tools in command menu", async ({ page }) => {
     // Visit a couple tools to populate recent tools
-    await page.goto(ALL_FORMATTERS[0].url);
+    await page.goto(formatters[0].url);
     await page.waitForLoadState("networkidle");
-    await page.goto(ALL_MINIFIERS[0].url);
+    await page.goto(minifiers[0].url);
     await page.waitForLoadState("networkidle");
 
     await openCommandMenu(page);
@@ -80,8 +84,8 @@ test.describe("Command Menu", () => {
     await expect(dialog).toBeVisible();
 
     // Check if either Recent Tools section exists OR tools are in Popular Tools
-    const formatter = dialog.locator(`text=${ALL_FORMATTERS[0].name}`);
-    const minifier = dialog.locator(`text=${ALL_MINIFIERS[0].name}`);
+    const formatter = dialog.locator(`text=${formatters[0].name}`);
+    const minifier = dialog.locator(`text=${minifiers[0].name}`);
 
     // Both tools should appear somewhere in the command menu
     await expect(formatter.first()).toBeVisible({ timeout: 5000 });

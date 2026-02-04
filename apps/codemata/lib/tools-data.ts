@@ -51,6 +51,9 @@ import type {
   FormatterTool,
   GeneratorTool,
   MinifierTool,
+  Tool,
+  ToolCategory,
+  ToolCategoryId,
   ValidatorTool,
 } from "./types";
 import { VALIDATOR_EXAMPLES } from "./validators/examples";
@@ -791,15 +794,6 @@ export const VALIDATOR_TOOLS: Record<string, ValidatorTool> = {
 };
 
 /**
- * Helper arrays for navigation components
- * Use Object.values() to get arrays from Records
- */
-export const ALL_FORMATTERS: FormatterTool[] = Object.values(FORMATTER_TOOLS);
-export const ALL_MINIFIERS: MinifierTool[] = Object.values(MINIFIER_TOOLS);
-export const ALL_ENCODERS: EncoderTool[] = Object.values(ENCODER_TOOLS);
-export const ALL_VALIDATORS: ValidatorTool[] = Object.values(VALIDATOR_TOOLS);
-
-/**
  * Generator Tools - Record-based structure for O(1) lookups
  * Key is the URL slug (e.g., "gitignore-generator")
  */
@@ -821,21 +815,106 @@ export const GENERATOR_TOOLS: Record<string, GeneratorTool> = {
 };
 
 /**
- * Helper array for navigation - uses Object.values for centralized updates
+ * Internal helper arrays for building ALL_TOOLS
  */
-export const ALL_GENERATORS = Object.values(GENERATOR_TOOLS);
+const ALL_FORMATTERS: FormatterTool[] = Object.values(FORMATTER_TOOLS);
+const ALL_MINIFIERS: MinifierTool[] = Object.values(MINIFIER_TOOLS);
+const ALL_ENCODERS: EncoderTool[] = Object.values(ENCODER_TOOLS);
+const ALL_VALIDATORS: ValidatorTool[] = Object.values(VALIDATOR_TOOLS);
+const ALL_GENERATORS: GeneratorTool[] = Object.values(GENERATOR_TOOLS);
 
 /**
- * Centralized tool registry for dynamic counting and category lookups.
- * Used by OG image generation to calculate tool counts automatically.
+ * Centralized tool registry with rich category metadata.
+ * Single source of truth for all category information.
+ *
+ * Adding a new category:
+ * 1. Define ToolCategoryId in lib/types.ts
+ * 2. Add category object here with all metadata
+ * 3. That's it! CommandMenu, home page, sitemap, etc. auto-update
  */
-export const ALL_TOOLS = {
-  formatters: ALL_FORMATTERS,
-  minifiers: ALL_MINIFIERS,
-  encoders: ALL_ENCODERS,
-  validators: ALL_VALIDATORS,
-  generators: ALL_GENERATORS,
+export const ALL_TOOLS: Record<ToolCategoryId, ToolCategory> = {
+  formatters: {
+    id: "formatters",
+    label: "Formatters",
+    singular: "Formatter",
+    url: "/formatters",
+    description: "Beautify and format your code with consistent styling",
+    order: 1,
+    tools: ALL_FORMATTERS,
+  },
+  minifiers: {
+    id: "minifiers",
+    label: "Minifiers",
+    singular: "Minifier",
+    url: "/minifiers",
+    description: "Compress your code by removing whitespace and optimizing",
+    order: 2,
+    tools: ALL_MINIFIERS,
+  },
+  encoders: {
+    id: "encoders",
+    label: "Encoders & Decoders",
+    singular: "Encoder",
+    url: "/encoders",
+    description:
+      "Encode and decode data for Base64, URL, HTML entities, JavaScript strings, and JWT tokens",
+    order: 3,
+    tools: ALL_ENCODERS,
+  },
+  validators: {
+    id: "validators",
+    label: "Validators",
+    singular: "Validator",
+    url: "/validators",
+    description:
+      "Validate JSON, HTML, CSS, XML, and test regex patterns with detailed error messages",
+    order: 4,
+    tools: ALL_VALIDATORS,
+  },
+  generators: {
+    id: "generators",
+    label: "Generators",
+    singular: "Generator",
+    url: "/generators",
+    description:
+      "Generate boilerplate code and configuration files for your projects",
+    order: 5,
+    tools: ALL_GENERATORS,
+  },
 } as const;
+
+/**
+ * Get all tools across all categories (flattened array)
+ */
+export function getAllTools(): Tool[] {
+  return Object.values(ALL_TOOLS).flatMap((category) => category.tools);
+}
+
+/**
+ * Pre-computed sorted categories for performance
+ * Internal implementation detail - use getCategoriesByOrder() instead
+ */
+const CATEGORIES_BY_ORDER = Object.values(ALL_TOOLS).sort(
+  (a, b) => a.order - b.order,
+);
+
+export function getCategoriesByOrder(): ToolCategory[] {
+  return CATEGORIES_BY_ORDER;
+}
+
+/**
+ * Get category by ID (type-safe lookup)
+ */
+export function getCategoryById(id: ToolCategoryId): ToolCategory {
+  return ALL_TOOLS[id];
+}
+
+/**
+ * Get total tool count (excluding comingSoon)
+ */
+export function getTotalToolCount(): number {
+  return getAllTools().filter((tool) => !tool.comingSoon).length;
+}
 
 /**
  * Type-safe slug helpers using template literal types

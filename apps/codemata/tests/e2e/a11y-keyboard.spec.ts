@@ -1,5 +1,8 @@
 import { expect, test } from "@playwright/test";
-import { ALL_FORMATTERS } from "../../lib/tools-data";
+import { ALL_TOOLS } from "../../lib/tools-data";
+
+// Test-local convenience constant
+const formatters = ALL_TOOLS.formatters.tools;
 
 /**
  * Keyboard Navigation Accessibility Tests
@@ -81,7 +84,7 @@ test.describe("Keyboard Navigation", () => {
   });
 
   test("should activate buttons with Enter key", async ({ page }) => {
-    await page.goto(ALL_FORMATTERS[0].url);
+    await page.goto(formatters[0].url);
 
     // Find and focus on a button (like copy button)
     const copyButton = page.locator('button:has-text("Copy")').first();
@@ -96,7 +99,7 @@ test.describe("Keyboard Navigation", () => {
   });
 
   test("should navigate CodeMirror editor with keyboard", async ({ page }) => {
-    await page.goto(ALL_FORMATTERS[0].url);
+    await page.goto(formatters[0].url);
 
     // Click into editor
     const inputEditor = page.locator(".cm-content").first();
@@ -120,7 +123,7 @@ test.describe("Keyboard Navigation", () => {
   test("should navigate configuration dropdowns with keyboard", async ({
     page,
   }) => {
-    await page.goto(ALL_FORMATTERS[0].url);
+    await page.goto(formatters[0].url);
 
     // Find indentation select
     const select = page.locator('select[name="indentation"]');

@@ -1,10 +1,11 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
-import {
-  ALL_ENCODERS,
-  ALL_FORMATTERS,
-  ALL_MINIFIERS,
-} from "../../lib/tools-data";
+import { ALL_TOOLS } from "../../lib/tools-data";
+
+// Test-local convenience constants
+const formatters = ALL_TOOLS.formatters.tools;
+const minifiers = ALL_TOOLS.minifiers.tools;
+const encoders = ALL_TOOLS.encoders.tools;
 
 /**
  * Accessibility Compliance Tests - Sample-Based
@@ -77,7 +78,7 @@ test.describe("Accessibility Compliance - WCAG AA", () => {
 
   // Test one representative tool per category (all use same page template)
   test("formatter tool page should pass axe-core scan", async ({ page }) => {
-    await page.goto(ALL_FORMATTERS[0].url);
+    await page.goto(formatters[0].url);
 
     const accessibilityScanResults = await new AxeBuilder({ page })
       .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
@@ -89,7 +90,7 @@ test.describe("Accessibility Compliance - WCAG AA", () => {
   });
 
   test("minifier tool page should pass axe-core scan", async ({ page }) => {
-    await page.goto(ALL_MINIFIERS[0].url);
+    await page.goto(minifiers[0].url);
 
     const accessibilityScanResults = await new AxeBuilder({ page })
       .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
@@ -101,7 +102,7 @@ test.describe("Accessibility Compliance - WCAG AA", () => {
   });
 
   test("encoder tool page should pass axe-core scan", async ({ page }) => {
-    await page.goto(ALL_ENCODERS[0].url);
+    await page.goto(encoders[0].url);
 
     const accessibilityScanResults = await new AxeBuilder({ page })
       .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])

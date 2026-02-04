@@ -204,13 +204,16 @@ DISABLE_AI=true pnpm build  # Build without AI content
 ## Key Files & Directories
 
 **Tool Configuration:**
-- `lib/tools-data.ts` - **Unified tool registry** with Record-based structure (O(1) lookups)
-  - `FORMATTER_TOOLS: Record<string, Tool>` - All formatter tools with inlined examples
-  - `MINIFIER_TOOLS: Record<string, Tool>` - All minifier tools with inlined examples
-  - `ALL_FORMATTERS/ALL_MINIFIERS` - Helper arrays for navigation
-  - `ALL_TOOLS` - Centralized registry for counting/category lookups
-- `lib/types.ts` - Shared TypeScript types (Tool interface, actions, languages)
+- `lib/tools-data.ts` - **Category-driven tool registry** with rich metadata
+  - `ALL_TOOLS: Record<ToolCategoryId, ToolCategory>` - Category metadata with nested tools
+  - `getCategoriesByOrder()` - Get categories sorted by display order
+  - `getAllTools()` - Flatten all tools across categories
+  - `getTotalToolCount()` - Count tools (excluding comingSoon)
+  - `getCategoryById(id)` - Type-safe category lookup
+  - Individual tool Records: `FORMATTER_TOOLS`, `MINIFIER_TOOLS`, etc.
+- `lib/types.ts` - Shared TypeScript types (ToolCategoryId, ToolCategory, Tool, actions)
 - `lib/site-config.ts` - Centralized site metadata (titles, descriptions, keywords)
+- `lib/search-index.ts` - Auto-generated search index from ALL_TOOLS
 
 **AI System:**
 - `lib/ai/generate.ts` - Main AI generation logic with retry + caching
@@ -229,16 +232,18 @@ DISABLE_AI=true pnpm build  # Build without AI content
 - `components/TipCard.tsx` - Contextual tip cards (tip/fact/bestPractice)
 - `components/RecommendedTools.tsx` - AI-generated tool recommendations
 
-## ImCreate Server Action** in `app/formatters/actions.ts`:
+## Adding a New Tool (Category-Driven Architecture)
+
+1. **Create Server Action** in `app/{category}/actions.ts`:
 ```typescript
 export async function formatMyTool(input: string, config: FormatConfig): Promise<string> {
   // Use appropriate library (Prettier, Terser, etc.)
 }
 ```
 
-2. **Add tool to `FORMATTER_TOOLS` Record** in `lib/tools-data.ts`:
+2. **Add tool to category Record** in `lib/tools-data.ts`:
 ```typescript
-export const FORMATTER_TOOLS: Record<string, Tool> = {
+export const FORMATTER_TOOLS: Record<string, FormatterTool> = {
   "my-tool-formatter": {  // Key is the URL slug
     id: "my-tool",
     name: "My Tool Formatter",
@@ -269,14 +274,60 @@ it("formats my tool code", async () => {
 ```
 
 **That's it!** The tool automatically appears in:
-- Navigation sidebars (uses `ALL_FORMATTERS` array)
-- Category pages (`/formatters` grid)
-- Sitemap generation
-- Dynamic OG image generation (with count-based cache busting)
+- Home page sections (via `getCategoriesByOrder()`)
+- Navigation sidebar (via `getCategoriesByOrder()`)
+- Command menu search (via auto-generated SEARCH_INDEX)
+- Category pages (via `ALL_TOOLS.formatters.tools`)
+- Sitemap (via `getAllTools()`)
+- Metadata validation (via `getAllTools()`)
+- Dynamic OG images (count-based cache busting)
 
-3. **Add tool config** to `FORMATTERS` object in `app/formatters/[slug]/page.tsx`
-4. **Add example** to `lib/examples.ts`
-5. **Write tests** in `__tests__/formatters.test.ts`
+**No need to update:** CommandMenu, page.tsx, sitemap.ts, NavigationList, or verify-metadata.ts!
+
+## Adding a New Tool Category
+
+1. **Add ToolCategoryId** to `lib/types.ts`:
+```typescript
+export type ToolCategoryId = "formatters" | "minifiers" | "encoders" | "validators" | "generators" | "your-category";
+```
+
+2. **Create tool Record and helper array** in `lib/tools-data.ts`:
+```typescript
+export const YOUR_CATEGORY_TOOLS: Record<string, YourToolType> = {
+  "tool-slug": {
+    id: "tool-id",
+    name: "Tool Name",
+    // ... tool properties
+  },
+};
+
+const ALL_YOUR_CATEGORY = Object.values(YOUR_CATEGORY_TOOLS);
+```
+
+3. **Add category to ALL_TOOLS** in `lib/tools-data.ts`:
+```typescript
+export const ALL_TOOLS: Record<ToolCategoryId, ToolCategory> = {
+  // ... existing categories
+  "your-category": {
+    id: "your-category",
+    label: "Your Category",
+    singular: "Your Tool",
+    url: "/your-category",
+    description: "Description for SEO and category page",
+    order: 6,  // Next available order number
+    tools: ALL_YOUR_CATEGORY,
+  },
+};
+```
+
+**That's it!** The category automatically appears in:
+- Home page sections (dynamic from `getCategoriesByOrder()`)
+- Command menu search groups (dynamic from `getCategoriesByOrder()`)
+- Navigation sidebar (dynamic from `getCategoriesByOrder()`)
+- Sitemap category pages (dynamic from `ALL_TOOLS`)
+- Metadata validation (automatic from `ALL_TOOLS`)
+
+**No manual updates needed for:** CommandMenu, page.tsx, sitemap.ts, NavigationList, or verify-metadata.ts!
 
 ### Environment Variables
 - `GOOGLE_API_KEY` - **Required** for AI generation (Gemini API)

@@ -1,5 +1,8 @@
 import { expect, test } from "@playwright/test";
-import { ALL_FORMATTERS } from "../../lib/tools-data";
+import { ALL_TOOLS } from "../../lib/tools-data";
+
+// Test-local convenience constant
+const formatters = ALL_TOOLS.formatters.tools;
 
 test.describe("SEO & Metadata", () => {
   test("home page should have correct metadata", async ({ page }) => {
@@ -48,7 +51,7 @@ test.describe("SEO & Metadata", () => {
   });
 
   test("tool pages should have correct metadata", async ({ page }) => {
-    const tool = ALL_FORMATTERS[0];
+    const tool = formatters[0];
     await page.goto(tool.url);
 
     // Title should include tool name
@@ -143,7 +146,7 @@ test.describe("SEO & Metadata", () => {
   });
 
   test("all tool pages should have proper h1 headings", async ({ page }) => {
-    const tool = ALL_FORMATTERS[0];
+    const tool = formatters[0];
     await page.goto(tool.url);
 
     // Should have exactly one h1

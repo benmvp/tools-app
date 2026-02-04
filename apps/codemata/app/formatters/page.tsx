@@ -2,11 +2,14 @@ import type { Metadata } from "next";
 import { ScrollToTopFab } from "@/components/ScrollToTopFab";
 import { ToolCard } from "@/components/ToolCard";
 import { SITE_CONFIG } from "@/lib/site-config";
-import { ALL_FORMATTERS } from "@/lib/tools-data";
+import { getCategoryById } from "@/lib/tools-data";
 import { getAppUrl, getOgImageUrl } from "@/lib/utils";
 
+const formattersCategory = getCategoryById("formatters");
+const formatterCount = formattersCategory.tools.length;
+
 const ogImageUrl = getOgImageUrl(
-  `${ALL_FORMATTERS.length} Formatters`,
+  `${formatterCount} Formatters`,
   SITE_CONFIG.pages.formatters.description,
 );
 
@@ -22,7 +25,7 @@ export const metadata: Metadata = {
         url: ogImageUrl,
         width: 1200,
         height: 630,
-        alt: `Codemata - ${ALL_FORMATTERS.length} Code Formatters`,
+        alt: `Codemata - ${formatterCount} Code Formatters`,
       },
     ],
   },
@@ -47,14 +50,14 @@ export default function FormattersPage() {
         </h1>
         <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
           Beautify and format your code with consistent styling. Choose from{" "}
-          {ALL_FORMATTERS.length} different formatters with customizable
-          indentation options.
+          {formatterCount} different formatters with customizable indentation
+          options.
         </p>
       </section>
       {/* Tools Grid */}
       <section>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {ALL_FORMATTERS.map((tool) => (
+          {formattersCategory.tools.map((tool) => (
             <ToolCard key={tool.id} {...tool} />
           ))}
         </div>
