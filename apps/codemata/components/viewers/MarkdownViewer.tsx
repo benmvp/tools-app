@@ -3,7 +3,7 @@
 import { markdown } from "@codemirror/lang-markdown";
 import CodeMirror from "@uiw/react-codemirror";
 import { Copy, Eye, FileText, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -25,7 +25,8 @@ export function MarkdownViewer({ action, defaultInput = "" }: Props) {
   const [error, setError] = useState<string>("");
   const [activeTab, setActiveTab] = useState<string>("markdown");
 
-  const inputSize = encoder.encode(input).length;
+  // Memoize input size calculation to avoid re-encoding on every render
+  const inputSize = useMemo(() => encoder.encode(input).length, [input]);
   const isOverLimit = inputSize > MAX_VIEWER_INPUT_SIZE;
   const isOutputStale = input !== lastPreviewedInput; // Detect when output doesn't match input
 

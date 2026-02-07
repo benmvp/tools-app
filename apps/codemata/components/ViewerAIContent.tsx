@@ -25,12 +25,22 @@ export async function ViewerAIContent({
 
   const availableTools = getAllAvailableTools();
 
+  // Normalize URLs for exact matching (prevent false positives from substring matches)
+  const normalizeUrl = (url: string) => {
+    const normalized = url.trim();
+    // Ensure leading slash, remove trailing slash
+    return normalized.startsWith("/")
+      ? normalized.replace(/\/$/, "")
+      : `/${normalized.replace(/\/$/, "")}`;
+  };
+
   // Get recommended tools details (limit to 3 for better layout)
   const recommendedTools =
     aiContent.recommendations?.tools
       ?.map((toolUrl) => {
+        const normalizedToolUrl = normalizeUrl(toolUrl);
         const tool = availableTools.find(
-          (t) => t.url === toolUrl || t.url.includes(toolUrl),
+          (t) => normalizeUrl(t.url) === normalizedToolUrl,
         );
         return tool;
       })

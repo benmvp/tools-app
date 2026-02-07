@@ -7,14 +7,16 @@ import { MAX_VIEWER_INPUT_SIZE } from "@/lib/viewers/constants";
 
 /**
  * Cached highlighter instance for performance
- * Shiki is expensive to initialize, so we cache it
+ * Shiki is expensive to initialize, so we cache the promise
+ * to prevent concurrent first requests from initializing multiple times
  */
-let highlighterCache: Awaited<ReturnType<typeof createHighlighter>> | null =
-  null;
+let highlighterPromise: Promise<
+  Awaited<ReturnType<typeof createHighlighter>>
+> | null = null;
 
 async function getHighlighterInstance() {
-  if (!highlighterCache) {
-    highlighterCache = await createHighlighter({
+  if (!highlighterPromise) {
+    highlighterPromise = createHighlighter({
       themes: ["github-dark", "github-light"],
       langs: [
         "javascript",
@@ -35,7 +37,7 @@ async function getHighlighterInstance() {
       ],
     });
   }
-  return highlighterCache;
+  return highlighterPromise;
 }
 
 /**
@@ -145,6 +147,9 @@ export async function previewMarkdown(input: string): Promise<string> {
         "alt",
         "src",
         "class",
+        // Note: "style" is needed for Shiki syntax highlighting (inline theme colors)
+        // DOMPurify sanitizes dangerous CSS (e.g., expression(), javascript: URLs)
+        // Alternative would require shipping CSS themes, which increases bundle size
         "style",
         "id",
         "type",

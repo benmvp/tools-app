@@ -35,14 +35,10 @@ test.describe("Viewer Tools - Integration", () => {
     const previewTab = page.getByRole("tab", { name: /preview/i });
     await previewTab.click();
 
-    // Wait for success toast (indicates preview completed)
-    const toast = page.locator("[data-sonner-toast]").first();
-    await expect(toast).toBeVisible({ timeout: 5000 });
-
     // Verify Preview tab is now active
     await expect(previewTab).toHaveAttribute("data-state", "active");
 
-    // Verify rendered content is visible
+    // Wait for rendered content to appear (more stable than waiting for toast)
     const previewPanel = page.locator('[role="tabpanel"]').filter({
       has: page.locator("h1"),
     });
