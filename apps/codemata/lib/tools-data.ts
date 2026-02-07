@@ -2,6 +2,7 @@ import {
   Braces,
   Code,
   Database,
+  Eye,
   FileCheck,
   FileCode,
   FileCode2,
@@ -46,6 +47,7 @@ import {
   validateHtml,
   validateXml,
 } from "../app/validators/actions";
+import { previewMarkdown } from "../app/viewers/actions";
 import type {
   EncoderTool,
   FormatterTool,
@@ -55,6 +57,7 @@ import type {
   ToolCategory,
   ToolCategoryId,
   ValidatorTool,
+  ViewerTool,
 } from "./types";
 import { VALIDATOR_EXAMPLES } from "./validators/examples";
 
@@ -815,6 +818,126 @@ export const GENERATOR_TOOLS: Record<string, GeneratorTool> = {
 };
 
 /**
+ * Viewer Tools - Preview and visualize code/data formats
+ * Key is the URL slug (e.g., "markdown-previewer")
+ */
+export const VIEWER_TOOLS: Record<string, ViewerTool> = {
+  "markdown-previewer": {
+    id: "markdown-preview",
+    name: "GitHub Markdown Previewer",
+    description: "Preview GitHub Flavored Markdown with live rendering",
+    url: "/viewers/markdown-previewer",
+    icon: Eye,
+    comingSoon: false,
+    action: previewMarkdown,
+    language: "markdown",
+    keywords: [
+      "markdown",
+      "md",
+      "github",
+      "gfm",
+      "preview",
+      "render",
+      "readme",
+      "docs",
+    ],
+    example: `# GitHub Markdown Previewer
+
+Preview your **GitHub Flavored Markdown** (GFM) with live rendering. Test how your README will look on GitHub before committing.
+
+## Supported Syntax
+
+### Text Formatting
+
+- **Bold text** using \`**bold**\` or \`__bold__\`
+- *Italic text* using \`*italic*\` or \`_italic_\`
+- ***Bold and italic*** using \`***both***\`
+- ~~Strikethrough~~ using \`~~text~~\`
+
+### Lists
+
+**Unordered list:**
+- Item 1
+- Item 2
+  - Nested item 2.1
+  - Nested item 2.2
+- Item 3
+
+**Ordered list:**
+1. First item
+2. Second item
+3. Third item
+
+### Task Lists
+
+- [x] Completed task
+- [ ] Incomplete task
+- [ ] Another task
+
+### Tables
+
+| Feature | Supported | Notes |
+|---------|-----------|-------|
+| Tables | ✅ Yes | Full GFM support |
+| Task Lists | ✅ Yes | Interactive checkboxes |
+| Code Blocks | ✅ Yes | Syntax highlighting |
+| Emojis | ✅ Yes | GitHub emoji codes |
+
+### Code
+
+Inline code: \`const x = 42;\`
+
+**Code block with syntax highlighting:**
+
+\`\`\`javascript
+function greet(name) {
+  console.log(\`Hello, \${name}!\`);
+}
+
+greet("GitHub");
+\`\`\`
+
+\`\`\`typescript
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+const user: User = {
+  id: 1,
+  name: "Alice",
+  email: "alice@example.com"
+};
+\`\`\`
+
+### Links and Images
+
+[GitHub](https://github.com)
+
+### Blockquotes
+
+> This is a blockquote
+>
+> It can span multiple lines
+
+### Horizontal Rule
+
+---
+
+## Try It Out!
+
+Edit the markdown in the editor and click **Preview** to see it rendered.
+`,
+    metadata: {
+      title: "GitHub Markdown Previewer | Codemata",
+      description:
+        "Preview GitHub Flavored Markdown (GFM) with live rendering. Test tables, task lists, code blocks, and syntax highlighting before committing your README.",
+    },
+  },
+};
+
+/**
  * Internal helper arrays for building ALL_TOOLS
  */
 const ALL_FORMATTERS: FormatterTool[] = Object.values(FORMATTER_TOOLS);
@@ -822,6 +945,7 @@ const ALL_MINIFIERS: MinifierTool[] = Object.values(MINIFIER_TOOLS);
 const ALL_ENCODERS: EncoderTool[] = Object.values(ENCODER_TOOLS);
 const ALL_VALIDATORS: ValidatorTool[] = Object.values(VALIDATOR_TOOLS);
 const ALL_GENERATORS: GeneratorTool[] = Object.values(GENERATOR_TOOLS);
+const ALL_VIEWERS: ViewerTool[] = Object.values(VIEWER_TOOLS);
 
 /**
  * Centralized tool registry with rich category metadata.
@@ -881,6 +1005,16 @@ export const ALL_TOOLS: Record<ToolCategoryId, ToolCategory> = {
     order: 5,
     tools: ALL_GENERATORS,
   },
+  viewers: {
+    id: "viewers",
+    label: "Viewers",
+    singular: "Viewer",
+    url: "/viewers",
+    description:
+      "Preview and visualize code and data formats with live rendering",
+    order: 6,
+    tools: ALL_VIEWERS,
+  },
 } as const;
 
 /**
@@ -924,9 +1058,11 @@ export type MinifierSlug = keyof typeof MINIFIER_TOOLS;
 export type EncoderSlug = keyof typeof ENCODER_TOOLS;
 export type ValidatorSlug = keyof typeof VALIDATOR_TOOLS;
 export type GeneratorSlug = keyof typeof GENERATOR_TOOLS;
+export type ViewerSlug = keyof typeof VIEWER_TOOLS;
 export type ToolSlug =
   | FormatterSlug
   | MinifierSlug
   | EncoderSlug
   | ValidatorSlug
-  | GeneratorSlug;
+  | GeneratorSlug
+  | ViewerSlug;

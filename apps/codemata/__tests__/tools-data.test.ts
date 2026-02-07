@@ -49,7 +49,8 @@ describe("Category-Driven Architecture", () => {
       ALL_TOOLS.minifiers.tools.length +
       ALL_TOOLS.encoders.tools.length +
       ALL_TOOLS.validators.tools.length +
-      ALL_TOOLS.generators.tools.length;
+      ALL_TOOLS.generators.tools.length +
+      ALL_TOOLS.viewers.tools.length;
 
     expect(allTools.length).toBe(expectedCount);
   });
@@ -89,6 +90,10 @@ describe("Category-Driven Architecture", () => {
     const generators = getCategoryById("generators");
     expect(generators.id).toBe("generators");
     expect(generators.label).toBe("Generators");
+
+    const viewers = getCategoryById("viewers");
+    expect(viewers.id).toBe("viewers");
+    expect(viewers.label).toBe("Viewers");
   });
 
   it("should calculate correct tool count (excluding comingSoon)", () => {
@@ -100,14 +105,15 @@ describe("Category-Driven Architecture", () => {
     expect(count).toBeGreaterThan(0);
   });
 
-  it("should have all categories in order 1-5", () => {
+  it("should have all categories in order 1-6", () => {
     const categories = getCategoriesByOrder();
-    expect(categories.length).toBe(5);
+    expect(categories.length).toBe(6);
     expect(categories[0].order).toBe(1);
     expect(categories[1].order).toBe(2);
     expect(categories[2].order).toBe(3);
     expect(categories[3].order).toBe(4);
     expect(categories[4].order).toBe(5);
+    expect(categories[5].order).toBe(6);
   });
 
   it("should have non-empty tool arrays for each category", () => {

@@ -477,7 +477,13 @@ ${getImportantGuidelines()}
  */
 export function buildUserPrompt(
   toolName: string,
-  toolType: "formatter" | "minifier" | "encoder" | "validator" | "generator",
+  toolType:
+    | "formatter"
+    | "minifier"
+    | "encoder"
+    | "validator"
+    | "generator"
+    | "viewer",
   availableTools: Array<{ displayName: string; url: string }>,
 ): string {
   const availableToolsList = availableTools
@@ -714,6 +720,127 @@ ${getTipsSectionInstructions()}
   - **tip**: "Combine multiple .gitignore templates to cover all aspects of your project"
   - **fact**: ".gitignore files use glob patterns to match file paths"
   - **bestPractice**: "Always add .gitignore before making your first commit to avoid tracking unwanted files"
+
+${getImportantGuidelines()}`;
+}
+
+/**
+ * System message for viewer tools
+ */
+export function getViewerSystemPrompt(): string {
+  return `You are an expert content generator for developer tools, specifically for code and data visualization and preview tools.
+
+Generate SEO-optimized and educational content for **${"{toolName}"}**.
+
+${getToneAndStyleSection()}
+
+${getFormattingRulesSection()}
+
+## Required Sections (ALL MUST BE GENERATED)
+
+### Intro (intro)
+
+- **content**: 1-2 sentence plain text overview of the viewer
+  - Focus on visualization and preview capabilities
+  - Mention supported formats and rendering features
+  - Emphasize "see before you publish" use case
+  - Keep brief, conversational tone
+
+### SEO Metadata (seoMetadata)
+
+- **title**: 50-60 character SEO-optimized page title
+  - Format: "{Format} Previewer | {Key Benefit}"
+  - Example: "GitHub Markdown Previewer | Test README Before Publishing"
+- **description**: 120-160 character meta description
+  - Highlight visualization capability
+  - Include key features (GFM, syntax highlighting, etc.)
+  - Call-to-action focused on preview/visualization
+  - Example: "Preview GitHub Flavored Markdown with live rendering. Test tables, code blocks, and task lists before committing your README."
+- **keywords**: Comma-separated keywords for SEO
+  - Include: viewer type, format name, preview, render, visualize, display
+  - Example: "markdown previewer, github markdown, gfm, readme preview, markdown render"
+
+### OpenGraph Metadata (openGraph)
+
+- **title**: OpenGraph title (can be slightly longer/different from SEO title)
+  - Example: "GitHub Markdown Previewer - See How Your README Will Look on GitHub"
+- **description**: OpenGraph description (can be slightly longer than SEO description)
+  - Example: "Preview GitHub Flavored Markdown with live rendering. Test tables, code blocks, syntax highlighting, and task lists before committing. Ensure your documentation looks perfect."
+- **type**: Always "website"
+
+### How to Use (howToUse) - ALWAYS GENERATE
+
+- **heading**: "How to Use ${"{toolName}"}"
+- **content**: Numbered list (3-5 steps) with clear instructions
+  - Paste/input content → Click preview button → View rendered output
+  - Mention tab switching if applicable
+  - Explain supported features (syntax, tables, etc.)
+  - **CRITICAL**: Each step MUST be on its OWN LINE
+  - **Example:** "1. **Paste your markdown** into the input editor.\\n2. **Click the Preview button** to render the content.\\n3. **View the rendered output** in the Preview tab.\\n4. **Switch between tabs** to compare raw input and rendered output."
+- **Output:** Markdown format
+
+### Features and Benefits (features)
+
+- **heading**: "Features and Benefits"
+- **content**: Bulleted list highlighting visualization capabilities
+  - Focus on rendering accuracy and supported features
+  - Mention: live preview, syntax highlighting, theme support, format-specific features
+  - Include format-specific capabilities (GFM tables, task lists, etc.)
+  - **CRITICAL**: Each bullet point MUST be on its OWN LINE
+  - **Example format:**
+    \`\`\`markdown
+    - **Live Preview**: See rendered output instantly as you edit
+    - **Syntax Highlighting**: Code blocks with full language support
+    - **GitHub-Accurate**: Renders exactly as it appears on GitHub
+    - **Theme Support**: Preview in light and dark modes
+    \`\`\`
+- **Output:** Markdown format with proper line breaks
+
+### Rationale (rationale)
+
+- **heading**: "Why Use ${"{toolName}"}?"
+- **content**: Bulleted list explaining benefits of preview/visualization
+  - Address: accuracy, confidence, avoid errors, see before publishing
+  - Benefits: catch formatting issues early, ensure cross-platform rendering, test before committing
+  - **CRITICAL**: Each bullet point MUST be on its OWN LINE
+- **Output:** Markdown format with proper line breaks
+
+### Purpose (purpose)
+
+- **heading**: Format explanation (e.g., "What is GitHub Flavored Markdown?")
+- **content**: Brief paragraph explaining the format/language
+  - What it is and its role in development
+  - Common use cases (documentation, README files, etc.)
+  - Why accurate preview matters for this format
+- **Output:** Markdown format
+
+### Integration (integrate)
+
+- **heading**: "Using ${"{toolName}"} in Your Workflow"
+- **content**: Tips for integrating previews into development workflow
+  - When to use the previewer (before commits, during writing, for testing)
+  - How it complements other tools (editors, formatters, validators)
+  - Team collaboration scenarios (shared previews, consistent rendering)
+  - Preview-driven development practices
+- **Output:** Markdown format
+
+${getFaqSectionFormat()}
+  - Address: viewer usage, supported formats, accuracy, export options
+  - Include at least 2 format-specific questions
+
+${getRecommendationsSectionFormat()}
+  - Recommend related viewers, formatters, or validators
+
+${getResourcesSectionFormat()}
+  - Official format specifications and documentation
+  - Related tools and resources
+  - Style guides and best practices
+
+${getTipsSectionInstructions()}
+- **Examples:**
+  - **tip**: "Preview your README in both light and dark themes to ensure readability"
+  - **fact**: "GitHub Flavored Markdown extends CommonMark with tables, task lists, and strikethrough"
+  - **bestPractice**: "Always preview documentation before committing to catch broken links and formatting issues"
 
 ${getImportantGuidelines()}`;
 }

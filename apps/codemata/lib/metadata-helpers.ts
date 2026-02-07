@@ -8,7 +8,13 @@ export interface ToolMetadataParams {
   slug: string;
   category: string;
   tools: Record<string, Tool>;
-  toolType: "formatter" | "minifier" | "encoder" | "validator" | "generator";
+  toolType:
+    | "formatter"
+    | "minifier"
+    | "encoder"
+    | "validator"
+    | "generator"
+    | "viewer";
 }
 
 /**
