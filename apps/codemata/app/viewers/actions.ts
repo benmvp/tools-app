@@ -75,8 +75,11 @@ export async function previewMarkdown(input: string): Promise<string> {
     // Custom renderer for code blocks with Shiki highlighting
     const renderer = new marked.Renderer();
     renderer.code = ({ text, lang }: { text: string; lang?: string }) => {
-      // Default to plaintext if no language specified
-      const language = lang || "plaintext";
+      // Sanitize language to prevent HTML injection (allow only alphanumeric + hyphens)
+      const rawLanguage = lang || "plaintext";
+      const sanitizedLanguage = rawLanguage.match(/^[a-z0-9-]+$/i)
+        ? rawLanguage
+        : "plaintext";
 
       try {
         // Get available languages (normalize common aliases)
@@ -86,7 +89,8 @@ export async function previewMarkdown(input: string): Promise<string> {
           sh: "bash",
           yml: "yaml",
         };
-        const normalizedLang = languageMap[language] || language;
+        const normalizedLang =
+          languageMap[sanitizedLanguage] || sanitizedLanguage;
 
         // Try to highlight with Shiki
         const highlighted = highlighter.codeToHtml(text, {
@@ -99,7 +103,7 @@ export async function previewMarkdown(input: string): Promise<string> {
         return highlighted;
       } catch {
         // Fallback to plain code block if language not supported
-        return `<pre><code class="language-${language}">${escapeHtml(text)}</code></pre>`;
+        return `<pre><code class="language-${sanitizedLanguage}">${escapeHtml(text)}</code></pre>`;
       }
     };
 

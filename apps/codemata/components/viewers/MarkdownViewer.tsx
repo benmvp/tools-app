@@ -15,16 +15,19 @@ interface Props {
 }
 
 const MAX_SIZE = 50 * 1024; // 50KB
+const encoder = new TextEncoder(); // Reuse encoder instance for performance
 
 export function MarkdownViewer({ action, defaultInput = "" }: Props) {
   const [input, setInput] = useState(defaultInput);
   const [output, setOutput] = useState("");
+  const [lastPreviewedInput, setLastPreviewedInput] = useState(""); // Track what was last previewed
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>("");
   const [activeTab, setActiveTab] = useState<string>("markdown");
 
-  const inputSize = new TextEncoder().encode(input).length;
+  const inputSize = encoder.encode(input).length;
   const isOverLimit = inputSize > MAX_SIZE;
+  const isOutputStale = input !== lastPreviewedInput; // Detect when output doesn't match input
 
   const handlePreview = async () => {
     if (!input.trim()) {
@@ -45,11 +48,14 @@ export function MarkdownViewer({ action, defaultInput = "" }: Props) {
     try {
       const rendered = await action(input);
       setOutput(rendered);
+      setLastPreviewedInput(input); // Mark this input as previewed
+      setError(""); // Clear any previous errors
       toast.success("Markdown previewed successfully");
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : "Failed to preview markdown";
       setError(errorMessage);
+      setOutput(""); // Clear stale output on error
       toast.error(errorMessage);
     } finally {
       setIsLoading(false);
@@ -58,8 +64,8 @@ export function MarkdownViewer({ action, defaultInput = "" }: Props) {
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
-    // Auto-preview when switching to preview tab
-    if (value === "preview" && !output && !isLoading) {
+    // Auto-preview when switching to preview tab if no output or output is stale
+    if (value === "preview" && (isOutputStale || !output) && !isLoading) {
       handlePreview();
     }
   };
@@ -80,7 +86,7 @@ export function MarkdownViewer({ action, defaultInput = "" }: Props) {
           onClick={handleCopyHTML}
           variant="outline"
           className="gap-2"
-          disabled={!output}
+          disabled={!output || isLoading || !!error || isOutputStale}
         >
           <Copy className="h-4 w-4" />
           Copy HTML
