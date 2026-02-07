@@ -3,12 +3,7 @@
 import DOMPurify from "isomorphic-dompurify";
 import { marked } from "marked";
 import { createHighlighter } from "shiki";
-
-/**
- * Maximum input size: 50KB (~12,500 words)
- * Prevents abuse and ensures fast rendering
- */
-const MAX_INPUT_SIZE = 50 * 1024; // 50KB in bytes
+import { MAX_VIEWER_INPUT_SIZE } from "@/lib/viewers/constants";
 
 /**
  * Cached highlighter instance for performance
@@ -62,9 +57,9 @@ marked.setOptions({
 export async function previewMarkdown(input: string): Promise<string> {
   // Validate input size
   const inputSize = new TextEncoder().encode(input).length;
-  if (inputSize > MAX_INPUT_SIZE) {
+  if (inputSize > MAX_VIEWER_INPUT_SIZE) {
     throw new Error(
-      `Input too large. Maximum size is ${MAX_INPUT_SIZE / 1024}KB (~${Math.floor(MAX_INPUT_SIZE / 4)} words). Your input is ${Math.ceil(inputSize / 1024)}KB.`,
+      `Input too large. Maximum size is ${MAX_VIEWER_INPUT_SIZE / 1024}KB (~${Math.floor(MAX_VIEWER_INPUT_SIZE / 4)} words). Your input is ${Math.ceil(inputSize / 1024)}KB.`,
     );
   }
 

@@ -79,7 +79,7 @@ function getRecommendationsSectionFormat(): string {
 - **content**: Links to other tools on the site
   - Reference the available tools list provided
   - Format as markdown links: \`- [Tool Name](url) - Brief description\`
-- **tools**: Array of tool IDs (will be validated)
+- **tools**: Array of tool URLs (e.g., ["/formatters/json-formatter", "/minifiers/css-minifier"])
 - **Output:** Markdown format`;
 }
 

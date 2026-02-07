@@ -8,13 +8,13 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { ViewerAction } from "@/lib/types";
+import { MAX_VIEWER_INPUT_SIZE } from "@/lib/viewers/constants";
 
 interface Props {
   action: ViewerAction;
   defaultInput?: string;
 }
 
-const MAX_SIZE = 50 * 1024; // 50KB
 const encoder = new TextEncoder(); // Reuse encoder instance for performance
 
 export function MarkdownViewer({ action, defaultInput = "" }: Props) {
@@ -26,7 +26,7 @@ export function MarkdownViewer({ action, defaultInput = "" }: Props) {
   const [activeTab, setActiveTab] = useState<string>("markdown");
 
   const inputSize = encoder.encode(input).length;
-  const isOverLimit = inputSize > MAX_SIZE;
+  const isOverLimit = inputSize > MAX_VIEWER_INPUT_SIZE;
   const isOutputStale = input !== lastPreviewedInput; // Detect when output doesn't match input
 
   const handlePreview = async () => {
@@ -37,7 +37,7 @@ export function MarkdownViewer({ action, defaultInput = "" }: Props) {
 
     if (isOverLimit) {
       setError(
-        `Input too large. Maximum size is ${MAX_SIZE / 1024}KB (~${Math.floor(MAX_SIZE / 4)} words).`,
+        `Input too large. Maximum size is ${MAX_VIEWER_INPUT_SIZE / 1024}KB (~${Math.floor(MAX_VIEWER_INPUT_SIZE / 4)} words).`,
       );
       return;
     }
@@ -92,7 +92,7 @@ export function MarkdownViewer({ action, defaultInput = "" }: Props) {
           Copy HTML
         </Button>
         <div className="ml-auto text-sm text-muted-foreground">
-          {(inputSize / 1024).toFixed(1)}KB / {MAX_SIZE / 1024}KB
+          {(inputSize / 1024).toFixed(1)}KB / {MAX_VIEWER_INPUT_SIZE / 1024}KB
           {isOverLimit && (
             <span className="text-destructive font-medium ml-2">
               (Over limit!)

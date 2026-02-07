@@ -60,7 +60,10 @@ export default async function ViewerPage({
           <MarkdownViewer action={tool.action} defaultInput={tool.example} />
         );
       default:
-        return null;
+        // Fail fast - tool exists in registry but no component mapping
+        throw new Error(
+          `Missing component mapping for viewer: ${slug}. Add a case to renderViewer().`,
+        );
     }
   };
 
