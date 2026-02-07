@@ -9,7 +9,7 @@ const viewersCategory = getCategoryById("viewers");
 const viewerCount = viewersCategory.tools.length;
 
 const ogImageUrl = getOgImageUrl(
-  `${viewerCount} Viewer${viewerCount === 1 ? "" : "s"}`,
+  `${viewerCount} Viewers`,
   SITE_CONFIG.pages.viewers.description,
 );
 
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
         url: ogImageUrl,
         width: 1200,
         height: 630,
-        alt: `Codemata - ${viewerCount} Code & Data Viewer${viewerCount === 1 ? "" : "s"}`,
+        alt: `Codemata - ${viewerCount} Code & Data Viewers`,
       },
     ],
   },

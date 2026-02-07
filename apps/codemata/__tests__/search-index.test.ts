@@ -1,10 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { POPULAR_TOOLS, SEARCH_INDEX } from "../lib/search-index";
-import {
-  ALL_TOOLS,
-  getAllTools,
-  getCategoriesByOrder,
-} from "../lib/tools-data";
+import { getAllTools, getCategoriesByOrder } from "../lib/tools-data";
 
 describe("Search Index", () => {
   describe("buildSearchIndex", () => {
@@ -91,9 +87,7 @@ describe("Search Index", () => {
       const allCategoryIds = getCategoriesByOrder().map(
         (category) => category.id,
       );
-      const categoryPattern = new RegExp(
-        `^/(${allCategoryIds.join("|")})/`,
-      );
+      const categoryPattern = new RegExp(`^/(${allCategoryIds.join("|")})/`);
 
       for (const item of SEARCH_INDEX) {
         expect(item.id).toBeTruthy();
