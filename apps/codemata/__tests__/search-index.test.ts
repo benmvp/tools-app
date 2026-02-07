@@ -1,42 +1,42 @@
 import { describe, expect, it } from "vitest";
 import { POPULAR_TOOLS, SEARCH_INDEX } from "../lib/search-index";
+import {
+  ALL_TOOLS,
+  getAllTools,
+  getCategoriesByOrder,
+} from "../lib/tools-data";
 
 describe("Search Index", () => {
   describe("buildSearchIndex", () => {
-    it("includes all formatters, minifiers, encoders, validators, and generators", () => {
+    it("includes all formatters, minifiers, encoders, validators, generators, and viewers", () => {
       expect(SEARCH_INDEX.length).toBeGreaterThan(0);
 
-      const formatters = SEARCH_INDEX.filter(
-        (item) => item.category === "formatters",
-      );
-      const minifiers = SEARCH_INDEX.filter(
-        (item) => item.category === "minifiers",
-      );
-      const encoders = SEARCH_INDEX.filter(
-        (item) => item.category === "encoders",
-      );
-      const validators = SEARCH_INDEX.filter(
-        (item) => item.category === "validators",
-      );
-      const generators = SEARCH_INDEX.filter(
-        (item) => item.category === "generators",
-      );
+      // Dynamically verify all categories are represented
+      const categories = getCategoriesByOrder();
+      for (const category of categories) {
+        const toolsInCategory = SEARCH_INDEX.filter(
+          (item) => item.category === category.id,
+        );
+        const expectedCount = category.tools.filter(
+          (tool) => !tool.comingSoon,
+        ).length;
+        expect(toolsInCategory.length).toBe(expectedCount);
+      }
 
-      expect(formatters.length).toBe(9);
-      expect(minifiers.length).toBe(6);
-      expect(encoders.length).toBe(5);
-      expect(validators.length).toBe(6);
-      expect(generators.length).toBe(1);
-      expect(SEARCH_INDEX.length).toBe(27); // 9 formatters + 6 minifiers + 5 encoders + 6 validators + 1 generator
+      // Verify total count matches all non-comingSoon tools
+      const allTools = getAllTools().filter((tool) => !tool.comingSoon);
+      expect(SEARCH_INDEX.length).toBe(allTools.length);
     });
 
     it("should include all categories", () => {
-      const categories = new Set(SEARCH_INDEX.map((item) => item.category));
-      expect(categories.has("formatters")).toBe(true);
-      expect(categories.has("minifiers")).toBe(true);
-      expect(categories.has("encoders")).toBe(true);
-      expect(categories.has("validators")).toBe(true);
-      expect(categories.has("generators")).toBe(true);
+      const indexCategories = new Set(
+        SEARCH_INDEX.map((item) => item.category),
+      );
+      const allCategories = getCategoriesByOrder();
+
+      for (const category of allCategories) {
+        expect(indexCategories.has(category.id)).toBe(true);
+      }
     });
 
     it("creates proper searchText with name and keywords", () => {
@@ -88,20 +88,19 @@ describe("Search Index", () => {
     });
 
     it("maintains all required fields", () => {
+      const allCategoryIds = getCategoriesByOrder().map(
+        (category) => category.id,
+      );
+      const categoryPattern = new RegExp(
+        `^/(${allCategoryIds.join("|")})/`,
+      );
+
       for (const item of SEARCH_INDEX) {
         expect(item.id).toBeTruthy();
         expect(item.name).toBeTruthy();
         expect(item.description).toBeTruthy();
-        expect(item.url).toMatch(
-          /^\/(formatters|minifiers|encoders|validators|generators)\//,
-        );
-        expect([
-          "formatters",
-          "minifiers",
-          "encoders",
-          "validators",
-          "generators",
-        ]).toContain(item.category);
+        expect(item.url).toMatch(categoryPattern);
+        expect(allCategoryIds).toContain(item.category);
         expect(Array.isArray(item.keywords)).toBe(true);
         expect(item.searchText).toBeTruthy();
       }
