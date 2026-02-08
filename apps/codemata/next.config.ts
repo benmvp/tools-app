@@ -5,7 +5,11 @@ const nextConfig: NextConfig = {
   reactCompiler: true,
   // Shiki uses dynamic imports and WASM that don't bundle well in serverless
   // Keep as external to avoid bundling issues
-  serverExternalPackages: ["shiki", "@shikijs/core", "@shikijs/engine-oniguruma"],
+  serverExternalPackages: [
+    "shiki",
+    "@shikijs/core",
+    "@shikijs/engine-oniguruma",
+  ],
 };
 
 export default nextConfig;

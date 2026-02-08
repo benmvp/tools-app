@@ -161,9 +161,10 @@ export function MarkdownViewer({ action, defaultInput = "" }: Props) {
 
       <div className="text-sm text-muted-foreground">
         <p>
-          <strong>Tip:</strong> This previewer supports GitHub Flavored Markdown
-          (GFM) including tables, task lists, strikethrough, and
-          syntax-highlighted code blocks.
+          <strong>Tip:</strong> This previewer supports Markdown including
+          tables, task lists, strikethrough, and syntax-highlighted code blocks.
+          Perfect for previewing README files, documentation, or blog posts
+          before publishing.
         </p>
       </div>
     </div>

@@ -123,7 +123,7 @@ export const SITE_CONFIG = {
     viewers: {
       title: "Code & Data Viewers | Codemata",
       description:
-        "Preview and visualize code and data formats with live rendering. GitHub Markdown previewer and more developer tools.",
+        "Preview and visualize code and data formats with live rendering. Markdown previewer and more developer tools.",
       keywords: [
         "viewer",
         "preview",

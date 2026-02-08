@@ -824,8 +824,8 @@ export const GENERATOR_TOOLS: Record<string, GeneratorTool> = {
 export const VIEWER_TOOLS: Record<string, ViewerTool> = {
   "markdown-previewer": {
     id: "markdown-preview",
-    name: "GitHub Markdown Previewer",
-    description: "Preview GitHub Flavored Markdown with live rendering",
+    name: "Markdown Previewer",
+    description: "Preview Markdown with live rendering",
     url: "/viewers/markdown-previewer",
     icon: Eye,
     comingSoon: false,
@@ -841,9 +841,9 @@ export const VIEWER_TOOLS: Record<string, ViewerTool> = {
       "readme",
       "docs",
     ],
-    example: `# GitHub Markdown Previewer
+    example: `# Markdown Previewer
 
-Preview your **GitHub Flavored Markdown** (GFM) with live rendering. Test how your README will look on GitHub before committing.
+Preview your **Markdown** with live rendering. Test how your README will look before committing.
 
 ## Supported Syntax
 
@@ -878,7 +878,7 @@ Preview your **GitHub Flavored Markdown** (GFM) with live rendering. Test how yo
 
 | Feature | Supported | Notes |
 |---------|-----------|-------|
-| Tables | ✅ Yes | Full GFM support |
+| Tables | ✅ Yes | Full support |
 | Task Lists | ✅ Yes | Interactive checkboxes |
 | Code Blocks | ✅ Yes | Syntax highlighting |
 | Emojis | ✅ Yes | GitHub emoji codes |
@@ -930,9 +930,9 @@ const user: User = {
 Edit the markdown in the editor and click **Preview** to see it rendered.
 `,
     metadata: {
-      title: "GitHub Markdown Previewer | Codemata",
+      title: "Markdown Previewer | Codemata",
       description:
-        "Preview GitHub Flavored Markdown (GFM) with live rendering. Test tables, task lists, code blocks, and syntax highlighting before committing your README.",
+        "Preview Markdown with live rendering. Test tables, task lists, code blocks, and syntax highlighting before committing your README.",
     },
   },
 };
