@@ -23,8 +23,6 @@ export async function ViewerAIContent({
     return null;
   }
 
-  const availableTools = getAllAvailableTools();
-
   // Normalize URLs for exact matching (prevent false positives from substring matches)
   const normalizeUrl = (url: string) => {
     const normalized = url.trim();
@@ -34,18 +32,23 @@ export async function ViewerAIContent({
       : `/${normalized.replace(/\/$/, "")}`;
   };
 
-  // Get recommended tools details (limit to 3 for better layout)
-  const recommendedTools =
-    aiContent.recommendations?.tools
-      ?.map((toolUrl) => {
-        const normalizedToolUrl = normalizeUrl(toolUrl);
-        const tool = availableTools.find(
-          (t) => normalizeUrl(t.url) === normalizedToolUrl,
-        );
-        return tool;
-      })
-      .filter((tool): tool is NonNullable<typeof tool> => tool !== undefined)
-      .slice(0, 3) || [];
+  // Only fetch available tools if we have recommendations to resolve
+  const hasRecommendations =
+    aiContent.recommendations?.tools &&
+    aiContent.recommendations.tools.length > 0;
+
+  const recommendedTools = hasRecommendations
+    ? aiContent.recommendations.tools
+        .map((toolUrl) => {
+          const normalizedToolUrl = normalizeUrl(toolUrl);
+          const tool = getAllAvailableTools().find(
+            (t) => normalizeUrl(t.url) === normalizedToolUrl,
+          );
+          return tool;
+        })
+        .filter((tool): tool is NonNullable<typeof tool> => tool !== undefined)
+        .slice(0, 3)
+    : [];
 
   return (
     <>

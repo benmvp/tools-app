@@ -1,7 +1,7 @@
 "use server";
 
-import DOMPurify from "isomorphic-dompurify";
 import { marked } from "marked";
+import sanitizeHtml from "sanitize-html";
 import { createHighlighter } from "shiki";
 import { MAX_VIEWER_INPUT_SIZE } from "@/lib/viewers/constants";
 
@@ -34,7 +34,12 @@ async function getHighlighterInstance() {
         "graphql",
         "jsx",
         "tsx",
+        "text", // Plain text fallback for code blocks without language
       ],
+    }).catch((error) => {
+      // Reset promise on failure so future requests can retry initialization
+      highlighterPromise = null;
+      throw error;
     });
   }
   return highlighterPromise;
@@ -73,10 +78,10 @@ export async function previewMarkdown(input: string): Promise<string> {
     const renderer = new marked.Renderer();
     renderer.code = ({ text, lang }: { text: string; lang?: string }) => {
       // Sanitize language to prevent HTML injection (allow only alphanumeric + hyphens)
-      const rawLanguage = lang || "plaintext";
+      const rawLanguage = lang || "text";
       const sanitizedLanguage = rawLanguage.match(/^[a-z0-9-]+$/i)
         ? rawLanguage
-        : "plaintext";
+        : "text";
 
       try {
         // Get available languages (normalize common aliases)
@@ -108,9 +113,9 @@ export async function previewMarkdown(input: string): Promise<string> {
     const html = await marked.parse(input, { renderer });
 
     // Sanitize HTML to prevent XSS attacks
-    const sanitized = DOMPurify.sanitize(html, {
-      // Allow common HTML elements and attributes
-      ALLOWED_TAGS: [
+    const sanitized = sanitizeHtml(html, {
+      // Allow common HTML elements
+      allowedTags: [
         "h1",
         "h2",
         "h3",
@@ -141,25 +146,18 @@ export async function previewMarkdown(input: string): Promise<string> {
         "img",
         "input",
       ],
-      ALLOWED_ATTR: [
-        "href",
-        "title",
-        "alt",
-        "src",
-        "class",
-        // Note: "style" is needed for Shiki syntax highlighting (inline theme colors)
-        // DOMPurify sanitizes dangerous CSS (e.g., expression(), javascript: URLs)
-        // Alternative would require shipping CSS themes, which increases bundle size
-        "style",
-        "id",
-        "type",
-        "checked",
-        "disabled",
-      ],
-      // Allow data attributes for Shiki themes
-      ALLOW_DATA_ATTR: true,
-      // Keep relative links
-      ALLOW_UNKNOWN_PROTOCOLS: false,
+      // Allow common attributes
+      allowedAttributes: {
+        a: ["href", "title"],
+        img: ["src", "alt", "title"],
+        input: ["type", "checked", "disabled"],
+        // Allow class, id, style, and data-* on all elements (for Shiki themes)
+        "*": ["class", "id", "style", "data-*"],
+      },
+      // Keep relative links for markdown
+      allowProtocolRelative: true,
+      // Don't strip unknown protocols (keep relative links)
+      allowedSchemes: ["http", "https", "mailto"],
     });
 
     return sanitized;

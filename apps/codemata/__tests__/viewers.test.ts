@@ -152,6 +152,18 @@ interface User {
       expect(result).not.toContain("onclick");
       expect(result).not.toContain("alert");
     });
+
+    it("sanitizes malicious code fence language strings", async () => {
+      // Attempt attribute injection via language string
+      const input = '```javascript" onload="alert(1)\nconst foo = "bar";\n```';
+      const result = await previewMarkdown(input);
+
+      // Should not contain the malicious attributes
+      expect(result).not.toContain('onload="alert');
+      expect(result).not.toContain("alert(1)");
+      // Should still render the code content safely
+      expect(result).toContain("foo");
+    });
   });
 
   describe("Input Validation", () => {
