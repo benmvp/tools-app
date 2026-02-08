@@ -3,6 +3,8 @@ import { RecommendedTools } from "@/components/RecommendedTools";
 import { TipCard } from "@/components/TipCard";
 import { getAllAvailableTools, getViewerContent } from "@/lib/ai/helpers";
 
+const AVAILABLE_TOOLS = getAllAvailableTools();
+
 interface ViewerAIContentProps {
   slug: string;
   viewerName: string;
@@ -41,7 +43,7 @@ export async function ViewerAIContent({
     ? aiContent.recommendations.tools
         .map((toolUrl) => {
           const normalizedToolUrl = normalizeUrl(toolUrl);
-          const tool = getAllAvailableTools().find(
+          const tool = AVAILABLE_TOOLS.find(
             (t) => normalizeUrl(t.url) === normalizedToolUrl,
           );
           return tool;

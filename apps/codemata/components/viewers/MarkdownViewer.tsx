@@ -145,7 +145,7 @@ export function MarkdownViewer({ action, defaultInput = "" }: Props) {
             ) : output ? (
               <div
                 className="prose prose-slate dark:prose-invert max-w-none"
-                // biome-ignore lint/security/noDangerouslySetInnerHtml: Content is sanitized server-side with DOMPurify
+                // biome-ignore lint/security/noDangerouslySetInnerHtml: Content is sanitized server-side with sanitize-html
                 dangerouslySetInnerHTML={{ __html: output }}
               />
             ) : (

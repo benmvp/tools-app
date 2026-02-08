@@ -1,10 +1,114 @@
 "use server";
 
+import { colord, extend } from "colord";
+import namesPlugin from "colord/plugins/names";
 import type { Tokens } from "marked";
 import { marked } from "marked";
 import sanitizeHtml from "sanitize-html";
 import { codeToHtml } from "shiki";
 import { MAX_VIEWER_INPUT_SIZE } from "@/lib/viewers/constants";
+
+const LANGUAGE_ALIASES: Record<string, string> = {
+  js: "javascript",
+  ts: "typescript",
+  sh: "bash",
+  yml: "yaml",
+};
+
+extend([namesPlugin]);
+
+const SAFE_COLOR_VALUES = new Set(["inherit", "currentcolor", "transparent"]);
+
+const ANY_STYLE_VALUE = [/^[\s\S]*$/];
+
+type AttributeMap = sanitizeHtml.Attributes;
+
+function isSafeColor(value: unknown): boolean {
+  if (typeof value !== "string") {
+    return false;
+  }
+  const trimmed = value.trim();
+  if (trimmed.length === 0) {
+    return false;
+  }
+  const normalized = trimmed.toLowerCase();
+  if (SAFE_COLOR_VALUES.has(normalized)) {
+    return true;
+  }
+  const parsed = colord(trimmed);
+  return parsed.isValid();
+}
+
+const STYLE_VALIDATORS: Record<string, (value: string) => boolean> = {
+  color: (value) => isSafeColor(value),
+  "background-color": (value) => isSafeColor(value),
+  "font-style": (value) => /^(?:normal|italic)$/i.test(value.trim()),
+  "font-weight": (value) => /^(?:normal|bold|[1-9]00)$/i.test(value.trim()),
+  "text-decoration": (value) =>
+    /^(?:none|underline|line-through)$/i.test(value.trim()),
+  "text-decoration-line": (value) =>
+    /^(?:none|underline|line-through)$/i.test(value.trim()),
+};
+
+function sanitizeStyleValue(styleValue: string): string | undefined {
+  const declarations = styleValue
+    .split(";")
+    .map((declaration) => declaration.trim())
+    .filter(Boolean);
+
+  const sanitized: string[] = [];
+
+  for (const declaration of declarations) {
+    const [propertyRaw, ...valueParts] = declaration.split(":");
+    if (!propertyRaw || valueParts.length === 0) {
+      continue;
+    }
+
+    const property = propertyRaw.trim().toLowerCase();
+    if (!property) {
+      continue;
+    }
+
+    const value = valueParts.join(":").trim();
+    if (!value || value.includes("!important")) {
+      continue;
+    }
+
+    const validator = STYLE_VALIDATORS[property];
+    if (!validator || !validator(value)) {
+      continue;
+    }
+
+    sanitized.push(`${property}: ${value}`);
+  }
+
+  if (sanitized.length === 0) {
+    return undefined;
+  }
+
+  return sanitized.join("; ");
+}
+
+// Re-validate inline styles with structured checks to avoid brittle regex patterns.
+function transformStyle(
+  tagName: string,
+  attribs: AttributeMap,
+): sanitizeHtml.Tag {
+  if (!attribs || typeof attribs.style !== "string") {
+    return { tagName, attribs };
+  }
+
+  const sanitizedStyle = sanitizeStyleValue(attribs.style);
+  const nextAttribs: AttributeMap = { ...attribs };
+
+  if (sanitizedStyle) {
+    nextAttribs.style = sanitizedStyle;
+  } else {
+    delete nextAttribs.style;
+  }
+
+  return { tagName, attribs: nextAttribs };
+}
 
 /**
  * Configure marked with GitHub Flavored Markdown (GFM) support
@@ -12,6 +116,37 @@ import { MAX_VIEWER_INPUT_SIZE } from "@/lib/viewers/constants";
 marked.setOptions({
   gfm: true, // GitHub Flavored Markdown
   breaks: true, // Convert \n to <br>
+});
+
+marked.use({
+  async: true,
+  walkTokens: async (token) => {
+    if (token.type !== "code") {
+      return;
+    }
+
+    const codeToken = token as Tokens.Code;
+    const rawLanguage = codeToken.lang || "text";
+    const sanitizedLanguage = rawLanguage.match(/^[a-z0-9-]+$/i)
+      ? rawLanguage
+      : "text";
+
+    try {
+      const normalizedLang =
+        LANGUAGE_ALIASES[sanitizedLanguage] || sanitizedLanguage;
+      const highlighted = await codeToHtml(codeToken.text, {
+        lang: normalizedLang,
+        themes: {
+          light: "github-light",
+          dark: "github-dark",
+        },
+      });
+      codeToken.text = highlighted;
+      codeToken.lang = "__shiki__";
+    } catch {
+      codeToken.lang = sanitizedLanguage;
+    }
+  },
 });
 
 /**
@@ -32,48 +167,6 @@ export async function previewMarkdown(input: string): Promise<string> {
   }
 
   try {
-    // Use walkTokens to pre-process code blocks asynchronously
-    // Store highlighted HTML in token for later rendering
-    marked.use({
-      async: true,
-      walkTokens: async (token) => {
-        if (token.type === "code") {
-          const codeToken = token as Tokens.Code;
-          // Sanitize language to prevent HTML injection (allow only alphanumeric + hyphens)
-          const rawLanguage = codeToken.lang || "text";
-          const sanitizedLanguage = rawLanguage.match(/^[a-z0-9-]+$/i)
-            ? rawLanguage
-            : "text";
-
-          try {
-            // Normalize common language aliases
-            const languageMap: Record<string, string> = {
-              js: "javascript",
-              ts: "typescript",
-              sh: "bash",
-              yml: "yaml",
-            };
-            const normalizedLang =
-              languageMap[sanitizedLanguage] || sanitizedLanguage;
-
-            // Highlight with Shiki and store in token
-            codeToken.text = await codeToHtml(codeToken.text, {
-              lang: normalizedLang,
-              themes: {
-                light: "github-light",
-                dark: "github-dark",
-              },
-            });
-            // Mark as pre-rendered HTML
-            codeToken.lang = "__shiki__";
-          } catch {
-            // Keep original text if highlighting fails
-            // Fallback rendering will handle it
-          }
-        }
-      },
-    });
-
     // Custom renderer to use pre-highlighted code
     const renderer = new marked.Renderer();
     renderer.code = ({ text, lang }: { text: string; lang?: string }) => {
@@ -130,8 +223,33 @@ export async function previewMarkdown(input: string): Promise<string> {
         a: ["href", "title"],
         img: ["src", "alt", "title"],
         input: ["type", "checked", "disabled"],
-        // Allow class, id, style, and data-* on all elements (for Shiki themes)
-        "*": ["class", "id", "style", "data-*"],
+        pre: ["class", "style"],
+        code: ["class", "style", "data-language", "data-theme"],
+        span: ["class", "style"],
+        "*": ["class", "id", "data-*"],
+      },
+      allowedStyles: {
+        pre: {
+          color: ANY_STYLE_VALUE,
+          "background-color": ANY_STYLE_VALUE,
+        },
+        code: {
+          color: ANY_STYLE_VALUE,
+          "background-color": ANY_STYLE_VALUE,
+        },
+        span: {
+          color: ANY_STYLE_VALUE,
+          "background-color": ANY_STYLE_VALUE,
+          "font-style": ANY_STYLE_VALUE,
+          "font-weight": ANY_STYLE_VALUE,
+          "text-decoration": ANY_STYLE_VALUE,
+          "text-decoration-line": ANY_STYLE_VALUE,
+        },
+      },
+      transformTags: {
+        pre: transformStyle,
+        code: transformStyle,
+        span: transformStyle,
       },
       // Keep relative links for markdown
       allowProtocolRelative: true,
