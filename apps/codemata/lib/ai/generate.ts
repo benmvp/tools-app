@@ -8,6 +8,7 @@ import {
   getGeneratorSystemPrompt,
   getMinifierSystemPrompt,
   getValidatorSystemPrompt,
+  getViewerSystemPrompt,
 } from "./prompts";
 import { type ToolContent, toolContentSchema } from "./schema";
 
@@ -69,6 +70,7 @@ const ALL_SYSTEM_PROMPTS = {
   encoder: getEncoderSystemPrompt,
   validator: getValidatorSystemPrompt,
   generator: getGeneratorSystemPrompt,
+  viewer: getViewerSystemPrompt,
 } as const;
 
 /**
@@ -78,7 +80,13 @@ const ALL_SYSTEM_PROMPTS = {
 export async function generateToolContent(
   toolId: string,
   toolName: string,
-  toolType: "formatter" | "minifier" | "encoder" | "validator" | "generator",
+  toolType:
+    | "formatter"
+    | "minifier"
+    | "encoder"
+    | "validator"
+    | "generator"
+    | "viewer",
   availableTools: Array<{ displayName: string; url: string }>,
 ): Promise<ToolContent | undefined> {
   // Skip AI generation based on environment mode

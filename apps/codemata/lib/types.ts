@@ -81,6 +81,12 @@ export type EncoderAction = (
 export type JwtDecoderAction = (input: string) => Promise<string>;
 
 /**
+ * Server action function signature for viewers
+ * Takes raw input and returns rendered HTML (sanitized)
+ */
+export type ViewerAction = (input: string) => Promise<string>;
+
+/**
  * Base Tool interface for all tools (formatters, minifiers, converters, etc.)
  */
 export interface Tool {
@@ -179,6 +185,27 @@ export interface GeneratorTool extends Tool {
 }
 
 /**
+ * Viewer Tool interface
+ *
+ * Viewers preview and visualize code/data formats with rendered output.
+ * Unlike formatters (code → formatted code), viewers transform input into visual display
+ * (e.g., markdown → HTML, SVG → rendered graphic, JSON → tree view).
+ *
+ * Key characteristics:
+ * - `action`: Server-side rendering that returns sanitized HTML or visual output
+ * - `language`: Input format (e.g., "markdown", "svg", "json")
+ * - `example`: Sample input to demonstrate viewer capabilities
+ *
+ * Examples: Markdown Previewer (markdown → HTML), SVG Viewer (SVG → rendered image),
+ * Diff Viewer (two files → side-by-side comparison)
+ */
+export interface ViewerTool extends Tool {
+  action: ViewerAction;
+  example: string;
+  language: "markdown" | "svg" | "json" | "xml" | "html" | "text";
+}
+
+/**
  * Type-safe category identifiers
  * Use this instead of loose strings for category references
  */
@@ -187,7 +214,8 @@ export type ToolCategoryId =
   | "minifiers"
   | "encoders"
   | "validators"
-  | "generators";
+  | "generators"
+  | "viewers";
 
 /**
  * Tool category metadata with nested tools
@@ -205,5 +233,6 @@ export interface ToolCategory {
     | MinifierTool[]
     | EncoderTool[]
     | ValidatorTool[]
-    | GeneratorTool[];
+    | GeneratorTool[]
+    | ViewerTool[];
 }

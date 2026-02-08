@@ -120,5 +120,20 @@ export const SITE_CONFIG = {
         "code generation",
       ],
     },
+    viewers: {
+      title: "Code & Data Viewers | Codemata",
+      description:
+        "Preview and visualize code and data formats with live rendering. Markdown previewer and more developer tools.",
+      keywords: [
+        "viewer",
+        "preview",
+        "markdown",
+        "github",
+        "gfm",
+        "render",
+        "visualize",
+        "display",
+      ],
+    },
   },
 } as const;
