@@ -17,21 +17,26 @@ export interface SearchableToolItem {
 /**
  * Build search index from ALL_TOOLS at module load time
  * Automatically includes all categories - no manual updates needed
+ * Excludes tools marked as comingSoon
  */
 function buildSearchIndex(): SearchableToolItem[] {
   return Object.entries(ALL_TOOLS).flatMap(([categoryId, category]) =>
-    category.tools.map((tool) => ({
-      id: tool.id,
-      name: tool.name,
-      description: tool.description,
-      url: tool.url,
-      category: categoryId as ToolCategoryId,
-      keywords: tool.keywords || [],
-      icon: tool.icon,
-      // Only index name + keywords for more precise fuzzy matching
-      // Description creates too many false positives with cmdk fuzzy search
-      searchText: [tool.name, ...(tool.keywords || [])].join(" ").toLowerCase(),
-    })),
+    category.tools
+      .filter((tool) => !tool.comingSoon) // Exclude coming soon tools
+      .map((tool) => ({
+        id: tool.id,
+        name: tool.name,
+        description: tool.description,
+        url: tool.url,
+        category: categoryId as ToolCategoryId,
+        keywords: tool.keywords || [],
+        icon: tool.icon,
+        // Only index name + keywords for more precise fuzzy matching
+        // Description creates too many false positives with cmdk fuzzy search
+        searchText: [tool.name, ...(tool.keywords || [])]
+          .join(" ")
+          .toLowerCase(),
+      })),
   );
 }
 

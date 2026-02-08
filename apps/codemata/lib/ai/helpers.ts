@@ -21,7 +21,13 @@ export const getToolContent = cache(
   async (
     toolId: string,
     toolName: string,
-    toolType: "formatter" | "minifier" | "encoder" | "validator" | "generator",
+    toolType:
+      | "formatter"
+      | "minifier"
+      | "encoder"
+      | "validator"
+      | "generator"
+      | "viewer",
   ) => {
     const availableTools = getAllAvailableTools();
     return generateToolContent(toolId, toolName, toolType, availableTools);
@@ -56,4 +62,9 @@ export const getValidatorContent = cache(
 export const getGeneratorContent = cache(
   async (toolId: string, toolName: string) =>
     getToolContent(toolId, toolName, "generator"),
+);
+
+export const getViewerContent = cache(
+  async (toolId: string, toolName: string) =>
+    getToolContent(toolId, toolName, "viewer"),
 );

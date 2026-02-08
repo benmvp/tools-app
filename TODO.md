@@ -113,11 +113,11 @@ Examples
 
 ### Viewers
 
+- [x] Markdown Previewer (`marked`, `shiki`, `isomorphic-dompurify`) - GitHub Flavored Markdown with syntax highlighting ✅
 - [ ] SVG Viewer (`svgo`, potentially a dedicated SVG rendering library)
 - [ ] View Page Source (Fetch source using a Server Action, display with syntax highlighting potentially `prismjs` or `highlight.js`)
 - [ ] Google Fonts Previewer (Google Fonts API)
 - [ ] Diff (`diff`, `diff2html`)
-- [ ] Markdown Previewer (`marked`, `markdown-it`)
 
 ### Colors
 
