@@ -1,49 +1,10 @@
 "use server";
 
+import type { Tokens } from "marked";
 import { marked } from "marked";
 import sanitizeHtml from "sanitize-html";
-import { createHighlighter } from "shiki";
+import { codeToHtml } from "shiki";
 import { MAX_VIEWER_INPUT_SIZE } from "@/lib/viewers/constants";
-
-/**
- * Cached highlighter instance for performance
- * Shiki is expensive to initialize, so we cache the promise
- * to prevent concurrent first requests from initializing multiple times
- */
-let highlighterPromise: Promise<
-  Awaited<ReturnType<typeof createHighlighter>>
-> | null = null;
-
-async function getHighlighterInstance() {
-  if (!highlighterPromise) {
-    highlighterPromise = createHighlighter({
-      themes: ["github-dark", "github-light"],
-      langs: [
-        "javascript",
-        "typescript",
-        "json",
-        "html",
-        "css",
-        "python",
-        "bash",
-        "shell",
-        "yaml",
-        "markdown",
-        "xml",
-        "sql",
-        "graphql",
-        "jsx",
-        "tsx",
-        "text", // Plain text fallback for code blocks without language
-      ],
-    }).catch((error) => {
-      // Reset promise on failure so future requests can retry initialization
-      highlighterPromise = null;
-      throw error;
-    });
-  }
-  return highlighterPromise;
-}
 
 /**
  * Configure marked with GitHub Flavored Markdown (GFM) support
@@ -71,42 +32,60 @@ export async function previewMarkdown(input: string): Promise<string> {
   }
 
   try {
-    // Get Shiki highlighter instance
-    const highlighter = await getHighlighterInstance();
+    // Use walkTokens to pre-process code blocks asynchronously
+    // Store highlighted HTML in token for later rendering
+    marked.use({
+      async: true,
+      walkTokens: async (token) => {
+        if (token.type === "code") {
+          const codeToken = token as Tokens.Code;
+          // Sanitize language to prevent HTML injection (allow only alphanumeric + hyphens)
+          const rawLanguage = codeToken.lang || "text";
+          const sanitizedLanguage = rawLanguage.match(/^[a-z0-9-]+$/i)
+            ? rawLanguage
+            : "text";
 
-    // Custom renderer for code blocks with Shiki highlighting
+          try {
+            // Normalize common language aliases
+            const languageMap: Record<string, string> = {
+              js: "javascript",
+              ts: "typescript",
+              sh: "bash",
+              yml: "yaml",
+            };
+            const normalizedLang =
+              languageMap[sanitizedLanguage] || sanitizedLanguage;
+
+            // Highlight with Shiki and store in token
+            codeToken.text = await codeToHtml(codeToken.text, {
+              lang: normalizedLang,
+              themes: {
+                light: "github-light",
+                dark: "github-dark",
+              },
+            });
+            // Mark as pre-rendered HTML
+            codeToken.lang = "__shiki__";
+          } catch {
+            // Keep original text if highlighting fails
+            // Fallback rendering will handle it
+          }
+        }
+      },
+    });
+
+    // Custom renderer to use pre-highlighted code
     const renderer = new marked.Renderer();
     renderer.code = ({ text, lang }: { text: string; lang?: string }) => {
-      // Sanitize language to prevent HTML injection (allow only alphanumeric + hyphens)
-      const rawLanguage = lang || "text";
-      const sanitizedLanguage = rawLanguage.match(/^[a-z0-9-]+$/i)
-        ? rawLanguage
-        : "text";
-
-      try {
-        // Get available languages (normalize common aliases)
-        const languageMap: Record<string, string> = {
-          js: "javascript",
-          ts: "typescript",
-          sh: "bash",
-          yml: "yaml",
-        };
-        const normalizedLang =
-          languageMap[sanitizedLanguage] || sanitizedLanguage;
-
-        // Try to highlight with Shiki
-        const highlighted = highlighter.codeToHtml(text, {
-          lang: normalizedLang,
-          themes: {
-            light: "github-light",
-            dark: "github-dark",
-          },
-        });
-        return highlighted;
-      } catch {
-        // Fallback to plain code block if language not supported
-        return `<pre><code class="language-${sanitizedLanguage}">${escapeHtml(text)}</code></pre>`;
+      // If pre-rendered by Shiki, return as-is
+      if (lang === "__shiki__") {
+        return text;
       }
+      // Fallback to plain code block
+      const sanitizedLanguage = (lang || "text").match(/^[a-z0-9-]+$/i)
+        ? lang
+        : "text";
+      return `<pre><code class="language-${sanitizedLanguage}">${escapeHtml(text)}</code></pre>`;
     };
 
     // Parse markdown to HTML
