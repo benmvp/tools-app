@@ -1302,26 +1302,25 @@ child: value`; // Missing indentation
   });
 
   describe("Duplicate Keys", () => {
-    it("silently accepts duplicate keys (last value wins)", async () => {
+    it("detects duplicate keys as warnings", async () => {
       const yaml = `name: First
 version: 1.0.0
 name: Second`;
 
       const result = await validateYaml(yaml);
 
-      // js-yaml allows duplicates (last value wins)
+      // js-yaml throws on duplicate keys, we convert to warning
       expect(result.valid).toBe(true);
+      expect(result.errors).toHaveLength(0);
 
-      // Our manual checker should find it
+      // Must have duplicate key warning
       const duplicateWarning = result.warnings.find((w) =>
-        w.message.includes("Duplicate key"),
+        w.message.includes("Duplicate"),
       );
 
-      // If found, verify it has proper structure
-      if (duplicateWarning) {
-        expect(duplicateWarning.severity).toBe("warning");
-        expect(duplicateWarning.line).toBe(3);
-      }
+      expect(duplicateWarning).toBeDefined();
+      expect(duplicateWarning?.severity).toBe("warning");
+      expect(duplicateWarning?.line).toBe(3);
     });
 
     it("allows duplicate keys at different nesting levels", async () => {
@@ -1333,6 +1332,7 @@ database:
 
       // These are not duplicates (different scopes)
       expect(result.valid).toBe(true);
+      expect(result.errors).toHaveLength(0);
       const duplicateWarning = result.warnings.find((w) =>
         w.message.includes("Duplicate key"),
       );

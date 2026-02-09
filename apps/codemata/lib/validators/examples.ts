@@ -87,11 +87,11 @@ database:
     username: admin
     password: secret123
 
-# Duplicate key (warning)
-version 2.0.0
+# Duplicate key (will trigger warning)
+version: 2.0.0
 
 servers:
-  - name production
+  - name: production
     url: https://api.production.com
   - name: staging
     url: https://api.staging.com`,

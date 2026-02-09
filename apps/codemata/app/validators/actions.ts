@@ -635,11 +635,12 @@ export async function validateYaml(input: string): Promise<ValidationResult> {
     // Handle YAML parsing errors
     if (error instanceof yaml.YAMLException) {
       // Check if this is a duplicate key error (should be a warning, not an error)
-      if (error.message?.includes("duplicated mapping key")) {
+      // Use error.reason for stable detection (not affected by formatting/line numbers)
+      if (error.reason === "duplicated mapping key") {
         warnings.push({
           line: error.mark?.line ? error.mark.line + 1 : 1,
           column: error.mark?.column ? error.mark.column + 1 : 1,
-          message: error.reason || error.message || "Duplicate key detected",
+          message: "Duplicate key detected (last value wins)",
           severity: "warning",
         });
 

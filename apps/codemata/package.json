@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev -p 3001",
     "build": "next build",
-    "build:test": "DISABLE_AI=true next build",
+    "build:test": "VERCEL_PROJECT_PRODUCTION_URL=localhost:3333 DISABLE_AI=true next build",
     "start": "next start -p 3333",
     "lint": "biome check",
     "format": "biome format --write",
