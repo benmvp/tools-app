@@ -13,6 +13,7 @@ import { HtmlValidator } from "@/components/validators/HtmlValidator";
 import { JsonValidator } from "@/components/validators/JsonValidator";
 import { UrlValidator } from "@/components/validators/UrlValidator";
 import { XmlValidator } from "@/components/validators/XmlValidator";
+import { YamlValidator } from "@/components/validators/YamlValidator";
 import { generateToolMetadata } from "@/lib/metadata-helpers";
 import { VALIDATOR_TOOLS } from "@/lib/tools-data";
 import { getToolStructuredData, isProductionBuild } from "@/lib/utils";
@@ -86,6 +87,8 @@ export default async function ValidatorPage({
         return <UrlValidator example={VALIDATOR_EXAMPLES.url} />;
       case "dockerfile-validator":
         return <DockerfileValidator example={VALIDATOR_EXAMPLES.dockerfile} />;
+      case "yaml-validator":
+        return <YamlValidator example={VALIDATOR_EXAMPLES.yaml} />;
       default:
         return null;
     }

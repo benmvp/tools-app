@@ -1,7 +1,7 @@
 # Tools App - Project Specification
 
 **Version:** 2.0
-**Last Updated:** December 21, 2025
+**Last Updated:** February 9, 2026
 **Status:** Planning Phase
 
 ---
@@ -37,8 +37,9 @@ Tools App is a suite of three web applications providing free, high-quality deve
    - Code formatters (8 languages/formats)
    - Code minifiers (6 languages/formats)
    - Encoders/decoders (5 tools: JWT, Base64, URL, HTML Entity, JS String)
-   - Validators (5 tools: JSON, HTML, CSS, XML, URL)
-   - Generators (1 tool: .gitignore Generator) - **NEW**
+   - Validators (7 tools: JSON, HTML, CSS, XML, URL, Dockerfile, YAML)
+   - Generators (1 tool: .gitignore Generator)
+   - Viewers (1 tool: GitHub Markdown Previewer)
    - Future: More generators, viewers, converters, AI tools
 
 2. **Moni** (moni.benmvp.com) - Financial calculators and planning tools
@@ -3815,7 +3816,8 @@ The implementation follows a **pragmatic, YAGNI-driven approach** that prioritiz
 1. **Git/DevOps Tools** (Size: S) - HIGHEST PRIORITY
    - [x] **10.1:** `.gitignore` Generator (massive traffic) - Template-based generator for .gitignore files (new Generators category) ✅ **COMPLETE**
    - [x] **10.2:** GitHub Markdown Previewer - Preview GitHub-flavored markdown with live rendering, syntax-highlighted code blocks, and XSS protection (new Viewers category) ✅ **COMPLETE**
-   - [ ] **10.3:** Dockerfile Linter - Validate Dockerfile syntax and best practices (existing Validators category)
+   - [x] **10.3:** Dockerfile Linter - Validate Dockerfile syntax and best practices (existing Validators category) ✅ **COMPLETE**
+   - [x] **10.4:** YAML Validator - Validate YAML syntax and best practices (existing Validators category) ✅ **COMPLETE**
 
 2. **CSS Generators** (Size: M) - VERY HIGH ENGAGEMENT
    - Box Shadow Generator, Border Radius, Flexbox Generator, CSS Grid Generator

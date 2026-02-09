@@ -43,6 +43,8 @@ Examples
 - [x] CSS (`css-tree` for strict syntax validation) ✅
 - [x] XML (`fast-xml-parser` for well-formedness validation) ✅
 - [x] URL Validator (Node.js built-in `URL` constructor) ✅
+- [x] Dockerfile Validator (`dockerfilelint` for best practices and security) ✅
+- [x] YAML Validator (`js-yaml` for syntax validation, duplicate key detection) ✅
 - [ ] Regex Tester (Potentially a library for visual representation of matches) - HIGH TRAFFIC
 - [ ] Favicon (Fetch favicon using a Server Action, parse HTML for `<link rel="icon">`, check image format, size, etc.)
 - [ ] SEO (Libraries/APIs for analyzing meta tags, etc.)

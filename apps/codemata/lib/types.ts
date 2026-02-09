@@ -153,7 +153,7 @@ export interface EncoderTool extends Tool {
 export interface ValidatorTool extends Tool {
   action?: ValidatorAction;
   example: string;
-  language: "json" | "html" | "css" | "xml" | "text" | "dockerfile";
+  language: "json" | "html" | "css" | "xml" | "text" | "dockerfile" | "yaml";
 }
 
 /**

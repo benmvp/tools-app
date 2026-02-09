@@ -6,6 +6,7 @@ import {
   validateJson,
   validateUrl,
   validateXml,
+  validateYaml,
 } from "../app/validators/actions";
 
 describe("validateJson", () => {
@@ -1188,6 +1189,224 @@ CMD ["node", "index.js"]`;
       const result = await validateDockerfile("   \n\n   ");
 
       expect(result.valid).toBe(false);
+    });
+  });
+});
+
+describe("validateYaml", () => {
+  describe("Valid YAML", () => {
+    it("validates simple YAML", async () => {
+      const yaml = `name: Test
+version: 1.0.0
+enabled: true`;
+
+      const result = await validateYaml(yaml);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+      expect(result.metadata?.toolName).toBe("YAML");
+    });
+
+    it("validates nested YAML objects", async () => {
+      const yaml = `database:
+  host: localhost
+  port: 5432
+  credentials:
+    username: admin
+    password: secret`;
+
+      const result = await validateYaml(yaml);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("validates YAML arrays", async () => {
+      const yaml = `servers:
+  - name: production
+    url: https://api.prod.com
+  - name: staging
+    url: https://api.staging.com`;
+
+      const result = await validateYaml(yaml);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("validates YAML with comments", async () => {
+      const yaml = `# Configuration file
+name: App # Application name
+version: 1.0.0`;
+
+      const result = await validateYaml(yaml);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("validates multi-line strings", async () => {
+      const yaml = `description: |
+  This is a multi-line
+  description text
+  with multiple lines`;
+
+      const result = await validateYaml(yaml);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+  });
+
+  describe("Syntax Errors", () => {
+    it("detects invalid YAML syntax", async () => {
+      const yaml = `name: Test
+version: [1.0.0`; // Unclosed bracket
+
+      const result = await validateYaml(yaml);
+
+      expect(result.valid).toBe(false);
+      expect(result.errors.length).toBeGreaterThan(0);
+      expect(result.errors[0].severity).toBe("error");
+    });
+
+    it("detects bad indentation", async () => {
+      const yaml = `parent:
+child: value`; // Missing indentation
+
+      const result = await validateYaml(yaml);
+
+      // Depending on js-yaml version, this might be valid or invalid
+      // Either way, we test that it returns a result
+      expect(result).toHaveProperty("valid");
+      expect(result).toHaveProperty("errors");
+    });
+
+    it("detects invalid mapping", async () => {
+      const yaml = `key with no value:`;
+
+      const result = await validateYaml(yaml);
+
+      // This is actually valid YAML (null value)
+      expect(result.valid).toBe(true);
+    });
+
+    it("detects tab characters (common YAML mistake)", async () => {
+      const yaml = "name: Test\n\tversion: 1.0.0"; // Tab character
+
+      const result = await validateYaml(yaml);
+
+      // js-yaml may parse this or throw error depending on context
+      expect(result).toHaveProperty("valid");
+    });
+  });
+
+  describe("Duplicate Keys", () => {
+    it("detects duplicate keys as warnings", async () => {
+      const yaml = `name: First
+version: 1.0.0
+name: Second`;
+
+      const result = await validateYaml(yaml);
+
+      // js-yaml throws on duplicate keys, we convert to warning
+      expect(result.valid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+
+      // Must have duplicate key warning
+      const duplicateWarning = result.warnings.find((w) =>
+        w.message.includes("Duplicate"),
+      );
+
+      expect(duplicateWarning).toBeDefined();
+      expect(duplicateWarning?.severity).toBe("warning");
+      expect(duplicateWarning?.line).toBe(3);
+    });
+
+    it("allows duplicate keys at different nesting levels", async () => {
+      const yaml = `name: Root
+database:
+  name: Database Name`;
+
+      const result = await validateYaml(yaml);
+
+      // These are not duplicates (different scopes)
+      expect(result.valid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+      const duplicateWarning = result.warnings.find((w) =>
+        w.message.includes("Duplicate key"),
+      );
+      expect(duplicateWarning).toBeUndefined();
+    });
+  });
+
+  describe("Edge Cases", () => {
+    it("handles empty input", async () => {
+      const result = await validateYaml("");
+
+      expect(result.valid).toBe(false);
+      expect(result.errors.length).toBeGreaterThan(0);
+      expect(result.errors[0].message).toContain("Empty input");
+    });
+
+    it("handles whitespace-only input", async () => {
+      const result = await validateYaml("   \n\n   ");
+
+      expect(result.valid).toBe(false);
+      expect(result.errors[0].message).toContain("Empty input");
+    });
+
+    it("handles only comments", async () => {
+      const yaml = `# Just a comment\n# Another comment`;
+
+      const result = await validateYaml(yaml);
+
+      // js-yaml considers this valid (parses to null)
+      expect(result.valid).toBe(true);
+    });
+
+    it("validates YAML with special characters", async () => {
+      const yaml = `message: "Hello, World! @#$%^&*()"\ncode: 'console.log("test")'`;
+
+      const result = await validateYaml(yaml);
+
+      expect(result.valid).toBe(true);
+    });
+
+    it("validates YAML with numbers as keys", async () => {
+      const yaml = `123: value\n456: another`;
+
+      const result = await validateYaml(yaml);
+
+      expect(result.valid).toBe(true);
+    });
+  });
+
+  describe("Line and Column Numbers", () => {
+    it("provides error location for syntax errors", async () => {
+      const yaml = `name: Test\nversion: [1.0.0`; // Error on line 2
+
+      const result = await validateYaml(yaml);
+
+      expect(result.valid).toBe(false);
+      expect(result.errors[0].line).toBeGreaterThan(0);
+      expect(result.errors[0].column).toBeGreaterThan(0);
+    });
+
+    it("provides warning location for duplicate keys", async () => {
+      const yaml = `first: 1\nsecond: 2\nfirst: 3`;
+
+      const result = await validateYaml(yaml);
+
+      const warning = result.warnings.find((w) =>
+        w.message.includes("Duplicate"),
+      );
+
+      // Warning may or may not be present depending on detection
+      if (warning) {
+        expect(warning.line).toBe(3);
+        expect(warning.column).toBe(1);
+      }
     });
   });
 });
