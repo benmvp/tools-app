@@ -1,6 +1,7 @@
 import {
   Braces,
   Code,
+  Container,
   Database,
   Eye,
   FileCheck,
@@ -44,6 +45,7 @@ import {
 } from "../app/minifiers/actions";
 import {
   validateCss,
+  validateDockerfile,
   validateHtml,
   validateXml,
 } from "../app/validators/actions";
@@ -792,6 +794,36 @@ export const VALIDATOR_TOOLS: Record<string, ValidatorTool> = {
       title: "URL Validator | Codemata",
       description:
         "Validate URLs and parse components. Free online URL validator with query param parsing.",
+    },
+  },
+  "dockerfile-validator": {
+    id: "dockerfile-validator",
+    name: "Dockerfile Validator",
+    description:
+      "Validate Dockerfile syntax and check for best practices and security issues",
+    url: "/validators/dockerfile-validator",
+    icon: Container,
+    comingSoon: false,
+    action: validateDockerfile,
+    language: "dockerfile",
+    keywords: [
+      "dockerfile",
+      "docker",
+      "container",
+      "validate",
+      "validator",
+      "lint",
+      "linter",
+      "check",
+      "best",
+      "practices",
+      "security",
+    ],
+    example: VALIDATOR_EXAMPLES.dockerfile,
+    metadata: {
+      title: "Dockerfile Validator | Codemata",
+      description:
+        "Validate Dockerfile syntax and best practices. Check for security issues and optimization opportunities. Free online Dockerfile linter with detailed recommendations.",
     },
   },
 };

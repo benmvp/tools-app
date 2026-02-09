@@ -493,3 +493,93 @@ export async function validateUrl(input: string): Promise<{
     urls,
   };
 }
+
+/**
+ * Validate Dockerfile syntax and best practices
+ */
+export async function validateDockerfile(
+  input: string,
+): Promise<ValidationResult> {
+  const errors: ValidationError[] = [];
+  const warnings: ValidationError[] = [];
+
+  // Check for empty input
+  if (!input.trim()) {
+    return {
+      valid: false,
+      errors: [
+        {
+          line: 1,
+          column: 1,
+          message: "Dockerfile is empty",
+          severity: "error",
+        },
+      ],
+      warnings: [],
+    };
+  }
+
+  // Use dynamic import to avoid issues with CJS module
+  const dockerfilelint = await import("dockerfilelint");
+
+  try {
+    // Run dockerfilelint
+    const results = dockerfilelint.run("", input);
+
+    // Process each result item
+    for (const item of results) {
+      // Skip null items (disabled rules)
+      if (!item) continue;
+
+      // Determine severity based on category
+      let severity: "error" | "warning" | "info" = "warning";
+      if (item.category === "Possible Bug") {
+        severity = "error";
+      } else if (
+        item.category === "Clarity" ||
+        item.category === "Optimization"
+      ) {
+        severity = "warning";
+      }
+
+      // Create validation error
+      const validationError: ValidationError = {
+        line: item.line || 1,
+        column: 1, // dockerfilelint doesn't provide column info
+        message: item.title || item.description || "Unknown error",
+        severity,
+      };
+
+      // Add to appropriate array
+      if (severity === "error") {
+        errors.push(validationError);
+      } else {
+        warnings.push(validationError);
+      }
+    }
+
+    return {
+      valid: errors.length === 0,
+      errors,
+      warnings,
+      metadata: { toolName: "Dockerfile" },
+    };
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Validation failed";
+
+    return {
+      valid: false,
+      errors: [
+        {
+          line: 1,
+          column: 1,
+          message: errorMessage,
+          severity: "error",
+        },
+      ],
+      warnings: [],
+      metadata: { toolName: "Dockerfile" },
+    };
+  }
+}

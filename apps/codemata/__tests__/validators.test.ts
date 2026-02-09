@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   validateCss,
+  validateDockerfile,
   validateHtml,
   validateJson,
   validateUrl,
@@ -978,6 +979,215 @@ http://test.org`;
       expect(parsed?.password).toBe("[redacted]");
       expect(parsed?.port).toBeUndefined(); // 21 is default for FTP
       expect(parsed?.pathname).toBe("/assets");
+    });
+  });
+});
+
+describe("validateDockerfile", () => {
+  describe("Valid Dockerfiles", () => {
+    it("validates a simple valid Dockerfile", async () => {
+      const dockerfile = `FROM node:18-alpine
+WORKDIR /app
+COPY package.json .
+RUN npm install
+COPY . .
+CMD ["npm", "start"]`;
+
+      const result = await validateDockerfile(dockerfile);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("validates a multi-stage Dockerfile", async () => {
+      const dockerfile = `FROM node:18 AS builder
+WORKDIR /app
+COPY package.json .
+RUN npm install
+
+FROM node:18-alpine
+WORKDIR /app
+COPY --from=builder /app .
+CMD ["node", "server.js"]`;
+
+      const result = await validateDockerfile(dockerfile);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it("validates Dockerfile with ARG before FROM", async () => {
+      const dockerfile = `ARG NODE_VERSION=18
+FROM node:\${NODE_VERSION}
+WORKDIR /app
+CMD ["node", "index.js"]`;
+
+      const result = await validateDockerfile(dockerfile);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+  });
+
+  describe("Syntax Errors", () => {
+    it("detects lowercase commands", async () => {
+      const dockerfile = `from node:18
+workdir /app`;
+
+      const result = await validateDockerfile(dockerfile);
+
+      expect(result.valid).toBe(true); // No errors, but warnings
+      expect(result.warnings.length).toBeGreaterThan(0);
+      expect(
+        result.warnings.some((w) => w.message.includes("Capitalize")),
+      ).toBe(true);
+    });
+
+    it("detects missing base image tag", async () => {
+      const dockerfile = `FROM node
+WORKDIR /app`;
+
+      const result = await validateDockerfile(dockerfile);
+
+      expect(result.warnings.length).toBeGreaterThan(0);
+    });
+
+    it("detects missing FROM command", async () => {
+      const dockerfile = `WORKDIR /app
+RUN npm install`;
+
+      const result = await validateDockerfile(dockerfile);
+
+      expect(result.valid).toBe(false);
+      expect(result.errors.some((e) => e.message.includes("FROM"))).toBe(true);
+    });
+
+    it("detects commands without parameters", async () => {
+      const dockerfile = `FROM node:18
+WORKDIR
+RUN npm install`;
+
+      const result = await validateDockerfile(dockerfile);
+
+      expect(result.valid).toBe(false);
+      expect(
+        result.errors.some((e) => e.message.includes("Required Arguments")),
+      ).toBe(true);
+    });
+  });
+
+  describe("Best Practices", () => {
+    it("detects sudo usage", async () => {
+      const dockerfile = `FROM ubuntu:22.04
+RUN sudo apt-get update`;
+
+      const result = await validateDockerfile(dockerfile);
+
+      expect(result.valid).toBe(false);
+      expect(result.errors.some((e) => e.message.includes("sudo"))).toBe(true);
+    });
+
+    it("detects apt-get without -y flag", async () => {
+      const dockerfile = `FROM ubuntu:22.04
+RUN apt-get update && apt-get install curl`;
+
+      const result = await validateDockerfile(dockerfile);
+
+      expect(result.valid).toBe(false);
+      expect(
+        result.errors.some((e) => e.message.toLowerCase().includes("apt-get")),
+      ).toBe(true);
+    });
+
+    it("detects apt-get upgrade", async () => {
+      const dockerfile = `FROM ubuntu:22.04
+RUN apt-get update && apt-get upgrade -y`;
+
+      const result = await validateDockerfile(dockerfile);
+
+      // apt-get upgrade is an optimization warning, not an error
+      expect(result.warnings.length).toBeGreaterThan(0);
+      expect(
+        result.warnings.some((w) =>
+          w.message.toLowerCase().includes("upgrade"),
+        ),
+      ).toBe(true);
+    });
+
+    it("suggests --no-install-recommends for apt-get install", async () => {
+      const dockerfile = `FROM ubuntu:22.04
+RUN apt-get update && apt-get install -y curl`;
+
+      const result = await validateDockerfile(dockerfile);
+
+      expect(result.warnings.length).toBeGreaterThan(0);
+      expect(
+        result.warnings.some((w) =>
+          w.message.toLowerCase().includes("recommends"),
+        ),
+      ).toBe(true);
+    });
+  });
+
+  describe("Line Numbers", () => {
+    it("reports correct line numbers for errors", async () => {
+      const dockerfile = `FROM node:18
+WORKDIR /app
+from ubuntu`;
+
+      const result = await validateDockerfile(dockerfile);
+
+      const fromError = result.warnings.find((e) =>
+        e.message.includes("Capitalize"),
+      );
+      expect(fromError?.line).toBe(3);
+    });
+
+    it("handles multi-line commands", async () => {
+      const dockerfile = `FROM node:18
+RUN apt-get update && \\
+    apt-get install -y \\
+    curl \\
+    git`;
+
+      const result = await validateDockerfile(dockerfile);
+
+      // Should report issues on line 2 (start of multi-line command)
+      if (result.errors.length > 0 || result.warnings.length > 0) {
+        const firstIssue = result.errors[0] || result.warnings[0];
+        expect(firstIssue.line).toBe(2);
+      }
+    });
+  });
+
+  describe("Empty and Comment Lines", () => {
+    it("ignores comments and empty lines", async () => {
+      const dockerfile = `# This is a comment
+FROM node:18
+
+# Set working directory
+WORKDIR /app
+
+CMD ["node", "index.js"]`;
+
+      const result = await validateDockerfile(dockerfile);
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+  });
+
+  describe("Error Handling", () => {
+    it("handles empty input", async () => {
+      const result = await validateDockerfile("");
+
+      expect(result.valid).toBe(false);
+    });
+
+    it("handles whitespace-only input", async () => {
+      const result = await validateDockerfile("   \n\n   ");
+
+      expect(result.valid).toBe(false);
     });
   });
 });

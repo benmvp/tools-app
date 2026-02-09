@@ -8,6 +8,7 @@ import { ValidatorAIContent } from "@/components/ValidatorAIContent";
 import { ValidatorIntro } from "@/components/ValidatorIntro";
 import { VisitTracker } from "@/components/VisitTracker";
 import { CssValidator } from "@/components/validators/CssValidator";
+import { DockerfileValidator } from "@/components/validators/DockerfileValidator";
 import { HtmlValidator } from "@/components/validators/HtmlValidator";
 import { JsonValidator } from "@/components/validators/JsonValidator";
 import { UrlValidator } from "@/components/validators/UrlValidator";
@@ -60,254 +61,74 @@ export default async function ValidatorPage({
   const { slug } = await params;
   const tool = VALIDATOR_TOOLS[slug];
 
-  // 404 if tool doesn't exist
-  if (!tool) {
+  // 404 if tool doesn't exist or tool is coming soon
+  if (!tool || tool.comingSoon) {
     notFound();
   }
 
-  // 404 if tool is coming soon (Phase 9.1 - all validators are coming soon)
-  if (tool.comingSoon) {
-    notFound();
-  }
+  // Map slug to validator component
+  const renderValidator = () => {
+    switch (slug) {
+      case "json-validator":
+        return (
+          <JsonValidator
+            example={VALIDATOR_EXAMPLES.json}
+            exampleSchema={VALIDATOR_EXAMPLES.jsonSchema}
+          />
+        );
+      case "html-validator":
+        return <HtmlValidator example={VALIDATOR_EXAMPLES.html} />;
+      case "css-validator":
+        return <CssValidator example={VALIDATOR_EXAMPLES.css} />;
+      case "xml-validator":
+        return <XmlValidator example={VALIDATOR_EXAMPLES.xml} />;
+      case "url-validator":
+        return <UrlValidator example={VALIDATOR_EXAMPLES.url} />;
+      case "dockerfile-validator":
+        return <DockerfileValidator example={VALIDATOR_EXAMPLES.dockerfile} />;
+      default:
+        return null;
+    }
+  };
 
-  // JSON Validator
-  if (slug === "json-validator") {
-    const structuredData = getToolStructuredData(
-      `/validators/${slug}`,
-      tool.name,
-    );
+  const structuredData = getToolStructuredData(
+    `/validators/${slug}`,
+    tool.name,
+  );
 
-    return (
-      <>
-        {/* Track page visit for recent tools */}
-        <VisitTracker url={`/validators/${slug}`} />
-
-        {/* Structured Data */}
-        <JsonLd data={structuredData} />
-
-        <div className="max-w-7xl mx-auto px-4 py-6 md:py-12">
-          <div className="flex flex-col gap-6">
-            <CategoryBackLink href="/validators" label="Validators" />
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold mb-2">
-                {tool.name}
-              </h1>
-              <Suspense
-                fallback={
-                  <p className="text-muted-foreground text-lg">
-                    {tool.description}
-                  </p>
-                }
-              >
-                <ValidatorIntro
-                  slug={slug}
-                  validatorName={tool.name}
-                  fallbackDescription={tool.description}
-                />
-              </Suspense>
-            </div>
-            <JsonValidator
-              example={VALIDATOR_EXAMPLES.json}
-              exampleSchema={VALIDATOR_EXAMPLES.jsonSchema}
-            />
-            <Suspense fallback={<AIContentSkeleton />}>
-              <ValidatorAIContent slug={slug} validatorName={tool.name} />
-            </Suspense>
-          </div>
-        </div>
-      </>
-    );
-  }
-
-  // HTML Validator
-  if (slug === "html-validator") {
-    const structuredData = getToolStructuredData(
-      `/validators/${slug}`,
-      tool.name,
-    );
-
-    return (
-      <>
-        {/* Track page visit for recent tools */}
-        <VisitTracker url={`/validators/${slug}`} />
-
-        {/* Structured Data */}
-        <JsonLd data={structuredData} />
-
-        <div className="max-w-7xl mx-auto px-4 py-6 md:py-12">
-          <div className="flex flex-col gap-6">
-            <CategoryBackLink href="/validators" label="Validators" />
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold mb-2">
-                {tool.name}
-              </h1>
-              <Suspense
-                fallback={
-                  <p className="text-muted-foreground text-lg">
-                    {tool.description}
-                  </p>
-                }
-              >
-                <ValidatorIntro
-                  slug={slug}
-                  validatorName={tool.name}
-                  fallbackDescription={tool.description}
-                />
-              </Suspense>
-            </div>
-            <HtmlValidator example={VALIDATOR_EXAMPLES.html} />
-            <Suspense fallback={<AIContentSkeleton />}>
-              <ValidatorAIContent slug={slug} validatorName={tool.name} />
-            </Suspense>
-          </div>
-        </div>
-      </>
-    );
-  }
-
-  // CSS Validator
-  if (slug === "css-validator") {
-    const structuredData = getToolStructuredData(
-      `/validators/${slug}`,
-      tool.name,
-    );
-
-    return (
-      <>
-        {/* Track page visit for recent tools */}
-        <VisitTracker url={`/validators/${slug}`} />
-
-        {/* Structured Data */}
-        <JsonLd data={structuredData} />
-
-        <div className="max-w-7xl mx-auto px-4 py-6 md:py-12">
-          <div className="flex flex-col gap-6">
-            <CategoryBackLink href="/validators" label="Validators" />
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold mb-2">
-                {tool.name}
-              </h1>
-              <Suspense
-                fallback={
-                  <p className="text-muted-foreground text-lg">
-                    {tool.description}
-                  </p>
-                }
-              >
-                <ValidatorIntro
-                  slug={slug}
-                  validatorName={tool.name}
-                  fallbackDescription={tool.description}
-                />
-              </Suspense>
-            </div>
-            <CssValidator example={VALIDATOR_EXAMPLES.css} />
-            <Suspense fallback={<AIContentSkeleton />}>
-              <ValidatorAIContent slug={slug} validatorName={tool.name} />
-            </Suspense>
-          </div>
-        </div>
-      </>
-    );
-  }
-
-  // XML Validator
-  if (slug === "xml-validator") {
-    const structuredData = getToolStructuredData(
-      `/validators/${slug}`,
-      tool.name,
-    );
-
-    return (
-      <>
-        {/* Track page visit for recent tools */}
-        <VisitTracker url={`/validators/${slug}`} />
-
-        {/* Structured Data */}
-        <JsonLd data={structuredData} />
-
-        <div className="max-w-7xl mx-auto px-4 py-6 md:py-12">
-          <div className="flex flex-col gap-6">
-            <CategoryBackLink href="/validators" label="Validators" />
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold mb-2">
-                {tool.name}
-              </h1>
-              <Suspense
-                fallback={
-                  <p className="text-muted-foreground text-lg">
-                    {tool.description}
-                  </p>
-                }
-              >
-                <ValidatorIntro
-                  slug={slug}
-                  validatorName={tool.name}
-                  fallbackDescription={tool.description}
-                />
-              </Suspense>
-            </div>
-            <XmlValidator example={VALIDATOR_EXAMPLES.xml} />
-            <Suspense fallback={<AIContentSkeleton />}>
-              <ValidatorAIContent slug={slug} validatorName={tool.name} />
-            </Suspense>
-          </div>
-        </div>
-      </>
-    );
-  }
-
-  // URL Validator
-  if (slug === "url-validator") {
-    const structuredData = getToolStructuredData(
-      `/validators/${slug}`,
-      tool.name,
-    );
-
-    return (
-      <>
-        {/* Track page visit for recent tools */}
-        <VisitTracker url={`/validators/${slug}`} />
-
-        {/* Structured Data */}
-        <JsonLd data={structuredData} />
-
-        <div className="max-w-7xl mx-auto px-4 py-6 md:py-12">
-          <div className="flex flex-col gap-6">
-            <CategoryBackLink href="/validators" label="Validators" />
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold mb-2">
-                {tool.name}
-              </h1>
-              <Suspense
-                fallback={
-                  <p className="text-muted-foreground text-lg">
-                    {tool.description}
-                  </p>
-                }
-              >
-                <ValidatorIntro
-                  slug={slug}
-                  validatorName={tool.name}
-                  fallbackDescription={tool.description}
-                />
-              </Suspense>
-            </div>
-            <UrlValidator example={VALIDATOR_EXAMPLES.url} />
-            <Suspense fallback={<AIContentSkeleton />}>
-              <ValidatorAIContent slug={slug} validatorName={tool.name} />
-            </Suspense>
-          </div>
-        </div>
-      </>
-    );
-  }
-
-  // Phase 9.3+: Other validators
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6 md:py-12">
-      <h1>{tool.name}</h1>
-      <p>Validator implementation coming in Phase 9.3+</p>
-    </div>
+    <>
+      {/* Track page visit for recent tools */}
+      <VisitTracker url={`/validators/${slug}`} />
+
+      {/* Structured Data */}
+      <JsonLd data={structuredData} />
+
+      <div className="max-w-7xl mx-auto px-4 py-6 md:py-12">
+        <div className="flex flex-col gap-6">
+          <CategoryBackLink href="/validators" label="Validators" />
+          <div>
+            <h1 className="text-3xl md:text-4xl font-bold mb-2">{tool.name}</h1>
+            <Suspense
+              fallback={
+                <p className="text-muted-foreground text-lg">
+                  {tool.description}
+                </p>
+              }
+            >
+              <ValidatorIntro
+                slug={slug}
+                validatorName={tool.name}
+                fallbackDescription={tool.description}
+              />
+            </Suspense>
+          </div>
+          {renderValidator()}
+          <Suspense fallback={<AIContentSkeleton />}>
+            <ValidatorAIContent slug={slug} validatorName={tool.name} />
+          </Suspense>
+        </div>
+      </div>
+    </>
   );
 }

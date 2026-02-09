@@ -56,4 +56,24 @@ ftp://user:pass@files.company.com:21/assets
 http://localhost:3000
 
 https://192.168.1.1/admin#settings`,
+
+  dockerfile: `# Base image without tag
+from node
+
+# Missing -y flag and dev dependencies
+run apt-get update && apt-get install git build-essential
+
+# Using sudo (not recommended)
+RUN sudo npm install -g pnpm
+
+# Multiple WORKDIR changes
+WORKDIR /app
+COPY package.json .
+run npm install
+WORKDIR /app/src
+
+EXPOSE 80 443
+
+# Missing CMD
+`,
 };
