@@ -10,7 +10,7 @@ Codemata is a Next.js web application providing high-quality code formatters and
 
 ## What is Codemata?
 
-Codemata offers **21 free developer tools** (as of Phase 10.2):
+Codemata offers **23 free developer tools** (as of Phase 10.4):
 
 ### Formatters (8 tools)
 - CSS/SCSS Formatter
@@ -19,6 +19,7 @@ Codemata offers **21 free developer tools** (as of Phase 10.2):
 - JavaScript/TypeScript Formatter
 - JSON Formatter
 - Markdown/MDX Formatter
+- SQL Formatter
 - XML Formatter
 - YAML Formatter
 
@@ -30,18 +31,27 @@ Codemata offers **21 free developer tools** (as of Phase 10.2):
 - SVG Minifier
 - XML Minifier
 
-### Validators (5 tools)
+### Validators (7 tools)
 - CSS Validator
+- Dockerfile Validator
 - HTML Validator
 - JSON Validator
 - URL Validator
 - XML Validator
+- YAML Validator
+
+### Encoders & Decoders (5 tools)
+- Base64 Encoder/Decoder
+- HTML Entity Encoder/Decoder
+- JavaScript String Encoder/Decoder
+- JWT Decoder
+- URL Encoder/Decoder
 
 ### Generators (1 tool)
 - .gitignore Generator
 
 ### Viewers (1 tool)
-- Markdown Previewer (GitHub Flavored Markdown with syntax highlighting)
+- GitHub Markdown Previewer (with syntax highlighting and XSS protection)
 
 ### Goals
 
@@ -94,6 +104,7 @@ Powered by **Gemini 2.0 Flash** with environment-aware behavior:
 
 All tool metadata lives in `lib/tools-data.ts`:
 - Record-based structure for O(1) lookups by slug
+- Alphabetically sorted by display name for easy navigation
 - Inlined example code (no separate files)
 - Single source of truth for navigation, sitemaps, and OG images
 

@@ -76,4 +76,23 @@ EXPOSE 80 443
 
 # Missing CMD
 `,
+
+  yaml: `# Application configuration
+name: My Application
+version: 1.0.0
+database:
+  host: localhost
+  port: 5432
+  credentials:
+    username: admin
+    password: secret123
+
+# Duplicate key (warning)
+version 2.0.0
+
+servers:
+  - name production
+    url: https://api.production.com
+  - name: staging
+    url: https://api.staging.com`,
 };

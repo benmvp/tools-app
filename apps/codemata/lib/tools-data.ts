@@ -48,6 +48,7 @@ import {
   validateDockerfile,
   validateHtml,
   validateXml,
+  validateYaml,
 } from "../app/validators/actions";
 import { previewMarkdown } from "../app/viewers/actions";
 import type {
@@ -826,6 +827,34 @@ export const VALIDATOR_TOOLS: Record<string, ValidatorTool> = {
         "Validate Dockerfile syntax and best practices. Check for security issues and optimization opportunities. Free online Dockerfile linter with detailed recommendations.",
     },
   },
+  "yaml-validator": {
+    id: "yaml-validator",
+    name: "YAML Validator",
+    description:
+      "Validate YAML syntax and structure, catch duplicate keys and formatting issues",
+    url: "/validators/yaml-validator",
+    icon: FileCheck,
+    comingSoon: false,
+    action: validateYaml,
+    language: "yaml",
+    keywords: [
+      "yaml",
+      "yml",
+      "validate",
+      "validator",
+      "syntax",
+      "check",
+      "lint",
+      "config",
+      "configuration",
+    ],
+    example: VALIDATOR_EXAMPLES.yaml,
+    metadata: {
+      title: "YAML Validator | Codemata",
+      description:
+        "Validate YAML syntax and structure. Detect duplicate keys and formatting issues. Free online YAML validator with detailed error messages.",
+    },
+  },
 };
 
 /**
@@ -971,13 +1000,26 @@ Edit the markdown in the editor and click **Preview** to see it rendered.
 
 /**
  * Internal helper arrays for building ALL_TOOLS
+ * Tools are sorted alphabetically by display name for easier navigation
  */
-const ALL_FORMATTERS: FormatterTool[] = Object.values(FORMATTER_TOOLS);
-const ALL_MINIFIERS: MinifierTool[] = Object.values(MINIFIER_TOOLS);
-const ALL_ENCODERS: EncoderTool[] = Object.values(ENCODER_TOOLS);
-const ALL_VALIDATORS: ValidatorTool[] = Object.values(VALIDATOR_TOOLS);
-const ALL_GENERATORS: GeneratorTool[] = Object.values(GENERATOR_TOOLS);
-const ALL_VIEWERS: ViewerTool[] = Object.values(VIEWER_TOOLS);
+const ALL_FORMATTERS: FormatterTool[] = Object.values(FORMATTER_TOOLS).sort(
+  (a, b) => a.name.localeCompare(b.name),
+);
+const ALL_MINIFIERS: MinifierTool[] = Object.values(MINIFIER_TOOLS).sort(
+  (a, b) => a.name.localeCompare(b.name),
+);
+const ALL_ENCODERS: EncoderTool[] = Object.values(ENCODER_TOOLS).sort((a, b) =>
+  a.name.localeCompare(b.name),
+);
+const ALL_VALIDATORS: ValidatorTool[] = Object.values(VALIDATOR_TOOLS).sort(
+  (a, b) => a.name.localeCompare(b.name),
+);
+const ALL_GENERATORS: GeneratorTool[] = Object.values(GENERATOR_TOOLS).sort(
+  (a, b) => a.name.localeCompare(b.name),
+);
+const ALL_VIEWERS: ViewerTool[] = Object.values(VIEWER_TOOLS).sort((a, b) =>
+  a.name.localeCompare(b.name),
+);
 
 /**
  * Centralized tool registry with rich category metadata.

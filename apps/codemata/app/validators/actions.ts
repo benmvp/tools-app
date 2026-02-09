@@ -5,6 +5,7 @@ import addFormats from "ajv-formats";
 import * as csstree from "css-tree";
 import { XMLValidator } from "fast-xml-parser";
 import { HtmlValidate } from "html-validate";
+import yaml from "js-yaml";
 import type { ValidationError, ValidationResult } from "@/lib/validators/types";
 
 /**
@@ -580,6 +581,101 @@ export async function validateDockerfile(
       ],
       warnings: [],
       metadata: { toolName: "Dockerfile" },
+    };
+  }
+}
+
+/**
+ * Validate YAML syntax and structure
+ * Detects duplicate keys and provides detailed error messages
+ */
+export async function validateYaml(input: string): Promise<ValidationResult> {
+  const errors: ValidationError[] = [];
+  const warnings: ValidationError[] = [];
+
+  // Empty input check
+  if (!input.trim()) {
+    return {
+      valid: false,
+      errors: [
+        {
+          line: 1,
+          column: 1,
+          message: "Empty input. Please provide YAML content to validate.",
+          severity: "error",
+        },
+      ],
+      warnings: [],
+      metadata: { toolName: "YAML" },
+    };
+  }
+
+  try {
+    // Parse YAML - will throw on syntax errors and duplicate keys
+    yaml.load(input, {
+      filename: "input.yaml",
+      onWarning: (warning: yaml.YAMLException) => {
+        warnings.push({
+          line: warning.mark?.line ? warning.mark.line + 1 : 1,
+          column: warning.mark?.column ? warning.mark.column + 1 : 1,
+          message: warning.message || "YAML warning",
+          severity: "warning",
+        });
+      },
+    });
+
+    // Success
+    return {
+      valid: true,
+      errors: [],
+      warnings,
+      metadata: { toolName: "YAML" },
+    };
+  } catch (error: unknown) {
+    // Handle YAML parsing errors
+    if (error instanceof yaml.YAMLException) {
+      // Check if this is a duplicate key error (should be a warning, not an error)
+      if (error.message?.includes("duplicated mapping key")) {
+        warnings.push({
+          line: error.mark?.line ? error.mark.line + 1 : 1,
+          column: error.mark?.column ? error.mark.column + 1 : 1,
+          message: error.reason || error.message || "Duplicate key detected",
+          severity: "warning",
+        });
+
+        // Parse is still valid, just with a warning
+        return {
+          valid: true,
+          errors: [],
+          warnings,
+          metadata: { toolName: "YAML" },
+        };
+      }
+
+      // All other YAML errors are actual errors
+      errors.push({
+        line: error.mark?.line ? error.mark.line + 1 : 1,
+        column: error.mark?.column ? error.mark.column + 1 : 1,
+        message: error.reason || error.message || "YAML syntax error",
+        severity: "error",
+      });
+    } else {
+      // Unexpected error
+      const errorMessage =
+        error instanceof Error ? error.message : "Validation failed";
+      errors.push({
+        line: 1,
+        column: 1,
+        message: errorMessage,
+        severity: "error",
+      });
+    }
+
+    return {
+      valid: false,
+      errors,
+      warnings,
+      metadata: { toolName: "YAML" },
     };
   }
 }

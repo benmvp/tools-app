@@ -6,7 +6,7 @@ A **pnpm monorepo** of three Next.js applications providing free developer tools
 
 | App | Status | Description | Port |
 |-----|--------|-------------|------|
-| **[Codemata](apps/codemata/)** | ✅ **[Live](https://codemata.benmvp.com)** | Code formatters & minifiers (14 tools) | 3001 |
+| **[Codemata](apps/codemata/)** | ✅ **[Live](https://codemata.benmvp.com)** | Code formatters, minifiers, validators, encoders, generators & viewers (23 tools) | 3001 |
 | **Moni** | 🚧 Planned | Financial calculators | 3002 |
 | **Convertly** | 🚧 Planned | Unit converters | 3003 |
 
