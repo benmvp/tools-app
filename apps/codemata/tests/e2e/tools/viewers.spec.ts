@@ -84,11 +84,15 @@ test.describe("Viewer Tools - Integration", () => {
 		const previewTab = page.getByRole("tab", { name: /preview/i });
 		await previewTab.click();
 
+		// Wait for preview tab to be active (ensures tab change completed)
+		await expect(previewTab).toHaveAttribute("data-state", "active");
+
 		// Should show error message in preview panel
-		const previewPanel = page
-			.locator('[role="tabpanel"]')
-			.filter({ hasText: /enter some markdown/i });
-		await expect(previewPanel).toBeVisible();
+		// Using direct text locator instead of filtering by tabpanel
+		const errorMessage = page.getByText(
+			/please enter some markdown to preview/i,
+		);
+		await expect(errorMessage).toBeVisible();
 
 		// Copy HTML button should be disabled (no output)
 		const copyButton = page.getByRole("button", { name: /copy html/i });
