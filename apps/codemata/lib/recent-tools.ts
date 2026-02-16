@@ -4,9 +4,9 @@
  */
 
 import {
-  addRecentTool as addRecentToolBase,
-  clearRecentTools as clearRecentToolsBase,
-  getRecentTools as getRecentToolsBase,
+	addRecentTool as addRecentToolBase,
+	clearRecentTools as clearRecentToolsBase,
+	getRecentTools as getRecentToolsBase,
 } from "@repo/shared";
 
 const APP_NAME = "codemata";
@@ -15,19 +15,19 @@ const APP_NAME = "codemata";
  * Get recent tool URLs from localStorage (Codemata-namespaced)
  */
 export function getRecentTools(): string[] {
-  return getRecentToolsBase(APP_NAME);
+	return getRecentToolsBase(APP_NAME);
 }
 
 /**
  * Add a tool URL to recent tools list (Codemata-namespaced)
  */
 export function addRecentTool(url: string): void {
-  addRecentToolBase(APP_NAME, url);
+	addRecentToolBase(APP_NAME, url);
 }
 
 /**
  * Clear all recent tools (Codemata-namespaced)
  */
 export function clearRecentTools(): void {
-  clearRecentToolsBase(APP_NAME);
+	clearRecentToolsBase(APP_NAME);
 }

@@ -8,8 +8,8 @@ import { addRecentTool } from "../recent-tools";
  * Call this in tool page components
  */
 export function useTrackVisit(toolUrl: string) {
-  useEffect(() => {
-    // Track visit on mount
-    addRecentTool(toolUrl);
-  }, [toolUrl]);
+	useEffect(() => {
+		// Track visit on mount
+		addRecentTool(toolUrl);
+	}, [toolUrl]);
 }

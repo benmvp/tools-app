@@ -11,15 +11,15 @@ import { expect, test } from "@playwright/test";
  */
 
 test.describe("TransformerMinifier Component", () => {
-  const REPRESENTATIVE_TOOL = "/minifiers/typescript-minifier";
+	const REPRESENTATIVE_TOOL = "/minifiers/typescript-minifier";
 
-  test("should show file size reduction badge", async ({ page }) => {
-    await page.goto(REPRESENTATIVE_TOOL);
+	test("should show file size reduction badge", async ({ page }) => {
+		await page.goto(REPRESENTATIVE_TOOL);
 
-    // Enter code
-    const inputEditor = page.locator(".cm-content").first();
-    await inputEditor.click();
-    await inputEditor.fill(`
+		// Enter code
+		const inputEditor = page.locator(".cm-content").first();
+		await inputEditor.click();
+		await inputEditor.fill(`
       // This is a comment
       const myVariable = {
         property: "value",
@@ -27,8 +27,8 @@ test.describe("TransformerMinifier Component", () => {
       };
     `);
 
-    // Wait for size/savings display to appear (minification happens automatically)
-    const sizeBadge = page.locator("text=/\\d+%|bytes|KB/i").first();
-    await expect(sizeBadge).toBeVisible({ timeout: 3000 });
-  });
+		// Wait for size/savings display to appear (minification happens automatically)
+		const sizeBadge = page.locator("text=/\\d+%|bytes|KB/i").first();
+		await expect(sizeBadge).toBeVisible({ timeout: 3000 });
+	});
 });

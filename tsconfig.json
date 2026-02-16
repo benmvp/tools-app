@@ -12,5 +12,6 @@
 		"incremental": true,
 		"target": "ES2022",
 		"forceConsistentCasingInFileNames": true
-	}
+	},
+	"exclude": ["node_modules"]
 }

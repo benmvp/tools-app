@@ -8,9 +8,9 @@ import { addRecentTool } from "@/lib/recent-tools";
  * Use this in server component pages to track visits
  */
 export function VisitTracker({ url }: { url: string }) {
-  useEffect(() => {
-    addRecentTool(url);
-  }, [url]);
+	useEffect(() => {
+		addRecentTool(url);
+	}, [url]);
 
-  return null;
+	return null;
 }

@@ -20,96 +20,96 @@ const encoders = ALL_TOOLS.encoders.tools;
  */
 
 test.describe("Accessibility Compliance - WCAG AA", () => {
-  test("home page should pass axe-core scan", async ({ page }) => {
-    await page.goto("/");
+	test("home page should pass axe-core scan", async ({ page }) => {
+		await page.goto("/");
 
-    const accessibilityScanResults = await new AxeBuilder({ page })
-      .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
-      .analyze();
+		const accessibilityScanResults = await new AxeBuilder({ page })
+			.withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
+			.analyze();
 
-    expect(accessibilityScanResults.violations).toEqual([]);
-  });
+		expect(accessibilityScanResults.violations).toEqual([]);
+	});
 
-  test("formatters category page should pass axe-core scan", async ({
-    page,
-  }) => {
-    await page.goto("/formatters");
+	test("formatters category page should pass axe-core scan", async ({
+		page,
+	}) => {
+		await page.goto("/formatters");
 
-    const accessibilityScanResults = await new AxeBuilder({ page })
-      .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
-      .analyze();
+		const accessibilityScanResults = await new AxeBuilder({ page })
+			.withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
+			.analyze();
 
-    expect(accessibilityScanResults.violations).toEqual([]);
-  });
+		expect(accessibilityScanResults.violations).toEqual([]);
+	});
 
-  test("minifiers category page should pass axe-core scan", async ({
-    page,
-  }) => {
-    await page.goto("/minifiers");
+	test("minifiers category page should pass axe-core scan", async ({
+		page,
+	}) => {
+		await page.goto("/minifiers");
 
-    const accessibilityScanResults = await new AxeBuilder({ page })
-      .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
-      .analyze();
+		const accessibilityScanResults = await new AxeBuilder({ page })
+			.withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
+			.analyze();
 
-    expect(accessibilityScanResults.violations).toEqual([]);
-  });
+		expect(accessibilityScanResults.violations).toEqual([]);
+	});
 
-  test("encoders category page should pass axe-core scan", async ({ page }) => {
-    await page.goto("/encoders");
+	test("encoders category page should pass axe-core scan", async ({ page }) => {
+		await page.goto("/encoders");
 
-    const accessibilityScanResults = await new AxeBuilder({ page })
-      .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
-      .analyze();
+		const accessibilityScanResults = await new AxeBuilder({ page })
+			.withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
+			.analyze();
 
-    expect(accessibilityScanResults.violations).toEqual([]);
-  });
+		expect(accessibilityScanResults.violations).toEqual([]);
+	});
 
-  test("validators category page should pass axe-core scan", async ({
-    page,
-  }) => {
-    await page.goto("/validators");
+	test("validators category page should pass axe-core scan", async ({
+		page,
+	}) => {
+		await page.goto("/validators");
 
-    const accessibilityScanResults = await new AxeBuilder({ page })
-      .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
-      .analyze();
+		const accessibilityScanResults = await new AxeBuilder({ page })
+			.withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
+			.analyze();
 
-    expect(accessibilityScanResults.violations).toEqual([]);
-  });
+		expect(accessibilityScanResults.violations).toEqual([]);
+	});
 
-  // Test one representative tool per category (all use same page template)
-  test("formatter tool page should pass axe-core scan", async ({ page }) => {
-    await page.goto(formatters[0].url);
+	// Test one representative tool per category (all use same page template)
+	test("formatter tool page should pass axe-core scan", async ({ page }) => {
+		await page.goto(formatters[0].url);
 
-    const accessibilityScanResults = await new AxeBuilder({ page })
-      .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
-      .exclude(".cm-content") // Exclude CodeMirror internals (3rd party library)
-      .exclude(".cm-scroller") // Exclude CodeMirror scroller
-      .analyze();
+		const accessibilityScanResults = await new AxeBuilder({ page })
+			.withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
+			.exclude(".cm-content") // Exclude CodeMirror internals (3rd party library)
+			.exclude(".cm-scroller") // Exclude CodeMirror scroller
+			.analyze();
 
-    expect(accessibilityScanResults.violations).toEqual([]);
-  });
+		expect(accessibilityScanResults.violations).toEqual([]);
+	});
 
-  test("minifier tool page should pass axe-core scan", async ({ page }) => {
-    await page.goto(minifiers[0].url);
+	test("minifier tool page should pass axe-core scan", async ({ page }) => {
+		await page.goto(minifiers[0].url);
 
-    const accessibilityScanResults = await new AxeBuilder({ page })
-      .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
-      .exclude(".cm-content") // Exclude CodeMirror internals (3rd party library)
-      .exclude(".cm-scroller") // Exclude CodeMirror scroller
-      .analyze();
+		const accessibilityScanResults = await new AxeBuilder({ page })
+			.withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
+			.exclude(".cm-content") // Exclude CodeMirror internals (3rd party library)
+			.exclude(".cm-scroller") // Exclude CodeMirror scroller
+			.analyze();
 
-    expect(accessibilityScanResults.violations).toEqual([]);
-  });
+		expect(accessibilityScanResults.violations).toEqual([]);
+	});
 
-  test("encoder tool page should pass axe-core scan", async ({ page }) => {
-    await page.goto(encoders[0].url);
+	test("encoder tool page should pass axe-core scan", async ({ page }) => {
+		await page.goto(encoders[0].url);
 
-    const accessibilityScanResults = await new AxeBuilder({ page })
-      .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
-      .exclude(".cm-content") // Exclude CodeMirror internals (3rd party library)
-      .exclude(".cm-scroller") // Exclude CodeMirror scroller
-      .analyze();
+		const accessibilityScanResults = await new AxeBuilder({ page })
+			.withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
+			.exclude(".cm-content") // Exclude CodeMirror internals (3rd party library)
+			.exclude(".cm-scroller") // Exclude CodeMirror scroller
+			.analyze();
 
-    expect(accessibilityScanResults.violations).toEqual([]);
-  });
+		expect(accessibilityScanResults.violations).toEqual([]);
+	});
 });

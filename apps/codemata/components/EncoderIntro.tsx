@@ -1,9 +1,9 @@
 import { getEncoderContent } from "@/lib/ai-helpers";
 
 interface EncoderIntroProps {
-  slug: string;
-  encoderName: string;
-  fallbackDescription: string;
+	slug: string;
+	encoderName: string;
+	fallbackDescription: string;
 }
 
 /**
@@ -11,23 +11,23 @@ interface EncoderIntroProps {
  * Wrapped in Suspense to replace static description
  */
 export async function EncoderIntro({
-  slug,
-  encoderName,
-  fallbackDescription,
+	slug,
+	encoderName,
+	fallbackDescription,
 }: EncoderIntroProps) {
-  const aiContent = await getEncoderContent(slug, encoderName);
+	const aiContent = await getEncoderContent(slug, encoderName);
 
-  if (!aiContent?.intro) {
-    return (
-      <p className="mb-8 text-slate-600 dark:text-slate-400">
-        {fallbackDescription}
-      </p>
-    );
-  }
+	if (!aiContent?.intro) {
+		return (
+			<p className="mb-8 text-slate-600 dark:text-slate-400">
+				{fallbackDescription}
+			</p>
+		);
+	}
 
-  return (
-    <p className="mb-8 text-lg text-slate-600 dark:text-slate-400">
-      {aiContent.intro}
-    </p>
-  );
+	return (
+		<p className="mb-8 text-lg text-slate-600 dark:text-slate-400">
+			{aiContent.intro}
+		</p>
+	);
 }

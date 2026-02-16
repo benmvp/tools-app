@@ -19,6 +19,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.9.4",
+		"@repo/config": "workspace:*",
 		"@types/node": "^22.10.6",
 		"@types/react": "^19.0.6",
 		"@vitejs/plugin-react": "^4.3.4",

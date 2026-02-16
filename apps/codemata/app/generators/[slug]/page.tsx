@@ -17,71 +17,71 @@ export const revalidate = 86400;
 
 // Pre-render all generator pages at build time
 export async function generateStaticParams() {
-  return Object.keys(GENERATOR_TOOLS).map((slug) => ({ slug }));
+	return Object.keys(GENERATOR_TOOLS).map((slug) => ({ slug }));
 }
 
 // Generate metadata
 export async function generateMetadata({
-  params,
+	params,
 }: {
-  params: Promise<{ slug: string }>;
+	params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const { slug } = await params;
-  return generateToolMetadata({
-    slug,
-    category: "generators",
-    tools: GENERATOR_TOOLS,
-    toolType: "generator",
-  });
+	const { slug } = await params;
+	return generateToolMetadata({
+		slug,
+		category: "generators",
+		tools: GENERATOR_TOOLS,
+		toolType: "generator",
+	});
 }
 
 export default async function GeneratorPage({
-  params,
+	params,
 }: {
-  params: Promise<{ slug: string }>;
+	params: Promise<{ slug: string }>;
 }) {
-  const { slug } = await params;
-  const tool = GENERATOR_TOOLS[slug];
+	const { slug } = await params;
+	const tool = GENERATOR_TOOLS[slug];
 
-  if (!tool) {
-    notFound();
-  }
+	if (!tool) {
+		notFound();
+	}
 
-  // Map slug to component
-  const renderGenerator = () => {
-    switch (slug) {
-      case "gitignore-generator":
-        return <GitignoreGenerator action={generateGitignore} />;
-      default:
-        return null;
-    }
-  };
+	// Map slug to component
+	const renderGenerator = () => {
+		switch (slug) {
+			case "gitignore-generator":
+				return <GitignoreGenerator action={generateGitignore} />;
+			default:
+				return null;
+		}
+	};
 
-  const structuredData = getToolStructuredData(
-    `/generators/${slug}`,
-    tool.name,
-  );
+	const structuredData = getToolStructuredData(
+		`/generators/${slug}`,
+		tool.name,
+	);
 
-  return (
-    <>
-      <JsonLd data={structuredData} />
+	return (
+		<>
+			<JsonLd data={structuredData} />
 
-      <div className="container mx-auto px-4 py-8 space-y-8">
-        <CategoryBackLink href="/generators" label="Generators" />
+			<div className="container mx-auto px-4 py-8 space-y-8">
+				<CategoryBackLink href="/generators" label="Generators" />
 
-        <div className="space-y-2">
-          <h1 className="text-4xl font-bold tracking-tight">{tool.name}</h1>
-          <p className="text-xl text-muted-foreground">{tool.description}</p>
-        </div>
+				<div className="space-y-2">
+					<h1 className="text-4xl font-bold tracking-tight">{tool.name}</h1>
+					<p className="text-xl text-muted-foreground">{tool.description}</p>
+				</div>
 
-        <GeneratorIntro slug={slug} generatorName={tool.name} />
+				<GeneratorIntro slug={slug} generatorName={tool.name} />
 
-        {renderGenerator()}
+				{renderGenerator()}
 
-        <Suspense fallback={<AIContentSkeleton />}>
-          <GeneratorAIContent slug={slug} generatorName={tool.name} />
-        </Suspense>
-      </div>
-    </>
-  );
+				<Suspense fallback={<AIContentSkeleton />}>
+					<GeneratorAIContent slug={slug} generatorName={tool.name} />
+				</Suspense>
+			</div>
+		</>
+	);
 }
