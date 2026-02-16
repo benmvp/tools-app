@@ -1,4 +1,4 @@
-import { shouldGenerateAI } from "@repo/shared";
+import { type ToolType, shouldGenerateAI } from "@repo/shared";
 import { getCachedContent, setCachedContent } from "./cache";
 import { callGeminiWithRetry } from "./client";
 import {
@@ -11,6 +11,9 @@ import {
 	getViewerSystemPrompt,
 } from "./prompts";
 import { type ToolContent, toolContentSchema } from "./schema";
+
+// Enable debug logging via environment variable (e.g., DEBUG_AI=true)
+const DEBUG_AI = process.env.DEBUG_AI === "true";
 
 /**
  * Process content to convert literal \n strings to actual newlines
@@ -80,20 +83,16 @@ const ALL_SYSTEM_PROMPTS = {
 export async function generateToolContent(
 	toolId: string,
 	toolName: string,
-	toolType:
-		| "formatter"
-		| "minifier"
-		| "encoder"
-		| "validator"
-		| "generator"
-		| "viewer",
+	toolType: ToolType,
 	availableTools: Array<{ displayName: string; url: string }>,
 ): Promise<ToolContent | undefined> {
 	// Skip AI generation based on environment mode
 	if (!shouldGenerateAI()) {
-		console.log(
-			`Skipping AI generation for ${toolType}-${toolId} (AI disabled in current mode)`,
-		);
+		if (DEBUG_AI) {
+			console.log(
+				`Skipping AI generation for ${toolType}-${toolId} (AI disabled in current mode)`,
+			);
+		}
 		return undefined;
 	}
 
@@ -102,11 +101,15 @@ export async function generateToolContent(
 	const cached = getCachedContent<ToolContent>(cacheKey);
 
 	if (cached) {
-		console.log(`Cache hit for ${cacheKey}`);
+		if (DEBUG_AI) {
+			console.log(`Cache hit for ${cacheKey}`);
+		}
 		return cached;
 	}
 
-	console.log(`Generating AI content for ${cacheKey}...`);
+	if (DEBUG_AI) {
+		console.log(`Generating AI content for ${cacheKey}...`);
+	}
 
 	try {
 		const systemPrompt = ALL_SYSTEM_PROMPTS[toolType]();
@@ -142,7 +145,9 @@ export async function generateToolContent(
 		// Cache successful result
 		setCachedContent(cacheKey, processedData);
 
-		console.log(`Successfully generated content for ${cacheKey}`);
+		if (DEBUG_AI) {
+			console.log(`Successfully generated content for ${cacheKey}`);
+		}
 		return processedData;
 	} catch (error) {
 		console.error(`Error generating content for ${cacheKey}:`, error);

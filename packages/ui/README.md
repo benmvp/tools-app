@@ -28,13 +28,13 @@ import { JsonLd } from "@repo/ui";
 ## Dependencies
 
 - **Core:** `@repo/shared`, `lucide-react`
-- **Peer Dependencies:** `react`, `next`
+- **Peer Dependencies:** `react`
 
 ## Testing
 
 ```bash
-pnpm test        # Run tests
-pnpm test:watch  # Watch mode
+pnpm type-check  # TypeScript validation
+pnpm lint        # Code quality checks
 ```
 
 ## Future Components

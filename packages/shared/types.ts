@@ -234,6 +234,18 @@ export type ToolCategoryId =
 	| "viewers";
 
 /**
+ * Tool type identifiers for AI content generation
+ * Singular form used in generateToolContent and related functions
+ */
+export type ToolType =
+	| "formatter"
+	| "minifier"
+	| "encoder"
+	| "validator"
+	| "generator"
+	| "viewer";
+
+/**
  * Tool category metadata with nested tools
  * Single source of truth for all category information
  */

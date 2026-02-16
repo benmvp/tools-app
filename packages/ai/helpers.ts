@@ -1,3 +1,4 @@
+import type { ToolType } from "@repo/shared";
 import { cache } from "react";
 import { generateToolContent } from "./generate";
 
@@ -15,13 +16,7 @@ export const getToolContent = cache(
 	async (
 		toolId: string,
 		toolName: string,
-		toolType:
-			| "formatter"
-			| "minifier"
-			| "encoder"
-			| "validator"
-			| "generator"
-			| "viewer",
+		toolType: ToolType,
 		availableTools: Array<{ displayName: string; url: string }>,
 	) => {
 		return generateToolContent(toolId, toolName, toolType, availableTools);

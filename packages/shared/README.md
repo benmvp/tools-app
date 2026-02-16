@@ -32,8 +32,8 @@ import { cn, shouldGenerateAI, type FormatterTool } from "@repo/shared";
 
 ## Dependencies
 
-- **Core:** `clsx`, `tailwind-merge`
-- **Peer Dependencies:** `react`, `next`, `lucide-react`
+- **Core:** `clsx`, `tailwind-merge`, `lucide-react`
+- **Peer Dependencies:** `react`
 
 ## Testing
 

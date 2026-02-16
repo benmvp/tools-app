@@ -29,12 +29,6 @@
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadEnvConfig } from "@next/env";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const projectDir = join(__dirname, "..");
-loadEnvConfig(projectDir);
-
 import { getAppUrl, getToolUrl } from "@repo/shared";
 import { load } from "cheerio";
 import {
@@ -42,6 +36,11 @@ import {
 	getCategoriesByOrder,
 	getTotalToolCount,
 } from "../lib/tools-data";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const projectDir = join(__dirname, "..");
+loadEnvConfig(projectDir);
 
 interface PageMetadata {
 	url: string;
