@@ -47,7 +47,7 @@ describe("Recent Tools", () => {
 
 	describe("getRecentTools", () => {
 		it("returns empty array when no tools stored", () => {
-			const result = getRecentTools();
+			const result = getRecentTools("codemata");
 			expect(result).toEqual([]);
 		});
 
@@ -60,7 +60,7 @@ describe("Recent Tools", () => {
 				]),
 			);
 
-			const result = getRecentTools();
+			const result = getRecentTools("codemata");
 			expect(result).toEqual([
 				"/formatters/json-formatter",
 				"/minifiers/css-minifier",
@@ -75,7 +75,7 @@ describe("Recent Tools", () => {
 
 			localStorage.setItem("codemata:recent-tools", "not-valid-json");
 
-			const result = getRecentTools();
+			const result = getRecentTools("codemata");
 			expect(result).toEqual([]);
 
 			consoleErrorSpy.mockRestore();
@@ -87,24 +87,24 @@ describe("Recent Tools", () => {
 				JSON.stringify({ invalid: "object" }),
 			);
 
-			const result = getRecentTools();
+			const result = getRecentTools("codemata");
 			expect(result).toEqual([]);
 		});
 	});
 
 	describe("addRecentTool", () => {
 		it("adds a new tool to empty list", () => {
-			addRecentTool("/formatters/json-formatter");
+			addRecentTool("codemata", "/formatters/json-formatter");
 
-			const result = getRecentTools();
+			const result = getRecentTools("codemata");
 			expect(result).toEqual(["/formatters/json-formatter"]);
 		});
 
 		it("adds tool to front of list", () => {
-			addRecentTool("/formatters/json-formatter");
-			addRecentTool("/minifiers/css-minifier");
+			addRecentTool("codemata", "/formatters/json-formatter");
+			addRecentTool("codemata", "/minifiers/css-minifier");
 
-			const result = getRecentTools();
+			const result = getRecentTools("codemata");
 			expect(result).toEqual([
 				"/minifiers/css-minifier",
 				"/formatters/json-formatter",
@@ -112,12 +112,12 @@ describe("Recent Tools", () => {
 		});
 
 		it("removes duplicate and moves to front", () => {
-			addRecentTool("/formatters/json-formatter");
-			addRecentTool("/minifiers/css-minifier");
-			addRecentTool("/formatters/html-formatter");
-			addRecentTool("/formatters/json-formatter"); // Duplicate
+			addRecentTool("codemata", "/formatters/json-formatter");
+			addRecentTool("codemata", "/minifiers/css-minifier");
+			addRecentTool("codemata", "/formatters/html-formatter");
+			addRecentTool("codemata", "/formatters/json-formatter"); // Duplicate
 
-			const result = getRecentTools();
+			const result = getRecentTools("codemata");
 			expect(result).toEqual([
 				"/formatters/json-formatter",
 				"/formatters/html-formatter",
@@ -126,44 +126,44 @@ describe("Recent Tools", () => {
 		});
 
 		it("maintains max of 5 tools", () => {
-			addRecentTool("/formatters/json-formatter");
-			addRecentTool("/minifiers/css-minifier");
-			addRecentTool("/formatters/html-formatter");
-			addRecentTool("/formatters/yaml-formatter");
-			addRecentTool("/formatters/xml-formatter");
-			addRecentTool("/minifiers/json-minifier"); // 6th tool
+			addRecentTool("codemata", "/formatters/json-formatter");
+			addRecentTool("codemata", "/minifiers/css-minifier");
+			addRecentTool("codemata", "/formatters/html-formatter");
+			addRecentTool("codemata", "/formatters/yaml-formatter");
+			addRecentTool("codemata", "/formatters/xml-formatter");
+			addRecentTool("codemata", "/minifiers/json-minifier"); // 6th tool
 
-			const result = getRecentTools();
+			const result = getRecentTools("codemata");
 			expect(result.length).toBe(5);
 			expect(result[0]).toBe("/minifiers/json-minifier");
 			expect(result).not.toContain("/formatters/json-formatter"); // Oldest removed
 		});
 
 		it("handles visiting same tool multiple times", () => {
-			addRecentTool("/formatters/json-formatter");
-			addRecentTool("/formatters/json-formatter");
-			addRecentTool("/formatters/json-formatter");
+			addRecentTool("codemata", "/formatters/json-formatter");
+			addRecentTool("codemata", "/formatters/json-formatter");
+			addRecentTool("codemata", "/formatters/json-formatter");
 
-			const result = getRecentTools();
+			const result = getRecentTools("codemata");
 			expect(result).toEqual(["/formatters/json-formatter"]);
 		});
 	});
 
 	describe("clearRecentTools", () => {
 		it("removes all recent tools", () => {
-			addRecentTool("/formatters/json-formatter");
-			addRecentTool("/minifiers/css-minifier");
+			addRecentTool("codemata", "/formatters/json-formatter");
+			addRecentTool("codemata", "/minifiers/css-minifier");
 
-			expect(getRecentTools().length).toBe(2);
+			expect(getRecentTools("codemata").length).toBe(2);
 
-			clearRecentTools();
+			clearRecentTools("codemata");
 
-			expect(getRecentTools()).toEqual([]);
+			expect(getRecentTools("codemata")).toEqual([]);
 		});
 
 		it("handles clearing empty list", () => {
-			clearRecentTools();
-			expect(getRecentTools()).toEqual([]);
+			clearRecentTools("codemata");
+			expect(getRecentTools("codemata")).toEqual([]);
 		});
 	});
 });

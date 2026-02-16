@@ -1,5 +1,4 @@
 import { getToolContent as getToolContentBase } from "@repo/ai";
-import { cache } from "react";
 import { getAllTools } from "./tools-data";
 
 /**
@@ -15,50 +14,43 @@ export function getAllAvailableTools() {
 /**
  * Category-specific helper functions
  * These wrap @repo/ai getToolContent with app-specific tool data
+ * Note: getToolContentBase is already cached with React.cache()
  */
-export const getToolContent = cache(
-  async (
-    toolId: string,
-    toolName: string,
-    toolType:
-      | "formatter"
-      | "minifier"
-      | "encoder"
-      | "validator"
-      | "generator"
-      | "viewer",
-  ) => {
-    const availableTools = getAllAvailableTools();
-    return getToolContentBase(toolId, toolName, toolType, availableTools);
-  },
-);
+export async function getToolContent(
+  toolId: string,
+  toolName: string,
+  toolType:
+    | "formatter"
+    | "minifier"
+    | "encoder"
+    | "validator"
+    | "generator"
+    | "viewer",
+) {
+  const availableTools = getAllAvailableTools();
+  return getToolContentBase(toolId, toolName, toolType, availableTools);
+}
 
-export const getFormatterContent = cache(
-  async (toolId: string, toolName: string) =>
-    getToolContent(toolId, toolName, "formatter"),
-);
+export async function getFormatterContent(toolId: string, toolName: string) {
+  return getToolContent(toolId, toolName, "formatter");
+}
 
-export const getMinifierContent = cache(
-  async (toolId: string, toolName: string) =>
-    getToolContent(toolId, toolName, "minifier"),
-);
+export async function getMinifierContent(toolId: string, toolName: string) {
+  return getToolContent(toolId, toolName, "minifier");
+}
 
-export const getEncoderContent = cache(
-  async (toolId: string, toolName: string) =>
-    getToolContent(toolId, toolName, "encoder"),
-);
+export async function getEncoderContent(toolId: string, toolName: string) {
+  return getToolContent(toolId, toolName, "encoder");
+}
 
-export const getValidatorContent = cache(
-  async (toolId: string, toolName: string) =>
-    getToolContent(toolId, toolName, "validator"),
-);
+export async function getValidatorContent(toolId: string, toolName: string) {
+  return getToolContent(toolId, toolName, "validator");
+}
 
-export const getGeneratorContent = cache(
-  async (toolId: string, toolName: string) =>
-    getToolContent(toolId, toolName, "generator"),
-);
+export async function getGeneratorContent(toolId: string, toolName: string) {
+  return getToolContent(toolId, toolName, "generator");
+}
 
-export const getViewerContent = cache(
-  async (toolId: string, toolName: string) =>
-    getToolContent(toolId, toolName, "viewer"),
-);
+export async function getViewerContent(toolId: string, toolName: string) {
+  return getToolContent(toolId, toolName, "viewer");
+}

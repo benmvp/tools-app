@@ -1,7 +1,7 @@
 "use client";
 
-import { addRecentTool } from "@repo/shared";
 import { useEffect } from "react";
+import { addRecentTool } from "@/lib/recent-tools";
 
 /**
  * Client component that tracks tool page visits

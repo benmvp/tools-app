@@ -1,8 +1,3 @@
-// AI content generation
-export * from "./generate";
+// AI content generation - only export helpers
+// Internal modules (generate, prompts, schema, cache, client, gemini-schema) not exported
 export * from "./helpers";
-export * from "./prompts";
-export * from "./schema";
-export * from "./cache";
-export * from "./client";
-export * from "./gemini-schema";
