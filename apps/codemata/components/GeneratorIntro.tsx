@@ -1,4 +1,4 @@
-import { getGeneratorContent } from "@/lib/ai/helpers";
+import { getGeneratorContent } from "@/lib/ai-helpers";
 
 export async function GeneratorIntro({
   slug,

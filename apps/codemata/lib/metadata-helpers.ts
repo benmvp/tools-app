@@ -1,8 +1,8 @@
+import type { Tool } from "@repo/shared";
+import { getAppUrl, getOgImageUrl } from "@repo/shared";
 import type { Metadata } from "next";
-import { getToolContent } from "./ai/helpers";
+import { getToolContent } from "./ai-helpers";
 import { SITE_CONFIG } from "./site-config";
-import type { Tool } from "./types";
-import { getAppUrl, getOgImageUrl } from "./utils";
 
 export interface ToolMetadataParams {
   slug: string;

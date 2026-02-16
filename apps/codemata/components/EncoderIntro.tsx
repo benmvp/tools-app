@@ -1,4 +1,4 @@
-import { getEncoderContent } from "@/lib/ai/helpers";
+import { getEncoderContent } from "@/lib/ai-helpers";
 
 interface EncoderIntroProps {
   slug: string;

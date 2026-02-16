@@ -1,13 +1,13 @@
 "use client";
 
 import { markdown } from "@codemirror/lang-markdown";
+import type { ViewerAction } from "@repo/shared";
 import CodeMirror from "@uiw/react-codemirror";
 import { Copy, Eye, FileText, Loader2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import type { ViewerAction } from "@/lib/types";
 import { MAX_VIEWER_INPUT_SIZE } from "@/lib/viewers/constants";
 
 interface Props {

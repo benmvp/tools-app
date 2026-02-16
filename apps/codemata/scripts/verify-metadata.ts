@@ -35,13 +35,13 @@ const __dirname = dirname(__filename);
 const projectDir = join(__dirname, "..");
 loadEnvConfig(projectDir);
 
+import { getAppUrl, getToolUrl } from "@repo/shared";
 import { load } from "cheerio";
 import {
   getAllTools,
   getCategoriesByOrder,
   getTotalToolCount,
 } from "../lib/tools-data";
-import { getAppUrl, getToolUrl } from "../lib/utils";
 
 interface PageMetadata {
   url: string;

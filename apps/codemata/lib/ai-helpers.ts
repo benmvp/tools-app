@@ -1,6 +1,6 @@
+import { getToolContent as getToolContentBase } from "@repo/ai";
 import { cache } from "react";
-import { generateToolContent } from "@/lib/ai/generate";
-import { getAllTools } from "@/lib/tools-data";
+import { getAllTools } from "./tools-data";
 
 /**
  * Helper to get all available tools for recommendation context
@@ -13,9 +13,8 @@ export function getAllAvailableTools() {
 }
 
 /**
- * Generate content for any tool with automatic category-aware caching
- * Wrapped in React cache() to deduplicate requests within same render
- * No category-specific functions needed - works for all tool types
+ * Category-specific helper functions
+ * These wrap @repo/ai getToolContent with app-specific tool data
  */
 export const getToolContent = cache(
   async (
@@ -30,15 +29,10 @@ export const getToolContent = cache(
       | "viewer",
   ) => {
     const availableTools = getAllAvailableTools();
-    return generateToolContent(toolId, toolName, toolType, availableTools);
+    return getToolContentBase(toolId, toolName, toolType, availableTools);
   },
 );
 
-/**
- * Category-specific helper functions for backward compatibility
- * These are thin wrappers that maintain existing component APIs
- * All logic centralized in getToolContent above
- */
 export const getFormatterContent = cache(
   async (toolId: string, toolName: string) =>
     getToolContent(toolId, toolName, "formatter"),

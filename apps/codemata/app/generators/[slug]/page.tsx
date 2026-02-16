@@ -1,3 +1,5 @@
+import { getToolStructuredData } from "@repo/shared";
+import { JsonLd } from "@repo/ui";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -6,10 +8,8 @@ import { CategoryBackLink } from "@/components/CategoryBackLink";
 import { GeneratorAIContent } from "@/components/GeneratorAIContent";
 import { GeneratorIntro } from "@/components/GeneratorIntro";
 import { GitignoreGenerator } from "@/components/GitignoreGenerator";
-import { JsonLd } from "@/components/JsonLd";
 import { generateToolMetadata } from "@/lib/metadata-helpers";
 import { GENERATOR_TOOLS } from "@/lib/tools-data";
-import { getToolStructuredData } from "@/lib/utils";
 import { generateGitignore } from "../actions";
 
 // ISR: Revalidate every 24 hours

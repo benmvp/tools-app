@@ -1,3 +1,5 @@
+import { getToolStructuredData, isProductionBuild } from "@repo/shared";
+import { JsonLd } from "@repo/ui";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -5,13 +7,11 @@ import { AIContentSkeleton } from "@/components/AIContentSkeleton";
 import { CategoryBackLink } from "@/components/CategoryBackLink";
 import { EncoderAIContent } from "@/components/EncoderAIContent";
 import { EncoderIntro } from "@/components/EncoderIntro";
-import { JsonLd } from "@/components/JsonLd";
 import { ScrollToTopFab } from "@/components/ScrollToTopFab";
 import { TransformerEncoder } from "@/components/TransformerEncoder";
 import { VisitTracker } from "@/components/VisitTracker";
 import { generateToolMetadata } from "@/lib/metadata-helpers";
 import { ENCODER_TOOLS } from "@/lib/tools-data";
-import { getToolStructuredData, isProductionBuild } from "@/lib/utils";
 
 // ISR: Revalidate every 24 hours
 export const revalidate = 86400;

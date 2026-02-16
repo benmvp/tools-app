@@ -1,5 +1,6 @@
 "use client";
 
+import type { FormatterTool } from "@repo/shared";
 import { Check, Copy, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -11,7 +12,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { FormatterTool } from "@/lib/types";
 import { CodeEditor } from "./CodeEditor";
 
 interface ConfigOption {

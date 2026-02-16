@@ -19,7 +19,10 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@repo/shared": ["../../packages/shared"],
+      "@repo/ai": ["../../packages/ai"],
+      "@repo/ui": ["../../packages/ui"]
     }
   },
   "include": [

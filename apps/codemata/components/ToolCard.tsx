@@ -1,7 +1,7 @@
+import type { Tool } from "@repo/shared";
+import { shouldPrefetch } from "@repo/shared";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import type { Tool } from "@/lib/types";
-import { shouldPrefetch } from "@/lib/utils";
 
 export function ToolCard({
   name,

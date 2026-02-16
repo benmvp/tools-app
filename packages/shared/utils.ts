@@ -2,7 +2,7 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+	return twMerge(clsx(inputs));
 }
 
 /**
@@ -21,17 +21,17 @@ export function cn(...inputs: ClassValue[]) {
  * @returns 'development' | 'preview' | 'production'
  */
 function getEnvironmentMode(): "development" | "preview" | "production" {
-  // Check VERCEL_ENV first (most specific)
-  const vercelEnv =
-    process.env.VERCEL_ENV || process.env.NEXT_PUBLIC_VERCEL_ENV;
+	// Check VERCEL_ENV first (most specific)
+	const vercelEnv =
+		process.env.VERCEL_ENV || process.env.NEXT_PUBLIC_VERCEL_ENV;
 
-  if (vercelEnv === "production") return "production";
-  if (vercelEnv === "preview") return "preview";
-  if (vercelEnv === "development") return "development";
+	if (vercelEnv === "production") return "production";
+	if (vercelEnv === "preview") return "preview";
+	if (vercelEnv === "development") return "development";
 
-  // Fall back to NODE_ENV
-  // next dev → development, next build → production
-  return process.env.NODE_ENV === "production" ? "production" : "development";
+	// Fall back to NODE_ENV
+	// next dev → development, next build → production
+	return process.env.NODE_ENV === "production" ? "production" : "development";
 }
 
 /**
@@ -41,14 +41,14 @@ function getEnvironmentMode(): "development" | "preview" | "production" {
  * @returns true if AI generation is enabled, false otherwise
  */
 export function shouldGenerateAI(): boolean {
-  // Override: force disable AI
-  if (process.env.DISABLE_AI === "true") {
-    return false;
-  }
+	// Override: force disable AI
+	if (process.env.DISABLE_AI === "true") {
+		return false;
+	}
 
-  // AI disabled in development mode (next dev)
-  // AI enabled in preview and production modes
-  return getEnvironmentMode() !== "development";
+	// AI disabled in development mode (next dev)
+	// AI enabled in preview and production modes
+	return getEnvironmentMode() !== "development";
 }
 
 /**
@@ -59,7 +59,7 @@ export function shouldGenerateAI(): boolean {
  * @returns true if pages should be pre-rendered, false for on-demand generation
  */
 export function isProductionBuild(): boolean {
-  return getEnvironmentMode() === "production";
+	return getEnvironmentMode() === "production";
 }
 
 /**
@@ -69,7 +69,7 @@ export function isProductionBuild(): boolean {
  * @returns true if links should be prefetched, false otherwise
  */
 export function shouldPrefetch(): boolean {
-  return getEnvironmentMode() === "production";
+	return getEnvironmentMode() === "production";
 }
 
 /**
@@ -90,15 +90,15 @@ export function shouldPrefetch(): boolean {
  * @returns Full URL with protocol
  */
 export function getAppUrl(path = ""): string {
-  const domain =
-    process.env.VERCEL_PROJECT_PRODUCTION_URL ||
-    process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL ||
-    "codemata.benmvp.com";
+	const domain =
+		process.env.VERCEL_PROJECT_PRODUCTION_URL ||
+		process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL ||
+		"codemata.benmvp.com";
 
-  // Detect localhost and use http:// instead of https://
-  const protocol = domain.includes("localhost") ? "http://" : "https://";
+	// Detect localhost and use http:// instead of https://
+	const protocol = domain.includes("localhost") ? "http://" : "https://";
 
-  return `${protocol}${domain}${path}`;
+	return `${protocol}${domain}${path}`;
 }
 
 /**
@@ -112,7 +112,7 @@ export function getAppUrl(path = ""): string {
  * @returns Full URL for the tool page
  */
 export function getToolUrl(tool: { url: string }): string {
-  return getAppUrl(tool.url);
+	return getAppUrl(tool.url);
 }
 
 /**
@@ -138,12 +138,12 @@ export const OG_IMAGE_VERSION = "1";
  * @returns Full OG image URL
  */
 export function getOgImageUrl(title: string, description: string): string {
-  const searchParams = new URLSearchParams();
-  searchParams.set("title", title);
-  searchParams.set("description", description);
-  searchParams.set("v", OG_IMAGE_VERSION);
+	const searchParams = new URLSearchParams();
+	searchParams.set("title", title);
+	searchParams.set("description", description);
+	searchParams.set("v", OG_IMAGE_VERSION);
 
-  return getAppUrl(`/api/og?${searchParams.toString()}`);
+	return getAppUrl(`/api/og?${searchParams.toString()}`);
 }
 
 /**
@@ -158,17 +158,17 @@ export function getOgImageUrl(title: string, description: string): string {
  * @returns Structured data object for JSON-LD
  */
 export function getToolStructuredData(path: string, toolName: string) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    name: toolName,
-    applicationCategory: "DeveloperApplication",
-    operatingSystem: "Web browser",
-    offers: {
-      "@type": "Offer",
-      price: "0",
-      priceCurrency: "USD",
-    },
-    url: getAppUrl(path),
-  };
+	return {
+		"@context": "https://schema.org",
+		"@type": "SoftwareApplication",
+		name: toolName,
+		applicationCategory: "DeveloperApplication",
+		operatingSystem: "Web browser",
+		offers: {
+			"@type": "Offer",
+			price: "0",
+			priceCurrency: "USD",
+		},
+		url: getAppUrl(path),
+	};
 }

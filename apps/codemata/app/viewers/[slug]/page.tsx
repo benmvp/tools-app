@@ -1,16 +1,16 @@
+import { getToolStructuredData, isProductionBuild } from "@repo/shared";
+import { JsonLd } from "@repo/ui";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { AIContentSkeleton } from "@/components/AIContentSkeleton";
 import { CategoryBackLink } from "@/components/CategoryBackLink";
-import { JsonLd } from "@/components/JsonLd";
 import { ViewerAIContent } from "@/components/ViewerAIContent";
 import { ViewerIntro } from "@/components/ViewerIntro";
 import { VisitTracker } from "@/components/VisitTracker";
 import { MarkdownViewer } from "@/components/viewers/MarkdownViewer";
 import { generateToolMetadata } from "@/lib/metadata-helpers";
 import { VIEWER_TOOLS } from "@/lib/tools-data";
-import { getToolStructuredData, isProductionBuild } from "@/lib/utils";
 
 // ISR: Revalidate every 24 hours
 export const revalidate = 86400;

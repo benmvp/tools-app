@@ -10,10 +10,10 @@ import { xml } from "@codemirror/lang-xml";
 import { yaml } from "@codemirror/lang-yaml";
 import type { Extension } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
+import type { EncoderTool, FormatterTool, MinifierTool } from "@repo/shared";
 import CodeMirror from "@uiw/react-codemirror";
 import { useTheme } from "next-themes";
 import { useEffect, useMemo, useState } from "react";
-import type { EncoderTool, FormatterTool, MinifierTool } from "@/lib/types";
 
 type CodeEditorLanguage =
   | FormatterTool["language"]

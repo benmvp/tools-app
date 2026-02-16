@@ -1,4 +1,4 @@
-import { getValidatorContent } from "@/lib/ai/helpers";
+import { getValidatorContent } from "@/lib/ai-helpers";
 
 interface ValidatorIntroProps {
   slug: string;

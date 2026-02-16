@@ -1,11 +1,11 @@
 "use client";
 
+import { shouldPrefetch } from "@repo/shared";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { Badge } from "@/components/ui/badge";
 import { getCategoriesByOrder } from "@/lib/tools-data";
-import { shouldPrefetch } from "@/lib/utils";
 
 interface NavigationListProps {
   onItemClick?: () => void; // For mobile to close menu

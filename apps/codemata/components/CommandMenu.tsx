@@ -1,5 +1,6 @@
 "use client";
 
+import { getRecentTools } from "@repo/shared";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -10,7 +11,6 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { getRecentTools } from "@/lib/recent-tools";
 import {
   POPULAR_TOOLS,
   SEARCH_INDEX,

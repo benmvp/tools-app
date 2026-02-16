@@ -1,7 +1,7 @@
 import { ContentSection } from "@/components/ContentSection";
 import { RecommendedTools } from "@/components/RecommendedTools";
 import { TipCard } from "@/components/TipCard";
-import { getAllAvailableTools, getGeneratorContent } from "@/lib/ai/helpers";
+import { getAllAvailableTools, getGeneratorContent } from "@/lib/ai-helpers";
 
 export async function GeneratorAIContent({
   slug,

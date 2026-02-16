@@ -278,107 +278,283 @@ packages:
 
 ### Port Assignments
 
-- **Codemata:** 3001 (dev), Production via Vercel
-- **Moni:** 3002 (dev), Production via Vercel
-- **Convertly:** 3003 (dev), Production via Vercel
+Each app uses two ports: one for development (`pnpm dev`) and one for production builds (`pnpm build:test && pnpm start`) used in E2E testing and Lighthouse CI.
+
+| App        | Dev Server     | Production Build | Live Domain            |
+| ---------- | -------------- | ---------------- | ---------------------- |
+| Codemata   | `localhost:3001` | `localhost:3333` | codemata.benmvp.com    |
+| Moni       | `localhost:3002` | `localhost:3334` | moni.benmvp.com        |
+| Convertly  | `localhost:3003` | `localhost:3335` | convertly.benmvp.com   |
+
+**Why Two Ports?**
+- Dev server includes hot reloading, debug output
+- Production build tests actual deployed behavior (optimized bundles, ISR, etc.)
+- E2E tests run against production build to catch production-specific issues
+- Lighthouse CI runs against production build for accurate performance metrics
 
 ---
 
 ## Shared Packages
 
-### @repo/ui
+### Current Status: YAGNI Approach
 
-The shared UI package provides theme-agnostic components used across all apps.
+Currently, all code lives directly in `apps/codemata/` following the **"You Aren't Gonna Need It"** principle. Shared packages will be extracted **only when duplication becomes painful** across multiple apps.
 
-#### Components
+**Rationale:**
+- Codemata is the only active app (Moni/Convertly are planned)
+- Premature abstraction adds complexity without proven benefit
+- Easier to iterate when code lives in one place
+- Clear duplication patterns will emerge naturally across apps
 
-**Layout Components:**
+### Shareable Patterns Identified from Codemata
 
-- `BaseRootLayout` - Root layout with theme provider, fonts, metadata
-- `Header` - Top navigation with logo, menu, search, theme toggle
-- `Footer` - Footer with links to benmvp.com, copyright, legal
+Once Convertly and/or Moni are built, the following patterns from Codemata are good candidates for extraction:
 
-**Tool Components:**
+#### 1. Layout Components (Potentially Shareable)
 
-- `Transformer` - Dual CodeMirror editor with configuration and actions
-- `ContentSection` - Collapsible section with heading and markdown content
-- `ContentSections` - Wrapper for multiple content sections
+**Header/Footer Structure:**
+- `Header` - Top navigation with logo, menu, command menu trigger, theme toggle
+- `Footer` - Simple footer with copyright and links
+- `NavigationList` - Sidebar navigation with category grouping
 
-**UI Primitives (shadcn/ui):**
+**Note:** Layout components would need theme configuration props to support different app colors/branding.
 
-- Button, Card, Dialog, Dropdown Menu
-- Accordion, Tabs, Toast
-- Form components
+#### 2. AI Content Generation System (Highly Shareable) ✅
 
-#### Theme System
+**Complete `lib/ai/` directory:**
+- `client.ts` - Google Gemini API client configuration
+- `schema.ts` - Zod schemas for AI response validation
+- `prompts.ts` - System prompts (adaptable per app domain)
+- `generate.ts` - Content generation with retry logic
+- `cache.ts` - Request deduplication to prevent duplicate API calls
+- `helpers.ts` - Category-specific AI content retrieval
 
-Components accept theme configuration via context:
+**This system is domain-agnostic** - Convertly and Moni can use the same infrastructure with different prompts.
 
+#### 3. Metadata & SEO Helpers (Highly Shareable) ✅
+
+**From `lib/metadata-helpers.ts`:**
+- `getTitleSuffix()` - Append site name to page titles
+- `ensureAbsoluteUrl()` - Convert relative URLs to absolute for OG tags
+- `generateMetadata()` - Standard metadata generation pattern
+
+**Domain-agnostic** - works for any site with configurable site name/URL.
+
+#### 4. Utility Functions (Highly Shareable) ✅
+
+**From `lib/utils.ts`:**
+- `cn()` - Class name merging utility (clsx + tailwind-merge)
+- Environment detection: `getEnvironmentMode()`, `isProductionBuild()`, `shouldGenerateAI()`, `shouldPrefetch()`
+- OG image helpers: `getOgImageUrl()` for dynamic social media previews
+
+**Domain-agnostic** - pure utility functions.
+
+#### 5. Tool/Category Registry Pattern (Adaptable) ✅
+
+**Pattern from `lib/tools-data.ts`:**
 ```typescript
-interface AppTheme {
-  colors: {
-    primary: string      // Tailwind color class (e.g., 'blue')
-    secondary: string
-    accent: string
-  }
-  brand: {
-    name: string
-    logo: React.ReactNode
-    url: string
+// Category-driven architecture with nested tools
+export const ALL_TOOLS: Record<ToolCategoryId, ToolCategory> = {
+  formatters: {
+    id: "formatters",
+    label: "Formatters",
+    singular: "Formatter",
+    url: "/formatters",
+    description: "Beautify and format code",
+    order: 1,
+    tools: [/* array of FormatterTool */],
+  },
+  // ... more categories
+}
+
+// Helper functions
+export function getCategoriesByOrder() { /* ... */ }
+export function getAllTools() { /* ... */ }
+export function getTotalToolCount() { /* ... */ }
+```
+
+**Benefit:** Auto-generates navigation, home page, sitemap, search index from single data source.
+
+#### 6. Type System Pattern (Adaptable)
+
+**From `lib/types.ts`:**
+```typescript
+export type ToolCategoryId = "formatters" | "minifiers" | ...
+
+export interface Tool {
+  id: string
+  name: string
+  description: string
+  url: string
+  icon: LucideIcon
+  comingSoon?: boolean
+}
+
+// Category-specific tool types extend base Tool
+export interface FormatterTool extends Tool {
+  action: ServerAction
+  language: string
+  example: string
+  metadata: { title: string; description: string }
+}
+```
+
+**Benefit:** Type-safe tool registry with category-specific extensions.
+
+#### 7. Testing Setup (Highly Shareable) ✅
+
+**Configuration files:**
+- `vitest.config.ts` - Vitest setup with coverage
+- `playwright.config.ts` - E2E testing setup
+- `lighthouserc.json` - Performance/accessibility gates
+- GitHub Actions workflows for CI/CD
+
+**Domain-agnostic** - same testing patterns apply to all apps.
+
+#### 8. Configuration Files (Potentially Shareable)
+
+**Build/tooling configs:**
+- `next.config.ts` - Next.js configuration patterns
+- `tailwind.config.ts` - Tailwind setup (with theme config per app)
+- `biome.json` - Linting/formatting config
+- `tsconfig.json` - TypeScript compiler options
+
+**Note:** Apps may need slight variations (different domains, environment variables, etc.).
+
+### What NOT to Share ❌
+
+**Tool-specific components:**
+- `Transformer.tsx` - Dual CodeMirror editor (specific to code tools)
+- `TransformerEncoder.tsx` - Encode/decode variant (Codemata-specific)
+- `ValidatorWrapper.tsx` - Validation error display (Codemata-specific)
+- Category-specific AI content components (`FormatterAIContent`, `MinifierAIContent`, etc.)
+
+These are **highly specialized** for Codemata's code transformation workflows and won't be needed by Convertly or Moni.
+
+### Extraction Strategy (When the Time Comes)
+
+When building Convertly or Moni, follow this process:
+
+1. **Copy, don't abstract** - Start by copying patterns from Codemata
+2. **Note duplication** - Document what feels repetitive/painful
+3. **Wait for third instance** - "Rule of three" before extracting
+4. **Extract cautiously** - Only truly shared, stable patterns
+5. **Prefer colocated code** - Keep app-specific logic in apps
+
+**Example extraction:**
+```bash
+# When AI system is duplicated across 2-3 apps:
+mkdir -p packages/ai/src
+cp apps/codemata/lib/ai/* packages/ai/src/
+# Create @repo/ai package
+# Update imports in all apps
+```
+
+### Workspace Configuration
+
+**Current `pnpm-workspace.yaml`:**
+```yaml
+packages:
+  - 'apps/*'
+  - 'packages/*'  # For future shared packages
+```
+
+**Future shared packages** (when extracted):
+- `@repo/ai` - AI content generation
+- `@repo/utils` - Common utilities
+- `@repo/config` - Shared configs (tsconfig, eslint, etc.)
+- `@repo/types` - Shared TypeScript types
+- Maybe `@repo/ui` - Layout components (if truly reusable)
+
+### Shared Configuration Packages (Priority)
+
+Configuration packages should be extracted **earlier than code** because they:
+- Eliminate config duplication without coupling app logic
+- Make tooling updates atomic across all apps
+- Work seamlessly with Turborepo's workspace detection
+
+**Recommended packages:**
+
+**`packages/typescript-config/`**
+```json
+// packages/typescript-config/base.json
+{
+  "compilerOptions": {
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve"
   }
 }
 
-// Each app provides its theme
-const codeMataTheme: AppTheme = { ... }
-const moniTheme: AppTheme = { ... }
-const convertlyTheme: AppTheme = { ... }
+// packages/typescript-config/nextjs.json
+{
+  "extends": "./base.json",
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "noEmit": true,
+    "incremental": true,
+    "module": "esnext",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
+}
 ```
 
-#### Package Structure
-
-```
-packages/ui/
-├── src/
-│   ├── components/
-│   │   ├── layout/
-│   │   │   ├── header.tsx
-│   │   │   ├── footer.tsx
-│   │   │   └── base-root-layout.tsx
-│   │   ├── transformer/
-│   │   │   ├── transformer.tsx
-│   │   │   ├── code-editor.tsx
-│   │   │   └── config-panel.tsx
-│   │   ├── content/
-│   │   │   ├── content-section.tsx
-│   │   │   └── content-sections.tsx
-│   │   └── ui/              # shadcn/ui components
-│   │       ├── button.tsx
-│   │       ├── card.tsx
-│   │       └── ...
-│   ├── lib/
-│   │   └── utils.ts
-│   ├── hooks/
-│   │   └── use-theme.ts
-│   └── types/
-│       └── index.ts
-├── package.json
-└── tsconfig.json
+**Usage in apps:**
+```json
+// apps/codemata/tsconfig.json
+{
+  "extends": "@repo/typescript-config/nextjs",
+  "compilerOptions": {
+    // App-specific overrides only
+  }
+}
 ```
 
-### @repo/typescript-config
+**`packages/biome-config/`**
+```json
+// packages/biome-config/biome.json
+{
+  "formatter": {
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true
+    }
+  },
+  "organizeImports": {
+    "enabled": true
+  }
+}
+```
 
-Shared TypeScript configurations:
+**Usage in apps:**
+```json
+// apps/codemata/biome.json
+{
+  "extends": ["@repo/biome-config"]
+}
+```
 
-- **base.json** - Base config with strict settings
-- **nextjs.json** - Extends base, adds Next.js specific options
-
-### @repo/eslint-config
-
-Shared ESLint configurations:
-
-- **base.js** - Base rules for all projects
-- **next.js** - Next.js specific rules
-- **react.js** - React specific rules
+**Benefits:**
+- Single source of truth for linting/formatting
+- Update once, applies to all apps
+- Turborepo automatically detects config changes and reruns affected tests
+- App-specific overrides still possible
 
 ---
 
@@ -557,6 +733,53 @@ const model = genAI.getGenerativeModel({
 **Environment Variables:**
 
 - `GOOGLE_API_KEY` - Google AI API key (required)
+
+### App-Specific API Keys & Accounts
+
+Each app maintains **separate API keys and accounts** for isolation, clean analytics, and independent monetization.
+
+**Rationale:**
+- **Isolation:** One app's API issues don't affect others
+- **Clean Analytics:** Separate Google Analytics properties for accurate traffic tracking
+- **Independent Monetization:** Dedicated AdSense accounts (or sub-accounts) per app
+- **Cost Tracking:** Per-app billing for API usage (Gemini, other services)
+- **Security:** Breach in one app doesn't compromise others
+
+**Per-App Environment Variables:**
+
+**Codemata (`apps/codemata/`):**
+```bash
+GOOGLE_API_KEY=<codemata-specific-key>
+NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX  # Codemata GA4 property
+NEXT_PUBLIC_ADSENSE_ID=ca-pub-XXXXXXXXXXXX  # Codemata AdSense
+```
+
+**Convertly (`apps/convertly/`):**
+```bash
+GOOGLE_API_KEY=<convertly-specific-key>
+NEXT_PUBLIC_GA_MEASUREMENT_ID=G-YYYYYYYYYY  # Convertly GA4 property
+NEXT_PUBLIC_ADSENSE_ID=ca-pub-YYYYYYYYYYYY  # Convertly AdSense
+```
+
+**Moni (`apps/moni/`):**
+```bash
+GOOGLE_API_KEY=<moni-specific-key>
+NEXT_PUBLIC_GA_MEASUREMENT_ID=G-ZZZZZZZZZZ  # Moni GA4 property
+NEXT_PUBLIC_ADSENSE_ID=ca-pub-ZZZZZZZZZZZZ  # Moni AdSense
+```
+
+**Implementation:**
+- Vercel project per app with dedicated environment variables
+- Each app's `.env.local` contains app-specific keys for development
+- Google Analytics dashboard has separate properties for each app
+- AdSense accounts (or sub-accounts) track monetization per app
+- Gemini API usage tracked separately (or shared key with usage attribution)
+
+**Benefits:**
+- Analytics dashboards show clean, app-specific metrics
+- Financial tracking clear for each app's profitability
+- API rate limits hit on per-app basis (one app's spike doesn't affect others)
+- Complete independence for future app sales/transfers
 
 ### Content Schema
 
@@ -965,352 +1188,192 @@ async function revalidate(app, slug) {
 
 ## Application Specifications
 
-### Codemata (Developer Tools)
+Each application has its own detailed specification file. This section provides a brief overview and links to complete documentation.
 
+### Overview
+
+| App | Domain | Status | Purpose | Tools | Spec File |
+|-----|--------|--------|---------|-------|----------|
+| **Codemata** | codemata.benmvp.com | ✅ **LIVE** (Phase 10.4) | Code transformation tools for developers | 26 tools (formatters, minifiers, encoders, validators, generators, viewers) | [apps/codemata/specs/codemata-spec.md](apps/codemata/specs/codemata-spec.md) |
+| **Convertly** | convertly.benmvp.com | 🚧 **PLANNED** | Unit & format conversion tools | 32+ planned converters (recipe, measurement, health, time, travel) | [apps/convertly/specs/convertly-spec.md](apps/convertly/specs/convertly-spec.md) |
+| **Moni** | moni.benmvp.com | 🚧 **PLANNED** | Financial calculators & planning tools | 30+ planned calculators (savings, debt, mortgage, budgeting) | [apps/moni/specs/moni-spec.md](apps/moni/specs/moni-spec.md) |
+
+### Codemata (Developer Tools) \u2705
+
+**Status:** Live - Phase 10.4 complete (26 tools across 6 categories)
 **Domain:** codemata.benmvp.com
-**Purpose:** Code transformation tools for developers
-
-#### Tool Categories
-
-**1. Formatters** - Beautify and format code with consistent styling
-
-| Tool ID   | Display Name | Languages                        | Library                         | Config      |
-| --------- | ------------ | -------------------------------- | ------------------------------- | ----------- |
-| `css`     | CSS/SCSS     | CSS, SCSS                        | Prettier                        | Indentation |
-| `graphql` | GraphQL      | GraphQL                          | Prettier                        | Indentation |
-| `html`    | HTML         | HTML                             | Prettier                        | Indentation |
-| `json`    | JSON         | JSON                             | Prettier                        | Indentation |
-| `md`      | Markdown/MDX | Markdown, MDX                    | Prettier                        | Indentation |
-| `ts`      | JS/TS        | JavaScript, TypeScript, JSX, TSX | Biome/Prettier                  | Indentation |
-| `xml`     | XML          | XML                              | Prettier + @prettier/plugin-xml | Indentation |
-| `yaml`    | YAML         | YAML                             | Prettier                        | Indentation |
-
-**2. Minifiers** - Compress code by removing whitespace and optimizing
-
-| Tool ID | Display Name | Languages              | Library              | Config |
-| ------- | ------------ | ---------------------- | -------------------- | ------ |
-| `css`   | CSS          | CSS                    | clean-css            | None   |
-| `html`  | HTML         | HTML                   | html-minifier-terser | None   |
-| `json`  | JSON         | JSON                   | JSON.stringify       | None   |
-| `svg`   | SVG          | SVG                    | svgo                 | None   |
-| `ts`    | JS/TS        | JavaScript, TypeScript | Terser               | None   |
-| `xml`   | XML          | XML                    | minify-xml           | None   |
-
-#### Route Structure
-
-```
-/                           - Home page (hero + categories + tool grid)
-/typescript-formatter       - JS/TS formatter tool page
-/json-formatter            - JSON formatter tool page
-/css-formatter             - CSS formatter tool page
-... (all formatters)
-/typescript-minifier       - JS/TS minifier tool page
-/json-minifier             - JSON minifier tool page
-... (all minifiers)
-```
-
-#### Tool Configuration
-
-**Formatter Configuration Example:**
-
-```typescript
-// apps/codemata/app/formatters/formatters.ts
-
-import type { TransformerConfig } from '../../types'
-
-export type Indentation = 'two-spaces' | 'four-spaces' | 'tabs'
-
-export const indentationConfig: TransformerConfig<Indentation> = {
-  id: 'indentation',
-  label: 'Indentation',
-  options: [
-    { label: 'Two Spaces', value: 'two-spaces' },
-    { label: 'Four Spaces', value: 'four-spaces' },
-    { label: 'Tabs', value: 'tabs' },
-  ],
-}
-
-export interface Formatter {
-  action: (input: string, config: FormatterConfig) => Promise<string>
-  configs: TransformerConfig[]
-}
-
-const typescriptFormatter: Formatter = {
-  action: formatTypescriptAction,
-  configs: [indentationConfig],
-}
-
-export const FORMATTERS: Record<FormatterId, Formatter> = {
-  ts: typescriptFormatter,
-  json: jsonFormatter,
-  // ... rest
-}
-```
-
-**Tool Metadata Example:**
-
-```typescript
-// apps/codemata/app/formatters/info.ts
-
-import type { TransformerInfo } from '../../types'
-import CodeIcon from '@mui/icons-material/Code'
-
-type FormatterInfo = TransformerInfo<FormatterId>
-
-const TS: FormatterInfo = {
-  id: 'ts',
-  slug: 'typescript',
-  displayName: 'JS/TS',
-  pageTitle: 'JavaScript & TypeScript Formatter',
-  Icon: CodeIcon,
-  url: '/typescript-formatter',
-}
-
-export const FORMATTERS_INFO: Record<FormatterId, FormatterInfo> = {
-  ts: TS,
-  json: JSON,
-  // ... rest
-}
-```
-
-#### Server Actions
-
-**Formatter Action Example:**
-
-```typescript
-// apps/codemata/app/formatters/actions.ts
-
-'use server'
-
-import { format } from 'prettier'
-import type { Indentation } from './types'
-
-export async function formatTypescriptAction(
-  input: string,
-  config: { indentation: Indentation },
-): Promise<string> {
-  const indent = getIndentSize(config.indentation)
-
-  try {
-    const formatted = await format(input, {
-      parser: 'typescript',
-      tabWidth: indent.size,
-      useTabs: indent.useTabs,
-      semi: true,
-      singleQuote: true,
-      trailingComma: 'es5',
-    })
-
-    return formatted
-  } catch (error) {
-    throw new Error(`Formatting failed: ${error.message}`)
-  }
-}
-
-function getIndentSize(indentation: Indentation) {
-  switch (indentation) {
-    case 'two-spaces':
-      return { size: 2, useTabs: false }
-    case 'four-spaces':
-      return { size: 4, useTabs: false }
-    case 'tabs':
-      return { size: 2, useTabs: true }
-  }
-}
-```
-
-#### Page Implementation
-
-```typescript
-// apps/codemata/app/formatters/[slug]/page.tsx
-
-import { notFound } from 'next/navigation'
-import { TransformerUi } from '@repo/ui/components/transformer'
-import { ContentSectionsUi } from '@repo/ui/components/content'
-import { getFormatterContent } from '../ai'
-import { FORMATTERS, FORMATTERS_INFO } from '../formatters'
-
-// ISR configuration
-export const revalidate = 86400 // 24 hours
-
-// Static params for build
-export function generateStaticParams() {
-  return Object.values(FORMATTERS_INFO).map(({ slug }) => ({
-    slug
-  }))
-}
-
-// Metadata generation
-export async function generateMetadata({ params }) {
-  const formatter = getFormatterBySlug(params.slug)
-  if (!formatter) return notFound()
-
-  const content = await getFormatterContent(formatter.id)
-
-  return {
-    title: content?.seo.title || formatter.pageTitle,
-    description: content?.seo.description,
-    keywords: content?.seo.keywords
-  }
-}
-
-// Page component
-export default async function FormatterPage({ params }) {
-  const formatter = getFormatterBySlug(params.slug)
-  if (!formatter) return notFound()
-
-  const content = await getFormatterContent(formatter.id)
-  const tool = FORMATTERS[formatter.id]
-
-  return (
-    <>
-      <h1>{formatter.pageTitle}</h1>
-
-      {content?.intro && <p>{content.intro}</p>}
-
-      <TransformerUi
-        action={tool.action}
-        configs={tool.configs}
-        actionLabel="Format"
-        stateLabel="Formatted"
-        displayName={formatter.displayName}
-      />
-
-      <ContentSectionsUi
-        sections={[
-          content?.features,
-          content?.rationale,
-          content?.purpose,
-          content?.integrate,
-          content?.faq,
-          content?.recommendations,
-          content?.resources
-        ].filter(Boolean)}
-      />
-    </>
-  )
-}
-```
-
-#### Theme Configuration
-
-```typescript
-// apps/codemata/theme.ts
-
-export const codeMataTheme = {
-  colors: {
-    primary: 'blue', // Tailwind color
-    secondary: 'slate',
-    accent: 'cyan',
-  },
-  brand: {
-    name: 'Codemata',
-    url: 'https://codemata.benmvp.com',
-    tagline: 'Developer Tools',
-  },
-}
-```
-
-### Moni (Financial Tools)
-
-**Domain:** moni.benmvp.com
-**Purpose:** Financial calculators and planning tools
-
-#### Tool Categories
-
-See TODO.md for complete list. Key categories:
-
-- **Savings & Investment:** Compound interest, savings goals, retirement planning
-- **Debt Management:** Loan calculators, debt payoff strategies
-- **Utilities:** Currency converter, tip calculator, net worth calculator
-
-#### Route Structure
-
-```
-/                              - Home page
-/compound-interest-calculator  - Calculator page
-/savings-goal-calculator       - Calculator page
-... (all calculators)
-```
-
-#### Calculator Pattern
-
-Similar structure to Codemata but with calculator-specific components:
-
-```typescript
-// Calculator configuration
-interface Calculator {
-  action: (inputs: CalculatorInputs) => Promise<CalculatorResults>
-  inputs: InputField[]
-  resultFormat: ResultDisplay
-}
-
-// Calculator page renders:
-// 1. Calculator form (inputs)
-// 2. Results display (charts + breakdown)
-// 3. AI-generated educational content
-```
-
-#### Theme Configuration
-
-```typescript
-// apps/moni/theme.ts
-
-export const moniTheme = {
-  colors: {
-    primary: 'green', // Financial/money color
-    secondary: 'slate',
-    accent: 'emerald',
-  },
-  brand: {
-    name: 'Moni',
-    url: 'https://moni.benmvp.com',
-    tagline: 'Financial Tools',
-  },
-}
-```
-
-### Convertly (Conversion Tools)
-
+**Theme:** Blue (`blue-600`)
+
+**Quick Summary:**
+- **8 Formatters** - Beautify code with Prettier/Biome (TypeScript, JSON, CSS, HTML, GraphQL, Markdown, XML, YAML)
+- **6 Minifiers** - Compress code by removing whitespace (JavaScript, CSS, HTML, JSON, SVG, XML)
+- **5 Encoders** - Encode/decode data formats (JWT, Base64, URL, HTML Entity, JS String)
+- **7 Validators** - Validate code syntax and structure (JSON, HTML, CSS, XML, URL, Dockerfile, YAML)
+- **1 Generator** - .gitignore template generator with 500+ templates
+- **1 Viewer** - GitHub-flavored Markdown previewer
+
+**Architecture:**
+- Server Actions for all transformations (security + bundle size)
+- AI-generated content with ISR (24-hour revalidation)
+- Category-driven tool registry (`lib/tools-data.ts`)
+- Dynamic OpenGraph images for social media
+- Hybrid rendering: production pre-renders, preview/dev on-demand
+
+**Next Priorities:**
+See [codemata-spec.md](apps/codemata/specs/codemata-spec.md#next-priorities) for detailed roadmap. Key categories:
+1. Production Validators (ESLint, TypeScript, Lighthouse, Bundle Analyzer)
+2. Advanced Converters (CSS \u2194 SCSS, JSON \u2194 YAML, Markdown \u2194 HTML)
+3. CSS Generators (Gradient, Shadow, Animation, Grid/Flexbox)
+4. AI Meta Tools (Code Explainer, Documentation Generator, Test Generator)
+
+**Complete Documentation:** [apps/codemata/specs/codemata-spec.md](apps/codemata/specs/codemata-spec.md)
+
+---
+
+### Convertly (Unit & Format Conversion) \ud83d\udea7
+
+**Status:** Planned - Launch after Codemata Phase 10.4
 **Domain:** convertly.benmvp.com
-**Purpose:** Unit and format conversion tools
+**Theme:** Purple (`purple-600`)
 
-#### Tool Categories
+**Quick Summary:**
+- **Broader audience** - Not dev-specific, appeals to general population (cooking, travel, fitness, shopping)
+- **High-traffic anchor** - Recipe Scaler has exceptional search volume
+- **Not AI-replaceable** - Dedicated converters beat AI chat for speed/convenience
+- **Mobile-first** - Perfect for real-world usage (following recipes, shopping internationally)
 
-See TODO.md for complete list. Key categories:
+**Priority Categories:**
+1. **Cooking/Recipe** (2 tools) - Recipe Scaler \u2b50\u2b50\u2b50, Cooking Temperature Converter
+2. **Measurement** (8 tools) - Length, Weight, Volume, Temperature, Area, Pressure, Energy, Speed
+3. **Health/Fitness** (5 tools) - BMI Calculator \u2b50, BMR/TDEE, Body Fat %, Macro Calculator, Running Pace
+4. **International/Travel** (3 tools) - Clothing Size \u2b50, Shoe Size, Paper Size converters
 
-- **Measurement:** Length, weight, volume, temperature, area
-- **Time:** Time zones, time units
-- **Data:** Data sizes, numeral systems
-- **Text:** Morse code, Roman numerals
+**Architecture:**
+- **Client-side calculations** (pure math, no security concerns)
+- Instant conversions with no network latency
+- Lower Vercel compute costs
+- Same AI content system as Codemata (different prompts)
 
-#### Route Structure
+**Phase 1 Plan:**
+- Week 1: Foundation (3 simple converters)
+- Week 2: Recipe Scaler anchor \ud83c\udfaf
+- Week 3: High-traffic converters (5 tools)
+- Week 4: Polish & SEO
 
-```
-/                        - Home page
-/length-converter        - Converter page
-/temperature-converter   - Converter page
-... (all converters)
-```
+**Complete Documentation:** [apps/convertly/specs/convertly-spec.md](apps/convertly/specs/convertly-spec.md)
 
-#### Theme Configuration
+---
 
+### Moni (Financial Calculators & Planning) \ud83d\udea7
+
+**Status:** Planned - Launch after Convertly foundation
+**Domain:** moni.benmvp.com
+**Theme:** Green (`green-600`)
+
+**Quick Summary:**
+- **High engagement** - Users run multiple scenarios, longer dwell time
+- **Strong monetization** - Financial product affiliate links (credit cards, brokerages, savings accounts)
+- **Accuracy critical** - Users make real financial decisions based on results
+- **Privacy-first** - Client-side calculations keep financial data on user's device
+
+**Priority Categories:**
+1. **Savings & Investing** (7 tools) - Compound Interest \u2b50\u2b50\u2b50, FIRE Calculator \u2b50, Retirement, Investment ROI
+2. **Debt Management** (5 tools) - Debt Payoff \u2b50\u2b50\u2b50, Loan Amortization \u2b50\u2b50, Credit Card Payoff
+3. **Real Estate** (6 tools) - Mortgage Calculator \u2b50\u2b50\u2b50, Rent vs Buy \u2b50\u2b50, Affordability
+4. **Budgeting** (2 tools) - 50/30/20 Budget \u2b50\u2b50, Expense Tracker
+
+**Architecture:**
+- **Client-side calculations** (complex math, privacy, minimize compute costs)
+- Chart visualizations (recharts library)
+- **Legal disclaimers** on every calculator (\"not financial advice\")
+- Extensive testing against known calculators for accuracy
+- Same AI system (domain-adapted prompts)
+
+**Critical Considerations:**
+- Financial calculations must be 100% accurate
+- Include disclaimers on all pages
+- Test against established calculators (Bankrate, NerdWallet)
+- Consider financial expert review before launch
+
+**Complete Documentation:** [apps/moni/specs/moni-spec.md](apps/moni/specs/moni-spec.md)
+
+---
+
+## Shared Architectural Patterns
+
+All three apps will follow these proven patterns from Codemata:
+
+### 1. Tool Registry Architecture
+
+**Category-driven data structure** (`lib/tools-data.ts`):
 ```typescript
-// apps/convertly/theme.ts
-
-export const convertlyTheme = {
-  colors: {
-    primary: 'purple', // Conversion/transformation color
-    secondary: 'slate',
-    accent: 'violet',
+export const ALL_TOOLS: Record<ToolCategoryId, ToolCategory> = {
+  formatters: {
+    id: "formatters",
+    label: "Formatters",
+    singular: "Formatter",
+    url: "/formatters",
+    description: "Beautify and format code with consistent styling",
+    order: 1,
+    tools: [/* array of tools */],
   },
-  brand: {
-    name: 'Convertly',
-    url: 'https://convertly.benmvp.com',
-    tagline: 'Conversion Tools',
-  },
+  // ... more categories
 }
 ```
+
+**Benefits:**
+- Auto-generates navigation from data
+- Single source of truth for all tools
+- Type-safe with TypeScript
+- Automatic sitemap/search index generation
+
+### 2. AI Content System
+
+**Hybrid rendering strategy:**
+- **Production:** Pre-render all pages with AI content (optimal SEO)
+- **Preview:** On-demand generation (saves API costs)
+- **Development:** AI disabled by default (preserves API quota)
+
+**ISR with 24-hour revalidation** keeps content fresh without manual deploys.
+
+### 3. Dynamic OpenGraph Images
+
+Social media preview images generated dynamically using **@vercel/og**:
+- 1200\u00d7630px PNG format
+- Count-based cache keys (auto-bust when tools added)
+- Branded design with gradients and logos
+
+### 4. Server-Side vs Client-Side Logic
+
+**Codemata:** Server Actions for transformations (security, no arbitrary code execution)
+**Convertly:** Client-side calculations (pure math, instant results)
+**Moni:** Client-side calculations (privacy, complex math)
+
+### 5. Testing Strategy
+
+**Comprehensive testing at multiple levels:**
+- **Unit tests** (Vitest) - Server Actions and utility functions
+- **E2E tests** (Playwright) - Sample-based testing to prevent linear growth
+- **Accessibility** (@axe-core/playwright) - WCAG 2.0/2.1 Level AA compliance
+- **Performance** (Lighthouse CI) - Automated gates for performance/accessibility/SEO
+
+**Sample-based E2E:** Test representative tools from each category, not every tool.
+
+### 6. Deployment & Infrastructure
+
+**Platform:** Vercel (optimized for Next.js)
+
+**Key features:**
+- Automatic deployments from GitHub main branch
+- Preview deployments for all PRs
+- Custom domains per app (codemata./moni./convertly.benmvp.com)
+- Environment variables managed in Vercel dashboard
+- ISR support with 24-hour revalidation
+
+**Environment variables:**
+- `GOOGLE_API_KEY` - Required for AI generation
+- `VERCEL_ENV` - Auto-set by platform (production/preview/development)
+- `DISABLE_AI` - Optional flag to skip AI generation
 
 ---
 
@@ -2539,6 +2602,84 @@ pnpm test formatters/actions.test.ts
 pnpm test -u
 ```
 
+### Turborepo Change Detection & CI Strategy
+
+Turborepo automatically detects which apps have changed and only runs tests for affected apps. This eliminates the need for a CI build matrix.
+
+**How It Works:**
+```bash
+# From repository root:
+pnpm test  # Turborepo runs tests only for apps with changes
+
+# Behind the scenes:
+# 1. Turborepo analyzes git history
+# 2. Identifies changed files
+# 3. Determines affected packages/apps
+# 4. Runs `test` command only for those apps
+# 5. Skips unchanged apps (uses cache)
+```
+
+**CI Configuration (Simplified):**
+```yaml
+# .github/workflows/ci.yml
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Full history for Turborepo
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - run: pnpm install
+      - run: pnpm test        # Runs only changed apps
+      - run: pnpm lint        # Runs only changed apps
+      - run: pnpm type-check  # Runs only changed apps
+```
+
+**Benefits:**
+- **No matrix needed** - Turborepo handles app detection
+- **Faster CI** - Only tests affected apps
+- **Local/remote caching** - Skips unchanged packages
+- **Simpler config** - Single test command at root
+
+**Example:**
+```bash
+# Only changed files in apps/codemata/
+$ pnpm test
+→ Turborepo runs tests ONLY for Codemata
+
+# Changed files in apps/codemata/ AND apps/convertly/
+$ pnpm test
+→ Turborepo runs tests for BOTH apps
+
+# No changed files (all cached)
+$ pnpm test
+→ Turborepo uses cached results, instant completion
+```
+
+**Testing Infrastructure Per App:**
+Each app maintains its own full test suite (no monorepo shortcuts):
+- Unit tests (Vitest)
+- E2E tests (Playwright)
+- Accessibility tests (@axe-core/playwright)
+- Performance tests (Lighthouse CI)
+- Metadata verification
+
+This ensures each app can be tested independently and completely.
+
 ### Test Coverage Goals
 
 - **Transformation Actions:** 100% coverage
@@ -3014,986 +3155,15 @@ git push origin main
 
 ## Implementation Plan
 
-### Overview
+Implementation details have been moved to app-specific specification files:
 
-The implementation follows a **pragmatic, YAGNI-driven approach** that prioritizes shipping working software over building infrastructure. The plan focuses on building Codemata first, launching it publicly, then expanding it with additional tools before building the other apps. Shared packages are extracted **only when duplication becomes painful**, not upfront.
+- **Codemata:** [apps/codemata/specs/codemata-spec.md](apps/codemata/specs/codemata-spec.md) - Completed Phases 1-10, next priorities included
+- **Convertly:** [apps/convertly/specs/convertly-spec.md](apps/convertly/specs/convertly-spec.md) - Phase 1 roadmap (4 weeks to MVP)
+- **Moni:** [apps/moni/specs/moni-spec.md](apps/moni/specs/moni-spec.md) - Complete tool roadmap and architecture
 
-**Key Principles:**
-- Build one working tool ASAP
-- Deploy early and often
-- Launch publicly after AI content integration
-- Expand Codemata based on traffic/analytics data
-- Extract shared code only when proven necessary
-- Build Convertly and Moni last, once Codemata is generating revenue
+**Current Status:** Codemata live with **26 tools** across 6 categories (formatters, minifiers, encoders, validators, generators, viewers). Phase 10.4 complete. Ready to either expand Codemata based on analytics or move to Convertly.
 
-**Effort Estimates:** Tasks are sized as S (Small), M (Medium), L (Large), or XL (Extra Large)
-
----
-
-### Phase 1: Codemata MVP - Single Formatter (Size: S)
-
-**Goal:** Get one working formatter deployed to production ASAP
-
-#### Tasks
-
-**1.1 Basic Next.js App**
-
-- [x] Create `apps/codemata/` with Next.js 15
-- [x] Configure Tailwind CSS (Codemata theme directly in app)
-- [x] Install shadcn/ui components (directly in app)
-- [x] Set up basic TypeScript config
-
-**1.2 Simple Layout**
-
-- [x] Create root layout with basic header/footer (in app)
-- [x] Add dark mode toggle (use next-themes)
-- [x] Basic responsive design
-
-**1.3 TypeScript Formatter - First Tool**
-
-- [x] Create `app/formatters/typescript-formatter/page.tsx`
-- [x] Build dual CodeMirror editor layout (in page)
-- [x] Implement `formatTypescriptAction` with Prettier
-- [x] Add indentation config dropdown
-- [x] Add copy button
-- [x] Basic error handling
-
-**1.4 Home Page**
-
-- [x] Simple hero section
-- [x] Link to TypeScript formatter
-- [x] Basic styling
-
-**1.5 Deploy**
-
-- [x] Set up Vercel project
-- [x] Deploy to codemata.benmvp.com
-- [x] Test in production
-
-**Deliverable:** Working Codemata app with ONE formatter in production 🚀
-
----
-
-### Phase 2: Complete Formatters (Size: M)
-
-**Goal:** Add all 8 formatters using the pattern from Phase 1
-
-#### Tasks
-
-**2.1 Add Remaining Formatters**
-
-- [x] JSON formatter (`/formatters/json-formatter/`)
-- [x] CSS formatter (`/formatters/css-formatter/`)
-- [x] HTML formatter (`/formatters/html-formatter/`)
-- [x] GraphQL formatter (`/formatters/graphql-formatter/`)
-- [x] Markdown formatter (`/formatters/markdown-formatter/`)
-- [x] XML formatter (`/formatters/xml-formatter/`)
-- [x] YAML formatter (`/formatters/yaml-formatter/`)
-
-**2.2 Refactor if Needed**
-
-- [x] Extract common transformer component if duplication is annoying
-- [x] Extract shared types if needed
-- [x] Keep everything in Codemata app for now
-
-**2.3 Home Page Update**
-
-- [x] Add "Formatters" section with tool grid
-- [x] Add icons and descriptions
-- [x] Make it look nice
-
-**2.4 Testing**
-
-- [x] Set up Vitest
-- [x] Write tests for each formatter action
-- [x] Test manually
-
-**Deliverable:** Codemata with all 8 formatters working
-
----
-
-### Phase 3: Add Minifiers (Size: M)
-
-**Goal:** Add all 6 minifiers
-
-#### Tasks
-
-**3.1 Create Minifier Pages**
-
-- [x] TypeScript minifier (`/minifiers/typescript-minifier/`)
-- [x] JSON minifier (`/minifiers/json-minifier/`)
-- [x] CSS minifier (`/minifiers/css-minifier/`)
-- [x] HTML minifier (`/minifiers/html-minifier/`)
-- [x] SVG minifier (`/minifiers/svg-minifier/`)
-- [x] XML minifier (`/minifiers/xml-minifier/`)
-
-**3.2 Update Home Page**
-
-- [x] Add "Minifiers" section
-- [x] Update navigation
-
-**3.3 Polish**
-
-- [x] Improve error messages
-- [x] Add loading states
-- [x] Mobile testing
-- [x] Dark mode testing
-
-**Deliverable:** Complete Codemata with 14 tools (8 formatters + 6 minifiers) ✅
-
----
-
-### Phase 4: AI Content Integration (Size: M)
-
-**Goal:** Transform tools into comprehensive educational resources with AI-generated content that drives organic traffic, increases engagement, and establishes authority—while keeping builds fast and costs optimized through on-demand generation.
-
-**Strategy Summary:**
-- **Content:** Full comprehensive content (8 sections + tips + recommendations)
-- **Generation:** On-demand with ISR (first request loads longer, then cached)
-- **Refresh:** Automatic 24-hour revalidation
-- **Errors:** Graceful degradation (tool always works)
-- **Enhancements:** Contextual tips + AI-powered tool recommendations
-
-#### Tasks
-
-**4.1 Infrastructure Setup**
-
-- [x] Install Google AI SDK (`@google/generative-ai`)
-- [x] Install Zod for schema validation
-- [x] Install Markdown rendering library:
-  - [x] `react-markdown` - Main renderer
-  - [x] `remark-gfm` - GitHub Flavored Markdown support
-  - [x] `react-syntax-highlighter` - Code block syntax highlighting
-- [x] Set up `GOOGLE_API_KEY` environment variable
-- [x] Create `lib/ai/client.ts` - Gemini client initialization
-- [x] Create `lib/ai/cache.ts` - In-memory request cache (prevent duplicate calls)
-- [x] Add retry logic with exponential backoff for API failures
-
-**4.2 Content Schema & Types**
-
-- [x] Define comprehensive Zod schema in `lib/ai/schema.ts`:
-  - [x] SEO metadata (title, description, keywords)
-  - [x] OpenGraph metadata (title, description, type)
-  - [x] 8 content sections (intro, features, rationale, purpose, integrate, faq, recommendations, resources)
-  - [x] Tips array (3-5 tips/facts/best practices)
-  - [x] Recommendations (related tool suggestions)
-- [x] Export TypeScript types from schema
-- [x] Document schema structure in comments
-
-**4.3 Prompt Engineering**
-
-- [x] Create system prompt template in `lib/ai/prompts.ts`:
-  - [x] Define tone and style (friendly, educational, SEO-optimized)
-  - [x] Specify output format for each section
-  - [x] Include markdown formatting rules
-  - [x] Set character/word limits per section
-- [x] Create dynamic user prompt builder:
-  - [x] Include tool metadata (name, description, languages)
-  - [x] Include list of all available tools (for recommendations)
-  - [x] Include tool category context
-- [x] Write separate prompt templates for:
-  - [x] Formatters
-  - [x] Minifiers
-  - [ ] Future: Encoders, Validators, Converters
-
-**4.4 Content Generation Logic**
-
-- [x] Create `lib/ai/generate.ts` with core functions:
-  - [x] `generateToolContent(toolId, toolMetadata)` - Main generation function
-  - [x] `getCachedContent(cacheKey)` - Check in-memory cache
-  - [x] `setCachedContent(cacheKey, content)` - Store in cache
-  - [x] `validateContent(response)` - Zod validation
-- [x] Implement error handling:
-  - [x] Return `undefined` on API failure (graceful degradation)
-  - [x] Log errors for monitoring
-  - [x] Retry failed requests (max 3 attempts)
-- [x] Add ISR configuration (`revalidate = 86400` - 24 hours)
-- [x] Test generation with 2-3 tools initially
-- [x] Add `SKIP_AI_GENERATION` env var for local dev
-- [x] Implement React cache() for request deduplication
-- [x] Configure production pre-rendering (`VERCEL_ENV=production`)
-
-**4.5 Tool Recommendations**
-
-- [x] Create AI-powered recommendations in generation logic
-- [x] Parse and validate tool IDs from AI response
-- [x] Fallback: Return empty array if AI fails (no recommendations shown)
-- [x] Validate tool IDs exist in current tool list
-- [x] Add recommendation display component (`<RecommendedTools>`)
-- [x] Link to recommended tools with icons
-- [x] Hide entire section if no recommendations available
-- [x] Limit to max 3 recommendations for better layout
-
-**4.6 Contextual Tips System**
-
-- [x] Generate 3-5 tips per tool in content generation
-- [x] Categorize as tip/fact/bestPractice
-- [x] Keep each tip under 150 characters
-- [x] Create `<TipCard>` component:
-  - [x] Floating card style with icon (lightbulb for tips, star for facts, checkmark for best practices)
-  - [x] Visually distinct from content sections (colored border, background)
-  - [x] Style by type (different colors: blue for tips, purple for facts, green for best practices)
-  - [x] Interspersed between content sections (breaks up long text)
-  - [x] Responsive padding and margins
-- [x] Test tips display on mobile
-- [x] Ensure tips don't disrupt reading flow
-
-**4.7 Content Display Components**
-
-- [x] Create `<ContentSection>` component:
-  - [x] Props: heading, content (markdown)
-  - [x] Use `react-markdown` with `remark-gfm` for rendering
-  - [x] Use `react-syntax-highlighter` for code blocks
-  - [x] All sections expanded by default (no collapsing)
-  - [x] Responsive design with proper typography
-  - [x] Semantic HTML (section, h2, etc.)
-- [x] Create content display with consistent spacing
-- [x] Section ordering: How to Use → Features → Rationale → Purpose → Integration → FAQ → Recommendations → Resources
-- [x] Intersperse tip cards between sections (sequential distribution)
-- [x] Create `<TipCard>` component (floating cards):
-  - [x] Props: type ('tip' | 'fact' | 'bestPractice'), content
-  - [x] Icon based on type (lucide-react icons)
-  - [x] Colored border and background based on type
-  - [x] Margin top/bottom for breathing room
-  - [x] Responsive width (full width on mobile)
-- [x] Create `<RecommendedTools>` component:
-  - [x] Display tool cards with links
-  - [x] Show tool icon and brief description
-  - [x] Grid layout (responsive: 1 col mobile, 3 cols desktop)
-  - [x] Fallback: hide section if no recommendations
-
-**4.8 Page Integration**
-
-- [x] Update `app/formatters/[slug]/page.tsx`:
-  - [x] Page structure with Suspense for loading states
-  - [x] Call AI generation with React cache() deduplication
-  - [x] Intro paragraph with separate Suspense boundary
-  - [x] Tool functionality (always available)
-  - [x] Content sections with tips interspersed
-  - [x] Gracefully hide content sections if generation fails
-  - [x] Ensure proper TypeScript typing for all props
-- [x] Update `app/minifiers/[slug]/page.tsx` (same pattern)
-- [x] Ensure tool functionality works WITHOUT AI content
-- [x] Test page with and without AI content
-- [x] Verify tip cards render properly between sections
-- [x] Add `<AIContentSkeleton>` loading component
-- [x] Fix newline processing in AI content
-
-**4.9 Metadata & SEO**
-
-- [x] Update `generateMetadata()` in page components:
-  - [x] Use AI-generated SEO metadata
-  - [x] Set title, description, keywords
-  - [x] Add OpenGraph tags:
-    - [x] `og:title`
-    - [x] `og:description`
-    - [x] `og:type` (website)
-    - [x] `og:url`
-    - [ ] `og:image` (app logo/screenshot) - Future: Phase 5
-  - [x] Add Twitter Card tags:
-    - [x] `twitter:card` (summary_large_image)
-    - [x] `twitter:title`
-    - [x] `twitter:description`
-    - [ ] `twitter:image` - Future: Phase 5
-  - [x] Fallback to static metadata if AI fails
-- [ ] Test social sharing preview (Twitter, LinkedIn, Slack) - Phase 5
-
-**4.10 Build Optimization**
-
-- [x] Configure ISR with 24-hour revalidation
-- [x] Implement React cache() for request deduplication
-- [x] Production pre-rendering via `VERCEL_ENV=production`
-- [x] Skip AI in preview builds and local dev
-- [x] `SKIP_AI_GENERATION` env var for local development
-- [x] Monitor API usage with console logging
-- [ ] Set up alerts for high usage - Future: Phase 5
-
-**4.11 Manual Regeneration**
-
-- [ ] Create `/api/revalidate` endpoint:
-  - [ ] Accept tool slug or "all"
-  - [ ] Trigger ISR revalidation
-  - [ ] Require secret token for security
-- [ ] Create `scripts/regenerate-ai.js`:
-  - [ ] CLI script to regenerate content
-  - [ ] Options: specific tool, category, or all
-  - [ ] Progress indicator
-  - [ ] Error reporting
-- [ ] Document regeneration process in README
-
-**4.12 Testing & Quality Assurance**
-
-- [x] Test content generation for sample tools
-- [x] Verify Zod validation catches malformed responses
-- [x] Test error handling (simulate API failures)
-- [x] Verify ISR caching behavior
-- [x] Test on-demand generation (first request)
-- [x] Verify graceful degradation (tool works without AI)
-- [x] Verify SEO metadata in page source
-- [x] Test Suspense loading states
-- [x] Test production pre-rendering
-- [x] Test preview build on-demand generation
-- [x] Test local dev with SKIP_AI_GENERATION
-- [ ] Test social media preview cards (Twitter, LinkedIn, Slack) - Phase 5
-- [x] Mobile testing for content display and tip cards - Phase 5
-- [x] Accessibility audit for content sections - Phase 5
-- [ ] Deploy and monitor content quality via spot checks - Phase 5
-- [ ] Use manual regeneration script if issues found in production - After 4.11
-
-**Status:** ✅ **COMPLETED** (Core implementation done, manual regeneration tools and polish in Phase 5)
-
-**Deliverable:** Codemata with full AI content, SEO-optimized metadata, production pre-rendering, and developer-friendly local workflow
-
----
-
-### Phase 5: Polish & Public Launch (Size: M)
-
-**Goal:** Production-ready public launch of Codemata
-
-#### Tasks
-
-**5.1 SEO Foundation**
-
-- [x] Add `robots.txt` and `sitemap.xml`
-- [x] Add base metadata to root layout (title template, description, OpenGraph, Twitter Cards, robots)
-- [x] Add page-level metadata (home, category pages, tool pages)
-- [x] Add JSON-LD structured data to all tool pages
-- [x] Add canonical URLs to all pages
-- [x] Create metadata verification script (`scripts/verify-metadata.ts`)
-- [x] Create centralized site configuration (`lib/site-config.ts`)
-- [x] Create `getAppUrl()` helper for environment-aware URLs (localhost vs production)
-- [x] Create `getToolUrl()` helper for tool URL construction
-- [x] Create `JsonLd` component to safely handle JSON-LD structured data
-- [x] All metadata validation passing (100% pass rate)
-- [x] Submit to Google Search Console & add `sitemap.xml`
-- [ ] Monitor search rankings and traffic
-
-**5.2 Performance Optimization**
-
-- [x] Lighthouse audits
-- [ ] Bundle size optimization
-- [ ] ISR testing
-
-**5.3 Dynamic OpenGraph Images**
-
-- [x] Install `@vercel/og` package
-- [x] Create `/api/og/route.tsx` endpoint:
-  - [x] Generate OG image dynamically using Vercel's edge runtime
-  - [x] Design card template:
-    - [x] Codemata logo (top left)
-    - [x] Tool/page title (large, 110px font): e.g., "JSON Formatter", "14 Free Developer Tools"
-    - [x] Description text (36px font, supporting context)
-    - [x] Tagline: "Codemata — Developer Tools" (bottom)
-    - [x] Gradient background (blue-100 to white) with decorative elements
-    - [x] Decorative circles with subtle opacity for visual depth
-  - [x] Inter font loaded automatically by Next.js OG
-  - [x] Return PNG image (1200x630px for optimal social sharing)
-  - [x] Cache images at edge (`max-age=31536000, stale-while-revalidate=86400`)
-- [x] Update `generateMetadata()` in all pages (17 total):
-  - [x] Home page (`/`)
-  - [x] Formatters category page (`/formatters`)
-  - [x] Minifiers category page (`/minifiers`)
-  - [x] 8 formatter tool pages
-  - [x] 6 minifier tool pages
-  - [x] Set `openGraph.images` with title+description parameters
-  - [x] Set `twitter:image` to same URL
-- [x] Implement cache busting strategy:
-  - [x] OG_IMAGE_VERSION constant for manual design changes
-  - [x] Count-based URLs for home/category pages (auto-bust when tools added)
-- [x] Test OG images in social media debuggers:
-  - [ ] [Twitter Card Validator](https://cards-dev.twitter.com/validator)
-  - [ ] [LinkedIn Post Inspector](https://www.linkedin.com/post-inspector/)
-  - [ ] [Facebook Sharing Debugger](https://developers.facebook.com/tools/debug/)
-  - [x] Slack unfurl preview
-- [ ] Ensure images render correctly on all platforms
-- [ ] Verify edge caching is working (check response headers in production)
-
-**Resources:**
-- Vercel OG Image Generation: https://vercel.com/docs/functions/edge-functions/og-image-generation
-- @vercel/og package: https://www.npmjs.com/package/@vercel/og
-- Example template: Card with logo + tool name + icon + tagline
-
-**5.4 Category Back Navigation & Navigation Improvements**
-
-- [x] Create `<CategoryBackLink>` component:
-  - [x] Pill/badge style with rounded corners
-  - [x] ArrowLeft icon from lucide-react
-  - [x] Background: `bg-muted` with hover effect
-  - [x] Text: `text-sm font-medium text-muted-foreground`
-  - [x] Hover: scale slightly + darken background
-  - [x] Props: `href` and `label`
-  - [x] CSS `order-[-1]` to display above H1 while maintaining semantic DOM order
-- [x] Add back link to formatter tool pages:
-  - [x] Shows "← Formatters" above page title
-  - [x] Links to `/formatters` category page
-  - [x] Positioned with `mb-6` spacing
-- [x] Add back link to minifier tool pages:
-  - [x] Shows "← Minifiers" above page title
-  - [x] Links to `/minifiers` category page
-  - [x] Positioned with `mb-6` spacing
-- [x] Design decisions:
-  - [x] No "Home" link (logo/wordmark serves that purpose)
-  - [x] No current page in navigation (H1 title shows that)
-  - [x] Single category link acts as "back to category" navigation
-  - [x] Floating above title, not traditional breadcrumbs
-- [x] SEO & Accessibility improvements:
-  - [x] H1 title comes first in DOM (semantic order)
-  - [x] CategoryBackLink comes after H1, uses flexbox `order-[-1]` to display above
-  - [x] Main content comes before Sidebar in DOM
-  - [x] Visual layout maintained with CSS positioning
-- [x] Test navigation on all 14 tool pages (8 formatters + 6 minifiers)
-- [x] Verify hover states and accessibility
-- [x] Refactor navigation components to eliminate duplication:
-  - [x] Extract `<NavigationList>` component shared by Sidebar and MobileNav
-  - [x] Data-driven categories configuration (easy to add new categories)
-  - [x] Category headers clickable (link to `/formatters`, `/minifiers` pages)
-  - [x] Eliminated ~160 lines of duplicate code
-- [x] Fix mobile layout issues:
-  - [x] MobileHeader positioning (fixed instead of sticky)
-  - [x] Add padding-top to prevent content from being hidden under fixed header
-  - [x] Optimize vertical spacing on mobile (reduce hero padding)
-
-**Status:** ✅ **COMPLETED**
-
-**5.5 Category Page Content Enhancements**
-
-**Decision:** Skip AI-generated category content in favor of manual, focused content. Category pages serve primarily as navigation hubs, and tool pages already provide comprehensive educational content. Manual approach is simpler, faster, and more maintainable.
-
-- [x] Add richer hero copy to category pages:
-  - [x] `/formatters` page - 2 educational paragraphs below hero
-  - [x] `/minifiers` page - 2 educational paragraphs below hero
-  - [x] Explain what the category does and its benefits
-  - [x] Positioned after tool grid (lower priority than tool discovery)
-  - [x] Left-aligned for better readability
-  - [x] Responsive spacing (reduced padding on mobile)
-- [x] Optimize mobile viewing experience:
-  - [x] Reduce vertical padding on hero sections (mobile: py-8, desktop: py-12/py-20)
-  - [x] Reduce container padding (mobile: py-6, desktop: py-12)
-  - [x] Save ~64px of vertical space on mobile screens
-
-**Future Consideration:** If catalog grows to 50+ tools per category or SEO data shows opportunity for category-level keywords, revisit AI-generated content with FAQ sections and comparison tables.
-
-**Status:** ✅ **COMPLETED**
-
-**5.6 Cross-browser Testing**
-
-- [ ] Chrome, Firefox, Safari
-- [ ] Mobile testing
-
-**5.7 Documentation**
-
-- [x] Update README
-- [x] Document the setup process
-
-**5.8 PWA Testing**
-
-- [x] Add favicon (multiple sizes for different platforms)
-- [x] Add PWA support (manifest.json, service worker, icons)
-- [x] Test app installation on mobile devices
-
-**5.9 Command Menu Search (Cmd+K)**
-
-**Goal:** Enable fast, keyboard-first tool discovery as the tool catalog grows
-
-**UI/UX Pattern:**
-
-- Cmd+K keyboard shortcut (Ctrl+K on Windows) opens search modal
-- Modal with auto-focused search input and fuzzy matching
-- Results grouped by category (Formatters, Minifiers, Encoders, etc.)
-- Keyboard navigation: arrow keys to select, Enter to navigate, Esc to close
-- Search icon in header opens same modal (mobile-friendly)
-- Empty state shows recent tools (stored in localStorage)
-- Subtle hints throughout app: "Press ⌘K to search"
-
-**Technical Approach:**
-
-- Use `cmdk` library (by Radix team) for command menu with built-in fuzzy search
-- Client-side search (instant results, no API latency)
-- Search index generated from tool metadata at build time
-- Index includes: tool name, category, keywords, description
-- Modal managed with shadcn/ui Dialog component
-- Global keyboard listener for Cmd+K shortcut
-- Navigation via Next.js router on selection
-
-**Search Features by Phase:**
-
-*MVP (Phase 5.9):*
-- Fuzzy text matching on tool names
-- Category grouping in results
-- Keyboard navigation
-- Basic keyword matching (e.g., "js" finds JavaScript tools)
-
-*Enhanced (Future):*
-- Filter by category ("formatters", "minifiers")
-- Filter by language ("javascript tools", "json tools")
-- Recent searches (localStorage)
-- Analytics tracking for popular searches
-- "Did you mean?" suggestions
-
-*Advanced (Future):*
-- Search within AI-generated content
-- Popular tools highlighted
-- Search shortcuts ("f" = jump to formatters, "m" = minifiers)
-- Command palette for app actions (theme toggle, etc.)
-
-**Tasks:**
-
-- [x] Install `cmdk` package from npm
-- [x] Install shadcn/ui command component
-- [x] Add `keywords` field to Tool type
-- [x] Add keywords to all 14 tools (8 formatters + 6 minifiers)
-- [x] Generate search index from tool metadata (`lib/search-index.ts`)
-- [x] Create recent tools storage utility (`lib/recent-tools.ts`)
-- [x] Create `<CommandMenu>` component using cmdk:
-  - [x] Cmd+K/Ctrl+K keyboard shortcut listener
-  - [x] Fuzzy search across tool names and keywords
-  - [x] Category-based result grouping (Formatters, Minifiers)
-  - [x] Keyboard navigation support (arrows, Enter, Esc)
-  - [x] Recent tools in empty state (localStorage)
-  - [x] Popular tools fallback when no recent history
-- [x] Add search triggers:
-  - [x] Desktop: Fake search box in sidebar with ⌘K hint
-  - [x] Mobile: Icon button in header
-  - [x] Both open command menu on click
-- [x] Add `<VisitTracker>` component to track tool visits
-- [x] Add visit tracking to all formatter pages
-- [x] Add visit tracking to all minifier pages
-- [x] Add keyboard shortcut hint to Footer ("Press ⌘K to search")
-- [x] Customize CommandDialog for mobile (90-95% width)
-- [x] Test across browsers and devices
-- [x] Verify accessibility (keyboard-only navigation works)
-- [ ] Track search analytics (optional, Phase 7)
-
-**Resources:**
-- cmdk library: https://cmdk.paco.me/
-- shadcn/ui command component: https://ui.shadcn.com/docs/components/command
-
-**Status:** ✅ **COMPLETED**
-
-**Deliverable:** Codemata with fast, keyboard-first tool discovery via Cmd+K search 🚀
-
----
-
-### Phase 6: Additional Formatters (Size: S) ✅ **COMPLETED**
-
-**Goal:** Add high-traffic formatter discovered after initial launch
-
-#### Tasks
-
-**6.1 SQL Formatter**
-
-- [x] Add SQL formatter page (`/formatters/sql-formatter/`)
-- [x] Implement `formatSqlAction` using `sql-formatter`
-- [x] Support multiple SQL dialects (MySQL, PostgreSQL, SQLite, etc.) - 17 dialects total
-- [x] Add configuration options (indentation, keyword case, etc.)
-- [x] Write tests
-- [x] Type system refactoring (FormatterTool, MinifierTool specialized types)
-
-**6.2 AI Content & Deploy**
-
-- [x] Generate AI content for SQL formatter
-- [x] Update home page with new tool
-- [x] Deploy to production
-
-**Deliverable:** ✅ Codemata with 15 tools (9 formatters + 6 minifiers)
-
-**Status:** ✅ **COMPLETED** - SQL Formatter with 17 dialect support (PostgreSQL, MySQL, MariaDB, SQLite, SQL Server/T-SQL, BigQuery, DB2, DB2i, Hive, N1QL, PL/SQL, Redshift, SingleStoreDB, Snowflake, Spark, Standard SQL, Trino), configuration options for keyword case and indentation, full test coverage, and type system improvements
-
----
-
-### Phase 7: Quality, Monitoring & Monetization (Size: M)
-
-**Goal:** Establish quality gates, analytics, and revenue streams
-
-#### Tasks
-
-**7.1 Analytics Setup**
-
-- [x] Set up Google Analytics 5
-- [x] Add tracking to all pages
-- [ ] Track tool usage events
-
-**7.2 Automated Testing & CI**
-
-- [x] Install Playwright for E2E testing (Firefox browser)
-- [x] Configure Playwright:
-  - [x] Headed mode for local dev (with `--ui` debug mode)
-  - [x] Headless mode for CI
-  - [x] Test against production build (`next build` + `next start`)
-  - [x] Tests in `apps/codemata/tests/e2e/`
-- [x] Write E2E tests for critical user flows:
-  - [x] **Core Tool Functionality:**
-    - [x] Paste code → format → copy result (formatters)
-    - [x] Paste code → minify → copy result (minifiers)
-    - [x] Configuration changes (indentation options)
-    - [x] Error handling (invalid syntax, malformed code)
-  - [x] **Navigation & Discovery:**
-    - [x] Navigation between tools via sidebar
-    - [x] Category landing pages (`/formatters`, `/minifiers`)
-    - [x] Category back links
-    - [x] Command Menu (⌘K) search and navigation
-    - [x] Recent tools tracking and display
-  - [x] **UI Features:**
-    - [x] Dark mode toggle persistence
-    - [x] Mobile responsive behavior (sidebar drawer)
-    - [x] Scroll-to-top FAB on long pages
-  - [x] **SEO & Metadata:**
-    - [x] Verify page titles and descriptions
-    - [x] OpenGraph image URLs load correctly
-    - [x] Canonical URLs are correct
-- [x] Install axe-core for accessibility testing
-- [x] Write accessibility tests (comprehensive - all 17 pages):
-  - [x] **WCAG AA Compliance:**
-    - [x] Home page
-    - [x] Category pages (formatters, minifiers)
-    - [x] All 8 formatter tool pages (9 formatters including SQL)
-    - [x] All 6 minifier tool pages
-  - [x] **Keyboard Navigation:**
-    - [x] Tab order follows logical flow
-    - [x] Enter activates buttons/links
-    - [x] Escape closes dialogs (command menu)
-    - [x] Focus visible on all interactive elements
-    - [x] CodeMirror editor keyboard accessible
-  - [x] **Screen Reader Compatibility:**
-    - [x] ARIA labels on all controls
-    - [x] Proper ARIA roles (dialog, menu, button)
-    - [x] Tool configuration dropdowns/selects labeled
-    - [x] Dynamic content announcements
-    - [x] Heading hierarchy (h1 → h2 → h3)
-  - [x] **Visual Accessibility:**
-    - [x] Color contrast validation (WCAG AA 4.5:1)
-    - [x] Focus indicators meet contrast requirements
-    - [x] No color-only information
-  - [x] **Component-Specific:**
-    - [x] Command menu focus trap
-    - [x] Mobile navigation accessible
-    - [x] Collapsible AI content sections keyboard accessible
-- [x] Set up Lighthouse CI (blocking):
-  - [x] Performance score ≥ 90
-  - [x] Accessibility score ≥ 93
-  - [x] Best Practices score ≥ 90
-  - [x] SEO score ≥ 95
-  - [x] Fail builds if scores drop below thresholds
-  - [x] Test representative pages (home, 2 categories, 2 tools per category = 7 pages)
-- [x] Update `.github/workflows/ci.yml` with hybrid job strategy:
-  - [x] **Stage 1 (Parallel):** `type-check`, `lint`, `format` (fast quality checks)
-  - [x] **Stage 2 (Sequential):** `build` (uploads artifact) + `test` (unit tests)
-  - [x] **Stage 3 (Parallel):** `e2e`, `lighthouse` (download artifact, comprehensive validation)
-  - [x] Run on all PRs and main branch pushes
-  - [x] Set up GitHub branch protection requiring all checks to pass
-- [x] Document testing approach:
-  - [x] Add testing section to README with local commands
-  - [x] Document how to run Playwright UI mode
-  - [x] Explain CI workflow stages
-  - [x] Add troubleshooting guide for common test failures
-
-**7.3 Monetization**
-
-- [x] Set up Google AdSense account
-- [ ] Add ads below tools
-- [ ] Add ads in content sections
-- [ ] Test ad placement and performance
-- [ ] A/B test different placements
-- [ ] Optimize based on revenue data
-
-**7.4 Monitoring & Data Collection**
-
-- [ ] Monitor traffic for 2-4 weeks
-- [ ] Identify popular tools
-- [ ] Analyze user behavior
-- [ ] Identify optimization opportunities
-- [ ] Monitor test results and fix failures
-
-**Deliverable:** Revenue-generating Codemata with comprehensive quality gates and performance tracking
-
----
-
-### Phase 8: Expand Codemata - Encoders/Decoders (Size: L) ✅
-
-**Goal:** Add high-traffic encoder/decoder tools
-
-#### Tools to Build
-
-- [x] JWT Decoder (very high traffic potential) ✅
-- [x] Base64 Encoder/Decoder ✅
-- [x] URL Encoder/Decoder ✅
-- [x] HTML Entity Encoder/Decoder ✅
-- [x] JS String Encoder/Decoder ✅
-
-#### Tasks
-
-**8.1 Implement Tools** ✅
-
-- [x] Create encoder/decoder pages ✅
-- [x] Implement server actions for each ✅
-- [x] Build appropriate UI (TransformerEncoder component with bidirectional buttons) ✅
-- [x] Write tests (unit tests, e2e, a11y & lighthouse tests) ✅
-  - [x] Unit tests: 18 tests for all encoder actions ✅
-  - [x] E2E tests: 26 tests for encode/decode/round-trip/copy/disabled states ✅
-  - [x] A11y compliance: 5 tests (WCAG 2.0/2.1 Level AA) ✅
-  - [x] Keyboard navigation: 5 tests for encoder-specific interactions ✅
-  - [x] Lighthouse tests: Performance/accessibility benchmarks ✅
-
-**8.2 AI Content & SEO** ✅
-
-- [x] Generate AI content for each tool ✅
-- [x] Optimize for high-traffic keywords ✅
-- [x] Update sitemap ✅
-- [x] Fix AI content list formatting (added explicit markdown formatting rules) ✅
-
-**8.3 UX Improvements** ✅
-
-- [x] Auto-scroll navigation to selected tool ✅
-- [x] Bidirectional encoder UI with mode buttons ✅
-
-**8.4 Deploy & Monitor**
-
-- [ ] Deploy to production ⏳ (ready for deployment)
-- [ ] Monitor analytics for these tools
-- [ ] Track revenue impact
-
-**Deliverable:** 5 additional encoders/decoders tools
-
----
-
-### Phase 9: Expand Codemata - Validators/Checkers (Size: L)
-
-**Goal:** Add validation and checking tools
-
-**Status:** 🚧 In Progress (Phase 9.1-9.5 complete - JSON, HTML & CSS validators live)
-
-#### Tools to Build
-
-- [x] JSON Validator (with schema support)
-- [x] HTML Validator
-- [x] CSS Validator
-- [ ] XML Validator
-- [ ] Regex Tester
-- [ ] URL Validator
-- [ ] (More validators as prioritized by analytics)
-
-#### Tasks
-
-**9.1 Foundation & Infrastructure** ✅ **COMPLETE**
-
-- [x] Create validator pages structure
-- [x] Build shared validation utilities
-- [x] Build error display UI components
-- [x] Build category page
-- [x] Add to navigation UI
-- [x] Set up with "Coming Soon" badges
-
-**9.2 Implement Validators** 🚧 In Progress
-
-- [x] JSON Validator
-- [x] HTML Validator (with html-validate, a11y checks, 65/35 layout)
-- [x] CSS Validator (css-tree, strict syntax validation, 65/35 layout)
-- [x] XML Validator
-- [ ] Regex Tester
-- [x] URL Validator
-
-**9.3 AI Content & SEO**
-
-- [x] Generate AI content for each tool
-- [x] Update sitemap
-
-**9.4 Deploy & Monitor**
-
-- [x] Deploy to production
-- [x] Monitor analytics
-- [x] Track revenue impact
-
-**Deliverable:** Codemata with comprehensive validation tools
-
----
-
-### Phase 10+: Continue Codemata Expansion (Size: Varies)
-
-**Goal:** Add remaining tool categories based on data
-
-#### Tool Categories (in priority order)
-
-1. **Git/DevOps Tools** (Size: S) - HIGHEST PRIORITY
-   - [x] **10.1:** `.gitignore` Generator (massive traffic) - Template-based generator for .gitignore files (new Generators category) ✅ **COMPLETE**
-   - [x] **10.2:** GitHub Markdown Previewer - Preview GitHub-flavored markdown with live rendering, syntax-highlighted code blocks, and XSS protection (new Viewers category) ✅ **COMPLETE**
-   - [x] **10.3:** Dockerfile Linter - Validate Dockerfile syntax and best practices (existing Validators category) ✅ **COMPLETE**
-   - [x] **10.4:** YAML Validator - Validate YAML syntax and best practices (existing Validators category) ✅ **COMPLETE**
-
-2. **CSS Generators** (Size: M) - VERY HIGH ENGAGEMENT
-   - Box Shadow Generator, Border Radius, Flexbox Generator, CSS Grid Generator
-
-3. **Image Tools** (Size: L) - HIGH SEO VALUE
-   - Image Compressor/Optimizer, Format Converter, Resizer, Favicon Generator
-
-4. **Converters** (Size: L)
-   - CRON Generator/Parser (very high traffic), HTML ↔ Markdown, XML ↔ JSON, CSV ↔ JSON, YAML ↔ JSON, Timestamp ↔ Date, SVG/Image to Data URI
-
-5. **Generators** (Size: M)
-   - Fake Data Generator (high value), Hash, UUID, QR codes, Meta tags, Passwords, Lorem Ipsum, JSON Schema to Sample, Badge Generator
-
-6. **Text Tools** (Size: M)
-   - String Diff, JSONPath Tester, XPath Tester, Case converter, Text analyzer, String reverser, Line sort/dedup, ASCII Art
-
-7. **Security/Crypto** (Size: M)
-   - Password Strength Checker, Certificate Decoder, Public Key Converter
-
-8. **API/HTTP Reference** (Size: S)
-   - HTTP Status Reference, MIME Type Lookup, User Agent Parser, Query String Builder
-
-9. **Viewers** (Size: L)
-   - SVG Viewer, Markdown Preview, Diff Tool, Page Source, Google Fonts
-
-10. **Colors** (Size: M)
-    - Color converter, Gradient generator, Color scheme creator
-
-11. **Network Tools** (Size: M)
-    - IP lookup, WHOIS, DNS lookup
-
-12. **AI Meta Tools** (Size: M) - HUGE SEO POTENTIAL (Tools ABOUT AI)
-    - ⚠️ Note: Client-side AI execution requires careful cost management
-    - Prompt Optimizer (flagship), Token Counter & Cost Calculator (no API cost!), Prompt Template Library (educational, no API cost), Context Window Optimizer, Code Explainer, Code Review Assistant
-
-13. **Other Tools** (Size: Varies)
-    - Character count, Unicode lookup, Date/Time calculator, API Tester
-
-#### Approach
-
-- Complete one category at a time
-- Monitor analytics after each deployment
-- Let data guide prioritization
-- Optimize based on traffic and revenue
-
-**Deliverable:** Comprehensive Codemata with 50+ developer tools
-
----
-
-### Phase 11: Convertly App
-
-**Goal:** Build conversion tools app using learnings from Codemata
-
-#### Tasks
-
-**10.1 Copy & Adapt**
-
-- [ ] Create `apps/convertly/` based on Codemata
-- [ ] Change theme to purple
-- [ ] Adapt layout components
-- [ ] Update branding
-
-**10.2 Initial Converters** (8-10 tools)
-
-- [ ] Length Converter
-- [ ] Weight/Mass Converter
-- [ ] Volume Converter
-- [ ] Area Converter
-
-**10.3 AI Content**
-
-- [ ] Adapt AI system for converter content
-- [ ] Generate content for each converter
-
-**10.4 Deploy**
-
-- [ ] Set up Vercel project
-- [ ] Deploy to convertly.benmvp.com
-- [ ] Add analytics and ads
-
-**10.5 Other Converters**
-
-- [ ] Temperature Converter
-- [ ] Time Zone Converter
-- [ ] Data Size Converter (bit, byte, KB, MB, GB, TB, etc.)
-- [ ] Numeral System Converter (decimal, binary, octal, hexadecimal)
-
-**Deliverable:** Convertly app launched with core converters
-
----
-
-### Phase 12: Moni App
-
-**Goal:** Build financial calculator app
-
-#### Tasks
-
-**11.1 Copy & Adapt**
-
-- [ ] Create `apps/moni/` based on Codemata/Convertly
-- [ ] Change theme to green
-- [ ] Adapt layout components
-- [ ] Update branding
-
-**11.2 Initial Calculators** (5-8 tools)
-
-- [ ] Compound Interest Calculator
-- [ ] Savings Goal Calculator
-- [ ] Simple Mortgage Calculator
-- [ ] Loan Pre-payment Calculator
-- [ ] ROI Calculator
-- [ ] Retirement Calculator (basic)
-- [ ] Tip Calculator
-- [ ] Currency Converter
-
-**11.3 AI Content**
-
-- [ ] Adapt AI system for calculator content
-- [ ] Generate content for each calculator
-
-**11.4 Deploy**
-
-- [ ] Set up Vercel project
-- [ ] Deploy to moni.benmvp.com
-- [ ] Add analytics and ads
-
-**Deliverable:** Moni app launched with core calculators
-
----
-
-### Ongoing: Extract Shared Code (When Needed)
-
-**Goal:** Create shared packages ONLY when duplication becomes painful
-
-#### Decision Point
-
-Extract shared code when:
-- Making the same change across multiple apps becomes tedious
-- Bug fixes need to be applied in multiple places
-- Component behavior diverges unintentionally
-- The duplication is actually causing real maintenance pain
-
-#### If/When Extracting:
-
-- [ ] Create `@repo/ui` package with truly shared components
-- [ ] Create `@repo/typescript-config` if configs are identical
-- [ ] Create `@repo/eslint-config` if configs are identical
-- [ ] Set up pnpm workspace (if not already done)
-- [ ] Set up Turborepo (if not already done)
-- [ ] Migrate apps to use shared packages
-- [ ] Test everything still works
-
-**Approach:** Extract incrementally, not all at once. Start with the most painful duplication first.
-
----
-
-### Milestones Summary
-
-| Phase | Size | Key Deliverable                              | Status      |
-| ----- | ---- | -------------------------------------------- | ----------- |
-| 1     | S    | Codemata with 1 formatter (deployed)         | ✅ Complete |
-| 2     | M    | All 8 formatters                             | ✅ Complete |
-| 3     | M    | All 6 minifiers (14 total tools)             | ✅ Complete |
-| 4     | M    | AI content + build optimization              | ✅ Complete |
-| 5     | M    | Polish and public launch                     | ✅ Complete |
-| 6     | S    | SQL Formatter (high-traffic addition)        | ✅ Complete |
-| 7     | S    | Analytics and ads (monetization)             | ✅ Complete |
-| 8     | L    | Encoders/Decoders (5 tools, 19 total)        | ✅ Complete |
-| 9     | L    | Validators/Checkers (8+ tools)               | ⏳ Pending  |
-| 10+   | Varies | Remaining Codemata categories (40+ tools)  | ⏳ Pending  |
-| 11    | L    | Convertly app launch                         | ⏳ Pending  |
-| 12    | XL   | Moni app launch                              | ⏳ Pending  |
-
-**Current Status:** Codemata live with **19 tools** (8 formatters + 6 minifiers + 5 encoders/decoders), analytics, and monetization. Ready to expand based on traffic data.
-
-**Key Strategy:** Continue expanding Codemata with high-traffic tools identified through analytics before building other apps. Extract shared code only when duplication hurts.
+**Recommended Next Step:** Launch Convertly with Recipe Scaler as high-traffic anchor (see [Convertly spec](apps/convertly/specs/convertly-spec.md) for details).
 
 ---
 

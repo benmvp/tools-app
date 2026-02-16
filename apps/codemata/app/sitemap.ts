@@ -1,5 +1,5 @@
+import { getAppUrl, getToolUrl } from "@repo/shared";
 import type { MetadataRoute } from "next";
-import { getAppUrl, getToolUrl } from "@/lib/utils";
 import { getAllTools, getCategoriesByOrder } from "../lib/tools-data";
 
 export default function sitemap(): MetadataRoute.Sitemap {

@@ -1,10 +1,14 @@
 "use client";
 
+import type {
+  EncoderAction,
+  EncoderTool,
+  JwtDecoderAction,
+} from "@repo/shared";
 import { ArrowLeft, ArrowRight, Check, Copy, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import type { EncoderAction, EncoderTool, JwtDecoderAction } from "@/lib/types";
 import { CodeEditor } from "./CodeEditor";
 
 interface TransformerEncoderProps {

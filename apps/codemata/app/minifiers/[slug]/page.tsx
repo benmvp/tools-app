@@ -1,9 +1,11 @@
+import type { MinifierAction } from "@repo/shared";
+import { getToolStructuredData, isProductionBuild } from "@repo/shared";
+import { JsonLd } from "@repo/ui";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { AIContentSkeleton } from "@/components/AIContentSkeleton";
 import { CategoryBackLink } from "@/components/CategoryBackLink";
-import { JsonLd } from "@/components/JsonLd";
 import { MinifierAIContent } from "@/components/MinifierAIContent";
 import { MinifierIntro } from "@/components/MinifierIntro";
 import { ScrollToTopFab } from "@/components/ScrollToTopFab";
@@ -11,8 +13,6 @@ import { TransformerMinifier } from "@/components/TransformerMinifier";
 import { VisitTracker } from "@/components/VisitTracker";
 import { generateToolMetadata } from "@/lib/metadata-helpers";
 import { MINIFIER_TOOLS } from "@/lib/tools-data";
-import type { MinifierAction } from "@/lib/types";
-import { getToolStructuredData, isProductionBuild } from "@/lib/utils";
 
 // ISR: Revalidate every 24 hours
 export const revalidate = 86400;

@@ -1,7 +1,7 @@
 import { ContentSection } from "@/components/ContentSection";
 import { RecommendedTools } from "@/components/RecommendedTools";
 import { TipCard } from "@/components/TipCard";
-import { getAllAvailableTools, getFormatterContent } from "@/lib/ai/helpers";
+import { getAllAvailableTools, getFormatterContent } from "@/lib/ai-helpers";
 
 interface FormatterAIContentProps {
   slug: string;

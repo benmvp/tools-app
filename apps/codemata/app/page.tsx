@@ -1,9 +1,9 @@
+import { getAppUrl, getOgImageUrl } from "@repo/shared";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ToolCard } from "@/components/ToolCard";
 import { SITE_CONFIG } from "@/lib/site-config";
 import { getCategoriesByOrder, getTotalToolCount } from "@/lib/tools-data";
-import { getAppUrl, getOgImageUrl } from "@/lib/utils";
 
 const totalCount = getTotalToolCount();
 

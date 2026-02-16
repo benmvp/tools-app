@@ -1,8 +1,8 @@
+import { getAppUrl } from "@repo/shared";
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import Script from "next/script";
 import { SITE_CONFIG } from "@/lib/site-config";
-import { getAppUrl } from "@/lib/utils";
 import { LayoutContent } from "./layout-content";
 import "./globals.css";
 

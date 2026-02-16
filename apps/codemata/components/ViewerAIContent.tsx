@@ -1,7 +1,7 @@
 import { ContentSection } from "@/components/ContentSection";
 import { RecommendedTools } from "@/components/RecommendedTools";
 import { TipCard } from "@/components/TipCard";
-import { getAllAvailableTools, getViewerContent } from "@/lib/ai/helpers";
+import { getAllAvailableTools, getViewerContent } from "@/lib/ai-helpers";
 
 const AVAILABLE_TOOLS = getAllAvailableTools();
 

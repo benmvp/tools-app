@@ -1,3 +1,14 @@
+import type {
+  EncoderTool,
+  FormatterTool,
+  GeneratorTool,
+  MinifierTool,
+  Tool,
+  ToolCategory,
+  ToolCategoryId,
+  ValidatorTool,
+  ViewerTool,
+} from "@repo/shared";
 import {
   Braces,
   Code,
@@ -51,17 +62,6 @@ import {
   validateYaml,
 } from "../app/validators/actions";
 import { previewMarkdown } from "../app/viewers/actions";
-import type {
-  EncoderTool,
-  FormatterTool,
-  GeneratorTool,
-  MinifierTool,
-  Tool,
-  ToolCategory,
-  ToolCategoryId,
-  ValidatorTool,
-  ViewerTool,
-} from "./types";
 import { VALIDATOR_EXAMPLES } from "./validators/examples";
 
 /**

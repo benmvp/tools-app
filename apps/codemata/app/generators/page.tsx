@@ -1,10 +1,10 @@
+import { getAppUrl, getOgImageUrl } from "@repo/shared";
 import { ArrowLeft } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ToolCard } from "@/components/ToolCard";
 import { SITE_CONFIG } from "@/lib/site-config";
 import { getCategoryById } from "@/lib/tools-data";
-import { getAppUrl, getOgImageUrl } from "@/lib/utils";
 
 const generatorCategory = getCategoryById("generators");
 const generatorCount = generatorCategory.tools.length;

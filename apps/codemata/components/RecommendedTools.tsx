@@ -1,6 +1,6 @@
+import { shouldPrefetch } from "@repo/shared";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { shouldPrefetch } from "@/lib/utils";
 
 interface RecommendedToolsProps {
   heading: string;

@@ -1,4 +1,4 @@
-import { getMinifierContent } from "@/lib/ai/helpers";
+import { getMinifierContent } from "@/lib/ai-helpers";
 
 interface MinifierIntroProps {
   slug: string;

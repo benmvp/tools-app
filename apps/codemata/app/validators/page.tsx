@@ -1,9 +1,9 @@
+import { getAppUrl, getOgImageUrl } from "@repo/shared";
 import type { Metadata } from "next";
 import { ScrollToTopFab } from "@/components/ScrollToTopFab";
 import { ToolCard } from "@/components/ToolCard";
 import { SITE_CONFIG } from "@/lib/site-config";
 import { getCategoryById } from "@/lib/tools-data";
-import { getAppUrl, getOgImageUrl } from "@/lib/utils";
 
 const validatorsCategory = getCategoryById("validators");
 const validatorCount = validatorsCategory.tools.filter(

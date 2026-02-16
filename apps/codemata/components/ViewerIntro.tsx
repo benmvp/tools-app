@@ -1,4 +1,4 @@
-import { getViewerContent } from "@/lib/ai/helpers";
+import { getViewerContent } from "@/lib/ai-helpers";
 import { VIEWER_TOOLS } from "@/lib/tools-data";
 
 interface ViewerIntroProps {

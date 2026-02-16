@@ -1,7 +1,7 @@
 "use server";
 
+import type { EncoderMode } from "@repo/shared";
 import jwt from "jsonwebtoken";
-import type { EncoderMode } from "@/lib/types";
 
 /**
  * Base64 Encoder/Decoder

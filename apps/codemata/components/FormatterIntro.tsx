@@ -1,4 +1,4 @@
-import { getFormatterContent } from "@/lib/ai/helpers";
+import { getFormatterContent } from "@/lib/ai-helpers";
 
 interface FormatterIntroProps {
   slug: string;

@@ -1,20 +1,8 @@
+import type { ValidationError, ValidationResult } from "@repo/shared";
 import type { LucideIcon } from "lucide-react";
 
-export interface ValidationError {
-  line: number; // 1-indexed
-  column: number; // 1-indexed
-  message: string;
-  severity: "error" | "warning" | "info";
-  endLine?: number;
-  endColumn?: number;
-}
-
-export interface ValidationResult {
-  valid: boolean;
-  errors: ValidationError[];
-  warnings: ValidationError[];
-  metadata?: Record<string, unknown>; // Tool-specific (e.g., property count)
-}
+// Re-export for backwards compatibility with existing imports
+export type { ValidationError, ValidationResult };
 
 export interface ValidatorTool {
   id: string;

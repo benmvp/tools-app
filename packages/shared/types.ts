@@ -1,31 +1,47 @@
 import type { LucideIcon } from "lucide-react";
-import type { ValidationResult } from "./validators/types";
+
+// Validation types (used by validator tools)
+export interface ValidationError {
+	line: number; // 1-indexed
+	column: number; // 1-indexed
+	message: string;
+	severity: "error" | "warning" | "info";
+	endLine?: number;
+	endColumn?: number;
+}
+
+export interface ValidationResult {
+	valid: boolean;
+	errors: ValidationError[];
+	warnings: ValidationError[];
+	metadata?: Record<string, unknown>; // Tool-specific (e.g., property count)
+}
 
 export type Indentation = "two-spaces" | "four-spaces" | "tabs";
 
 export type KeywordCase = "uppercase" | "lowercase";
 
 export type SqlDialect =
-  | "postgresql"
-  | "mysql"
-  | "mariadb"
-  | "sqlite"
-  | "sql"
-  | "bigquery"
-  | "db2"
-  | "db2i"
-  | "hive"
-  | "n1ql"
-  | "plsql"
-  | "redshift"
-  | "singlestoredb"
-  | "snowflake"
-  | "spark"
-  | "transactsql"
-  | "trino";
+	| "postgresql"
+	| "mysql"
+	| "mariadb"
+	| "sqlite"
+	| "sql"
+	| "bigquery"
+	| "db2"
+	| "db2i"
+	| "hive"
+	| "n1ql"
+	| "plsql"
+	| "redshift"
+	| "singlestoredb"
+	| "snowflake"
+	| "spark"
+	| "transactsql"
+	| "trino";
 
 export interface FormatConfig extends Record<string, string> {
-  indentation: Indentation;
+	indentation: Indentation;
 }
 
 /**
@@ -37,24 +53,24 @@ export interface FormatConfig extends Record<string, string> {
  * Other sql-formatter options (linesBetweenQueries, etc.) use library defaults.
  */
 export interface SqlFormatConfig extends FormatConfig {
-  dialect: SqlDialect;
-  keywordCase: KeywordCase;
+	dialect: SqlDialect;
+	keywordCase: KeywordCase;
 }
 
 /**
  * Server action function signature for formatters
  */
 export type FormatterAction = (
-  input: string,
-  config: FormatConfig,
+	input: string,
+	config: FormatConfig,
 ) => Promise<string>;
 
 /**
  * Server action function signature for SQL formatter
  */
 export type SqlFormatterAction = (
-  input: string,
-  config: SqlFormatConfig,
+	input: string,
+	config: SqlFormatConfig,
 ) => Promise<string>;
 
 /**
@@ -71,8 +87,8 @@ export type EncoderMode = "encode" | "decode";
  * Server action function signature for encoders/decoders
  */
 export type EncoderAction = (
-  input: string,
-  mode: EncoderMode,
+	input: string,
+	mode: EncoderMode,
 ) => Promise<string>;
 
 /**
@@ -90,78 +106,78 @@ export type ViewerAction = (input: string) => Promise<string>;
  * Base Tool interface for all tools (formatters, minifiers, converters, etc.)
  */
 export interface Tool {
-  // Navigation & Card Display
-  id: string;
-  name: string;
-  description: string; // Short description for cards/OG images
-  url: string;
-  icon: LucideIcon;
-  comingSoon?: boolean;
+	// Navigation & Card Display
+	id: string;
+	name: string;
+	description: string; // Short description for cards/OG images
+	url: string;
+	icon: LucideIcon;
+	comingSoon?: boolean;
 
-  // Search keywords for command menu
-  keywords?: string[];
+	// Search keywords for command menu
+	keywords?: string[];
 
-  // SEO Metadata (static fallback when AI fails)
-  metadata: {
-    title: string;
-    description: string; // Long meta description
-  };
+	// SEO Metadata (static fallback when AI fails)
+	metadata: {
+		title: string;
+		description: string; // Long meta description
+	};
 }
 
 /**
  * Formatter Tool interface with language support
  */
 export interface FormatterTool extends Tool {
-  action: FormatterAction | SqlFormatterAction;
-  example: string;
-  language:
-    | "typescript"
-    | "javascript"
-    | "json"
-    | "yaml"
-    | "css"
-    | "html"
-    | "graphql"
-    | "markdown"
-    | "xml"
-    | "sql";
+	action: FormatterAction | SqlFormatterAction;
+	example: string;
+	language:
+		| "typescript"
+		| "javascript"
+		| "json"
+		| "yaml"
+		| "css"
+		| "html"
+		| "graphql"
+		| "markdown"
+		| "xml"
+		| "sql";
 }
 
 /**
  * Minifier Tool interface with language support (excludes SQL and GraphQL)
  */
 export interface MinifierTool extends Tool {
-  action: MinifierAction;
-  example: string;
-  language: "typescript" | "javascript" | "json" | "css" | "html" | "xml";
+	action: MinifierAction;
+	example: string;
+	language: "typescript" | "javascript" | "json" | "css" | "html" | "xml";
 }
 
 /**
  * Encoder Tool interface with mode support
  */
 export interface EncoderTool extends Tool {
-  action: EncoderAction | JwtDecoderAction;
-  modes?: { value: EncoderMode; label: string }[];
-  defaultMode?: EncoderMode;
-  example: string;
-  language: "typescript" | "javascript" | "json" | "text" | "html" | "xml";
+	action: EncoderAction | JwtDecoderAction;
+	modes?: { value: EncoderMode; label: string }[];
+	defaultMode?: EncoderMode;
+	example: string;
+	language: "typescript" | "javascript" | "json" | "text" | "html" | "xml";
 }
 
 /**
  * Validator Tool interface
  */
 export interface ValidatorTool extends Tool {
-  action?: ValidatorAction;
-  example: string;
-  language: "json" | "html" | "css" | "xml" | "text" | "dockerfile" | "yaml";
+	action?: ValidatorAction;
+	example: string;
+	language: "json" | "html" | "css" | "xml" | "text" | "dockerfile" | "yaml";
 }
 
 /**
  * Validator action type
  */
 export type ValidatorAction = (
-  input: string,
-  options?: Record<string, unknown>,
+	input: string,
+	options?: Record<string, unknown>,
 ) => Promise<ValidationResult>;
 
 /**
@@ -180,8 +196,8 @@ export type ValidatorAction = (
  * QR Code Generator (input form + image output)
  */
 export interface GeneratorTool extends Tool {
-  // Intentionally minimal - generators have unique implementations
-  // See individual generator components for specific UI/logic patterns
+	// Intentionally minimal - generators have unique implementations
+	// See individual generator components for specific UI/logic patterns
 }
 
 /**
@@ -200,9 +216,9 @@ export interface GeneratorTool extends Tool {
  * Diff Viewer (two files → side-by-side comparison)
  */
 export interface ViewerTool extends Tool {
-  action: ViewerAction;
-  example: string;
-  language: "markdown" | "svg" | "json" | "xml" | "html" | "text";
+	action: ViewerAction;
+	example: string;
+	language: "markdown" | "svg" | "json" | "xml" | "html" | "text";
 }
 
 /**
@@ -210,29 +226,29 @@ export interface ViewerTool extends Tool {
  * Use this instead of loose strings for category references
  */
 export type ToolCategoryId =
-  | "formatters"
-  | "minifiers"
-  | "encoders"
-  | "validators"
-  | "generators"
-  | "viewers";
+	| "formatters"
+	| "minifiers"
+	| "encoders"
+	| "validators"
+	| "generators"
+	| "viewers";
 
 /**
  * Tool category metadata with nested tools
  * Single source of truth for all category information
  */
 export interface ToolCategory {
-  id: ToolCategoryId;
-  label: string; // Display name: "Formatters"
-  singular: string; // Singular form: "Formatter"
-  url: string; // Category page: "/formatters"
-  description: string; // SEO/meta description
-  order: number; // Display order (1, 2, 3...)
-  tools:
-    | FormatterTool[]
-    | MinifierTool[]
-    | EncoderTool[]
-    | ValidatorTool[]
-    | GeneratorTool[]
-    | ViewerTool[];
+	id: ToolCategoryId;
+	label: string; // Display name: "Formatters"
+	singular: string; // Singular form: "Formatter"
+	url: string; // Category page: "/formatters"
+	description: string; // SEO/meta description
+	order: number; // Display order (1, 2, 3...)
+	tools:
+		| FormatterTool[]
+		| MinifierTool[]
+		| EncoderTool[]
+		| ValidatorTool[]
+		| GeneratorTool[]
+		| ViewerTool[];
 }

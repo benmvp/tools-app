@@ -8,7 +8,7 @@
  * Shared tone and style guidelines for all tools
  */
 function getToneAndStyleSection(): string {
-  return `## Tone and Style
+	return `## Tone and Style
 
 - Friendly and approachable
 - Educational and helpful
@@ -21,7 +21,7 @@ function getToneAndStyleSection(): string {
  * Shared critical formatting rules for markdown lists
  */
 function getFormattingRulesSection(): string {
-  return `## CRITICAL FORMATTING RULES
+	return `## CRITICAL FORMATTING RULES
 
 **For ALL Markdown Lists (Bulleted or Numbered):**
 - Each list item MUST be on its OWN LINE
@@ -54,7 +54,7 @@ function getFormattingRulesSection(): string {
  * Shared FAQ section format
  */
 function getFaqSectionFormat(): string {
-  return `### FAQ (faq)
+	return `### FAQ (faq)
 
 - **heading**: "Frequently Asked Questions"
 - **content**: 3-5 common questions and concise answers
@@ -73,7 +73,7 @@ function getFaqSectionFormat(): string {
  * Shared recommendations section format
  */
 function getRecommendationsSectionFormat(): string {
-  return `### Recommendations (recommendations)
+	return `### Recommendations (recommendations)
 
 - **heading**: "Related Tools"
 - **content**: Links to other tools on the site
@@ -87,7 +87,7 @@ function getRecommendationsSectionFormat(): string {
  * Shared resources section format
  */
 function getResourcesSectionFormat(): string {
-  return `### Resources (resources)
+	return `### Resources (resources)
 
 - **heading**: "External Resources"
 - **content**: Links to official documentation and learning resources
@@ -99,7 +99,7 @@ function getResourcesSectionFormat(): string {
  * Shared contextual tips format
  */
 function getTipsSectionInstructions(): string {
-  return `### Contextual Tips (tips)
+	return `### Contextual Tips (tips)
 
 - Generate exactly 3-5 tips, facts, or best practices
 - Each tip must be categorized as "tip", "fact", or "bestPractice"
@@ -111,7 +111,7 @@ function getTipsSectionInstructions(): string {
  * Shared important guidelines
  */
 function getImportantGuidelines(): string {
-  return `## Important Guidelines
+	return `## Important Guidelines
 
 - Be specific to the language/format being discussed
 - Use concrete examples where helpful
@@ -126,7 +126,7 @@ function getImportantGuidelines(): string {
  * System message for formatter tools
  */
 export function getFormatterSystemPrompt(): string {
-  return `
+	return `
 You are a copywriter and SEO expert for an application called **Codemata** that provides developer tools.
 
 Your task is to generate content for various online **formatter** tools that Codemata offers. The content will be used to create web pages for each tool, providing information on how to use the tool, its features, benefits, and integration options.
@@ -248,7 +248,7 @@ ${getImportantGuidelines()}
  * System message for minifier tools
  */
 export function getMinifierSystemPrompt(): string {
-  return `
+	return `
 You are a copywriter and SEO expert for an application called **Codemata** that provides developer tools.
 
 Your task is to generate content for various online **minifier** tools that Codemata offers. The content will be used to create web pages for each tool, providing information on how to use the tool, its features, benefits, and integration options.
@@ -362,7 +362,7 @@ ${getImportantGuidelines()}
  * System message for encoder/decoder tools
  */
 export function getEncoderSystemPrompt(): string {
-  return `
+	return `
 You are a copywriter and SEO expert for an application called **Codemata** that provides developer tools.
 
 Your task is to generate content for various online **encoder/decoder** tools that Codemata offers. The content will be used to create web pages for each tool, providing information on how to use the tool, its features, benefits, and integration options.
@@ -476,21 +476,21 @@ ${getImportantGuidelines()}
  * Build user prompt for a specific tool
  */
 export function buildUserPrompt(
-  toolName: string,
-  toolType:
-    | "formatter"
-    | "minifier"
-    | "encoder"
-    | "validator"
-    | "generator"
-    | "viewer",
-  availableTools: Array<{ displayName: string; url: string }>,
+	toolName: string,
+	toolType:
+		| "formatter"
+		| "minifier"
+		| "encoder"
+		| "validator"
+		| "generator"
+		| "viewer",
+	availableTools: Array<{ displayName: string; url: string }>,
 ): string {
-  const availableToolsList = availableTools
-    .map(({ displayName, url }) => `- ${displayName} - ${url}`)
-    .join("\n");
+	const availableToolsList = availableTools
+		.map(({ displayName, url }) => `- ${displayName} - ${url}`)
+		.join("\n");
 
-  return `Generate the content for the following ${toolType} tool: ${toolName}
+	return `Generate the content for the following ${toolType} tool: ${toolName}
 
 All available tools on the site:
 ${availableToolsList}
@@ -508,7 +508,7 @@ Remember to:
  * System message for validator tools
  */
 export function getValidatorSystemPrompt(): string {
-  return `You are an expert content generator for developer tools, specifically for code validation and testing tools.
+	return `You are an expert content generator for developer tools, specifically for code validation and testing tools.
 
 Generate SEO-optimized and educational content for **${"{toolName}"}**.
 
@@ -628,7 +628,7 @@ ${getImportantGuidelines()}`;
  * System message for generator tools
  */
 export function getGeneratorSystemPrompt(): string {
-  return `You are an expert content generator for developer tools, specifically for code generation and scaffolding tools.
+	return `You are an expert content generator for developer tools, specifically for code generation and scaffolding tools.
 
 Generate SEO-optimized and educational content for **${"{toolName}"}**.
 
@@ -728,7 +728,7 @@ ${getImportantGuidelines()}`;
  * System message for viewer tools
  */
 export function getViewerSystemPrompt(): string {
-  return `You are an expert content generator for developer tools, specifically for code and data visualization and preview tools.
+	return `You are an expert content generator for developer tools, specifically for code and data visualization and preview tools.
 
 Generate SEO-optimized and educational content for **${"{toolName}"}**.
 

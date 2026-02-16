@@ -1,9 +1,10 @@
+import { getToolStructuredData, isProductionBuild } from "@repo/shared";
+import { JsonLd } from "@repo/ui";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { AIContentSkeleton } from "@/components/AIContentSkeleton";
 import { CategoryBackLink } from "@/components/CategoryBackLink";
-import { JsonLd } from "@/components/JsonLd";
 import { ValidatorAIContent } from "@/components/ValidatorAIContent";
 import { ValidatorIntro } from "@/components/ValidatorIntro";
 import { VisitTracker } from "@/components/VisitTracker";
@@ -16,7 +17,6 @@ import { XmlValidator } from "@/components/validators/XmlValidator";
 import { YamlValidator } from "@/components/validators/YamlValidator";
 import { generateToolMetadata } from "@/lib/metadata-helpers";
 import { VALIDATOR_TOOLS } from "@/lib/tools-data";
-import { getToolStructuredData, isProductionBuild } from "@/lib/utils";
 import { VALIDATOR_EXAMPLES } from "@/lib/validators/examples";
 
 // ISR revalidation - 24 hours

@@ -1,7 +1,7 @@
 import { ContentSection } from "@/components/ContentSection";
 import { RecommendedTools } from "@/components/RecommendedTools";
 import { TipCard } from "@/components/TipCard";
-import { getAllAvailableTools, getValidatorContent } from "@/lib/ai/helpers";
+import { getAllAvailableTools, getValidatorContent } from "@/lib/ai-helpers";
 
 interface ValidatorAIContentProps {
   slug: string;

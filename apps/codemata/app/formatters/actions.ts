@@ -1,9 +1,9 @@
 "use server";
 
 import xmlPlugin from "@prettier/plugin-xml";
+import type { FormatConfig, SqlFormatConfig } from "@repo/shared";
 import { format } from "prettier";
 import { format as formatSqlQuery } from "sql-formatter";
-import type { FormatConfig, SqlFormatConfig } from "@/lib/types";
 
 function getFormatterOptions(config: FormatConfig) {
   const tabWidth =
