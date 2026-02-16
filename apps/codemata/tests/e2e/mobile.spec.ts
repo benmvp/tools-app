@@ -114,22 +114,25 @@ test.describe("Mobile Experience", () => {
 	});
 
 	test("should show scroll-to-top FAB on long pages", async ({ page }) => {
-		// Use category page which has enough content (tool grid)
-		await page.goto("/formatters");
+		// Use home page which has multiple sections and is guaranteed to be long
+		await page.goto("/");
 
-		// Wait for page to fully load and render
+		// Wait for page to fully load
 		await page.waitForLoadState("networkidle");
 
-		// Scroll down slowly (FAB appears after 300px)
-		await page.evaluate(() =>
-			window.scrollTo({ top: 350, behavior: "instant" }),
-		);
+		// Scroll to footer by finding copyright text (guaranteed to be > 300px down on mobile)
+		const footerText = page.getByText(/All rights reserved/i);
+		await footerText.scrollIntoViewIfNeeded();
 
-		// FAB should appear after scrolling
-		const fab = page.locator('button[aria-label*="top" i]');
-		await expect(fab).toBeVisible({ timeout: 3000 });
+		// Wait for FAB to appear after scrolling
+		const fab = page.locator('button[aria-label="Back to top"]');
+		await expect(fab).toBeVisible();
 
-		// Click FAB
+		// Verify we actually scrolled past the 300px threshold
+		const scrollY = await page.evaluate(() => window.scrollY);
+		expect(scrollY).toBeGreaterThan(300);
+
+		// Click FAB to scroll back to top
 		await fab.click();
 
 		// Wait for scroll to complete by polling scroll position
