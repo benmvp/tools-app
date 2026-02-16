@@ -3,14 +3,14 @@
 **Application:** Moni
 **Domain:** moni.benmvp.com
 **Purpose:** Personal finance calculators and planning tools
-**Status:** 🚧 **PLANNED** - Launch after Convertly foundation
+**Status:** 🚧 **PLANNED** - Launch after Codemata Phase 10.4
 
 ---
 
 ## Table of Contents
 
 1. [Overview](#overview)
-2. [Why Moni After Convertly?](#why-moni-after-convertly)
+2. [Why Moni Before Convertly?](#why-moni-before-convertly)
 3. [Tool Categories](#tool-categories)
 4. [Architecture & Patterns](#architecture--patterns)
 5. [Implementation Considerations](#implementation-considerations)
@@ -70,38 +70,46 @@ Unlike Codemata, Moni calculations should run **client-side** for:
 
 ---
 
-## Why Moni After Convertly?
+## Why Moni Before Convertly?
 
 ### Strategic Rationale
 
-1. **Convertly Validates Client-Side Calc Pattern**
-   - Moni inherits proven calculator architecture
-   - Convertly tests mobile-first UX patterns
-   - Client-side validation already working
+1. **Higher ROI - Not Easily Google-able**
+   - Financial calculations require context and precision
+   - Can't be quickly answered by Google search alone
+   - Users need interactive scenarios ("what if I pay $X extra?")
+   - Compound interest, debt payoff, mortgage amortization = complex
 
-2. **Higher Engagement Than Convertly**
-   - Financial planning = longer dwell time
-   - Users run multiple scenarios
-   - Save/bookmark favorite calculators
-   - Return monthly (budget tracking, mortgage planning)
-
-3. **Strong Monetization Potential**
+2. **Stronger Monetization Potential**
    - Financial product affiliate links (credit cards, savings accounts, brokerages)
    - High commercial intent keywords
    - Users actively researching financial decisions
+   - Better ad performance (financial services CPM)
 
-4. **Demands Proven Infrastructure**
-   - Financial accuracy requires mature testing
-   - Convertly builds confidence in calculator patterns
-   - Monorepo shared components validated
+3. **Higher Engagement**
+   - Financial planning = longer dwell time
+   - Users run multiple scenarios before deciding
+   - Save/bookmark favorite calculators
+   - Return monthly (budget tracking, mortgage planning)
+
+4. **Convertly Tools More Commoditized**
+   - Unit conversions easily answered by Google ("375F to C")
+   - Voice assistants handle simple conversions
+   - Lower differentiation value
+   - Recipe Scaler is main unique value prop
+
+5. **Shared Infrastructure Ready**
+   - ✅ @repo/config, @repo/ai, @repo/shared all complete
+   - Client-side calculator pattern works for both apps
+   - Can validate with Moni first, then apply to Convertly
 
 ### Timing
 
-Launch Moni **after** Convertly foundation (10-12 converters live). This allows:
-- Client-side calculator patterns proven
-- Mobile-first UX validated
-- Analytics from Convertly inform priorities
-- Financial accuracy requirements tackled with confidence
+Launch Moni **immediately after** Codemata Phase 10.4 (26 tools). This allows:
+- Leverage completed shared package infrastructure
+- Target high-value audience with financial intent
+- Validate client-side calculator architecture
+- Generate higher ROI before building commodity converters
 
 ---
 
@@ -485,18 +493,29 @@ export const ALL_TOOLS: Record<ToolCategoryId, ToolCategory> = {
 
 ### Phase 0: App Architecture Foundation
 
+**Status:** 🚧 **NEXT UP** - Launch after Codemata Phase 10.4 complete
+
 **Timeline:** 3-4 days
 **Goal:** Set up empty Moni app with complete navigation/search architecture
+
+**Prerequisites:**
+- ✅ @repo/config package ready (TypeScript, Biome, Vitest configs)
+- ✅ @repo/ai package ready (AI content generation)
+- ✅ @repo/shared package ready (shared types/utils)
+- ✅ @repo/ui package ready (common components)
+- ⏳ Codemata Phase 10.4 complete (26 tools live)
 
 #### Tasks
 
 **0.1 Create App from Codemata Template**
 
 - [ ] Copy `apps/codemata/` structure to `apps/moni/`
-- [ ] Update `package.json` (name: "@repo/moni", ports)
+- [ ] Update `package.json` (name: "@repo/moni", ports: 3002 dev, 3334 prod)
+- [ ] Extend @repo/config (biome.json, tsconfig.json, vitest.config.ts)
 - [ ] Change theme to green (`green-600` → `green-700`)
 - [ ] Update all branding ("Moni" wordmark, tagline: "Financial Calculators")
 - [ ] Remove Codemata-specific code (formatters, minifiers, etc.)
+- [ ] Add global FinancialDisclaimer component
 
 **0.2 Create ONE Placeholder Calculator**
 

@@ -3,14 +3,14 @@
 **Application:** Convertly
 **Domain:** convertly.benmvp.com
 **Purpose:** Unit and format conversion tools for everyone
-**Status:** 🚧 **PLANNED** - Launch after Codemata Phase 10.4
+**Status:** 🚧 **PLANNED** - Launch after Moni foundation
 
 ---
 
 ## Table of Contents
 
 1. [Overview](#overview)
-2. [Why Convertly Next?](#why-convertly-next)
+2. [Why Convertly After Moni?](#why-convertly-after-moni)
 3. [Tool Categories](#tool-categories)
 4. [Architecture & Patterns](#architecture--patterns)
 5. [Implementation Plan](#implementation-plan)
@@ -76,42 +76,42 @@ function convertLength(value: number, from: string, to: string): number {
 
 ---
 
-## Why Convertly Next?
+## Why Convertly After Moni?
 
 ### Strategic Rationale
 
-1. **Fastest Path to Traffic Diversity**
-   - Recipe Scaler alone has exceptional search volume
+1. **Moni Provides Higher ROI First**
+   - Financial calculators can't be easily Google-d
+   - Unit conversions are commoditized (Google answers "375F to C")
+   - Better to tackle high-value tools before commodity tools
+
+2. **Validates Client-Side Architecture**
+   - Moni proves client-side calculator patterns work
+   - Same architecture applies to Convertly converters
+   - Learn from Moni's mobile-first UX
+
+3. **Still Valuable - Recipe Scaler Anchor**
+   - Recipe Scaler has exceptional search volume
+   - Not easily replaced by AI/Google (fraction handling, scaling logic)
    - Cooking/measurement tools serve 100% of population
-   - Validates "beyond developers" strategy
 
-2. **Validates Monorepo Architecture**
-   - Second app proves shared component strategy
-   - Tests different audience/domain patterns
-   - Builds confidence before Moni's accuracy demands
-
-3. **Low Risk, High Reward**
-   - Simple math operations (vs. financial calculations)
+4. **Lower Risk After Moni Success**
+   - Simple math operations (vs. financial accuracy demands)
    - Fast to build (10-12 converters in 3-4 weeks)
-   - Huge search volume for Recipe Scaler
-   - Mobile usage patterns (different from Codemata)
+   - Proven calculator component patterns from Moni
 
-4. **Not AI-Commoditized**
-   - Converting units via AI chat = clunky
-   - Dedicated converter = instant, bookmarkable
-   - Mobile-first (AI chat less convenient on phones)
-
-5. **Complements Codemata**
+5. **Complements Both Apps**
    - Builds benmvp.com brand across audiences
-   - Cross-promotion opportunities
-   - Shared infrastructure amortized
+   - Developer tools (Codemata) + Finance (Moni) + General (Convertly)
+   - Cross-promotion across three distinct audiences
 
 ### Timing
 
-Launch Convertly **after** completing Codemata Phase 10.4 (26 tools). This allows:
-- Codemata to generate initial revenue
-- Analytics data to guide future priorities
-- Proven monorepo patterns to replicate
+Launch Convertly **after** Moni foundation (10-15 calculators live). This allows:
+- Client-side calculator patterns validated
+- Mobile-first UX lessons learned
+- Higher ROI tools launched first
+- Proven calculator component architecture to replicate
 
 ---
 
@@ -377,8 +377,18 @@ export const ALL_TOOLS: Record<ToolCategoryId, ToolCategory> = {
 
 ### Phase 0: App Architecture Foundation
 
+**Status:** 🚧 **NOT STARTED** - Launch after Moni foundation complete
+
 **Timeline:** 3-4 days
 **Goal:** Set up empty Convertly app with complete navigation/search architecture
+
+**Prerequisites:**
+- ✅ @repo/config package ready (TypeScript, Biome, Vitest configs)
+- ✅ @repo/ai package ready (AI content generation)
+- ✅ @repo/shared package ready (shared types/utils)
+- ✅ @repo/ui package ready (common components)
+- ⏳ Moni foundation complete (10-15 calculators live)
+- ⏳ Client-side calculator patterns validated
 
 #### Tasks
 
@@ -446,8 +456,11 @@ export const ALL_TOOLS: Record<ToolCategoryId, ToolCategory> = {
 
 #### Phase 1.1: Foundation Converters (Week 1)
 
+**Status:** 🚧 **NOT STARTED**
+
 **Tasks:**
-- [x] Create `apps/convertly/` from Codemata template
+- [ ] Create `apps/convertly/` from Codemata template
+- [ ] Extend @repo/config (biome.json, tsconfig.json, vitest.config.ts)
 - [ ] Change theme to purple (`purple-600`)
 - [ ] Adapt layout components (Header, Footer, Navigation)
 - [ ] Update branding ("Convertly" wordmark, tagline)

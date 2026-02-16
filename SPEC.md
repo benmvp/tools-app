@@ -296,62 +296,109 @@ Each app uses two ports: one for development (`pnpm dev`) and one for production
 
 ## Shared Packages
 
-### Current Status: YAGNI Approach
+### Current Status: Foundation Complete ✅
 
-Currently, all code lives directly in `apps/codemata/` following the **"You Aren't Gonna Need It"** principle. Shared packages will be extracted **only when duplication becomes painful** across multiple apps.
+The monorepo now includes **four shared packages** extracted from Codemata patterns, ready for use by all apps (Codemata, Convertly, Moni).
 
-**Rationale:**
-- Codemata is the only active app (Moni/Convertly are planned)
-- Premature abstraction adds complexity without proven benefit
-- Easier to iterate when code lives in one place
-- Clear duplication patterns will emerge naturally across apps
+**Extraction Rationale:**
+- Moni and Convertly are planned next
+- Shared configs eliminate 50-75% duplication in tooling setup
+- AI system is domain-agnostic and proven
+- Common utilities and types prevent code drift
 
-### Shareable Patterns Identified from Codemata
+### Extracted Packages (Completed)
 
-Once Convertly and/or Moni are built, the following patterns from Codemata are good candidates for extraction:
+#### 1. @repo/config ✅ **NEW**
 
-#### 1. Layout Components (Potentially Shareable)
+**Purpose:** Single source of truth for TypeScript, Biome, and Vitest configurations.
 
-**Header/Footer Structure:**
+**Contents:**
+- `typescript/base.json` - ES2022, strict mode, bundler resolution
+- `typescript/nextjs.json` - Next.js-specific compiler options
+- `typescript/package.json` - React package configs (no rootDir/outDir)
+- `biome/base.json` - React domain, organize imports
+- `biome/nextjs.json` - Next.js domain, CSS rules
+- `biome/package.json` - Simple extends for packages
+- `vitest/base.ts` - Node environment, globals
+- `vitest/react.ts` - React config exports
+- `vitest/nextjs.ts` - Next.js config function
+
+**Benefits:**
+- 50-75% reduction in config file sizes across monorepo
+- New apps can extend configs with 3-5 lines per file
+- Consistent tooling behavior across all apps/packages
+- Single place to update compiler/linter settings
+
+**Usage:**
+```json
+// tsconfig.json
+{ "extends": "@repo/config/typescript/nextjs" }
+
+// biome.json
+{ "extends": "@repo/config/biome/nextjs" }
+
+// vitest.config.ts
+import { nextjsConfig } from '@repo/config/vitest/nextjs'
+export default nextjsConfig(__dirname)
+```
+
+#### 2. @repo/ai ✅
+
+**Purpose:** AI content generation system using Gemini 2.0 Flash.
+
+**Contents:**
+- `client.ts` - Google Gemini API client configuration
+- `schema.ts` - Zod schemas for AI response validation
+- `prompts.ts` - System prompts (adaptable per app domain)
+- `generate.ts` - Content generation with retry logic + DEBUG_AI flag
+- `cache.ts` - Request deduplication to prevent duplicate API calls
+- `helpers.ts` - Category-specific AI content retrieval
+- `__tests__/` - Comprehensive unit tests (processContentNewlines, etc.)
+
+**Domain-agnostic** - Convertly and Moni can use the same infrastructure with different prompts.
+
+#### 3. @repo/shared ✅
+
+**Purpose:** Shared types and utility functions.
+
+**Contents:**
+- `types.ts` - Shared TypeScript types (ToolType, etc.)
+- `utils.ts` - `cn()` class name utility, environment detection
+- `recent-tools.ts` - Recent tools tracking logic
+
+**Domain-agnostic** - pure utility functions usable across all apps.
+
+#### 4. @repo/ui ✅
+
+**Purpose:** Shared UI components and patterns.
+
+**Contents:**
+- `JsonLd.tsx` - JSON-LD structured data component
+- Shared UI utilities and helpers
+
+**Note:** Layout components remain app-specific for now (each app has unique branding/navigation).
+
+---
+
+### Patterns Still in Codemata (App-Specific)
+
+The following remain in `apps/codemata/` as they are tool-specific and not needed by Convertly/Moni:
+
+#### 1. Layout Components (App-Specific)
+
+**Why not shared:**
+- Each app has unique branding (Codemata blue, Convertly purple, Moni green)
+- Different navigation structures (code categories vs converter categories vs calculator categories)
+- App-specific features (command menu shortcuts, recent tools)
+
+**Codemata components:**
 - `Header` - Top navigation with logo, menu, command menu trigger, theme toggle
 - `Footer` - Simple footer with copyright and links
 - `NavigationList` - Sidebar navigation with category grouping
 
-**Note:** Layout components would need theme configuration props to support different app colors/branding.
+#### 2. Tool/Category Architecture (Pattern to Replicate)
 
-#### 2. AI Content Generation System (Highly Shareable) ✅
-
-**Complete `lib/ai/` directory:**
-- `client.ts` - Google Gemini API client configuration
-- `schema.ts` - Zod schemas for AI response validation
-- `prompts.ts` - System prompts (adaptable per app domain)
-- `generate.ts` - Content generation with retry logic
-- `cache.ts` - Request deduplication to prevent duplicate API calls
-- `helpers.ts` - Category-specific AI content retrieval
-
-**This system is domain-agnostic** - Convertly and Moni can use the same infrastructure with different prompts.
-
-#### 3. Metadata & SEO Helpers (Highly Shareable) ✅
-
-**From `lib/metadata-helpers.ts`:**
-- `getTitleSuffix()` - Append site name to page titles
-- `ensureAbsoluteUrl()` - Convert relative URLs to absolute for OG tags
-- `generateMetadata()` - Standard metadata generation pattern
-
-**Domain-agnostic** - works for any site with configurable site name/URL.
-
-#### 4. Utility Functions (Highly Shareable) ✅
-
-**From `lib/utils.ts`:**
-- `cn()` - Class name merging utility (clsx + tailwind-merge)
-- Environment detection: `getEnvironmentMode()`, `isProductionBuild()`, `shouldGenerateAI()`, `shouldPrefetch()`
-- OG image helpers: `getOgImageUrl()` for dynamic social media previews
-
-**Domain-agnostic** - pure utility functions.
-
-#### 5. Tool/Category Registry Pattern (Adaptable) ✅
-
-**Pattern from `lib/tools-data.ts`:**
+**Codemata's `lib/tools-data.ts` pattern:**
 ```typescript
 // Category-driven architecture with nested tools
 export const ALL_TOOLS: Record<ToolCategoryId, ToolCategory> = {
@@ -366,64 +413,26 @@ export const ALL_TOOLS: Record<ToolCategoryId, ToolCategory> = {
   },
   // ... more categories
 }
-
-// Helper functions
-export function getCategoriesByOrder() { /* ... */ }
-export function getAllTools() { /* ... */ }
-export function getTotalToolCount() { /* ... */ }
 ```
 
-**Benefit:** Auto-generates navigation, home page, sitemap, search index from single data source.
+**Benefits:**
+- Auto-generates navigation, home page, sitemap, search index
+- Type-safe tool registry with category-specific extensions
+- Single source of truth for all tool metadata
 
-#### 6. Type System Pattern (Adaptable)
+**Replication:** Convertly and Moni will use the same pattern with converter/calculator-specific types.
 
-**From `lib/types.ts`:**
-```typescript
-export type ToolCategoryId = "formatters" | "minifiers" | ...
+#### 3. Metadata & SEO Helpers (Pattern to Replicate)
 
-export interface Tool {
-  id: string
-  name: string
-  description: string
-  url: string
-  icon: LucideIcon
-  comingSoon?: boolean
-}
+**Codemata's `lib/metadata-helpers.ts` pattern:**
+- `getTitleSuffix()` - Append site name to page titles
+- `ensureAbsoluteUrl()` - Convert relative URLs to absolute for OG tags
+- `generateMetadata()` - Standard metadata generation
 
-// Category-specific tool types extend base Tool
-export interface FormatterTool extends Tool {
-  action: ServerAction
-  language: string
-  example: string
-  metadata: { title: string; description: string }
-}
-```
+**Replication:** Each app will have its own `metadata-helpers.ts` with app-specific site config.
 
-**Benefit:** Type-safe tool registry with category-specific extensions.
+#### 4. Tool-Specific Components (Not Shareable)
 
-#### 7. Testing Setup (Highly Shareable) ✅
-
-**Configuration files:**
-- `vitest.config.ts` - Vitest setup with coverage
-- `playwright.config.ts` - E2E testing setup
-- `lighthouserc.json` - Performance/accessibility gates
-- GitHub Actions workflows for CI/CD
-
-**Domain-agnostic** - same testing patterns apply to all apps.
-
-#### 8. Configuration Files (Potentially Shareable)
-
-**Build/tooling configs:**
-- `next.config.ts` - Next.js configuration patterns
-- `tailwind.config.ts` - Tailwind setup (with theme config per app)
-- `biome.json` - Linting/formatting config
-- `tsconfig.json` - TypeScript compiler options
-
-**Note:** Apps may need slight variations (different domains, environment variables, etc.).
-
-### What NOT to Share ❌
-
-**Tool-specific components:**
 - `Transformer.tsx` - Dual CodeMirror editor (specific to code tools)
 - `TransformerEncoder.tsx` - Encode/decode variant (Codemata-specific)
 - `ValidatorWrapper.tsx` - Validation error display (Codemata-specific)
@@ -431,13 +440,29 @@ export interface FormatterTool extends Tool {
 
 These are **highly specialized** for Codemata's code transformation workflows and won't be needed by Convertly or Moni.
 
-### Extraction Strategy (When the Time Comes)
+---
 
-When building Convertly or Moni, follow this process:
+### Building New Apps (Convertly/Moni)
 
-1. **Copy, don't abstract** - Start by copying patterns from Codemata
-2. **Note duplication** - Document what feels repetitive/painful
-3. **Wait for third instance** - "Rule of three" before extracting
+**What's Ready to Use:**
+- ✅ @repo/config - Extend configs with 3-5 lines per file
+- ✅ @repo/ai - Generate tool content with different prompts
+- ✅ @repo/shared - Shared types and utilities
+- ✅ @repo/ui - Common UI components
+- ✅ Testing infrastructure - Vitest, Playwright, Lighthouse patterns
+
+**What to Replicate from Codemata:**
+- Category-driven tool registry pattern (`lib/tools-data.ts`)
+- Metadata helpers pattern (`lib/metadata-helpers.ts`)
+- Page structure (`app/[category]/[slug]/page.tsx`)
+- Navigation components (adapted for each app's branding)
+- AI content sections (adapted for converter/calculator context)
+
+**Strategy:**
+1. **Start with Phase 0** - Set up app skeleton with ONE tool
+2. **Validate infrastructure** - Config extends, AI generation, deployment
+3. **Rapid expansion** - Add 10+ tools using proven patterns
+4. **Extract on pain** - Only create new shared packages when duplication hurts
 4. **Extract cautiously** - Only truly shared, stable patterns
 5. **Prefer colocated code** - Keep app-specific logic in apps
 
