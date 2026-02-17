@@ -5,32 +5,32 @@ export const runtime = "edge";
 
 // Image metadata
 export const size = {
-  width: 32,
-  height: 32,
+	width: 32,
+	height: 32,
 };
 export const contentType = "image/png";
 
 // Image generation
 export default function Icon() {
-  return new ImageResponse(
-    <div
-      style={{
-        fontSize: 20,
-        background: "transparent",
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        color: "#2563eb",
-        fontFamily: "monospace",
-        fontWeight: "bold",
-      }}
-    >
-      &lt;/&gt;
-    </div>,
-    {
-      ...size,
-    },
-  );
+	return new ImageResponse(
+		<div
+			style={{
+				fontSize: 20,
+				background: "transparent",
+				width: "100%",
+				height: "100%",
+				display: "flex",
+				alignItems: "center",
+				justifyContent: "center",
+				color: "#2563eb",
+				fontFamily: "monospace",
+				fontWeight: "bold",
+			}}
+		>
+			&lt;/&gt;
+		</div>,
+		{
+			...size,
+		},
+	);
 }

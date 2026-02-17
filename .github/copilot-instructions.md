@@ -384,11 +384,14 @@ This project follows **"You Aren't Gonna Need It"** - extract shared packages **
 
 ## References
 
-- **SPEC.md** - Complete project specification & architecture decisions
-- **TODO.md** - Roadmap for future tools & features
-- **apps/codemata/README.md** - Complete developer guide (setup, architecture, deployment)
-- **apps/codemata/TESTING.md** - Comprehensive testing documentation (E2E, accessibility, CI/CD)
-- **Implementation Plan** - See SPEC.md Phase 1-7 for step-by-step progress
+- **Project Spec:** [SPEC.md](../SPEC.md) - High-level architecture, tech stack, shared patterns, development workflow
+- **Codemata Spec:** [apps/codemata/specs/codemata-spec.md](../apps/codemata/specs/codemata-spec.md) - Complete Codemata documentation (current tools, architecture, phases, roadmap)
+- **Convertly Spec:** [apps/convertly/specs/convertly-spec.md](../apps/convertly/specs/convertly-spec.md) - Convertly roadmap and architecture (planned)
+- **Moni Spec:** [apps/moni/specs/moni-spec.md](../apps/moni/specs/moni-spec.md) - Moni roadmap and architecture (planned)
+- **Codemata README:** [apps/codemata/README.md](../apps/codemata/README.md) - Complete developer guide (setup, architecture, deployment)
+- **Testing Guide:** [apps/codemata/TESTING.md](../apps/codemata/TESTING.md) - Comprehensive testing documentation (E2E, accessibility, CI/CD)
+- **OG Image Cache Busting:** [apps/codemata/docs/OG_IMAGE_CACHE_BUSTING.md](../apps/codemata/docs/OG_IMAGE_CACHE_BUSTING.md) - How to bust OpenGraph image cache after design changes
+- **Implementation Plan:** See app-specific spec files for phase-by-phase roadmaps
 
 ## Quick Tips
 

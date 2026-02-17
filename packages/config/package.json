@@ -1,0 +1,28 @@
+{
+	"name": "@repo/config",
+	"version": "0.0.0",
+	"private": true,
+	"description": "Shared configurations for TypeScript, Biome, and Vitest",
+	"exports": {
+		"./typescript/base.json": "./typescript/base.json",
+		"./typescript/nextjs.json": "./typescript/nextjs.json",
+		"./typescript/package.json": "./typescript/package.json",
+		"./biome/base.json": "./biome/base.json",
+		"./biome/nextjs.json": "./biome/nextjs.json",
+		"./biome/package.json": "./biome/package.json",
+		"./vitest/base": "./vitest/base.ts",
+		"./vitest/react": "./vitest/react.ts",
+		"./vitest/nextjs": "./vitest/nextjs.ts"
+	},
+	"files": [
+		"typescript",
+		"biome",
+		"vitest"
+	],
+	"devDependencies": {
+		"@types/node": "^22.10.6",
+		"@vitejs/plugin-react": "^4.3.4",
+		"typescript": "^5.7.3",
+		"vitest": "^2.1.9"
+	}
+}

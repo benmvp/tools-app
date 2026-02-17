@@ -1,12 +1,12 @@
 export const VALIDATOR_EXAMPLES = {
-  json: `{
+	json: `{
   "name": "John Doe",
   "age": 30,
   "email": "john@example.com",
   "tags": ["developer", "javascript"],
 }`,
 
-  jsonSchema: `{
+	jsonSchema: `{
   "type": "object",
   "required": ["name", "email"],
   "properties": {
@@ -17,13 +17,13 @@ export const VALIDATOR_EXAMPLES = {
   }
 }`,
 
-  regex: {
-    pattern: String.raw`(\w+)@(\w+\.\w+)`,
-    flags: "gi",
-    testString: "Contact us at john@example.com or jane@test.org for support.",
-  },
+	regex: {
+		pattern: String.raw`(\w+)@(\w+\.\w+)`,
+		flags: "gi",
+		testString: "Contact us at john@example.com or jane@test.org for support.",
+	},
 
-  html: `<!DOCTYPE html>
+	html: `<!DOCTYPE html>
 <html>
   <head><title>Test Page</title></head>
   <body>
@@ -32,7 +32,7 @@ export const VALIDATOR_EXAMPLES = {
   </body>
 </html>`,
 
-  css: `.container {
+	css: `.container {
   color: #ff0000;
   background: blue
   padding: 20px;
@@ -43,21 +43,21 @@ export const VALIDATOR_EXAMPLES = {
   font-weight bold;
 }`,
 
-  xml: `<?xml version="1.0" encoding="UTF-8"?>
+	xml: `<?xml version="1.0" encoding="UTF-8"?>
 <root>
   <item id="1">First Item</item>
   <item id="2">Second Item</item>
   <mismatched></wrong>
 </root>`,
 
-  url: `https://example.com/api/users?page=1&limit=10
+	url: `https://example.com/api/users?page=1&limit=10
 example.com
 ftp://user:pass@files.company.com:21/assets
 http://localhost:3000
 
 https://192.168.1.1/admin#settings`,
 
-  dockerfile: `# Base image without tag
+	dockerfile: `# Base image without tag
 from node
 
 # Missing -y flag and dev dependencies
@@ -77,7 +77,7 @@ EXPOSE 80 443
 # Missing CMD
 `,
 
-  yaml: `# Application configuration
+	yaml: `# Application configuration
 name: My Application
 version: 1.0.0
 database:

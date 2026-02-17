@@ -1,0 +1,30 @@
+{
+	"name": "@repo/ui",
+	"version": "0.0.0",
+	"private": true,
+	"exports": {
+		".": "./index.ts"
+	},
+	"scripts": {
+		"lint": "biome check .",
+		"format": "biome format --write .",
+		"type-check": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@repo/shared": "workspace:*",
+		"lucide-react": "^0.468.0"
+	},
+	"peerDependencies": {
+		"react": "^19.0.0"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^1.9.4",
+		"@repo/config": "workspace:*",
+		"@types/node": "^22.10.6",
+		"@types/react": "^19.0.6",
+		"@vitejs/plugin-react": "^4.3.4",
+		"jsdom": "^25.0.1",
+		"typescript": "^5.7.3",
+		"vitest": "^2.1.9"
+	}
+}

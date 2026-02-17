@@ -13,32 +13,32 @@ import { FORMATTER_SAMPLES } from "../../fixtures/samples";
  */
 
 test.describe("Formatter Tools - Integration", () => {
-  const REPRESENTATIVE_TOOL = FORMATTER_TOOLS["typescript-formatter"];
-  const sample = FORMATTER_SAMPLES.typescript;
+	const REPRESENTATIVE_TOOL = FORMATTER_TOOLS["typescript-formatter"];
+	const sample = FORMATTER_SAMPLES.typescript;
 
-  test("should format code via server action", async ({ page }) => {
-    await page.goto(REPRESENTATIVE_TOOL.url);
+	test("should format code via server action", async ({ page }) => {
+		await page.goto(REPRESENTATIVE_TOOL.url);
 
-    // Verify page loaded
-    await expect(page).toHaveTitle(
-      new RegExp(REPRESENTATIVE_TOOL.metadata.title, "i"),
-    );
+		// Verify page loaded
+		await expect(page).toHaveTitle(
+			new RegExp(REPRESENTATIVE_TOOL.metadata.title, "i"),
+		);
 
-    // Find input editor and paste code
-    const inputEditor = page.locator(".cm-content").first();
-    await inputEditor.click();
-    await inputEditor.fill(sample.valid);
+		// Find input editor and paste code
+		const inputEditor = page.locator(".cm-content").first();
+		await inputEditor.click();
+		await inputEditor.fill(sample.valid);
 
-    // Click the Format button
-    const formatButton = page.getByRole("button", { name: /format/i });
-    await formatButton.click();
+		// Click the Format button
+		const formatButton = page.getByRole("button", { name: /format/i });
+		await formatButton.click();
 
-    // Wait for success toast (indicates formatting completed)
-    const toast = page.locator("[data-sonner-toast]").first();
-    await expect(toast).toBeVisible({ timeout: 5000 });
+		// Wait for success toast (indicates formatting completed)
+		const toast = page.locator("[data-sonner-toast]").first();
+		await expect(toast).toBeVisible({ timeout: 5000 });
 
-    // Verify copy button is enabled (output exists)
-    const copyButton = page.getByRole("button", { name: /copy/i }).first();
-    await expect(copyButton).toBeEnabled();
-  });
+		// Verify copy button is enabled (output exists)
+		const copyButton = page.getByRole("button", { name: /copy/i }).first();
+		await expect(copyButton).toBeEnabled();
+	});
 });
