@@ -172,3 +172,41 @@ export function getToolStructuredData(path: string, toolName: string) {
 		url: getAppUrl(path),
 	};
 }
+
+/**
+ * Format currency with context-dependent decimal precision.
+ * Shows no decimals for whole numbers, 2 decimals for fractional amounts.
+ *
+ * Examples:
+ * - formatCurrency(15000) → "$15,000"
+ * - formatCurrency(15432.67) → "$15,432.67"
+ * - formatCurrency(100.5) → "$100.50"
+ *
+ * @param amount - The numeric amount to format
+ * @returns Formatted currency string with $ symbol and thousands separators
+ */
+export function formatCurrency(amount: number): string {
+	return new Intl.NumberFormat("en-US", {
+		style: "currency",
+		currency: "USD",
+		minimumFractionDigits: amount % 1 === 0 ? 0 : 2,
+		maximumFractionDigits: 2,
+	}).format(amount);
+}
+
+/**
+ * Format a rate (0-1) as a percentage with context-dependent decimal precision.
+ * Shows no decimals for whole percentages, 2 decimals for fractional percentages.
+ *
+ * Examples:
+ * - formatPercentage(0.05) → "5%"
+ * - formatPercentage(0.0543) → "5.43%"
+ * - formatPercentage(0.125) → "12.50%"
+ *
+ * @param rate - The rate as a decimal (e.g., 0.05 for 5%)
+ * @returns Formatted percentage string with % symbol
+ */
+export function formatPercentage(rate: number): string {
+	const percentage = rate * 100;
+	return `${percentage % 1 === 0 ? percentage : percentage.toFixed(2)}%`;
+}

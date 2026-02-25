@@ -11,7 +11,20 @@ interface ContentSectionProps {
 
 /**
  * Content section component with markdown rendering
- * All sections are expanded (no collapsing)
+ *
+ * Renders a heading and markdown content with syntax highlighting
+ * for code blocks. Supports GitHub Flavored Markdown (GFM) for
+ * tables, task lists, strikethrough, etc.
+ *
+ * All sections are expanded (no collapsing) for better SEO.
+ *
+ * @example
+ * ```tsx
+ * <ContentSection
+ *   heading="How to Use"
+ *   content="This tool helps you **format** code..."
+ * />
+ * ```
  */
 export function ContentSection({ heading, content }: ContentSectionProps) {
 	return (

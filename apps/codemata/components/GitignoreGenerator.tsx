@@ -4,8 +4,8 @@ import { ChevronDown, Download, Search, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { CodeEditor } from "@/components/CodeEditor";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Badge } from "@repo/ui";
+import { Button } from "@repo/ui";
 import {
 	DropdownMenu,
 	DropdownMenuContent,

@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { AIContentSkeleton } from "@/components/AIContentSkeleton";
-import { CategoryBackLink } from "@/components/CategoryBackLink";
+import { CategoryBackLink } from "@repo/ui";
 import { EncoderAIContent } from "@/components/EncoderAIContent";
 import { EncoderIntro } from "@/components/EncoderIntro";
 import { ScrollToTopFab } from "@/components/ScrollToTopFab";
@@ -71,12 +71,12 @@ export default async function EncoderPage({
 			{/* Structured Data */}
 			<JsonLd data={structuredData} />
 
-			<div className="mx-auto max-w-7xl px-4 py-8 flex flex-col">
-				{/* Page Header (first in DOM for SEO/A11y) */}
-				<h1 className="mb-2 text-4xl font-bold">{encoder.name}</h1>
-
-				{/* Category Navigation (after H1 in DOM, but displayed above via CSS order) */}
+			<div className="mx-auto max-w-7xl px-4 py-3 lg:py-8">
+				{/* Category Navigation */}
 				<CategoryBackLink href="/encoders" label="Encoders" />
+
+				{/* Page Header */}
+				<h1 className="mb-2 text-4xl font-bold">{encoder.name}</h1>
 
 				{/* Intro paragraph with Suspense (replaces with AI intro when ready) */}
 				<Suspense
