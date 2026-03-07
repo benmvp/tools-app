@@ -88,11 +88,12 @@ test.describe("Viewer Tools - Integration", () => {
 		await expect(previewTab).toHaveAttribute("data-state", "active");
 
 		// Should show error message in preview panel
-		// Using direct text locator instead of filtering by tabpanel
+		// The component auto-triggers handlePreview() on tab change, which sets error state
+		// Using longer timeout for async state updates on mobile devices
 		const errorMessage = page.getByText(
 			/please enter some markdown to preview/i,
 		);
-		await expect(errorMessage).toBeVisible();
+		await expect(errorMessage).toBeVisible({ timeout: 10000 });
 
 		// Copy HTML button should be disabled (no output)
 		const copyButton = page.getByRole("button", { name: /copy html/i });
