@@ -1,4 +1,8 @@
-import { getToolStructuredData, isProductionBuild } from "@repo/shared";
+import {
+	getToolStructuredData,
+	isProductionBuild,
+	PAGE_REVALIDATE_SECONDS,
+} from "@repo/shared";
 import { JsonLd } from "@repo/ui";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -19,8 +23,7 @@ import { generateToolMetadata } from "@/lib/metadata-helpers";
 import { VALIDATOR_TOOLS } from "@/lib/tools-data";
 import { VALIDATOR_EXAMPLES } from "@/lib/validators/examples";
 
-// ISR revalidation - 24 hours
-export const revalidate = 86400;
+export const revalidate = PAGE_REVALIDATE_SECONDS;
 
 // Max duration for Vercel serverless functions (AI generation)
 export const maxDuration = 30;

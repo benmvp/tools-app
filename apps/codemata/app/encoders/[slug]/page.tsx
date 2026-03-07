@@ -1,4 +1,8 @@
-import { getToolStructuredData, isProductionBuild } from "@repo/shared";
+import {
+	getToolStructuredData,
+	isProductionBuild,
+	PAGE_REVALIDATE_SECONDS,
+} from "@repo/shared";
 import { JsonLd } from "@repo/ui";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -13,8 +17,7 @@ import { VisitTracker } from "@/components/VisitTracker";
 import { generateToolMetadata } from "@/lib/metadata-helpers";
 import { ENCODER_TOOLS } from "@/lib/tools-data";
 
-// ISR: Revalidate every 24 hours
-export const revalidate = 86400;
+export const revalidate = PAGE_REVALIDATE_SECONDS;
 
 // Extend serverless function timeout for AI generation
 export const maxDuration = 30;

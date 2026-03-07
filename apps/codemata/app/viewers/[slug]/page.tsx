@@ -1,4 +1,8 @@
-import { getToolStructuredData, isProductionBuild } from "@repo/shared";
+import {
+	getToolStructuredData,
+	isProductionBuild,
+	PAGE_REVALIDATE_SECONDS,
+} from "@repo/shared";
 import { JsonLd } from "@repo/ui";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -12,8 +16,7 @@ import { MarkdownViewer } from "@/components/viewers/MarkdownViewer";
 import { generateToolMetadata } from "@/lib/metadata-helpers";
 import { VIEWER_TOOLS } from "@/lib/tools-data";
 
-// ISR: Revalidate every 24 hours
-export const revalidate = 86400;
+export const revalidate = PAGE_REVALIDATE_SECONDS;
 export const maxDuration = 30; // For AI generation
 export const dynamicParams = true;
 
