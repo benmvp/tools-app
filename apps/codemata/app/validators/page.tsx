@@ -1,8 +1,4 @@
-import {
-	getAppUrl,
-	getOgImageUrl,
-	PAGE_REVALIDATE_SECONDS,
-} from "@repo/shared";
+import { getAppUrl, getOgImageUrl } from "@repo/shared";
 import type { Metadata } from "next";
 import { ScrollToTopFab } from "@/components/ScrollToTopFab";
 import { ToolCard } from "@/components/ToolCard";
@@ -47,7 +43,8 @@ export const metadata: Metadata = {
 	},
 };
 
-export const revalidate = PAGE_REVALIDATE_SECONDS;
+// ISR: Revalidate page every 7 days
+export const revalidate = 604800;
 
 export default function ValidatorsPage() {
 	return (

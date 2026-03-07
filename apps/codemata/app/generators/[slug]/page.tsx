@@ -1,4 +1,4 @@
-import { getToolStructuredData, PAGE_REVALIDATE_SECONDS } from "@repo/shared";
+import { getToolStructuredData } from "@repo/shared";
 import { JsonLd } from "@repo/ui";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -12,7 +12,8 @@ import { generateToolMetadata } from "@/lib/metadata-helpers";
 import { GENERATOR_TOOLS } from "@/lib/tools-data";
 import { generateGitignore } from "../actions";
 
-export const revalidate = PAGE_REVALIDATE_SECONDS;
+// ISR: Revalidate page every 7 days
+export const revalidate = 604800;
 
 // Pre-render all generator pages at build time
 export async function generateStaticParams() {
