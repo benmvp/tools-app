@@ -3,7 +3,7 @@
 **Application:** Moni
 **Domain:** moni.benmvp.com
 **Purpose:** Personal finance calculators and planning tools
-**Status:** 🚧 **PLANNED** - Launch after Codemata Phase 10.4
+**Status:** 🔨 **IN DEVELOPMENT** - Phase 0 complete (1 calculator), deployment pending
 
 ---
 
@@ -122,17 +122,18 @@ Launch Moni **immediately after** Codemata Phase 10.4 (26 tools). This allows:
 | **50/30/20 Budget Calculator** ⭐⭐ | VERY HIGH | Calculate budget based on after-tax income   |
 | Expense Tracker            | HIGH    | Track monthly expenses by category             |
 
-### 2. Savings & Investing (7 tools) - **CORE CATEGORY**
+### 2. Savings & Investing (8 tools) - **CORE CATEGORY**
 
-| Tool Name                          | Traffic | Description                                    |
-| ---------------------------------- | ------- | ---------------------------------------------- |
-| **Compound Interest Calculator** ⭐⭐⭐ | EXTREME | Visualize growth with compound interest       |
-| Savings Goal Calculator            | HIGH    | How much to save monthly to reach goal         |
-| Investment Return Calculator       | HIGH    | Calculate ROI on investments                   |
-| Retirement Savings Calculator      | HIGH    | How much to save for retirement                |
-| Emergency Fund Calculator          | MEDIUM  | Calculate ideal emergency fund size            |
-| **Fire Calculator** ⭐              | HIGH    | Financial Independence Retire Early calculator |
-| Dollar Cost Averaging Calculator   | MEDIUM  | Show DCA benefits vs lump sum                  |
+| Tool Name                          | Status | Traffic | Description                                    |
+| ---------------------------------- | ------ | ------- | ---------------------------------------------- |
+| **Simple Interest Calculator** | ✅ | HIGH | Calculate simple interest on investments (Phase 0 test tool) |
+| **Compound Interest Calculator** ⭐⭐⭐ | 📋 | EXTREME | Visualize growth with compound interest       |
+| Savings Goal Calculator            | 📋 | HIGH    | How much to save monthly to reach goal         |
+| Investment Return Calculator       | 📋 | HIGH    | Calculate ROI on investments                   |
+| Retirement Savings Calculator      | 📋 | HIGH    | How much to save for retirement                |
+| Emergency Fund Calculator          | 📋 | MEDIUM  | Calculate ideal emergency fund size            |
+| **Fire Calculator** ⭐              | 📋 | HIGH    | Financial Independence Retire Early calculator |
+| Dollar Cost Averaging Calculator   | 📋 | MEDIUM  | Show DCA benefits vs lump sum                  |
 
 ### 3. Debt Management (5 tools) - **HIGH INTENT CATEGORY**
 
@@ -493,50 +494,50 @@ export const ALL_TOOLS: Record<ToolCategoryId, ToolCategory> = {
 
 ### Phase 0: App Architecture Foundation
 
-**Status:** 🚧 **NEXT UP** - Launch after Codemata Phase 10.4 complete
+**Status:** � **IN PROGRESS** - Core app complete, deployment pending
 
-**Timeline:** 3-4 days
+**Timeline:** 3-4 days (Started Feb 18, 2026)
 **Goal:** Set up empty Moni app with complete navigation/search architecture
 
 **Prerequisites:**
 - ✅ @repo/config package ready (TypeScript, Biome, Vitest configs)
 - ✅ @repo/ai package ready (AI content generation)
-- ✅ @repo/shared package ready (shared types/utils)
-- ✅ @repo/ui package ready (common components)
-- ⏳ Codemata Phase 10.4 complete (26 tools live)
+- ✅ @repo/shared package ready (shared types/utils + formatCurrency/formatPercentage)
+- ✅ @repo/ui package ready (common components + Button/Badge primitives)
+- ✅ Codemata Phase 10.4 complete (26 tools live)
 
 #### Tasks
 
 **0.1 Create App from Codemata Template**
 
-- [ ] Copy `apps/codemata/` structure to `apps/moni/`
-- [ ] Update `package.json` (name: "@repo/moni", ports: 3002 dev, 3334 prod)
-- [ ] Extend @repo/config (biome.json, tsconfig.json, vitest.config.ts)
-- [ ] Change theme to green (`green-600` → `green-700`)
-- [ ] Update all branding ("Moni" wordmark, tagline: "Financial Calculators")
-- [ ] Remove Codemata-specific code (formatters, minifiers, etc.)
-- [ ] Add global FinancialDisclaimer component
+- [x] Copy `apps/codemata/` structure to `apps/moni/`
+- [x] Update `package.json` (name: "@repo/moni", ports: 3002 dev, 3334 prod)
+- [x] Extend @repo/config (biome.json, tsconfig.json, vitest.config.ts)
+- [x] Change theme to green (`#16A34A` green-600, `#22C55E` green-500 dark mode)
+- [x] Update all branding ($ dollar sign wordmark/logos, "Moni - Financial Calculators")
+- [x] Remove Codemata-specific code (formatters, minifiers, etc.)
+- [x] Add global FinancialDisclaimer component
 
 **0.2 Create ONE Placeholder Calculator**
 
-- [ ] Create Simple Interest Calculator (simplest: principal × rate × time)
-- [ ] Validates entire data flow: tool registry → page → component
-- [ ] Tests client-side calculation pattern
-- [ ] Example code in `lib/tools-data.ts`
-- [ ] AI content generation working
-- [ ] Financial disclaimer component visible
+- [x] Create Simple Interest Calculator (simplest: principal × rate × time)
+- [x] Validates entire data flow: tool registry → page → component
+- [x] Tests client-side calculation pattern (useMemo for performance)
+- [x] Example code in `lib/tools-data.ts` (category-driven architecture)
+- [x] AI content generation working (via @repo/ai with calculator prompts)
+- [x] Financial disclaimer component visible
 
 **0.3 Setup Navigation Infrastructure**
 
-- [ ] Home page with hero + single calculator card
-- [ ] Category page: `/investing-savings` with Simple Interest
-- [ ] Tool page: `/simple-interest-calculator`
-- [ ] Left sidebar navigation (desktop)
-- [ ] Mobile navigation drawer
-- [ ] Command menu (⌘K) with fuzzy search
-- [ ] Recent calculators tracking (localStorage)
-- [ ] CategoryBackLink component
-- [ ] Global FinancialDisclaimer component
+- [x] Home page with hero + single calculator card
+- [x] Category page: `/savings-investing` with Simple Interest
+- [x] Tool page: `/savings-investing/simple-interest-calculator`
+- [x] Left sidebar navigation (desktop, centered $ wordmark)
+- [x] Mobile navigation drawer
+- [x] Command menu (⌘K) with fuzzy search
+- [x] Recent calculators tracking (localStorage via @repo/shared)
+- [x] CategoryBackLink component (moved to @repo/ui, positioned above h1)
+- [x] Global FinancialDisclaimer component
 
 **0.4 Vercel Setup**
 
@@ -560,12 +561,110 @@ export const ALL_TOOLS: Record<ToolCategoryId, ToolCategory> = {
 
 **Deliverable:** Working Moni app with ONE calculator, complete navigation, financial disclaimers, deployed to production. Ready to add 10+ calculators in Phase 1. 🚀
 
+**Completed Extras (Beyond Spec):**
+- [x] Moved Button & Badge primitives to @repo/ui (shared across apps)
+- [x] Added formatCurrency() & formatPercentage() utilities to @repo/shared
+- [x] Fixed infinite loop bug in SimpleInterestCalculator (useMemo pattern)
+- [x] Optimized responsive padding (`py-3 lg:py-8` for mobile)
+- [x] Constrained input widths (`max-w-md` on medium+ screens)
+- [x] Logo spacing improvements (140×52 viewBox, proper $ symbol extension)
+- [x] Empty categories filtered from navigation
+- [x] All tool pages refactored (CategoryBackLink before h1, removed CSS order tricks)
+
 **Why Phase 0?**
 - Validates entire architecture before building tools
 - Tests financial disclaimer integration globally
 - Proves AI content generation works for financial context
 - Single calculator exercises all code paths
 - Foundation ready for high-accuracy calculators
+
+---
+
+### Phase 1: Core Calculators & Analytics
+
+**Status:** 🚧 **PLANNED** - After Phase 0 deployment
+
+**Timeline:** 1-2 weeks
+**Goal:** Add 5-7 high-traffic calculators + GA4 event tracking
+
+#### Tasks
+
+**1.1 GA4 Event Tracking Setup**
+
+- [ ] **Create event taxonomy for Moni**
+  - Calculator events: `calculator_loaded`, `calculation_performed`, `input_changed`
+  - Navigation events: `calculator_search`, `category_viewed`
+  - Custom dimensions: `calculator_type`, `input_principal`, `input_rate`, `time_period`
+- [ ] **Implement tracking in Simple Interest Calculator**
+  - Track page views with calculator metadata
+  - Track calculation completions
+  - Track input interactions (debounced)
+- [ ] **Add GA4 tracking to Codemata as well**
+  - Tool events: `tool_loaded`, `format_action`, `minify_action`, `copy_result`
+  - Transform events: `code_formatted`, `code_minified`, `code_encoded`
+  - Custom dimensions: `tool_type`, `language`, `indentation`, `action_type`
+- [ ] **Set up conversion goals in GA4**
+  - Primary: Calculation completed
+  - Secondary: Multiple calculators used in session
+  - Engagement: Time on calculator > 30s
+- [ ] **Document event schema in both READMEs**
+  - Event naming conventions
+  - Required/optional parameters
+  - Custom dimension taxonomy
+  - Privacy considerations (no PII in events)
+
+**1.2 Add High-Traffic Calculators**
+
+- [ ] **Compound Interest Calculator** ⭐⭐⭐ (with recharts visualization)
+  - Initial investment + monthly contributions
+  - Compounding frequency (monthly, yearly)
+  - Line chart showing growth over time
+  - Yearly breakdown table
+- [ ] **Debt Payoff Calculator** ⭐⭐⭐ (snowball/avalanche comparison)
+  - Multiple debts with balance/APR/minPayment
+  - Snowball vs Avalanche strategy comparison
+  - Timeline visualization
+  - Total interest saved calculation
+- [ ] **Mortgage Calculator** ⭐⭐⭐ (PITI breakdown)
+  - Principal, Interest, Taxes, Insurance
+  - PMI calculation (< 20% down payment)
+  - Amortization schedule
+  - Extra payment simulator
+- [ ] **50/30/20 Budget Calculator** ⭐⭐ (pie chart visualization)
+  - After-tax income input
+  - Automatic 50/30/20 split
+  - Pie chart breakdown
+  - Detailed category recommendations
+- [ ] **Loan Amortization Calculator** ⭐⭐ (amortization table)
+  - Month-by-month principal/interest breakdown
+  - Total interest paid
+  - Downloadable schedule (CSV)
+  - Extra payment impact
+
+**1.3 Chart Library Integration**
+
+- [ ] Install recharts + shadcn/ui chart components
+- [ ] Create reusable chart components:
+  - `<LineChart />` for investment growth
+  - `<PieChart />` for budget breakdown
+  - `<AmortizationTable />` for loan schedules
+  - `<StackedAreaChart />` for debt payoff timeline
+- [ ] Add responsive chart behaviors (mobile-friendly scaling)
+- [ ] Test chart accessibility:
+  - Keyboard navigation
+  - ARIA labels for data points
+  - Screen reader announcements
+  - Color contrast (WCAG AA compliant)
+
+**1.4 Testing & Documentation**
+
+- [ ] Unit tests for new calculators (100% coverage)
+- [ ] E2E tests for chart interactions
+- [ ] Lighthouse scores > 95 for all pages
+- [ ] Update README with Phase 1 completion status
+- [ ] Document GA4 events in analytics guide
+
+**Deliverable:** Moni with 6 calculators, full GA4 tracking, data visualizations, and matching analytics for Codemata. Ready for Phase 2 (advanced calculators).
 
 ---
 
@@ -727,10 +826,18 @@ Below is the comprehensive list of all planned Moni tools. Prioritize based on a
   - Compare to budget targets
   - Spending trends over time
 
-### Savings & Investing (7 tools)
+### Savings & Investing (8 tools)
 
-**Status:** 0/7 (Priority: High)
+**Status:** 1/8 (Priority: High) - Simple Interest Calculator ✅ Complete
 
+- [x] **Simple Interest Calculator** (HIGH TRAFFIC) ✅
+  - Calculate interest on principal × rate × time
+  - Real-time validation with error handling
+  - Currency & percentage formatting
+  - Client-side calculation (useMemo pattern)
+  - Financial disclaimer integration
+  - AI content generation working
+  - **Deployed:** Phase 0 test calculator
 - [ ] **Compound Interest Calculator** ⭐⭐⭐ (EXTREMELY HIGH TRAFFIC)
   - Initial investment + periodic contributions
   - Monthly/yearly compounding
@@ -905,15 +1012,31 @@ Below is the comprehensive list of all planned Moni tools. Prioritize based on a
 
 ## Summary
 
-**Launch Strategy:** Launch Moni after Convertly foundation is complete and client-side calculator patterns are proven. Start with 10-12 highest-traffic calculators (compound interest, debt payoff, mortgage, budget calculator).
+**Current Status (Feb 2026):** Phase 0 complete (except deployment). Moni has 1 working calculator with full infrastructure.
+
+**Launch Strategy (UPDATED):** Launching Moni BEFORE Convertly (reversed from original plan). Simple Interest Calculator validates client-side calculation patterns, AI content generation, and financial accuracy requirements. Monorepo infrastructure proven with Codemata (26 tools). Ready for Phase 1 (5-7 more calculators + GA4 tracking).
 
 **Architecture:** Client-side calculations for privacy and cost savings, extensive testing for financial accuracy, chart visualizations for engagement, legal disclaimers on all pages.
 
 **Development Ports:**
-- Dev server: `localhost:3002`
+- Dev server: `localhost:3002` ✅ Running
 - Production build: `localhost:3334` (for E2E/Lighthouse testing)
 
-**Timing:** After Convertly validates monorepo with second app. Moni's financial accuracy demands require mature infrastructure and testing confidence.
+**Completed Infrastructure:**
+- ✅ Category-driven tool registry (same pattern as Codemata)
+- ✅ Complete navigation (sidebar, mobile drawer, command menu ⌘K)
+- ✅ Shared packages (@repo/ai, @repo/shared, @repo/ui with Button/Badge)
+- ✅ $ Dollar sign branding (wordmark, logos, favicons, OG images)
+- ✅ Simple Interest Calculator with validation & formatting
+- ✅ Financial disclaimer component
+- ✅ AI content generation for financial context
+- ✅ Responsive design (mobile-first, constrained inputs)
+
+**Next Steps:**
+1. Resolve open issues (logo colors, commit 150 files)
+2. Deploy to Vercel (moni.benmvp.com)
+3. Add testing infrastructure (Phase 0.5)
+4. Phase 1: Add 5-7 high-traffic calculators + GA4 tracking
 
 **Legal/Accuracy:** Every calculator includes disclaimers ("not financial advice"), tested against known calculators, reviewed for accuracy. This is **critical** - users make real financial decisions based on results.
 

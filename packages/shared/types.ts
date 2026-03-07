@@ -224,25 +224,23 @@ export interface ViewerTool extends Tool {
 /**
  * Type-safe category identifiers
  * Use this instead of loose strings for category references
+ *
+ * NOTE: Each app (Codemata, Moni) defines its own ToolCategoryId in lib/types.ts
+ * This union type includes all possible categories across all apps for shared utilities
  */
-export type ToolCategoryId =
-	| "formatters"
-	| "minifiers"
-	| "encoders"
-	| "validators"
-	| "generators"
-	| "viewers";
+export type ToolCategoryId = string;
 
 /**
  * Tool type identifiers for AI content generation
  * Singular form used in generateToolContent and related functions
  */
 export type ToolType =
-	| "formatter"
-	| "minifier"
+	| "calculator"
 	| "encoder"
-	| "validator"
+	| "formatter"
 	| "generator"
+	| "minifier"
+	| "validator"
 	| "viewer";
 
 /**

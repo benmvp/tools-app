@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { AIContentSkeleton } from "@/components/AIContentSkeleton";
-import { CategoryBackLink } from "@/components/CategoryBackLink";
+import { CategoryBackLink } from "@repo/ui";
 import { MinifierAIContent } from "@/components/MinifierAIContent";
 import { MinifierIntro } from "@/components/MinifierIntro";
 import { ScrollToTopFab } from "@/components/ScrollToTopFab";
@@ -75,12 +75,12 @@ export default async function MinifierPage({
 			{/* Structured Data */}
 			<JsonLd data={structuredData} />
 
-			<div className="max-w-7xl mx-auto px-4 py-8 flex flex-col">
-				{/* Page Header (first in DOM for SEO/A11y) */}
-				<h1 className="text-4xl font-bold mb-2">{minifier.name}</h1>
-
-				{/* Category Navigation (after H1 in DOM, but displayed above via CSS order) */}
+			<div className="max-w-7xl mx-auto px-4 py-3 lg:py-8">
+				{/* Category Navigation */}
 				<CategoryBackLink href="/minifiers" label="Minifiers" />
+
+				{/* Page Header */}
+				<h1 className="text-4xl font-bold mb-2">{minifier.name}</h1>
 
 				{/* Intro paragraph with Suspense (replaces with AI intro when ready) */}
 				<Suspense

@@ -1,0 +1,20 @@
+{
+	"extends": "@repo/config/typescript/nextjs.json",
+	"compilerOptions": {
+		"paths": {
+			"@/*": ["./*"],
+			"@repo/shared": ["../../packages/shared"],
+			"@repo/ai": ["../../packages/ai"],
+			"@repo/ui": ["../../packages/ui"]
+		}
+	},
+	"include": [
+		"next-env.d.ts",
+		"**/*.ts",
+		"**/*.tsx",
+		".next/types/**/*.ts",
+		".next/dev/types/**/*.ts",
+		"**/*.mts"
+	],
+	"exclude": ["node_modules"]
+}

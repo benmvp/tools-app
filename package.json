@@ -13,7 +13,9 @@
     "lint": "turbo run lint",
     "test": "turbo run test",
     "format": "turbo run format",
-    "type-check": "turbo run type-check"
+    "type-check": "turbo run type-check",
+    "codemata:dev": "pnpm --filter @repo/codemata dev",
+    "moni:dev": "pnpm --filter @repo/moni dev"
   },
   "devDependencies": {
     "turbo": "^2.3.3"
