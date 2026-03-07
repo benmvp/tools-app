@@ -19,8 +19,8 @@ import { generateToolMetadata } from "@/lib/metadata-helpers";
 import { VALIDATOR_TOOLS } from "@/lib/tools-data";
 import { VALIDATOR_EXAMPLES } from "@/lib/validators/examples";
 
-// ISR revalidation - 24 hours
-export const revalidate = 86400;
+// ISR: Revalidate page every 7 days
+export const revalidate = 604800;
 
 // Max duration for Vercel serverless functions (AI generation)
 export const maxDuration = 30;

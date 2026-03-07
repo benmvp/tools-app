@@ -43,8 +43,8 @@ export const metadata: Metadata = {
 	},
 };
 
-// ISR revalidation - 24 hours
-export const revalidate = 86400;
+// ISR: Revalidate page every 7 days
+export const revalidate = 604800;
 
 export default function ValidatorsPage() {
 	return (

@@ -13,8 +13,8 @@ import { VisitTracker } from "@/components/VisitTracker";
 import { generateToolMetadata } from "@/lib/metadata-helpers";
 import { ENCODER_TOOLS } from "@/lib/tools-data";
 
-// ISR: Revalidate every 24 hours
-export const revalidate = 86400;
+// ISR: Revalidate page every 7 days
+export const revalidate = 604800;
 
 // Extend serverless function timeout for AI generation
 export const maxDuration = 30;

@@ -12,8 +12,8 @@ import { MarkdownViewer } from "@/components/viewers/MarkdownViewer";
 import { generateToolMetadata } from "@/lib/metadata-helpers";
 import { VIEWER_TOOLS } from "@/lib/tools-data";
 
-// ISR: Revalidate every 24 hours
-export const revalidate = 86400;
+// ISR: Revalidate page every 7 days
+export const revalidate = 604800;
 export const maxDuration = 30; // For AI generation
 export const dynamicParams = true;
 

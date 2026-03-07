@@ -12,8 +12,8 @@ import { generateToolMetadata } from "@/lib/metadata-helpers";
 import { GENERATOR_TOOLS } from "@/lib/tools-data";
 import { generateGitignore } from "../actions";
 
-// ISR: Revalidate every 24 hours
-export const revalidate = 86400;
+// ISR: Revalidate page every 7 days
+export const revalidate = 604800;
 
 // Pre-render all generator pages at build time
 export async function generateStaticParams() {
