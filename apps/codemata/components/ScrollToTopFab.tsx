@@ -2,7 +2,7 @@
 
 import { ArrowUp } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@repo/ui";
 import {
 	Tooltip,
 	TooltipContent,

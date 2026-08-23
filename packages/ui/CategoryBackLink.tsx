@@ -6,6 +6,20 @@ interface CategoryBackLinkProps {
 	label: string;
 }
 
+/**
+ * Back link to category page
+ *
+ * Displays a styled back button at the top of tool pages
+ * that links to the parent category page.
+ *
+ * @example
+ * ```tsx
+ * <CategoryBackLink
+ *   href="/formatters"
+ *   label="All Formatters"
+ * />
+ * ```
+ */
 export function CategoryBackLink({ href, label }: CategoryBackLinkProps) {
 	return (
 		<Link

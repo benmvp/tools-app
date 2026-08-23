@@ -1,7 +1,7 @@
 "use client";
 
 import { X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@repo/ui";
 import { NavigationList } from "./NavigationList";
 
 interface MobileNavProps {

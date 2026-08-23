@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { AIContentSkeleton } from "@/components/AIContentSkeleton";
-import { CategoryBackLink } from "@/components/CategoryBackLink";
+import { CategoryBackLink } from "@repo/ui";
 import { ValidatorAIContent } from "@/components/ValidatorAIContent";
 import { ValidatorIntro } from "@/components/ValidatorIntro";
 import { VisitTracker } from "@/components/VisitTracker";
@@ -107,7 +107,7 @@ export default async function ValidatorPage({
 			{/* Structured Data */}
 			<JsonLd data={structuredData} />
 
-			<div className="max-w-7xl mx-auto px-4 py-6 md:py-12">
+			<div className="max-w-7xl mx-auto px-4 py-3 lg:py-8">
 				<div className="flex flex-col gap-6">
 					<CategoryBackLink href="/validators" label="Validators" />
 					<div>

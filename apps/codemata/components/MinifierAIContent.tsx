@@ -1,5 +1,4 @@
-import { ContentSection } from "@/components/ContentSection";
-import { RecommendedTools } from "@/components/RecommendedTools";
+import { ContentSection, RecommendedTools } from "@repo/ui";
 import { TipCard } from "@/components/TipCard";
 import { getAllAvailableTools, getMinifierContent } from "@/lib/ai-helpers";
 

@@ -11,10 +11,16 @@
 		"type-check": "tsc --noEmit"
 	},
 	"dependencies": {
+		"@radix-ui/react-slot": "^1.1.1",
 		"@repo/shared": "workspace:*",
-		"lucide-react": "^0.468.0"
+		"class-variance-authority": "^0.7.1",
+		"lucide-react": "^0.468.0",
+		"react-markdown": "^9.0.1",
+		"react-syntax-highlighter": "^15.6.1",
+		"remark-gfm": "^4.0.0"
 	},
 	"peerDependencies": {
+		"next": "^15.0.0",
 		"react": "^19.0.0"
 	},
 	"devDependencies": {
@@ -22,6 +28,7 @@
 		"@repo/config": "workspace:*",
 		"@types/node": "^22.10.6",
 		"@types/react": "^19.0.6",
+		"@types/react-syntax-highlighter": "^15.5.13",
 		"@vitejs/plugin-react": "^4.3.4",
 		"jsdom": "^25.0.1",
 		"typescript": "^5.7.3",

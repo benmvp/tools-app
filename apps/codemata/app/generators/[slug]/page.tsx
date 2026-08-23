@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { AIContentSkeleton } from "@/components/AIContentSkeleton";
-import { CategoryBackLink } from "@/components/CategoryBackLink";
+import { CategoryBackLink } from "@repo/ui";
 import { GeneratorAIContent } from "@/components/GeneratorAIContent";
 import { GeneratorIntro } from "@/components/GeneratorIntro";
 import { GitignoreGenerator } from "@/components/GitignoreGenerator";
@@ -66,7 +66,7 @@ export default async function GeneratorPage({
 		<>
 			<JsonLd data={structuredData} />
 
-			<div className="container mx-auto px-4 py-8 space-y-8">
+			<div className="container mx-auto px-4 py-3 lg:py-8 space-y-8">
 				<CategoryBackLink href="/generators" label="Generators" />
 
 				<div className="space-y-2">

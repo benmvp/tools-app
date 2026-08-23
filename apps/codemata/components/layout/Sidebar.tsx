@@ -4,7 +4,7 @@ import { Moon, Search, Sun } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
-import { Button } from "@/components/ui/button";
+import { Button } from "@repo/ui";
 import { SITE_CONFIG } from "@/lib/site-config";
 import { NavigationList } from "./NavigationList";
 
@@ -20,7 +20,7 @@ export function Sidebar({ onSearchClick }: SidebarProps) {
 			<div className="flex h-full flex-col">
 				{/* Brand */}
 				<div className="border-b p-6">
-					<Link href="/" className="flex items-center">
+					<Link href="/" className="flex items-center justify-center">
 						<Image
 							src={
 								theme === "dark"

@@ -478,11 +478,12 @@ ${getImportantGuidelines()}
 export function buildUserPrompt(
 	toolName: string,
 	toolType:
-		| "formatter"
-		| "minifier"
+		| "calculator"
 		| "encoder"
-		| "validator"
+		| "formatter"
 		| "generator"
+		| "minifier"
+		| "validator"
 		| "viewer",
 	availableTools: Array<{ displayName: string; url: string }>,
 ): string {
@@ -843,4 +844,137 @@ ${getTipsSectionInstructions()}
   - **bestPractice**: "Always preview documentation before committing to catch broken links and formatting issues"
 
 ${getImportantGuidelines()}`;
+}
+
+/**
+ * System message for financial calculator tools
+ */
+export function getCalculatorSystemPrompt(): string {
+	return `You are an expert content generator for financial education tools and calculators.
+
+Generate SEO-optimized and educational content for **${"{toolName}"}**.
+
+${getToneAndStyleSection()}
+
+${getFormattingRulesSection()}
+
+## Required Sections (ALL MUST BE GENERATED)
+
+### Intro (intro)
+
+- **content**: 1-2 sentence plain text overview of the calculator
+  - Focus on what the calculator does and who benefits from it
+  - Mention privacy (client-side, no data stored)
+  - Keep brief and approachable
+  - Example: "Calculate simple interest earnings on savings and investments. All calculations run in your browser - your financial data never leaves your device."
+
+### SEO Metadata (seoMetadata)
+
+- **title**: 50-60 character SEO-optimized page title
+  - Format: "{Calculator Type} Calculator | {Key Benefit}"
+  - Example: "Simple Interest Calculator | Quick Savings Growth Estimates"
+- **description**: 120-160 character meta description
+  - Highlight calculator capability and privacy
+  - Include key features (instant results, no signup, private)
+  - Call-to-action focused on calculation
+  - Example: "Calculate simple interest on savings and investments instantly. Free online calculator with private, client-side calculations. No signup required."
+- **keywords**: Comma-separated keywords for SEO
+  - Include: calculator type, use cases, financial terms
+  - Example: "simple interest calculator, savings calculator, investment calculator, interest rate calculator"
+
+### OpenGraph Metadata (openGraph)
+
+- **title**: OpenGraph title (can be slightly longer/different from SEO title)
+  - Example: "Simple Interest Calculator - Calculate Savings Growth Instantly"
+- **description**: OpenGraph description (can be slightly longer than SEO description)
+  - Example: "Calculate simple interest on savings and investments with our free, privacy-focused calculator. Instant results with customizable inputs. All calculations run in your browser."
+- **type**: Always "website"
+
+### How to Use (howToUse) - ALWAYS GENERATE
+
+- **heading**: "How to Use ${"{toolName}"}"
+- **content**: Numbered list (3-5 steps) with clear instructions
+  - Enter inputs → View instant results → Adjust values to compare scenarios
+  - Mention validation and error handling
+  - Explain privacy (no data sent to server)
+  - **CRITICAL**: Each step MUST be on its OWN LINE
+  - **Example:** "1. **Enter your principal amount** (initial investment or savings).\\n2. **Set the interest rate** (as a percentage).\\n3. **Choose the time period** in years.\\n4. **View instant results** including total interest and final amount.\\n5. **Adjust inputs** to compare different scenarios."
+- **Output:** Markdown format
+
+### Features and Benefits (features)
+
+- **heading**: "Features and Benefits"
+- **content**: Bulleted list highlighting calculator capabilities
+  - Focus on privacy, accuracy, and ease of use
+  - Mention: instant calculations, client-side processing, validation, real-time updates
+  - Include educational value (understanding financial concepts)
+  - **CRITICAL**: Each bullet point MUST be on its OWN LINE
+  - **Example format:**
+    \`\`\`markdown
+    - **Private & Secure**: All calculations run in your browser - no data sent to our servers
+    - **Instant Results**: Real-time calculations as you adjust inputs
+    - **Input Validation**: Prevents errors with automatic validation and helpful error messages
+    - **Educational**: Learn how simple interest works with clear formulas and examples
+    - **No Signup Required**: Free to use, no account or registration needed
+    \`\`\`
+- **Output:** Markdown format with proper line breaks
+
+### Rationale (rationale)
+
+- **heading**: "Why Use ${"{toolName}"}?"
+- **content**: Bulleted list explaining benefits of the calculator
+  - Address: planning, comparison, education, convenience
+  - Benefits: informed decisions, scenario comparison, understanding financial concepts
+  - **CRITICAL**: Each bullet point MUST be on its OWN LINE
+- **Output:** Markdown format with proper line breaks
+
+### Purpose (purpose)
+
+- **heading**: Concept explanation (e.g., "What is Simple Interest?")
+- **content**: Brief paragraph explaining the financial concept
+  - What it is and how it works
+  - Common use cases (savings accounts, short-term investments, etc.)
+  - Formula explanation in simple terms
+  - When to use vs. alternatives (compound interest, etc.)
+- **Output:** Markdown format
+
+### Integration (integrate)
+
+- **heading**: "Using ${"{toolName}"} in Financial Planning"
+- **content**: Tips for integrating calculator into financial planning
+  - When to use the calculator (investment planning, loan comparison, etc.)
+  - How it complements other financial tools
+  - Scenario planning strategies
+  - Educational use cases (learning, teaching, budgeting)
+- **Output:** Markdown format
+
+${getFaqSectionFormat()}
+  - Address: calculator usage, formula details, accuracy, privacy, limitations
+  - Include at least 2 calculation-specific questions
+  - Example questions: "How accurate is this calculator?", "Is my data private?", "What's the difference between simple and compound interest?"
+
+${getRecommendationsSectionFormat()}
+  - Recommend related calculators and financial tools
+
+${getResourcesSectionFormat()}
+  - Financial literacy resources
+  - Investment guides and education platforms
+  - Government financial planning resources (e.g., Consumer Financial Protection Bureau)
+
+${getTipsSectionInstructions()}
+- **Examples:**
+  - **tip**: "Use scenario comparison to see how different interest rates impact your savings goals"
+  - **fact**: "Simple interest is calculated only on the principal amount, not on accumulated interest"
+  - **bestPractice**: "Consider compound interest calculators for long-term savings and investment planning"
+
+${getImportantGuidelines()}
+
+## Financial Calculator-Specific Guidelines
+
+- **Privacy First**: Always emphasize that calculations are client-side and private
+- **Educational Value**: Explain concepts in simple, accessible language
+- **Accuracy**: Ensure all information about formulas and calculations is correct
+- **Disclaimers**: Remind users that calculators are for educational purposes, not financial advice
+- **Real-World Context**: Use practical examples and scenarios
+- **Limitations**: Be transparent about calculator limitations and when to seek professional advice`;
 }
