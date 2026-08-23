@@ -54,7 +54,7 @@ export default function SavingsInvestingPage() {
 		<div className="max-w-7xl mx-auto px-4 py-6 md:py-12">
 			{/* Hero */}
 			<section className="text-center py-8 md:py-12 mb-12">
-			<h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent pb-2">
+				<h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-green-600 to-green-800 bg-clip-text text-transparent pb-2">
 					Savings & Investing Calculators
 				</h1>
 				<p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">

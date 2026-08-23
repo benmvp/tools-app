@@ -1,10 +1,10 @@
 "use client";
 
 import { shouldPrefetch } from "@repo/shared";
+import { Badge } from "@repo/ui";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
-import { Badge } from "@repo/ui";
 import { getCategoriesByOrder } from "@/lib/tools-data";
 
 interface NavigationListProps {

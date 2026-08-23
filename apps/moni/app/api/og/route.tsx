@@ -85,17 +85,17 @@ export async function GET(request: NextRequest) {
 						alignItems: "center",
 					}}
 				>
-{/* $ symbol */}
-				<div
-					style={{
-						display: "flex",
-						fontSize: 48,
-						color: "#16A34A",
-						fontWeight: "bold",
-						fontFamily: "Arial",
-					}}
-				>
-					$
+					{/* $ symbol */}
+					<div
+						style={{
+							display: "flex",
+							fontSize: 48,
+							color: "#16A34A",
+							fontWeight: "bold",
+							fontFamily: "Arial",
+						}}
+					>
+						$
 					</div>
 
 					{/* MONI text */}

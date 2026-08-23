@@ -23,14 +23,8 @@ export function SimpleInterestCalculator() {
 	const [rate, setRate] = useState("5");
 	const [years, setYears] = useState("10");
 
-	// Validation errors
-	const [errors, setErrors] = useState<Record<string, string>>({});
-
-	/**
-	 * Validate and calculate results
-	 * Returns null if any inputs are invalid
-	 */
-	const getResults = () => {
+	// Derive validation errors and result from the current input state.
+	const { errors, result } = useMemo(() => {
 		const newErrors: Record<string, string> = {};
 
 		// Parse inputs
@@ -65,27 +59,31 @@ export function SimpleInterestCalculator() {
 			newErrors.years = "Time period must be greater than zero";
 		}
 
-		setErrors(newErrors);
-
-		// If any errors, return null
+		// If any errors, stop before calculation.
 		if (Object.keys(newErrors).length > 0) {
-			return null;
+			return {
+				errors: newErrors,
+				result: null,
+			};
 		}
 
 		// Calculate
 		try {
-			return calculateSimpleInterest({
-				principal: principalNum,
-				rate: rateNum / 100, // Convert percentage to decimal
-				years: yearsNum,
-			});
+			return {
+				errors: newErrors,
+				result: calculateSimpleInterest({
+					principal: principalNum,
+					rate: rateNum / 100, // Convert percentage to decimal
+					years: yearsNum,
+				}),
+			};
 		} catch (_error) {
-			return null;
+			return {
+				errors: newErrors,
+				result: null,
+			};
 		}
-	};
-
-	// Memoize results to prevent infinite loop from setErrors
-	const result = useMemo(() => getResults(), [principal, rate, years]);
+	}, [principal, rate, years]);
 
 	return (
 		<div className="space-y-8">
@@ -116,7 +114,7 @@ export function SimpleInterestCalculator() {
 									errors.principal ? "border-red-500" : "border-gray-300"
 								}`}
 								placeholder="10000"
-                min="0"
+								min="0"
 								step="1000"
 								aria-invalid={!!errors.principal}
 								aria-describedby={
@@ -146,7 +144,7 @@ export function SimpleInterestCalculator() {
 								type="number"
 								value={rate}
 								onChange={(e) => setRate(e.target.value)}
-                min="0"
+								min="0"
 								step="0.1"
 								className={`w-full pr-10 pl-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
 									errors.rate ? "border-red-500" : "border-gray-300"
@@ -182,7 +180,7 @@ export function SimpleInterestCalculator() {
 								value={years}
 								onChange={(e) => setYears(e.target.value)}
 								step="1"
-                min="0"
+								min="0"
 								className={`w-full pr-20 pl-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 ${
 									errors.years ? "border-red-500" : "border-gray-300"
 								}`}
