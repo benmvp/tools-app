@@ -21,13 +21,14 @@ export function ToolCard({
 			<div className="flex items-start justify-between mb-4">
 				<div
 					className={`p-2 rounded-lg bg-green-100 dark:bg-green-950 ${
-						!comingSoon &&
-						"group-hover:bg-green-200 dark:group-hover:bg-green-900 transition-colors"
+						!comingSoon
+							? "group-hover:bg-green-200 dark:group-hover:bg-green-900 transition-colors"
+							: ""
 					}`}
 				>
 					<Icon
 						className={`h-6 w-6 text-green-600 dark:text-green-400 ${
-							!comingSoon && "group-hover:scale-110 transition-transform"
+							!comingSoon ? "group-hover:scale-110 transition-transform" : ""
 						}`}
 					/>
 				</div>
