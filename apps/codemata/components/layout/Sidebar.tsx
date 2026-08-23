@@ -1,10 +1,10 @@
 "use client";
 
+import { Button } from "@repo/ui";
 import { Moon, Search, Sun } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
-import { Button } from "@repo/ui";
 import { SITE_CONFIG } from "@/lib/site-config";
 import { NavigationList } from "./NavigationList";
 

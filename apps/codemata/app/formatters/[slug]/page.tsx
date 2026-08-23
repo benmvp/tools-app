@@ -1,11 +1,10 @@
 import type { FormatterAction } from "@repo/shared";
 import { getToolStructuredData, isProductionBuild } from "@repo/shared";
-import { JsonLd } from "@repo/ui";
+import { CategoryBackLink, JsonLd } from "@repo/ui";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { AIContentSkeleton } from "@/components/AIContentSkeleton";
-import { CategoryBackLink } from "@repo/ui";
 import { FormatterAIContent } from "@/components/FormatterAIContent";
 import { FormatterIntro } from "@/components/FormatterIntro";
 import { ScrollToTopFab } from "@/components/ScrollToTopFab";

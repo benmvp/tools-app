@@ -1,10 +1,10 @@
 "use client";
 
 import type { FormatterTool } from "@repo/shared";
+import { Button } from "@repo/ui";
 import { Check, Copy, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Button } from "@repo/ui";
 import {
 	Select,
 	SelectContent,

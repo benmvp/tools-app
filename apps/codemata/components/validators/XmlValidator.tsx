@@ -1,10 +1,10 @@
 "use client";
 
 import type { EditorView } from "@codemirror/view";
+import { Button } from "@repo/ui";
 import { useMemo, useState } from "react";
 import { validateXml } from "@/app/validators/actions";
 import { CodeEditor } from "@/components/CodeEditor";
-import { Button } from "@repo/ui";
 import { createLinter, scrollToError } from "@/lib/validators/diagnostics";
 import type { ValidationError, ValidationResult } from "@/lib/validators/types";
 import { ValidationResults } from "./ValidationResults";

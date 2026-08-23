@@ -1,10 +1,9 @@
 import { getToolStructuredData, isProductionBuild } from "@repo/shared";
-import { JsonLd } from "@repo/ui";
+import { CategoryBackLink, JsonLd } from "@repo/ui";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { AIContentSkeleton } from "@/components/AIContentSkeleton";
-import { CategoryBackLink } from "@repo/ui";
 import { ViewerAIContent } from "@/components/ViewerAIContent";
 import { ViewerIntro } from "@/components/ViewerIntro";
 import { VisitTracker } from "@/components/VisitTracker";
