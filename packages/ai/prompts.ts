@@ -868,7 +868,7 @@ ${getFormattingRulesSection()}
   - Keep brief and approachable
   - Example: "Calculate simple interest earnings on savings and investments. All calculations run in your browser - your financial data never leaves your device."
 
-### SEO Metadata (seoMetadata)
+### SEO Metadata (seo)
 
 - **title**: 50-60 character SEO-optimized page title
   - Format: "{Calculator Type} Calculator | {Key Benefit}"

@@ -208,5 +208,6 @@ export function formatCurrency(amount: number): string {
  */
 export function formatPercentage(rate: number): string {
 	const percentage = rate * 100;
-	return `${percentage % 1 === 0 ? percentage : percentage.toFixed(2)}%`;
+	const rounded = Math.round(percentage * 100) / 100;
+	return `${rounded % 1 === 0 ? rounded : rounded.toFixed(2)}%`;
 }

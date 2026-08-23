@@ -47,6 +47,13 @@ describe("formatPercentage", () => {
 		expect(formatPercentage(0.0789)).toBe("7.89%");
 	});
 
+	it("handles floating-point precision edge cases", () => {
+		// 0.57 * 100 = 56.99999999999999 without rounding
+		expect(formatPercentage(0.57)).toBe("57%");
+		// 0.29 * 100 = 28.999999999999996 without rounding
+		expect(formatPercentage(0.29)).toBe("29%");
+	});
+
 	it("handles zero correctly", () => {
 		expect(formatPercentage(0)).toBe("0%");
 	});
