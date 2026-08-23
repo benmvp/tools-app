@@ -46,10 +46,6 @@ test.describe("Command Menu", () => {
 
 		// Verify TypeScript formatter appears
 		await expect(
-			page.locator("text=TypeScript & JavaScript Formatter").first(),
-		).toBeVisible();
-		await expect(
-			page.locator("text=TypeScript & JavaScript Minifier").first(),
 		).toBeVisible();
 	});
 

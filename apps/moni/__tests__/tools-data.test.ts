@@ -88,12 +88,9 @@ describe("Category-Driven Architecture", () => {
 		const categories = Object.values(ALL_TOOLS).sort(
 			(a, b) => a.order - b.order,
 		);
-		expect(categories.length).toBe(5);
+		// Phase 0: Only 1 category has tools (savings-investing)
+		expect(categories.length).toBe(1);
 		expect(categories[0].order).toBe(1);
-		expect(categories[1].order).toBe(2);
-		expect(categories[2].order).toBe(3);
-		expect(categories[3].order).toBe(4);
-		expect(categories[4].order).toBe(5);
 	});
 
 	it("should have at least one category with tools", () => {

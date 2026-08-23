@@ -2,11 +2,9 @@
 	"ci": {
 		"collect": {
 			"url": [
-				"http://localhost:3333/",
-				"http://localhost:3333/formatters",
-				"http://localhost:3333/formatters/typescript-formatter",
-				"http://localhost:3333/minifiers/typescript-minifier",
-				"http://localhost:3333/encoders/base64-encoder"
+				"http://localhost:3334/",
+				"http://localhost:3334/savings-investing",
+				"http://localhost:3334/savings-investing/simple-interest-calculator"
 			],
 			"numberOfRuns": 2,
 			"settings": {

@@ -145,7 +145,7 @@ test.describe("Keyboard Navigation", () => {
 
 		// Press Cmd+K (Meta+K for Mac, Control+K for others)
 		// Note: The cmdk library listens for this shortcut
-		await page.keyboard.press("Meta+KeyK");
+		await page.keyboard.press("Meta+K");
 
 		// Dialog should open
 		const dialog = page.locator('[role="dialog"]');
@@ -154,7 +154,7 @@ test.describe("Keyboard Navigation", () => {
 
 	test("should close command menu with Escape", async ({ page }) => {
 		await page.goto("/");
-		await page.keyboard.press("Meta+KeyK");
+		await page.keyboard.press("Meta+K");
 
 		// Verify opened
 		await expect(page.locator('[role="dialog"]')).toBeVisible({
@@ -204,7 +204,7 @@ test.describe("Keyboard Navigation", () => {
 		await page.goto("/");
 
 		// Open command menu with keyboard shortcut
-		await page.keyboard.press("Meta+KeyK");
+		await page.keyboard.press("Meta+K");
 
 		// Verify dialog is open
 		await expect(page.locator('[role="dialog"]')).toBeVisible({

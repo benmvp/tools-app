@@ -52,13 +52,9 @@ export async function CalculatorAIContent({
 	// TODO: In Phase 2 - Implement AI content generation
 	// const aiContent = await getCalculatorContent(slug, calculatorName);
 
-	// Placeholder for Phase 1: Returns null (no AI content yet)
-	// This will be replaced with AI-generated content in Phase 2
+	// Phase 0: No AI content yet (waiting for deployment & Phase 1)
 	return null;
-
-	// The code below will be uncommented in Phase 2
-	// biome-ignore lint/correctness/noUnreachable: Dead code intentional until Phase 2
-	const aiContent = null as unknown as AIContent;
+}
 	const recommendedTools =
 		aiContent.recommendations?.tools
 			?.map((toolUrl: string) => {

@@ -14,7 +14,8 @@ export interface ToolMetadataParams {
 		| "encoder"
 		| "validator"
 		| "generator"
-		| "viewer";
+		| "viewer"
+		| "calculator";
 }
 
 /**

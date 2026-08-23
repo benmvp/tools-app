@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
 					display: "flex",
 					flexDirection: "column",
 					position: "relative",
-					background: "linear-gradient(135deg, #BFDBFE 0%, #FFFFFF 100%)",
+					background: "linear-gradient(135deg, #D1FAE5 0%, #FFFFFF 100%)",
 					overflow: "hidden",
 				}}
 			>

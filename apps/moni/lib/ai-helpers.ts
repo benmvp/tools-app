@@ -25,7 +25,8 @@ export async function getToolContent(
 		| "encoder"
 		| "validator"
 		| "generator"
-		| "viewer",
+		| "viewer"
+		| "calculator",
 ) {
 	const availableTools = getAllAvailableTools();
 	return getToolContentBase(toolId, toolName, toolType, availableTools);
@@ -53,4 +54,8 @@ export async function getGeneratorContent(toolId: string, toolName: string) {
 
 export async function getViewerContent(toolId: string, toolName: string) {
 	return getToolContent(toolId, toolName, "viewer");
+}
+
+export async function getCalculatorContent(toolId: string, toolName: string) {
+	return getToolContent(toolId, toolName, "calculator");
 }

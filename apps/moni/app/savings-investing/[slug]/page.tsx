@@ -49,8 +49,7 @@ export async function generateMetadata({
 		slug,
 		category: "savings-investing",
 		tools: SAVINGS_INVESTING_TOOLS,
-		// biome-ignore lint/suspicious/noExplicitAny: ToolType union doesn't include calculator yet
-		toolType: "calculator" as any,
+		toolType: "calculator",
 	});
 }
 

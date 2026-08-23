@@ -16,8 +16,8 @@ import { defineConfig, devices } from "@playwright/test";
  * - SEO metadata validation
  */
 
-// Use production server on port 3333
-const BASE_URL = process.env.BASE_URL || "http://localhost:3333";
+// Use production server on port 3334
+const BASE_URL = process.env.BASE_URL || "http://localhost:3334";
 
 export default defineConfig({
 	testDir: "./tests/e2e",

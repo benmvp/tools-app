@@ -2,14 +2,14 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
 	return {
-		name: "Moni - Code Formatting & Minification Tools",
+		name: "Moni - Financial Calculators",
 		short_name: "Moni",
 		description:
-			"Free online code formatters and minifiers for TypeScript, JavaScript, JSON, CSS, HTML, and more. Format and optimize your code instantly.",
+			"Free financial calculators and planning tools. Make informed decisions about budgeting, investing, debt, and more.",
 		start_url: "/",
 		display: "standalone",
 		background_color: "#ffffff",
-		theme_color: "#2563eb",
+		theme_color: "#16a34a",
 		icons: [
 			{
 				src: "/icon?size=192",
