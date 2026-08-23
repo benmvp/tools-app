@@ -208,6 +208,8 @@ export function formatCurrency(amount: number): string {
  */
 export function formatPercentage(rate: number): string {
 	const percentage = rate * 100;
-	const rounded = Math.round(percentage * 100) / 100;
+	// Add Number.EPSILON to handle binary floating-point half-values correctly
+	// (e.g., 0.01005 * 100 = 1.0049999... should round to 1.01, not 1.00)
+	const rounded = Math.round((percentage + Number.EPSILON) * 100) / 100;
 	return `${rounded % 1 === 0 ? rounded : rounded.toFixed(2)}%`;
 }

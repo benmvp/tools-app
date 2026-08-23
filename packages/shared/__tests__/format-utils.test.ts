@@ -25,7 +25,7 @@ describe("formatCurrency", () => {
 
 	it("rounds to 2 decimal places", () => {
 		expect(formatCurrency(99.999)).toBe("$100.00");
-		expect(formatCurrency(10.125)).toBe("$10.13"); // Banker's rounding
+		expect(formatCurrency(10.125)).toBe("$10.13"); // Half-expand (away-from-zero) rounding
 	});
 
 	it("formats small decimals", () => {
@@ -52,6 +52,8 @@ describe("formatPercentage", () => {
 		expect(formatPercentage(0.57)).toBe("57%");
 		// 0.29 * 100 = 28.999999999999996 without rounding
 		expect(formatPercentage(0.29)).toBe("29%");
+		// 0.01005 * 100 = 1.0049999... which can round down without proper handling
+		expect(formatPercentage(0.01005)).toBe("1.01%");
 	});
 
 	it("handles zero correctly", () => {
