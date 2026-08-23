@@ -24,8 +24,14 @@ describe("formatCurrency", () => {
 	});
 
 	it("rounds to 2 decimal places", () => {
-		expect(formatCurrency(99.999)).toBe("$100.00");
+		expect(formatCurrency(99.999)).toBe("$100"); // Rounds to whole number, no decimals
 		expect(formatCurrency(10.125)).toBe("$10.13"); // Half-expand (away-from-zero) rounding
+	});
+
+	it("handles floating-point precision in whole number detection", () => {
+		// Values that should be whole numbers but have floating-point error
+		expect(formatCurrency(15000.0000000004)).toBe("$15,000");
+		expect(formatCurrency(100.0000000001)).toBe("$100");
 	});
 
 	it("formats small decimals", () => {

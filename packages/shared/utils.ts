@@ -186,10 +186,13 @@ export function getToolStructuredData(path: string, toolName: string) {
  * @returns Formatted currency string with $ symbol and thousands separators
  */
 export function formatCurrency(amount: number): string {
+	// Round to 2 decimals first to handle floating-point precision issues
+	// before checking if it's a whole number (e.g., 15000.0000000004 → 15000)
+	const rounded = Math.round(amount * 100) / 100;
 	return new Intl.NumberFormat("en-US", {
 		style: "currency",
 		currency: "USD",
-		minimumFractionDigits: amount % 1 === 0 ? 0 : 2,
+		minimumFractionDigits: Number.isInteger(rounded) ? 0 : 2,
 		maximumFractionDigits: 2,
 	}).format(amount);
 }
