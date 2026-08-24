@@ -204,7 +204,7 @@ export function formatCurrency(amount: number): string {
  * Examples:
  * - formatPercentage(0.05) → "5%"
  * - formatPercentage(0.0543) → "5.43%"
- * - formatPercentage(0.125) → "12.5%"
+ * - formatPercentage(0.125) → "12.50%"
  * - formatPercentage(0.99985) → "99.99%"
  *
  * @param rate - The rate as a decimal (e.g., 0.05 for 5%)
