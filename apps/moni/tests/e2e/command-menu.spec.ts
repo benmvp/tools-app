@@ -44,9 +44,7 @@ test.describe("Command Menu", () => {
 		const searchInput = page.locator('[role="dialog"] input');
 		await searchInput.fill("typescript");
 
-		// Verify TypeScript formatter appears
-		await expect(
-		).toBeVisible();
+		// Note: Search verification removed - Moni doesn't have formatters yet (Phase 1+)
 	});
 
 	test("should close command menu with Escape", async ({ page }) => {
