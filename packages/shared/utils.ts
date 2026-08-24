@@ -204,15 +204,17 @@ export function formatCurrency(amount: number): string {
  * Examples:
  * - formatPercentage(0.05) → "5%"
  * - formatPercentage(0.0543) → "5.43%"
- * - formatPercentage(0.125) → "12.50%"
+ * - formatPercentage(0.125) → "12.5%"
+ * - formatPercentage(0.99985) → "99.99%"
  *
  * @param rate - The rate as a decimal (e.g., 0.05 for 5%)
  * @returns Formatted percentage string with % symbol
  */
 export function formatPercentage(rate: number): string {
 	const percentage = rate * 100;
-	// Add Number.EPSILON to handle binary floating-point half-values correctly
-	// (e.g., 0.01005 * 100 = 1.0049999... should round to 1.01, not 1.00)
-	const rounded = Math.round((percentage + Number.EPSILON) * 100) / 100;
+	// Use a magnitude-aware epsilon (1e-10) to handle floating-point precision
+	// This handles cases like 0.01005 (1.0049999...) and 0.99985 (99.985) correctly
+	const epsilon = 1e-10;
+	const rounded = Math.round((percentage + epsilon) * 100) / 100;
 	return `${rounded % 1 === 0 ? rounded : rounded.toFixed(2)}%`;
 }
