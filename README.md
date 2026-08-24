@@ -28,6 +28,25 @@ pnpm dev
 - **[SPEC.md](SPEC.md)** - Project specification & architecture decisions
 - **[TODO.md](TODO.md)** - Feature roadmap
 
+## Living Docs Index
+
+Master links only. Authority rule: Current State documents are canonical for what exists now. Roadmap and legacy spec documents are planning context.
+
+### Codemata
+
+- **Current State (canonical):** [apps/codemata/specs/current-state.md](apps/codemata/specs/current-state.md)
+- **Architecture Contracts (canonical):** [apps/codemata/specs/architecture-contracts.md](apps/codemata/specs/architecture-contracts.md)
+- **Roadmap:** [apps/codemata/specs/roadmap.md](apps/codemata/specs/roadmap.md)
+- **Legacy Spec (non-canonical):** [apps/codemata/specs/codemata-spec.md](apps/codemata/specs/codemata-spec.md)
+
+### Moni
+
+- **Current implementation spec (mixed, migration pending):** [apps/moni/specs/moni-spec.md](apps/moni/specs/moni-spec.md)
+
+### Convertly
+
+- **Current implementation spec (mixed, migration pending):** [apps/convertly/specs/convertly-spec.md](apps/convertly/specs/convertly-spec.md)
+
 ## License
 
 © 2025 Ben Ilegbodu. All rights reserved.
