@@ -41,7 +41,7 @@ export const SITE_CONFIG = {
 		description:
 			"Free financial calculators and planning tools. Calculate savings, debt payoff, mortgages, and more. Make informed financial decisions.",
 		images: {
-			url: "/logo.svg",
+			url: "/img/logo.svg",
 			width: 400,
 			height: 400,
 			alt: "Moni - Financial Calculators",
@@ -53,7 +53,7 @@ export const SITE_CONFIG = {
 		card: "summary_large_image" as const,
 		description:
 			"Free financial calculators and planning tools. Calculate savings, debt payoff, mortgages, and more. Make informed financial decisions.",
-		images: ["/logo.svg"],
+		images: ["/img/logo.svg"],
 	},
 
 	// Robots configuration
