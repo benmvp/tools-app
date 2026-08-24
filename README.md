@@ -41,11 +41,17 @@ Master links only. Authority rule: Current State documents are canonical for wha
 
 ### Moni
 
-- **Current implementation spec (mixed, migration pending):** [apps/moni/specs/moni-spec.md](apps/moni/specs/moni-spec.md)
+- **Current State (canonical):** [apps/moni/specs/current-state.md](apps/moni/specs/current-state.md)
+- **Architecture Contracts (canonical):** [apps/moni/specs/architecture-contracts.md](apps/moni/specs/architecture-contracts.md)
+- **Roadmap:** [apps/moni/specs/roadmap.md](apps/moni/specs/roadmap.md)
+- **Legacy Spec (non-canonical):** [apps/moni/specs/moni-spec.md](apps/moni/specs/moni-spec.md)
 
 ### Convertly
 
-- **Current implementation spec (mixed, migration pending):** [apps/convertly/specs/convertly-spec.md](apps/convertly/specs/convertly-spec.md)
+- **Current State (canonical):** [apps/convertly/specs/current-state.md](apps/convertly/specs/current-state.md)
+- **Architecture Contracts (canonical):** [apps/convertly/specs/architecture-contracts.md](apps/convertly/specs/architecture-contracts.md)
+- **Roadmap:** [apps/convertly/specs/roadmap.md](apps/convertly/specs/roadmap.md)
+- **Legacy Spec (non-canonical):** [apps/convertly/specs/convertly-spec.md](apps/convertly/specs/convertly-spec.md)
 
 ## License
 

@@ -1,4 +1,14 @@
-# Moni - Financial Calculators & Planning Tools Specification
+# Moni - Financial Calculators & Planning Tools Specification (Legacy)
+
+## Migration Note
+
+This file is now legacy and non-canonical.
+
+- Canonical current state: [current-state.md](current-state.md)
+- Canonical architecture contracts: [architecture-contracts.md](architecture-contracts.md)
+- Planning roadmap: [roadmap.md](roadmap.md)
+
+Use this file as historical reference only. New functionality and governance updates should be reflected in canonical docs.
 
 **Application:** Moni
 **Domain:** moni.benmvp.com
