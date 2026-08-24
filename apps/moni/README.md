@@ -4,20 +4,16 @@
 
 Moni is a Next.js web application providing high-quality code formatters and minifiers with AI-enhanced educational content. Part of the [Tools App monorepo](../../README.md), it focuses on developer productivity tools that are fast, accurate, and SEO-optimized.
 
-🌐 **Live Site:** [codemata.benmvp.com](https://codemata.benmvp.com)
+🌐 **Live Site:** [moni.benmvp.com](https://moni.benmvp.com) _(Coming soon - Phase 0)_
 
 ---
 
 ## What is Moni?
 
-Moni offers **23 free developer tools** (as of Phase 10.4):
+Moni offers **1 financial calculator** (as of Phase 0):
 
-### Formatters (8 tools)
-- CSS/SCSS Formatter
-- GraphQL Formatter
-- HTML Formatter
-- JavaScript/TypeScript Formatter
-- JSON Formatter
+### Savings & Investing (1 tool)
+- Simple Interest Calculator
 - Markdown/MDX Formatter
 - SQL Formatter
 - XML Formatter
@@ -72,7 +68,7 @@ Moni is part of a **pnpm monorepo** managed by Turborepo:
 ```
 tools-app/
 ├── apps/
-│   ├── codemata/          # This app (port 3001)
+│   ├── codemata/          # Code tools (port 3001)
 │   ├── moni/              # Financial tools (port 3002, planned)
 │   └── convertly/         # Unit converters (port 3003, planned)
 └── packages/              # Shared packages (future)
@@ -177,19 +173,19 @@ All tool metadata lives in `lib/tools-data.ts`:
 # From monorepo root
 pnpm install
 
-# Run Moni only (port 3001)
-cd apps/codemata
+# Run Moni only (port 3002)
+cd apps/moni
 pnpm dev
 
 # Or run all apps from root (Turborepo parallel mode)
 pnpm dev
 ```
 
-The app will be available at **http://localhost:3001**
+The app will be available at **http://localhost:3002**
 
 ### Environment Variables
 
-Create `apps/codemata/.env.local` (never commit this file):
+Create `apps/moni/.env.local` (never commit this file):
 
 ```bash
 # Optional: Enable AI content generation locally
@@ -230,16 +226,14 @@ pnpm verify-metadata
 ### Project Structure
 
 ```
-apps/codemata/
+apps/moni/
 ├── app/
 │   ├── layout.tsx              # Root layout
 │   ├── page.tsx                # Home page
-│   ├── formatters/
-│   │   ├── actions.ts          # Server Actions for formatters
+│   ├── savings-investing/
+│   │   ├── actions.ts          # Server Actions for calculators
 │   │   ├── page.tsx            # Category landing page
-│   │   └── [slug]/page.tsx     # Dynamic tool pages
-│   ├── minifiers/
-│   │   └── ...                 # Same structure as formatters
+│   │   └── [slug]/page.tsx     # Dynamic calculator pages
 │   └── api/
 │       └── og/route.tsx        # OpenGraph image generation
 ├── components/
@@ -272,7 +266,7 @@ apps/codemata/
 ### Run All Checks Before Committing
 
 ```bash
-cd apps/codemata
+cd apps/moni
 
 # 1. Format code
 pnpm format
@@ -381,7 +375,7 @@ CI runs on all PRs and pushes to `main` via `.github/workflows/ci.yml` with a hy
 
 ### Vercel Deployment
 
-**Production:** [codemata.benmvp.com](https://codemata.benmvp.com)
+**Production:** [moni.benmvp.com](https://moni.benmvp.com) _(Coming soon - Phase 0)_
 
 **How it works:**
 1. Push to `main` branch triggers automatic Vercel deployment
@@ -513,7 +507,7 @@ Moni has comprehensive end-to-end testing, accessibility compliance, and perform
 E2E tests run against a **production build** (not dev server):
 
 ```bash
-cd apps/codemata
+cd apps/moni
 
 # Run E2E tests (headless)
 pnpm test:e2e
@@ -624,17 +618,14 @@ pnpm test:e2e --project=iphone-13
 Performance and quality benchmarking on 7 representative pages:
 
 ```bash
-cd apps/codemata
+cd apps/moni
 pnpm lighthouse
 ```
 
 **Pages Tested:**
 - Home page
-- Formatters category
-- Minifiers category
-- JSON Formatter (example formatter)
-- TypeScript Formatter (example formatter)
-- JavaScript Minifier (example minifier)
+- Savings & Investing category
+- Simple Interest Calculator
 - CSS Minifier (example minifier)
 
 **Thresholds (all passing):**
@@ -653,7 +644,7 @@ pnpm lighthouse
 Before committing major changes, run the full quality suite:
 
 ```bash
-cd apps/codemata
+cd apps/moni
 
 # 1. Format code
 pnpm format
@@ -664,7 +655,7 @@ pnpm lint
 # 3. Type check
 pnpm type-check
 
-# 4. Unit tests (72 tests)
+# 4. Unit tests (42 tests)
 pnpm test
 
 # 5. Metadata validation (18 pages)
@@ -780,7 +771,7 @@ Total: ~10 minutes
 ### Troubleshooting
 
 **E2E timeouts:**
-- Verify production server running: `curl http://localhost:3001`
+- Verify production server running: `curl http://localhost:3002`
 - Check build exists: `ls -la .next/`
 
 **Accessibility violations:**

@@ -1,5 +1,3 @@
-import { ContentSection, RecommendedTools } from "@repo/ui";
-import { TipCard } from "@/components/TipCard";
 import type { CalculatorTool } from "@/lib/types";
 
 interface CalculatorAIContentProps {
@@ -9,6 +7,7 @@ interface CalculatorAIContentProps {
 }
 
 // Placeholder type for AI content (will be defined in Phase 2)
+// biome-ignore lint/correctness/noUnusedVariables: Defined for future Phase 2 implementation
 interface AIContent {
 	howToUse?: { heading: string; content: string };
 	useCases?: { heading: string; content: string };
@@ -47,11 +46,11 @@ interface AIContent {
 export async function CalculatorAIContent({
 	slug: _slug,
 	calculatorName: _calculatorName,
-	allTools = [],
+	allTools: _allTools = [],
 }: CalculatorAIContentProps) {
 	// TODO: In Phase 2 - Implement AI content generation
 	// const aiContent = await getCalculatorContent(slug, calculatorName);
 
-	// Phase 0: No AI content yet (waiting for deployment & Phase 1)
+	// Phase 0: No AI content yet (waiting for deployment and Phase 1)
 	return null;
 }

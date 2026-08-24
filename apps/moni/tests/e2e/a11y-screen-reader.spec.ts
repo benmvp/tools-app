@@ -30,7 +30,7 @@ test.describe("Screen Reader Compatibility", () => {
 
 	test("should have proper ARIA roles on dialog", async ({ page }) => {
 		await page.goto("/");
-		await page.keyboard.press("Meta+KeyK");
+		await page.keyboard.press("Meta+K");
 
 		// Command menu should have role="dialog" and be visible
 		const dialog = page.locator('[role="dialog"]');
@@ -141,7 +141,7 @@ test.describe("Screen Reader Compatibility", () => {
 
 	test("command menu should announce search results", async ({ page }) => {
 		await page.goto("/");
-		await page.keyboard.press("Meta+KeyK");
+		await page.keyboard.press("Meta+K");
 
 		// Wait for dialog to be visible
 		const dialog = page.locator('[role="dialog"]');

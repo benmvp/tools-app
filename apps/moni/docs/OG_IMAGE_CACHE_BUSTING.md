@@ -15,7 +15,7 @@ All OG images use a simple, consistent format:
 ```
 
 **Parameters:**
-- `title` - Main heading text (e.g., "14 Free Developer Tools", "JSON Formatter")
+- `title` - Main heading text (e.g., "Free Financial Calculators", "Simple Interest Calculator")
 - `description` - Supporting description text
 - `v` - Version number from `OG_IMAGE_VERSION` constant
 
