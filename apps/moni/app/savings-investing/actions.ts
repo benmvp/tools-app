@@ -6,6 +6,12 @@ import type { SimpleInterestInput, SimpleInterestResult } from "@/lib/types";
 /**
  * Server action for calculating simple interest
  *
+ * NOTE: Currently unused - Moni runs calculations client-side for privacy (no data sent to server).
+ * This server action is reserved for potential future features like:
+ * - Multi-step calculations requiring server resources
+ * - Integration with external financial APIs
+ * - Batch calculations or report generation
+ *
  * @param input - Principal, rate, and time
  * @returns Final amount and total interest earned
  *

@@ -98,26 +98,26 @@ test.describe("Keyboard Navigation", () => {
 		}
 	});
 
-	test("should navigate CodeMirror editor with keyboard", async ({ page }) => {
+	test("should navigate calculator inputs with keyboard", async ({ page }) => {
 		await page.goto(savingsInvesting[0].url);
 
-		// Click into editor
-		const inputEditor = page.locator(".cm-content").first();
-		await inputEditor.click();
+		// Tab through form inputs (calculator uses native inputs, not CodeMirror)
+		const principalInput = page.locator('input[name="principal"]');
+		await principalInput.focus();
 
-		// Type text
-		await page.keyboard.type("const x = 1;");
+		// Type value
+		await page.keyboard.type("10000");
 
-		// Verify text was entered
-		const content = await inputEditor.textContent();
-		expect(content).toContain("const x = 1");
+		// Verify value was entered
+		const value = await principalInput.inputValue();
+		expect(value).toBe("10000");
 
-		// Tab should move focus out of editor
+		// Tab should move to next input
 		await page.keyboard.press("Tab");
 		const focusedElement = await page.evaluate(() =>
-			document.activeElement?.tagName.toLowerCase(),
+			document.activeElement?.getAttribute("name"),
 		);
-		expect(focusedElement).not.toBe("textarea");
+		expect(focusedElement).toBe("rate");
 	});
 
 	test("should navigate configuration dropdowns with keyboard", async ({
