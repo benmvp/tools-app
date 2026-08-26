@@ -223,11 +223,11 @@ export interface ViewerTool extends Tool {
 
 /**
  * Type-safe category identifiers
- * 
+ *
  * NOTE: This is intentionally `string` in the shared package to support multiple apps.
  * Each app (Codemata, Moni) defines its own strict `ToolCategoryId` union in lib/types.ts
  * for app-specific type safety. The shared package uses `string` to accept all app categories.
- * 
+ *
  * For app-specific code, always import the strict type from your app's lib/types.ts.
  * For shared utilities that work across apps, use this flexible string type.
  */
