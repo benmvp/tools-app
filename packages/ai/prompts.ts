@@ -646,7 +646,7 @@ ${getFormattingRulesSection()}
   - Mention key features (code generation, templates, customization)
   - Keep brief, conversational tone
 
-### SEO Metadata (seoMetadata)
+### SEO Metadata (seo)
 
 - **title**: 50-60 character SEO-optimized page title
   - Include tool name + key benefit
@@ -747,7 +747,7 @@ ${getFormattingRulesSection()}
   - Emphasize "see before you publish" use case
   - Keep brief, conversational tone
 
-### SEO Metadata (seoMetadata)
+### SEO Metadata (seo)
 
 - **title**: 50-60 character SEO-optimized page title
   - Format: "{Format} Previewer | {Key Benefit}"

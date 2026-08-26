@@ -25,7 +25,7 @@ describe("formatCurrency", () => {
 
 	it("rounds to 2 decimal places", () => {
 		expect(formatCurrency(99.999)).toBe("$100"); // Rounds to whole number, no decimals
-		expect(formatCurrency(10.125)).toBe("$10.13"); // Half-expand (away-from-zero) rounding
+		expect(formatCurrency(10.125)).toBe("$10.13"); // Uses round-half-away-from-zero (half-expand) rounding
 	});
 
 	it("handles floating-point precision in whole number detection", () => {
@@ -37,6 +37,12 @@ describe("formatCurrency", () => {
 	it("formats small decimals", () => {
 		expect(formatCurrency(0.01)).toBe("$0.01");
 		expect(formatCurrency(0.1)).toBe("$0.10");
+	});
+
+	it("handles negative amounts with symmetric rounding", () => {
+		expect(formatCurrency(-500)).toBe("-$500");
+		expect(formatCurrency(-123.45)).toBe("-$123.45");
+		expect(formatCurrency(-99.999)).toBe("-$100"); // Should round to whole like positive 99.999
 	});
 });
 

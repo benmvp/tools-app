@@ -188,11 +188,12 @@ export function getToolStructuredData(path: string, toolName: string) {
 export function formatCurrency(amount: number): string {
 	// Round to 2 decimals first to handle floating-point precision issues
 	// before checking if it's a whole number (e.g., 15000.0000000004 → 15000)
+	// Use Math.abs for sign-aware whole number detection to handle negative values symmetrically
 	const rounded = Math.round(amount * 100) / 100;
 	return new Intl.NumberFormat("en-US", {
 		style: "currency",
 		currency: "USD",
-		minimumFractionDigits: Number.isInteger(rounded) ? 0 : 2,
+		minimumFractionDigits: Number.isInteger(Math.abs(rounded)) ? 0 : 2,
 		maximumFractionDigits: 2,
 	}).format(amount);
 }
@@ -212,9 +213,9 @@ export function formatCurrency(amount: number): string {
  */
 export function formatPercentage(rate: number): string {
 	const percentage = rate * 100;
-	// Use a magnitude-aware epsilon (1e-10) to handle floating-point precision
-	// This handles cases like 0.01005 (1.0049999...) and 0.99985 (99.985) correctly
-	const epsilon = 1e-10;
-	const rounded = Math.round((percentage + epsilon) * 100) / 100;
-	return `${rounded % 1 === 0 ? rounded : rounded.toFixed(2)}%`;
+	// Round to 2 decimal places first, then check if whole number
+	// This prevents floating-point issues like 0.57 * 100 = 56.99999999999999
+	// Add small epsilon (1e-10) to handle halfway cases like 0.01005 correctly
+	const rounded = Math.round((percentage + 1e-10) * 100) / 100;
+	return `${Number.isInteger(rounded) ? rounded : rounded.toFixed(2)}%`;
 }
