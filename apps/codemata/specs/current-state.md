@@ -48,7 +48,7 @@ Codemata is the live developer-tools app in Tools App. It provides browser-acces
 
 - Multiple historical docs contain conflicting tool totals and phase status wording.
 - Legacy specification files currently mix current-state facts with roadmap plans.
-- Root documentation has not yet fully adopted canonical current-state plus contracts links for every app.
+- Some legacy app-level specs still duplicate canonical content and require ongoing drift cleanup.
 
 ## Evidence
 

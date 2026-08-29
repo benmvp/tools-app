@@ -19,13 +19,11 @@ Convertly is the planned unit and format conversion app in Tools App. It is inte
 
 - The Convertly directory currently contains specification documents only.
 - No Convertly application implementation files are present in this branch state.
-- Planning emphasizes client-side conversion behavior for speed and cost control.
 
 ## Runtime and Architecture Reality
 
 - No runnable Convertly app implementation exists in this branch state.
-- Current architecture details are design intent in specification docs, not implemented code.
-- Intended approach is primarily client-side conversion workflows.
+- Current architecture details are design intent in specification docs and architecture contracts, not implemented code.
 
 ## Testing and Quality Reality
 

@@ -18,7 +18,6 @@ Canonical architecture rules: [architecture-contracts.md](architecture-contracts
 
 ## Workflow and Governance Improvements
 
-- Adopt canonical living docs across all apps using the Codemata pilot format.
 - Add agent-guided documentation checks that warn on source updates without canonical doc updates.
 - Reduce spec drift by keeping planning content in roadmap docs only.
 
@@ -31,3 +30,4 @@ Canonical architecture rules: [architecture-contracts.md](architecture-contracts
 ## Change Log
 
 - 2026-08-23: Created dedicated roadmap file to separate planning content from canonical current-state and architecture docs.
+- 2026-08-29: Removed completed canonical-doc adoption item from roadmap priorities.

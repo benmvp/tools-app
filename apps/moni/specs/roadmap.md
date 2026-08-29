@@ -11,10 +11,10 @@ Canonical architecture rules: [architecture-contracts.md](architecture-contracts
 
 ## Planned Focus Areas
 
-- Phase 0 app scaffold and initial calculator MVP
-- Financial disclaimer integration across calculator pages
-- Accuracy-focused calculator implementation and tests
-- Navigation, discovery, and category-driven tooling structure
+- Expand implemented calculator coverage beyond Simple Interest (for example, compound interest and debt planning tools).
+- Complete production deployment and operational readiness for moni.benmvp.com.
+- Improve and de-duplicate Moni app documentation that still reflects copied Codemata language.
+- Add analytics and event taxonomy coverage for calculator interactions.
 
 ## Governance and Rollout
 
@@ -25,3 +25,4 @@ Canonical architecture rules: [architecture-contracts.md](architecture-contracts
 ## Change Log
 
 - 2026-08-23: Created dedicated roadmap file to separate planning from canonical current-state and architecture docs.
+- 2026-08-29: Replaced completed Phase 0 items with forward-looking roadmap priorities.
