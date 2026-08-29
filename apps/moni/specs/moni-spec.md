@@ -494,7 +494,7 @@ export const ALL_TOOLS: Record<ToolCategoryId, ToolCategory> = {
 
 ### Phase 0: App Architecture Foundation
 
-**Status:** � **IN PROGRESS** - Core app complete, deployment pending
+**Status:** 🚧 **IN PROGRESS** - Core app complete, deployment pending
 
 **Timeline:** 3-4 days (Started Feb 18, 2026)
 **Goal:** Set up empty Moni app with complete navigation/search architecture

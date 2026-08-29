@@ -1,5 +1,5 @@
-import type { ToolCategoryId } from "@repo/shared";
 import type { LucideIcon } from "lucide-react";
+import type { ToolCategoryId } from "./types";
 import { ALL_TOOLS } from "./tools-data";
 
 export interface SearchableToolItem {

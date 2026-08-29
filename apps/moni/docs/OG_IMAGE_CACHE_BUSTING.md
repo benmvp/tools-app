@@ -139,7 +139,7 @@ Since URLs change when content changes, this long cache is safe and performant.
 Run after making changes:
 
 ```bash
-cd apps/codemata
+cd apps/moni
 pnpm verify-metadata
 ```
 
@@ -168,13 +168,13 @@ After deploying OG image changes:
 
 1. **Run verification script:**
    ```bash
-   cd apps/codemata
+   cd apps/moni
    pnpm verify-metadata  # Must pass 100%
    ```
 
 2. **Test image URLs:**
    ```bash
-   curl -I https://codemata.benmvp.com/api/og?title=Test&description=Test&v=1
+   curl -I https://moni.benmvp.com/api/og?title=Test&description=Test&v=1
    # Should return 200 OK with Content-Type: image/png
    ```
 
