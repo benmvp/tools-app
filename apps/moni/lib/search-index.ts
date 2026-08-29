@@ -1,6 +1,6 @@
 import type { LucideIcon } from "lucide-react";
-import type { ToolCategoryId } from "./types";
 import { ALL_TOOLS } from "./tools-data";
+import type { ToolCategoryId } from "./types";
 
 export interface SearchableToolItem {
 	id: string;
