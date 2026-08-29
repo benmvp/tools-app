@@ -16,32 +16,48 @@ Use this skill to run a structured backlog triage pass for issues in
 - Weekly or sprint-start backlog reviews.
 - Manual triage sessions when backlog grows or priorities shift.
 
-## Hard-coded project context
+## Fixed scope
 
 - Repository: `benmvp/tools-app`.
-- Project owner: `benmvp` (user project).
-- Project: `AI Harness` (`number: 1`, `id: PVT_kwHOAFcyLs4BhP3X`).
-- Status field: `Status` (`id: PVTSSF_lAHOAFcyLs4BhP3XzhgMSQM`).
-- Backlog option: `Backlog` (`id: f75ad846`).
-- Planning option: `Planning` (`id: 47fc9ee4`).
-- Priority field: `Priority` (`id: PVTSSF_lAHOAFcyLs4BhP3XzhgMSXI`).
-- Priority options: `P0` (`79628723`), `P1` (`0a877460`), `P2` (`da944a9c`).
+- Project owner: `benmvp` (user project scope).
+- Project title: `AI Harness`.
+- Status flow: `Backlog` -> `Planning`.
+- Priority field name: `Priority`.
 - Refinement label: `agent-refined`.
-- Issue type labels used by this repo: `enhancement`, `bug`, `documentation`, `question`.
+- Issue type labels: `enhancement`, `bug`, `documentation`, `question`.
 
-Do not prompt for repo, project, or column inputs when running this skill.
+Do not prompt for repo, project, field, or column names when running this
+skill. These names are fixed and known.
+
+## Runtime discovery (required)
+
+Resolve IDs dynamically with `gh` each run, using the fixed names above:
+
+1. Resolve project by title:
+  - `gh project list --owner benmvp --format json`
+  - Select the project where `title == "AI Harness"` and capture `projectId`.
+2. Resolve field and option IDs:
+  - `gh project field-list <project-number> --owner benmvp --format json`
+  - Capture:
+    - `statusFieldId` for field `Status`
+    - `backlogOptionId` for option `Backlog`
+    - `planningOptionId` for option `Planning`
+    - `priorityFieldId` for field `Priority`
+    - `p0OptionId`, `p1OptionId`, `p2OptionId` for options `P0`, `P1`, `P2`
+3. Fail fast if any required project/field/option name is missing.
 
 ## Workflow
 
-1. Query `AI Harness` items where `Repository=benmvp/tools-app` and `Status=Backlog`.
-2. Skip draft items for labeling/commenting; only mutate issue-backed items.
-3. For each item, evaluate feasibility and capture rationale.
-4. Rank by priority using impact, effort, urgency, and strategic alignment.
-5. Map score to `Priority` and update the project `Priority` field (`P0`/`P1`/`P2`).
-6. Add issue-type label (`enhancement`, `bug`, `documentation`, or `question`).
-7. Add the `agent-refined` label to processed issues.
-8. Promote the highest-priority ready item from `Backlog` to `Planning`.
-9. Return a concise triage summary with actions taken and any blockers.
+1. Discover project and field/option IDs from fixed names.
+2. Query `AI Harness` items where `Repository=benmvp/tools-app` and `Status=Backlog`.
+3. Skip draft items for labeling/commenting; only mutate issue-backed items.
+4. For each item, evaluate feasibility and capture rationale.
+5. Rank by priority using impact, effort, urgency, and strategic alignment.
+6. Map score to `Priority` and update the project `Priority` field (`P0`/`P1`/`P2`).
+7. Add issue-type label (`enhancement`, `bug`, `documentation`, or `question`).
+8. Add the `agent-refined` label to processed issues.
+9. Promote the highest-priority ready item from `Backlog` to `Planning`.
+10. Return a concise triage summary with actions taken and any blockers.
 
 ## Feasibility rubric
 
@@ -86,22 +102,24 @@ For ties:
 ## Recommended gh CLI patterns
 
 - Ensure labels exist:
-  - `gh label create agent-refined --color 7057ff --description "Items that have been analyzed and refined by an AI agent" || true`
-  - `gh label create enhancement --color a2eeef --description "New feature or request" || true`
-  - `gh label create bug --color d73a4a --description "Something isn't working" || true`
-  - `gh label create documentation --color 0075ca --description "Improvements or additions to documentation" || true`
-  - `gh label create question --color d876e3 --description "Further information is requested" || true`
+  - `gh label list --repo benmvp/tools-app --limit 200`
+  - Create missing labels only (no error masking):
+    - `gh label create agent-refined --repo benmvp/tools-app --color 7057ff --description "Items that have been analyzed and refined by an AI agent"`
+    - `gh label create enhancement --repo benmvp/tools-app --color a2eeef --description "New feature or request"`
+    - `gh label create bug --repo benmvp/tools-app --color d73a4a --description "Something isn't working"`
+    - `gh label create documentation --repo benmvp/tools-app --color 0075ca --description "Improvements or additions to documentation"`
+    - `gh label create question --repo benmvp/tools-app --color d876e3 --description "Further information is requested"`
 - Add feasibility comment:
-  - `gh issue comment <issue-number> --body "<feasibility-note>"`
+  - `gh issue comment <issue-number> --repo benmvp/tools-app --body "<feasibility-note>"`
 - Add labels to processed issue:
-  - `gh issue edit <issue-number> --add-label <type-label>,agent-refined`
+  - `gh issue edit <issue-number> --repo benmvp/tools-app --add-label <type-label>,agent-refined`
 
-Set project fields by ID (single-select option IDs):
+Set project fields using IDs resolved at runtime:
 
 - Set `Priority`:
-  - `gh project item-edit --id <item-id> --project-id PVT_kwHOAFcyLs4BhP3X --field-id PVTSSF_lAHOAFcyLs4BhP3XzhgMSXI --single-select-option-id <79628723|0a877460|da944a9c>`
+  - `gh project item-edit --id <item-id> --project-id <project-id> --field-id <priority-field-id> --single-select-option-id <p0|p1|p2-option-id>`
 - Move `Backlog` -> `Planning`:
-  - `gh project item-edit --id <item-id> --project-id PVT_kwHOAFcyLs4BhP3X --field-id PVTSSF_lAHOAFcyLs4BhP3XzhgMSQM --single-select-option-id 47fc9ee4`
+  - `gh project item-edit --id <item-id> --project-id <project-id> --field-id <status-field-id> --single-select-option-id <planning-option-id>`
 
 ## Issue type label classification
 
@@ -118,7 +136,8 @@ in the feasibility comment.
 ## Edge cases
 
 - Empty backlog: return a no-op summary.
-- Missing configured fields/options: stop and report mismatch against the hard-coded IDs.
+- Missing project/field/option by name: stop and report exactly which required
+  name could not be resolved.
 - Missing project write access: stop and report permission error.
 - Mixed item types (drafts and issues): only label/comment on issue-backed items.
 
