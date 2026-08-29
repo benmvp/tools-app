@@ -1,11 +1,11 @@
 "use client";
 
 import type { EditorView } from "@codemirror/view";
+import { Button } from "@repo/ui";
 import { ChevronDown, ChevronUp, Settings } from "lucide-react";
 import { useMemo, useState } from "react";
 import { validateJson } from "@/app/validators/actions";
 import { CodeEditor } from "@/components/CodeEditor";
-import { Button } from "@/components/ui/button";
 import {
 	Collapsible,
 	CollapsibleContent,

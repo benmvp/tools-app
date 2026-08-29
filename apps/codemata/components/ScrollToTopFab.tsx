@@ -1,8 +1,8 @@
 "use client";
 
+import { Button } from "@repo/ui";
 import { ArrowUp } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
 import {
 	Tooltip,
 	TooltipContent,

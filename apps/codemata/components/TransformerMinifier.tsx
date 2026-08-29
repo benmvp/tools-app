@@ -1,11 +1,10 @@
 "use client";
 
 import type { MinifierTool } from "@repo/shared";
+import { Badge, Button } from "@repo/ui";
 import { Check, Copy, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { CodeEditor } from "./CodeEditor";
 
 interface TransformerMinifierProps {

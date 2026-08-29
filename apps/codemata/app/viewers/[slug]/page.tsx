@@ -1,10 +1,9 @@
 import { getToolStructuredData, isProductionBuild } from "@repo/shared";
-import { JsonLd } from "@repo/ui";
+import { CategoryBackLink, JsonLd } from "@repo/ui";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { AIContentSkeleton } from "@/components/AIContentSkeleton";
-import { CategoryBackLink } from "@/components/CategoryBackLink";
 import { ViewerAIContent } from "@/components/ViewerAIContent";
 import { ViewerIntro } from "@/components/ViewerIntro";
 import { VisitTracker } from "@/components/VisitTracker";
@@ -74,7 +73,7 @@ export default async function ViewerPage({
 			<JsonLd data={structuredData} />
 			<VisitTracker url={`/viewers/${slug}`} />
 
-			<div className="container mx-auto px-4 py-8 space-y-8">
+			<div className="container mx-auto px-4 py-3 lg:py-8 space-y-8">
 				<CategoryBackLink href="/viewers" label="Viewers" />
 
 				<div className="space-y-2">

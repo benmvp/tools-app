@@ -1,10 +1,10 @@
 "use client";
 
+import { Button } from "@repo/ui";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { validateUrl } from "@/app/validators/actions";
 import { CodeEditor } from "@/components/CodeEditor";
-import { Button } from "@/components/ui/button";
 
 interface UrlValidatorProps {
 	example: string;

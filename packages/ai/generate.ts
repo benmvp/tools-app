@@ -3,6 +3,7 @@ import { getCachedContent, setCachedContent } from "./cache";
 import { callGeminiWithRetry } from "./client";
 import {
 	buildUserPrompt,
+	getCalculatorSystemPrompt,
 	getEncoderSystemPrompt,
 	getFormatterSystemPrompt,
 	getGeneratorSystemPrompt,
@@ -68,11 +69,12 @@ function processContentNewlines(content: ToolContent): ToolContent {
 
 // Get appropriate system prompt using lookup for readability
 const ALL_SYSTEM_PROMPTS = {
-	formatter: getFormatterSystemPrompt,
-	minifier: getMinifierSystemPrompt,
+	calculator: getCalculatorSystemPrompt,
 	encoder: getEncoderSystemPrompt,
-	validator: getValidatorSystemPrompt,
+	formatter: getFormatterSystemPrompt,
 	generator: getGeneratorSystemPrompt,
+	minifier: getMinifierSystemPrompt,
+	validator: getValidatorSystemPrompt,
 	viewer: getViewerSystemPrompt,
 } as const;
 

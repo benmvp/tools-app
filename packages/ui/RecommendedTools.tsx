@@ -13,8 +13,21 @@ interface RecommendedToolsProps {
 
 /**
  * Recommended tools component
- * Displays AI-suggested related tools in a grid
- * Only rendered if tools are available
+ *
+ * Displays AI-suggested related tools in a responsive grid.
+ * Only rendered if tools are available. Used in AI-generated
+ * content sections to cross-promote related tools.
+ *
+ * @example
+ * ```tsx
+ * <RecommendedTools
+ *   heading="Related Tools"
+ *   tools={[
+ *     { displayName: "Tool 1", url: "/tool-1", description: "..." },
+ *     { displayName: "Tool 2", url: "/tool-2" }
+ *   ]}
+ * />
+ * ```
  */
 export function RecommendedTools({ heading, tools }: RecommendedToolsProps) {
 	if (!tools || tools.length === 0) {

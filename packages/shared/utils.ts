@@ -172,3 +172,50 @@ export function getToolStructuredData(path: string, toolName: string) {
 		url: getAppUrl(path),
 	};
 }
+
+/**
+ * Format currency with context-dependent decimal precision.
+ * Shows no decimals for whole numbers, 2 decimals for fractional amounts.
+ *
+ * Examples:
+ * - formatCurrency(15000) → "$15,000"
+ * - formatCurrency(15432.67) → "$15,432.67"
+ * - formatCurrency(100.5) → "$100.50"
+ *
+ * @param amount - The numeric amount to format
+ * @returns Formatted currency string with $ symbol and thousands separators
+ */
+export function formatCurrency(amount: number): string {
+	// Round to 2 decimals first to handle floating-point precision issues
+	// before checking if it's a whole number (e.g., 15000.0000000004 → 15000)
+	// Use Math.abs for sign-aware whole number detection to handle negative values symmetrically
+	const rounded = Math.round(amount * 100) / 100;
+	return new Intl.NumberFormat("en-US", {
+		style: "currency",
+		currency: "USD",
+		minimumFractionDigits: Number.isInteger(Math.abs(rounded)) ? 0 : 2,
+		maximumFractionDigits: 2,
+	}).format(amount);
+}
+
+/**
+ * Format a rate (0-1) as a percentage with context-dependent decimal precision.
+ * Shows no decimals for whole percentages, 2 decimals for fractional percentages.
+ *
+ * Examples:
+ * - formatPercentage(0.05) → "5%"
+ * - formatPercentage(0.0543) → "5.43%"
+ * - formatPercentage(0.125) → "12.50%"
+ * - formatPercentage(0.99985) → "99.99%"
+ *
+ * @param rate - The rate as a decimal (e.g., 0.05 for 5%)
+ * @returns Formatted percentage string with % symbol
+ */
+export function formatPercentage(rate: number): string {
+	const percentage = rate * 100;
+	// Round to 2 decimal places first, then check if whole number
+	// This prevents floating-point issues like 0.57 * 100 = 56.99999999999999
+	// Add small epsilon (1e-10) to handle halfway cases like 0.01005 correctly
+	const rounded = Math.round((percentage + 1e-10) * 100) / 100;
+	return `${Number.isInteger(rounded) ? rounded : rounded.toFixed(2)}%`;
+}
