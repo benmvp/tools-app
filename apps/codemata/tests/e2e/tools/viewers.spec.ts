@@ -75,10 +75,15 @@ test.describe("Viewer Tools - Integration", () => {
 	test("should prevent preview for empty input", async ({ page }) => {
 		await page.goto(REPRESENTATIVE_TOOL.url);
 
-		// Clear any default input (CodeMirror uses contenteditable, not input/textarea)
+		// Clear any default input using .fill("") which works for CodeMirror contenteditable
 		const inputEditor = page.locator(".cm-content").first();
 		await inputEditor.click();
-		await inputEditor.fill("");
+		await inputEditor.fill(""); // Clear content
+		
+		// Verify input was actually cleared by checking the size indicator shows "0.0KB"
+		await expect(page.locator("text=/0\\.0KB\\s*\\/\\s*50KB/")).toBeVisible({
+			timeout: 2000,
+		});
 
 		// Click Preview tab to trigger transformation
 		const previewTab = page.getByRole("tab", { name: /preview/i });
