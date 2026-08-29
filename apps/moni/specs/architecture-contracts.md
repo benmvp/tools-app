@@ -1,10 +1,10 @@
 # Moni Architecture Contracts
 
-Last Updated: 2026-08-23
+Last Updated: 2026-08-29
 
 ## Contract Purpose
 
-These contracts define implementation expectations for Moni as it moves from planned to implemented state.
+These contracts define implementation expectations for Moni as the app expands from Phase 0.
 
 ## Core Contracts
 
@@ -12,11 +12,12 @@ These contracts define implementation expectations for Moni as it moves from pla
 
 - Calculator and category metadata should be centralized in a single registry layer.
 - Route generation and navigation should derive from canonical registry data.
+- Empty future categories can exist in metadata, but category navigation rendering should continue to filter to non-empty categories.
 
 ### Contract: Client-Side Calculator Execution
 
 - Pure financial calculations should run client-side for responsiveness and privacy.
-- Server actions should be reserved for cases requiring external calls or server-only processing.
+- Server actions can exist for future expansion but should not replace client-side execution for simple calculator flows without a clear need.
 
 ### Contract: Financial Disclaimer Presence
 
@@ -41,5 +42,10 @@ These contracts define implementation expectations for Moni as it moves from pla
 
 ## Evidence
 
+- [apps/moni/lib/tools-data.ts](apps/moni/lib/tools-data.ts)
+- [apps/moni/app/savings-investing/[slug]/page.tsx](apps/moni/app/savings-investing/[slug]/page.tsx)
+- [apps/moni/components/SimpleInterestCalculator.tsx](apps/moni/components/SimpleInterestCalculator.tsx)
+- [apps/moni/app/savings-investing/actions.ts](apps/moni/app/savings-investing/actions.ts)
+- [apps/moni/__tests__/tools-data.test.ts](apps/moni/__tests__/tools-data.test.ts)
 - [apps/moni/specs/moni-spec.md](apps/moni/specs/moni-spec.md)
 - [README.md](README.md)
