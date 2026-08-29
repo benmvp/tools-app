@@ -79,7 +79,7 @@ test.describe("Viewer Tools - Integration", () => {
 		const inputEditor = page.locator(".cm-content").first();
 		await inputEditor.click();
 		await inputEditor.fill(""); // Clear content
-		
+
 		// Verify input was actually cleared by checking the size indicator shows "0.0KB"
 		await expect(page.locator("text=/0\\.0KB\\s*\\/\\s*50KB/")).toBeVisible({
 			timeout: 2000,
