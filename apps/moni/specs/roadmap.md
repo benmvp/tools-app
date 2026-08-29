@@ -1,13 +1,13 @@
 # Moni Roadmap
 
-Last Updated: 2026-08-23
+Last Updated: 2026-08-29
 
 ## Scope
 
 This document tracks planned and proposed Moni work. It is not canonical for current implementation state.
 
-Canonical current-state source: [apps/moni/specs/current-state.md](apps/moni/specs/current-state.md)
-Canonical architecture rules: [apps/moni/specs/architecture-contracts.md](apps/moni/specs/architecture-contracts.md)
+Canonical current-state source: [current-state.md](current-state.md)
+Canonical architecture rules: [architecture-contracts.md](architecture-contracts.md)
 
 ## Planned Focus Areas
 

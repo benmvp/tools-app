@@ -56,28 +56,28 @@ Warning output should include:
 
 ## Canonical Targets
 
-- Root index: [README.md](README.md)
+- Root index: [README.md](../../../README.md)
 
 ### Codemata
 
-- Current State: [apps/codemata/specs/current-state.md](apps/codemata/specs/current-state.md)
-- Architecture Contracts: [apps/codemata/specs/architecture-contracts.md](apps/codemata/specs/architecture-contracts.md)
-- Roadmap: [apps/codemata/specs/roadmap.md](apps/codemata/specs/roadmap.md)
-- Legacy spec: [apps/codemata/specs/codemata-spec.md](apps/codemata/specs/codemata-spec.md)
+- Current State: [apps/codemata/specs/current-state.md](../../../apps/codemata/specs/current-state.md)
+- Architecture Contracts: [apps/codemata/specs/architecture-contracts.md](../../../apps/codemata/specs/architecture-contracts.md)
+- Roadmap: [apps/codemata/specs/roadmap.md](../../../apps/codemata/specs/roadmap.md)
+- Legacy spec: [apps/codemata/specs/codemata-spec.md](../../../apps/codemata/specs/codemata-spec.md)
 
 ### Moni
 
-- Current State: [apps/moni/specs/current-state.md](apps/moni/specs/current-state.md)
-- Architecture Contracts: [apps/moni/specs/architecture-contracts.md](apps/moni/specs/architecture-contracts.md)
-- Roadmap: [apps/moni/specs/roadmap.md](apps/moni/specs/roadmap.md)
-- Legacy spec: [apps/moni/specs/moni-spec.md](apps/moni/specs/moni-spec.md)
+- Current State: [apps/moni/specs/current-state.md](../../../apps/moni/specs/current-state.md)
+- Architecture Contracts: [apps/moni/specs/architecture-contracts.md](../../../apps/moni/specs/architecture-contracts.md)
+- Roadmap: [apps/moni/specs/roadmap.md](../../../apps/moni/specs/roadmap.md)
+- Legacy spec: [apps/moni/specs/moni-spec.md](../../../apps/moni/specs/moni-spec.md)
 
 ### Convertly
 
-- Current State: [apps/convertly/specs/current-state.md](apps/convertly/specs/current-state.md)
-- Architecture Contracts: [apps/convertly/specs/architecture-contracts.md](apps/convertly/specs/architecture-contracts.md)
-- Roadmap: [apps/convertly/specs/roadmap.md](apps/convertly/specs/roadmap.md)
-- Legacy spec: [apps/convertly/specs/convertly-spec.md](apps/convertly/specs/convertly-spec.md)
+- Current State: [apps/convertly/specs/current-state.md](../../../apps/convertly/specs/current-state.md)
+- Architecture Contracts: [apps/convertly/specs/architecture-contracts.md](../../../apps/convertly/specs/architecture-contracts.md)
+- Roadmap: [apps/convertly/specs/roadmap.md](../../../apps/convertly/specs/roadmap.md)
+- Legacy spec: [apps/convertly/specs/convertly-spec.md](../../../apps/convertly/specs/convertly-spec.md)
 
 ## Quick Workflow
 

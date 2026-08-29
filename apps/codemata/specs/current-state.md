@@ -1,6 +1,6 @@
 # Codemata Current State
 
-Last Updated: 2026-08-23
+Last Updated: 2026-08-29
 
 ## Purpose
 
@@ -52,13 +52,13 @@ Codemata is the live developer-tools app in Tools App. It provides browser-acces
 
 ## Evidence
 
-- [apps/codemata/lib/tools-data.ts](apps/codemata/lib/tools-data.ts)
-- [apps/codemata/app/formatters/actions.ts](apps/codemata/app/formatters/actions.ts)
-- [apps/codemata/app/minifiers/actions.ts](apps/codemata/app/minifiers/actions.ts)
-- [apps/codemata/app/validators/actions.ts](apps/codemata/app/validators/actions.ts)
-- [apps/codemata/app/encoders/actions.ts](apps/codemata/app/encoders/actions.ts)
-- [apps/codemata/app/viewers/actions.ts](apps/codemata/app/viewers/actions.ts)
-- [apps/codemata/lib/ai/helpers.ts](apps/codemata/lib/ai/helpers.ts)
-- [apps/codemata/lib/ai/generate.ts](apps/codemata/lib/ai/generate.ts)
-- [apps/codemata/__tests__/tools-data.test.ts](apps/codemata/__tests__/tools-data.test.ts)
-- [apps/codemata/README.md](apps/codemata/README.md)
+- [../lib/tools-data.ts](../lib/tools-data.ts)
+- [../app/formatters/actions.ts](../app/formatters/actions.ts)
+- [../app/minifiers/actions.ts](../app/minifiers/actions.ts)
+- [../app/validators/actions.ts](../app/validators/actions.ts)
+- [../app/encoders/actions.ts](../app/encoders/actions.ts)
+- [../app/viewers/actions.ts](../app/viewers/actions.ts)
+- [../lib/ai/helpers.ts](../lib/ai/helpers.ts)
+- [../lib/ai/generate.ts](../lib/ai/generate.ts)
+- [../__tests__/tools-data.test.ts](../__tests__/tools-data.test.ts)
+- [../README.md](../README.md)

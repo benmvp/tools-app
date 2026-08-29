@@ -1,6 +1,6 @@
 # Codemata Architecture Contracts
 
-Last Updated: 2026-08-23
+Last Updated: 2026-08-29
 
 ## Contract Purpose
 
@@ -56,11 +56,11 @@ These contracts define the non-negotiable implementation patterns for Codemata. 
 
 ## Evidence
 
-- [apps/codemata/lib/tools-data.ts](apps/codemata/lib/tools-data.ts)
-- [apps/codemata/app/formatters/actions.ts](apps/codemata/app/formatters/actions.ts)
-- [apps/codemata/app/minifiers/actions.ts](apps/codemata/app/minifiers/actions.ts)
-- [apps/codemata/app/validators/actions.ts](apps/codemata/app/validators/actions.ts)
-- [apps/codemata/lib/ai/helpers.ts](apps/codemata/lib/ai/helpers.ts)
-- [apps/codemata/lib/ai/generate.ts](apps/codemata/lib/ai/generate.ts)
-- [apps/codemata/__tests__/tools-data.test.ts](apps/codemata/__tests__/tools-data.test.ts)
-- [apps/codemata/TESTING.md](apps/codemata/TESTING.md)
+- [../lib/tools-data.ts](../lib/tools-data.ts)
+- [../app/formatters/actions.ts](../app/formatters/actions.ts)
+- [../app/minifiers/actions.ts](../app/minifiers/actions.ts)
+- [../app/validators/actions.ts](../app/validators/actions.ts)
+- [../lib/ai/helpers.ts](../lib/ai/helpers.ts)
+- [../lib/ai/generate.ts](../lib/ai/generate.ts)
+- [../__tests__/tools-data.test.ts](../__tests__/tools-data.test.ts)
+- [../TESTING.md](../TESTING.md)

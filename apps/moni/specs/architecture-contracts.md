@@ -42,10 +42,10 @@ These contracts define implementation expectations for Moni as the app expands f
 
 ## Evidence
 
-- [apps/moni/lib/tools-data.ts](apps/moni/lib/tools-data.ts)
-- [apps/moni/app/savings-investing/[slug]/page.tsx](apps/moni/app/savings-investing/[slug]/page.tsx)
-- [apps/moni/components/SimpleInterestCalculator.tsx](apps/moni/components/SimpleInterestCalculator.tsx)
-- [apps/moni/app/savings-investing/actions.ts](apps/moni/app/savings-investing/actions.ts)
-- [apps/moni/__tests__/tools-data.test.ts](apps/moni/__tests__/tools-data.test.ts)
-- [apps/moni/specs/moni-spec.md](apps/moni/specs/moni-spec.md)
-- [README.md](README.md)
+- [../lib/tools-data.ts](../lib/tools-data.ts)
+- [../app/savings-investing/[slug]/page.tsx](../app/savings-investing/[slug]/page.tsx)
+- [../components/SimpleInterestCalculator.tsx](../components/SimpleInterestCalculator.tsx)
+- [../app/savings-investing/actions.ts](../app/savings-investing/actions.ts)
+- [../__tests__/tools-data.test.ts](../__tests__/tools-data.test.ts)
+- [moni-spec.md](moni-spec.md)
+- [../../../README.md](../../../README.md)

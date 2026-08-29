@@ -1,13 +1,13 @@
 # Codemata Roadmap
 
-Last Updated: 2026-08-23
+Last Updated: 2026-08-29
 
 ## Scope
 
 This document tracks planned and proposed work for Codemata. It is not canonical for current implementation state.
 
-Canonical current-state source: [apps/codemata/specs/current-state.md](apps/codemata/specs/current-state.md)
-Canonical architecture rules: [apps/codemata/specs/architecture-contracts.md](apps/codemata/specs/architecture-contracts.md)
+Canonical current-state source: [current-state.md](current-state.md)
+Canonical architecture rules: [architecture-contracts.md](architecture-contracts.md)
 
 ## Near-Term Priorities
 

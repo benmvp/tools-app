@@ -1,6 +1,6 @@
 # Convertly Current State
 
-Last Updated: 2026-08-23
+Last Updated: 2026-08-29
 
 ## Purpose
 
@@ -21,20 +21,6 @@ Convertly is the planned unit and format conversion app in Tools App. It is inte
 - No Convertly application implementation files are present in this branch state.
 - Planning emphasizes client-side conversion behavior for speed and cost control.
 
-### Planned Category Direction
-
-- Cooking and Recipe
-- Measurement
-- Time
-- Data and Computing
-- Health and Fitness
-- International and Travel
-- Energy and Power
-- Computing and Internet
-- Video and Photography
-- Text
-- Other
-
 ## Runtime and Architecture Reality
 
 - No runnable Convertly app implementation exists in this branch state.
@@ -53,5 +39,5 @@ Convertly is the planned unit and format conversion app in Tools App. It is inte
 
 ## Evidence
 
-- [apps/convertly/specs/convertly-spec.md](apps/convertly/specs/convertly-spec.md)
-- [README.md](README.md)
+- [convertly-spec.md](convertly-spec.md)
+- [../../../README.md](../../../README.md)

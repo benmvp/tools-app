@@ -30,7 +30,7 @@ pnpm dev
 
 ## Living Docs Index
 
-Master links only. Authority rule: Current State documents are canonical for what exists now. Roadmap and legacy spec documents are planning context.
+Master links only. Authority rule: Current State documents are canonical for what exists now. Architecture Contracts documents define implementation rules. Roadmap documents are planning context. Legacy specs are historical reference.
 
 ### Codemata
 

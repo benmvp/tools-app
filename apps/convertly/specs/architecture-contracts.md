@@ -1,6 +1,6 @@
 # Convertly Architecture Contracts
 
-Last Updated: 2026-08-23
+Last Updated: 2026-08-29
 
 ## Contract Purpose
 
@@ -41,5 +41,5 @@ These contracts define implementation expectations for Convertly as it moves fro
 
 ## Evidence
 
-- [apps/convertly/specs/convertly-spec.md](apps/convertly/specs/convertly-spec.md)
-- [README.md](README.md)
+- [convertly-spec.md](convertly-spec.md)
+- [../../../README.md](../../../README.md)

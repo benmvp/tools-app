@@ -1,13 +1,13 @@
 # Convertly Roadmap
 
-Last Updated: 2026-08-23
+Last Updated: 2026-08-29
 
 ## Scope
 
 This document tracks planned and proposed Convertly work. It is not canonical for current implementation state.
 
-Canonical current-state source: [apps/convertly/specs/current-state.md](apps/convertly/specs/current-state.md)
-Canonical architecture rules: [apps/convertly/specs/architecture-contracts.md](apps/convertly/specs/architecture-contracts.md)
+Canonical current-state source: [current-state.md](current-state.md)
+Canonical architecture rules: [architecture-contracts.md](architecture-contracts.md)
 
 ## Planned Focus Areas
 
@@ -15,6 +15,20 @@ Canonical architecture rules: [apps/convertly/specs/architecture-contracts.md](a
 - Recipe scaler anchor and high-traffic converters
 - Client-side conversion architecture and UX optimization
 - Navigation, search, and category-driven discovery
+
+## Planned Category Direction
+
+- Cooking and Recipe
+- Measurement
+- Time
+- Data and Computing
+- Health and Fitness
+- International and Travel
+- Energy and Power
+- Computing and Internet
+- Video and Photography
+- Text
+- Other
 
 ## Governance and Rollout
 
