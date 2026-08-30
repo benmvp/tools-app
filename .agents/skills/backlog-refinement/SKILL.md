@@ -34,7 +34,7 @@ skill. These names are fixed and known.
 Resolve IDs dynamically with `gh` each run, using the fixed names above:
 
 1. Resolve project by title:
-  - `gh project list --owner benmvp --format json`
+  - `gh project list --owner benmvp --limit 100 --format json`
   - Select the project where `title == "AI Harness"` and capture both:
     - `projectNumber` from `number` (used by `gh project field-list`)
     - `projectId` from `id` (used by `gh project item-edit --project-id`)
@@ -51,7 +51,8 @@ Resolve IDs dynamically with `gh` each run, using the fixed names above:
 ## Workflow
 
 1. Discover project and field/option IDs from fixed names.
-2. Query `AI Harness` items where `Repository=benmvp/tools-app` and `Status=Backlog`.
+2. Query `AI Harness` items in `Status=Backlog`, then only process items whose
+  linked issue belongs to `benmvp/tools-app`.
 3. Skip draft items for labeling/commenting; only mutate issue-backed items.
 4. For each item, evaluate feasibility and capture rationale.
 5. Rank by priority using impact, effort, urgency, and strategic alignment.
