@@ -34,18 +34,18 @@ skill. These names are fixed and known.
 Resolve IDs dynamically with `gh` each run, using the fixed names above:
 
 1. Resolve project by title:
-  - `gh project list --owner benmvp --limit 100 --format json`
-  - Select the project where `title == "AI Harness"` and capture both:
-    - `projectNumber` from `number` (used by `gh project field-list`)
-    - `projectId` from `id` (used by `gh project item-edit --project-id`)
+    - `gh project list --owner benmvp --limit 100 --format json`
+    - Select the project where `title == "AI Harness"` and capture both:
+      - `projectNumber` from `number` (used by `gh project field-list`)
+      - `projectId` from `id` (used by `gh project item-edit --project-id`)
 2. Resolve field and option IDs:
-  - `gh project field-list <projectNumber> --owner benmvp --format json`
-  - Capture:
-    - `statusFieldId` for field `Status`
-    - `backlogOptionId` for option `Backlog`
-    - `planningOptionId` for option `Planning`
-    - `priorityFieldId` for field `Priority`
-    - `p0OptionId`, `p1OptionId`, `p2OptionId` for options `P0`, `P1`, `P2`
+    - `gh project field-list <projectNumber> --owner benmvp --format json`
+    - Capture:
+      - `statusFieldId` for field `Status`
+      - `backlogOptionId` for option `Backlog`
+      - `planningOptionId` for option `Planning`
+      - `priorityFieldId` for field `Priority`
+      - `p0OptionId`, `p1OptionId`, `p2OptionId` for options `P0`, `P1`, `P2`
 3. Fail fast if any required project/field/option name is missing.
 
 ## Workflow
