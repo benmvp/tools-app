@@ -10,12 +10,15 @@
     "dev": "turbo run dev",
     "build": "turbo run build",
     "build:test": "turbo run build:test",
-    "lint": "turbo run lint",
+    "lint": "turbo run lint && pnpm lint:agents",
+    "lint:agents": "biome check --files-ignore-unknown=true --no-errors-on-unmatched .agents",
     "test": "turbo run test",
-    "format": "turbo run format",
+    "format": "turbo run format && pnpm format:agents",
+    "format:agents": "biome format --write --files-ignore-unknown=true --no-errors-on-unmatched .agents",
     "type-check": "turbo run type-check"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.2.0",
     "turbo": "^2.3.3"
   },
   "pnpm": {
