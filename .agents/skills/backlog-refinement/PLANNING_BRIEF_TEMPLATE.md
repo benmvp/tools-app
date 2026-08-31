@@ -21,7 +21,7 @@ This template is comment-only output; do not modify the issue body.
 
 ## Constraints
 
-- **App ownership (codemata/moni/convertly/cross-app):**
+- **App ownership (codemata/moni/convertly or cross-app with no single app label):**
 - **Technical or platform constraints:**
 - **Dependency constraints:**
 
@@ -59,7 +59,7 @@ This template is comment-only output; do not modify the issue body.
 ## Planning Exit Criteria check
 
 - **Problem, outcome, and scope are unambiguous:** Yes/No
-- **App ownership is explicit:** Yes/No
+- **App ownership is explicit (including cross-app when no single app label applies):** Yes/No
 - **Unknowns have concrete de-risk next step:** Yes/No
 - **Priority and rationale are documented:** Yes/No
 - **No unresolved external blocker:** Yes/No

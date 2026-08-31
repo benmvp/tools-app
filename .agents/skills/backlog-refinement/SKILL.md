@@ -74,7 +74,7 @@ Resolve IDs dynamically with `gh` each run, using the fixed names above:
 
 ## Planning Brief template
 
-Closely follow the external template at:
+Closely follow the Planning Brief template file at:
 
 - `.agents/skills/backlog-refinement/PLANNING_BRIEF_TEMPLATE.md`
 
@@ -140,6 +140,9 @@ Include a short feasibility note on each issue with:
 - Risks or unknowns.
 - Minimum next step to de-risk.
 
+These feasibility details must be included inside the structured Planning Brief
+comment (not as a separate short comment).
+
 ## Priority rubric
 
 Use a simple weighted model:
@@ -169,8 +172,8 @@ For ties:
 
 - Check issue labels:
   - `gh issue view <issue-number> --repo benmvp/tools-app --json labels --jq '.labels[].name'`
-- Add feasibility comment:
-  - `gh issue comment <issue-number> --repo benmvp/tools-app --body "<feasibility-note>"`
+- Add structured Planning Brief comment:
+  - `gh issue comment <issue-number> --repo benmvp/tools-app --body "<planning-brief-comment>"`
 - Add blocker comment (when exit criteria fail):
   - `gh issue comment <issue-number> --repo benmvp/tools-app --body "<blocked-note>"`
 - Add base labels to processed issue:
@@ -214,7 +217,7 @@ Assign at most one app label per processed issue:
 If an app label is applicable, first check existing labels and only add it when
 missing. If multiple apps are mentioned, choose one only when a clear primary
 owner exists; otherwise add none and note the ambiguity in the feasibility
-comment.
+comment. Treat cross-app ownership as no single app label.
 
 ## Edge cases
 
