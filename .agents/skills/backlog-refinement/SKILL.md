@@ -23,13 +23,24 @@ Use this skill to run a structured backlog triage pass for issues in
 - Project title: `AI Harness`.
 - Status flow: `Backlog` -> `Planning`.
 - Priority field name: `Priority`.
-- Refinement label: `agent-refined`.
-- Blocked label: `blocked`.
+- Refinement provenance label: `agent-refined`.
+- Gate state label (read-only here): `validated-refinement`.
+- Blocked label: `blocked` (external blockers only).
 - Issue type labels: `enhancement`, `bug`, `documentation`, `question`.
 - App labels: `codemata`, `moni`, `convertly`.
 
 Do not prompt for repo, project, field, or column names when running this
 skill. These names are fixed and known.
+
+## Criteria source
+
+The bar for promoting `Backlog` -> `Planning` lives in
+`.agents/workflow-criteria/REFINEMENT_CRITERIA.md`. Read it at the start of every
+run.
+
+That file is the single source of truth for the criteria, label semantics,
+comment markers, staleness, and rejection loop protection. Do not restate or fork
+it here.
 
 ## Runtime discovery (required)
 
@@ -52,25 +63,54 @@ Resolve IDs dynamically with `gh` each run, using the fixed names above:
 
 ## Workflow
 
-1. Discover project and field/option IDs from fixed names.
-2. Query `AI Harness` items in `Status=Backlog`, then only process items whose
-  linked issue belongs to `benmvp/tools-app`.
-3. Skip draft items for labeling/commenting; only mutate issue-backed items.
-4. Analyze relevant codebase areas to reduce unknowns and produce actionable
+1. Read `.agents/workflow-criteria/REFINEMENT_CRITERIA.md`.
+2. Discover project and field/option IDs from fixed names.
+3. Query `AI Harness` items in `Status=Backlog` that do **not** have
+  `validated-refinement`, then only process items whose linked issue belongs to
+  `benmvp/tools-app`.
+4. Skip draft items for labeling/commenting; only mutate issue-backed items.
+5. Read the full comment history for each item, oldest to newest, including any
+  prior Planning Brief and validation comments. See
+  [Reading prior comments](#reading-prior-comments).
+6. Analyze relevant codebase areas to reduce unknowns and produce actionable
   de-risk next steps.
-5. Evaluate feasibility and capture rationale.
-6. Rank by priority using impact, effort, urgency, and strategic alignment.
-7. Post a structured refinement comment using the Planning Brief template.
-8. Map score to `Priority` and update the project `Priority` field (`P0`/`P1`/`P2`).
-9. Add issue-type label (`enhancement`, `bug`, `documentation`, or `question`).
-10. Add the `agent-refined` label to processed issues.
-11. If the issue maps to a specific app, add exactly one app label (`codemata`,
+7. Evaluate feasibility and capture rationale.
+8. Rank by priority using impact, effort, urgency, and strategic alignment.
+9. Post a structured refinement comment using the Planning Brief template,
+  starting with the `<!-- agent:planning-brief -->` marker.
+10. Map score to `Priority` and update the project `Priority` field (`P0`/`P1`/`P2`).
+11. Add issue-type label (`enhancement`, `bug`, `documentation`, or `question`).
+12. Add the `agent-refined` label to processed issues.
+13. If the issue maps to a specific app, add exactly one app label (`codemata`,
   `moni`, or `convertly`) if it is not already present.
-12. Promote the highest-priority ready item from `Backlog` to `Planning` only
-  when Planning Exit Criteria are met.
-13. If Planning Exit Criteria are not met, leave a blocker comment and add the
-  `blocked` label.
-14. Return a concise triage summary with actions taken and any blockers.
+14. Promote the highest-priority ready item from `Backlog` to `Planning` only
+  when the refinement criteria are met.
+15. If the criteria are not met, leave the item in `Backlog` and record the
+  unmet criteria in the Planning Brief. Do **not** apply `blocked`; that label
+  is only for external blockers.
+16. Return a concise triage summary with actions taken and any blockers.
+
+This skill promotes items but does not validate them. Promoted items sit in
+`Planning` without `validated-refinement` until `/refinement-validation` runs,
+which is the expected intermediate state.
+
+## Reading prior comments
+
+Read every comment before refining, not just the issue body. Human replies often
+contain the scope decisions the body lacks, and a prior rejection is the highest
+signal input available.
+
+Use the HTML markers defined in the criteria file to locate machine-authored
+comments. Never match on comment prose; wording changes, markers do not.
+
+When a `<!-- agent:validation-fail -->` comment exists:
+
+1. Take the most recent one and treat every gap it cites as a required input.
+2. Address each gap explicitly in the new Planning Brief.
+3. Do **not** re-promote the item while any cited gap is unaddressed. Re-posting
+  a near-identical brief just gets the item kicked back again.
+4. If a gap can only be answered by a human, say so in the brief and leave the
+  item in `Backlog` rather than promoting it.
 
 ## Planning Brief template
 
@@ -80,17 +120,30 @@ Closely follow the Planning Brief template file at:
 
 Write all refinement output into issue comments only. Do not edit the issue body.
 
-## Planning Exit Criteria
+Start the Planning Brief comment with the `<!-- agent:planning-brief -->` marker
+so `/refinement-validation` and the speccing skill can locate it.
 
-An item is eligible to move from `Backlog` to `Planning` when all are true:
+## Refinement criteria
 
-1. Problem, outcome, and scope are unambiguous.
-2. A primary app label is set, or cross-app ownership is explicitly declared.
-3. Top unknowns are identified with a concrete minimum de-risk next step.
-4. Priority and rationale are documented.
-5. No external decision blocker remains unresolved.
+See `.agents/workflow-criteria/REFINEMENT_CRITERIA.md`. Evaluate every criterion
+and record the verdict in the Planning Brief.
 
-If any criterion fails, keep the item in `Backlog` and report blockers by adding a blocker comment and applying the `blocked` label.
+If any criterion fails, keep the item in `Backlog` and record which criteria are
+unmet and what would resolve them. Do not apply `blocked` for underspecified
+items; an underspecified item is a column problem, not a label problem.
+
+Apply `blocked` only for an unresolved external dependency, as defined in the
+criteria file.
+
+## Follow-up proposals
+
+When refinement excludes work that must still happen, for example capability this
+issue removes or defers, record it as a follow-up proposal block in the Planning
+Brief.
+
+Do not create the issue. Proposals are materialized separately. See
+`.agents/workflow-criteria/REFINEMENT_CRITERIA.md` for the format and the rule on
+when a follow-up qualifies.
 
 ## Open Questions
 
@@ -118,13 +171,8 @@ be explicit before spec drafting.
 
 ## Comment formatting rules
 
-When writing refinement comments:
-
-- Use inline code formatting with backticks for file paths, commands, symbols,
-  and other non-plain-text tokens.
-- Use fenced code blocks for multi-line code or command snippets.
-- Use bold formatting for bullet-point labels so labels are visually distinct
-  from values (for example: `- **Problem statement:** ...`).
+Follow the shared formatting rules in
+`.agents/workflow-criteria/REFINEMENT_CRITERIA.md`.
 
 ## Feasibility rubric
 
@@ -172,13 +220,13 @@ For ties:
 
 - Check issue labels:
   - `gh issue view <issue-number> --repo benmvp/tools-app --json labels --jq '.labels[].name'`
+- Read full comment history before refining:
+  - `gh issue view <issue-number> --repo benmvp/tools-app --json body,labels,comments`
 - Add structured Planning Brief comment:
-  - `gh issue comment <issue-number> --repo benmvp/tools-app --body "<planning-brief-comment>"`
-- Add blocker comment (when exit criteria fail):
-  - `gh issue comment <issue-number> --repo benmvp/tools-app --body "<blocked-note>"`
+  - `gh issue comment <issue-number> --repo benmvp/tools-app --body-file <path>`
 - Add base labels to processed issue:
   - `gh issue edit <issue-number> --repo benmvp/tools-app --add-label <type-label>,agent-refined`
-- Add blocked label when criteria are not met:
+- Add blocked label for an external blocker only:
   - `gh issue edit <issue-number> --repo benmvp/tools-app --add-label blocked`
 - Add app label only when applicable and missing:
   - `gh issue edit <issue-number> --repo benmvp/tools-app --add-label <app-label>`
@@ -226,7 +274,13 @@ comment. Treat cross-app ownership as no single app label.
   name could not be resolved.
 - Missing project write access: stop and report permission error.
 - Mixed item types (drafts and issues): only label/comment on issue-backed items.
-- Exit criteria failed: keep in `Backlog`, post blocker comment, add `blocked` label.
+- Criteria failed: keep in `Backlog` and record the unmet criteria in the
+  Planning Brief. No `blocked` label.
+- External blocker found: apply `blocked` and promote to `Planning` as usual if
+  the criteria are otherwise met. A well-defined item is waiting, not
+  underspecified, so it must not be held in `Backlog`.
+- Item previously rejected by `/refinement-validation`: address every cited gap
+  before considering promotion; if a gap needs human input, do not promote.
 
 ## Output format
 
@@ -238,6 +292,9 @@ Return a compact report containing:
 - Item promoted to `Planning` (or reason none was promoted).
 - Labels applied (`agent-refined` and issue-type labels).
 - App labels applied (`codemata`, `moni`, `convertly`) or why none were added.
-- Blocked labels applied (or why not).
+- Blocked labels applied for external blockers (or why not).
+- Items carrying prior validation rejections, and how each cited gap was
+  addressed.
+- Follow-up proposals recorded, and that none were materialized as issues.
 - Follow-up actions for unresolved risks.
-- Planning Exit Criteria status per processed issue (met/not met).
+- Refinement criteria status per processed issue (met/not met).
