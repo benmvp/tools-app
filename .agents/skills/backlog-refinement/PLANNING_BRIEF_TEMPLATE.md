@@ -3,6 +3,13 @@
 Use this template for the refinement comment posted on each processed issue.
 This template is comment-only output; do not modify the issue body.
 
+The comment must start with this marker on its first line, so
+`/refinement-validation` and the speccing skill can locate it:
+
+```text
+<!-- agent:planning-brief -->
+```
+
 ## Context
 
 - **Problem statement:**
@@ -56,20 +63,54 @@ This template is comment-only output; do not modify the issue body.
 - **Score:** `impact + urgency + strategicAlignment - effortCost =`
 - **Priority mapping (P0/P1/P2):**
 
-## Planning Exit Criteria check
+## Refinement criteria check
 
-- **Problem, outcome, and scope are unambiguous:** Yes/No
-- **App ownership is explicit (including cross-app when no single app label applies):** Yes/No
-- **Unknowns have concrete de-risk next step:** Yes/No
-- **Priority and rationale are documented:** Yes/No
-- **No unresolved external blocker:** Yes/No
+Criteria are defined in `.agents/workflow-criteria/REFINEMENT_CRITERIA.md`.
+Refer to them by name, never by position.
+
+- **Scope clarity:** Yes/No
+- **App ownership:** Yes/No
+- **De-risk step:** Yes/No
+- **Priority rationale:** Yes/No
+- **Codebase verification:** Yes/No
+- **Author intent honored (scope follows the issue body; any disagreement is
+  recorded as an Open Question rather than a rewritten scope):** Yes/No
 - **Result:** Met/Not Met
+- **If Not Met, what would resolve each gap:**
+
+## External blocker (only when one exists)
+
+- **What:**
+- **Owner / dependency:**
+- **What would unblock it:**
+
+## Prior validation rejections (only when present)
+
+- **Latest rejection round:**
+- **Gaps cited, and how each is addressed in this brief:**
 
 ## Open questions (only when relevant)
-
 1.
 2.
 3.
+
+## Proposed follow-ups (only when relevant)
+
+Use only when the current issue's scope explicitly excludes work that must still
+happen, for example capability this issue removes or defers. See
+`.agents/workflow-criteria/REFINEMENT_CRITERIA.md`. Do not propose general
+improvements or adjacent ideas.
+
+Repeat the block per follow-up.
+
+<!-- agent:followup-proposal -->
+### Proposed follow-up
+
+- **Title:**
+- **Why:**
+- **Type:**
+- **App:**
+- **Materialized as:**
 
 ## Ready-for-spec details (only when relevant)
 
