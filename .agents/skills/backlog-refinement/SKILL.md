@@ -25,6 +25,7 @@ Use this skill to run a structured backlog triage pass for issues in
 - Priority field name: `Priority`.
 - Refinement label: `agent-refined`.
 - Issue type labels: `enhancement`, `bug`, `documentation`, `question`.
+- App labels: `codemata`, `moni`, `convertly`.
 
 Do not prompt for repo, project, field, or column names when running this
 skill. These names are fixed and known.
@@ -59,8 +60,10 @@ Resolve IDs dynamically with `gh` each run, using the fixed names above:
 6. Map score to `Priority` and update the project `Priority` field (`P0`/`P1`/`P2`).
 7. Add issue-type label (`enhancement`, `bug`, `documentation`, or `question`).
 8. Add the `agent-refined` label to processed issues.
-9. Promote the highest-priority ready item from `Backlog` to `Planning`.
-10. Return a concise triage summary with actions taken and any blockers.
+9. If the issue maps to a specific app, add exactly one app label (`codemata`,
+  `moni`, or `convertly`) if it is not already present.
+10. Promote the highest-priority ready item from `Backlog` to `Planning`.
+11. Return a concise triage summary with actions taken and any blockers.
 
 ## Feasibility rubric
 
@@ -112,10 +115,16 @@ For ties:
     - `gh label create bug --repo benmvp/tools-app --color d73a4a --description "Something isn't working"`
     - `gh label create documentation --repo benmvp/tools-app --color 0075ca --description "Improvements or additions to documentation"`
     - `gh label create question --repo benmvp/tools-app --color d876e3 --description "Further information is requested"`
+    - `gh label create codemata --repo benmvp/tools-app --color 0e8a16 --description "Issues related to the Codemata app"`
+    - `gh label create moni --repo benmvp/tools-app --color 1d76db --description "Issues related to the Moni app"`
+    - `gh label create convertly --repo benmvp/tools-app --color fbca04 --description "Issues related to the Convertly app"`
 - Add feasibility comment:
   - `gh issue comment <issue-number> --repo benmvp/tools-app --body "<feasibility-note>"`
-- Add labels to processed issue:
+- Add base labels to processed issue:
   - `gh issue edit <issue-number> --repo benmvp/tools-app --add-label <type-label>,agent-refined`
+- Add app label only when applicable and missing:
+  - `gh issue view <issue-number> --repo benmvp/tools-app --json labels --jq '.labels[].name'`
+  - `gh issue edit <issue-number> --repo benmvp/tools-app --add-label <app-label>`
 
 Set project fields using IDs resolved at runtime:
 
@@ -136,6 +145,23 @@ Assign exactly one type label per processed issue using this order:
 If multiple categories appear, choose the first matching rule above and note why
 in the feasibility comment.
 
+## App label classification
+
+Assign at most one app label per processed issue:
+
+1. `codemata`: Issue clearly references `apps/codemata`, Codemata features,
+  Codemata routes/tools, or Codemata UI/content.
+2. `moni`: Issue clearly references `apps/moni`, Moni features, or Moni docs.
+3. `convertly`: Issue clearly references `apps/convertly`, Convertly features,
+  or Convertly docs.
+4. No app label: Cross-cutting monorepo/platform work, ambiguous ownership, or
+  more than one app without a primary owner.
+
+If an app label is applicable, first check existing labels and only add it when
+missing. If multiple apps are mentioned, choose one only when a clear primary
+owner exists; otherwise add none and note the ambiguity in the feasibility
+comment.
+
 ## Edge cases
 
 - Empty backlog: return a no-op summary.
@@ -151,6 +177,7 @@ Return a compact report containing:
 - Total backlog items reviewed.
 - Issues updated with feasibility notes.
 - Priority changes made.
-- Item promoted to Planning (or reason none was promoted).
+- Item promoted to `Planning` (or reason none was promoted).
 - Labels applied (`agent-refined` and issue-type labels).
+- App labels applied (`codemata`, `moni`, `convertly`) or why none were added.
 - Follow-up actions for unresolved risks.
