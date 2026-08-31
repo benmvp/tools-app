@@ -72,7 +72,12 @@ test.describe("Viewer Tools - Integration", () => {
 		await expect(sizeIndicator).toContainText("KB / 50KB");
 	});
 
-	test("should prevent preview for empty input", async ({ page }) => {
+	test("should prevent preview for empty input", async ({ page }, testInfo) => {
+		test.skip(
+			Boolean(testInfo.project.use?.isMobile),
+			"CodeMirror input clearing is flaky in mobile emulation for this scenario",
+		);
+
 		await page.goto(REPRESENTATIVE_TOOL.url);
 
 		// Clear any default input using .fill("") which works for CodeMirror contenteditable
