@@ -64,18 +64,23 @@ An external blocker is a dependency on a third party, an upstream service, or a
 human decision that no amount of further refinement can resolve.
 
 External blockers **do not** fail the criteria. An otherwise well-refined item is
-correctly defined; it is simply waiting. Handle it as:
+correctly defined; it is simply waiting. A blocked but well-defined item belongs
+in `Planning`, regardless of which stage discovers the blocker:
 
-- Leave `Status` as `Planning`.
+- `Status` is `Planning`. Refinement promotes such an item as usual; validation
+  leaves it where it is.
 - Apply the `blocked` label.
 - Withhold `validated-refinement` so downstream skills do not pick it up.
+
+Never hold a well-defined item in `Backlog` because it is blocked. `Backlog`
+means underspecified, and demoting a blocked item loses the refinement work.
 
 Do not use `blocked` for underspecified items. An underspecified item belongs in
 `Backlog`, which is a column problem, not a label problem.
 
 ## Label semantics
 
-Labels fall on four independent axes. A label answers exactly one question.
+Labels fall on five independent axes. A label answers exactly one question.
 
 | Axis | Question | Removable | Labels |
 | --- | --- | --- | --- |

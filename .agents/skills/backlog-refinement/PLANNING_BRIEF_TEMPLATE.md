@@ -69,12 +69,13 @@ Criteria are defined in `.agents/workflow-criteria/REFINEMENT_CRITERIA.md`.
 Refer to them by name, never by position.
 
 - **Scope clarity:** Yes/No
+  - **Author intent honored:** Yes/No. Scope follows the issue body, and any
+    disagreement is recorded as an Open Question rather than a rewritten scope.
+    This is part of Scope clarity, not a separate criterion.
 - **App ownership:** Yes/No
 - **De-risk step:** Yes/No
 - **Priority rationale:** Yes/No
 - **Codebase verification:** Yes/No
-- **Author intent honored (scope follows the issue body; any disagreement is
-  recorded as an Open Question rather than a rewritten scope):** Yes/No
 - **Result:** Met/Not Met
 - **If Not Met, what would resolve each gap:**
 

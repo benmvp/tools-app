@@ -276,7 +276,9 @@ comment. Treat cross-app ownership as no single app label.
 - Mixed item types (drafts and issues): only label/comment on issue-backed items.
 - Criteria failed: keep in `Backlog` and record the unmet criteria in the
   Planning Brief. No `blocked` label.
-- External blocker found: apply `blocked` and keep the item in `Backlog`.
+- External blocker found: apply `blocked` and promote to `Planning` as usual if
+  the criteria are otherwise met. A well-defined item is waiting, not
+  underspecified, so it must not be held in `Backlog`.
 - Item previously rejected by `/refinement-validation`: address every cited gap
   before considering promotion; if a gap needs human input, do not promote.
 
