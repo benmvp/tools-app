@@ -58,9 +58,9 @@ Resolve IDs dynamically with `gh` each run, using the fixed names above:
 3. Skip draft items for labeling/commenting; only mutate issue-backed items.
 4. Analyze relevant codebase areas to reduce unknowns and produce actionable
   de-risk next steps.
-5. Post a structured refinement comment using the Planning Brief template.
-6. Evaluate feasibility and capture rationale.
-7. Rank by priority using impact, effort, urgency, and strategic alignment.
+5. Evaluate feasibility and capture rationale.
+6. Rank by priority using impact, effort, urgency, and strategic alignment.
+7. Post a structured refinement comment using the Planning Brief template.
 8. Map score to `Priority` and update the project `Priority` field (`P0`/`P1`/`P2`).
 9. Add issue-type label (`enhancement`, `bug`, `documentation`, or `question`).
 10. Add the `agent-refined` label to processed issues.
