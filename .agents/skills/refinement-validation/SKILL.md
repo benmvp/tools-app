@@ -1,24 +1,25 @@
 ---
 name: refinement-validation
 description: |
-  Validates that issues sitting in the Planning column of the AI Harness project
-  are refined well enough to be there. Passing items get the
-  validated-refinement label; failing items are kicked back to Backlog with a
+  Validates that refined issues in the Backlog column of the AI Harness project
+  meet the refinement criteria. Passing items are promoted to Ready for Planning
+  with the validated-refinement label; failing items stay in Backlog with a
   comment explaining the gaps.
 ---
 
 # Refinement Validation
 
-Use this skill as the quality gate on the `Planning` column for
-`benmvp/tools-app` issues in the `AI Harness` GitHub Project.
+Use this skill as the quality gate that promotes `benmvp/tools-app` issues out of
+`Backlog` in the `AI Harness` GitHub Project.
 
-Items reach `Planning` two ways: promoted by `/backlog-refinement`, or moved
-manually. This skill audits both the same way, against the same criteria.
+This skill owns the `Backlog` -> `Ready for Planning` transition. Nothing else
+moves items into `Ready for Planning`, which is what makes that column mean
+"certified ready, nobody has started".
 
 ## When to use
 
-- After a `/backlog-refinement` run, to gate what it promoted.
-- After manually dragging issues into `Planning`.
+- After a `/backlog-refinement` run, to gate what it refined.
+- On a specific issue you refined or wrote by hand and want promoted.
 - Before running the speccing skill, so it only consumes validated items.
 
 ## Mandate: validation only
@@ -33,20 +34,19 @@ This skill **never** improves an issue. It does not:
 If a required piece of information can only be supplied by inventing it, that is
 the gap. Report it and fail the item.
 
-The one exception is the brief-shaped summary for manually-moved items
-(see [Manually-moved items](#manually-moved-items)), which restates information
-that already exists and must cite its source for every field.
+The one exception is the brief-shaped summary for items with no Planning Brief
+(see [Items without a Planning Brief](#items-without-a-planning-brief)), which
+restates information that already exists and must cite its source for every
+field.
+
+Validation is the only stage permitted to set `Status` on these items, and only
+along the transitions in [Outcome paths](#outcome-paths).
 
 ## Fixed scope
 
 - Repository: `benmvp/tools-app`.
 - Project owner: `benmvp` (user project scope).
 - Project title: `AI Harness`.
-- Column audited: `Planning`.
-- Demotion target: `Backlog`.
-- Gate state label: `validated-refinement`.
-- Provenance label: `agent-validated-refinement`.
-- Blocked label: `blocked`.
 
 Do not prompt for repo, project, field, or column names. These are fixed.
 
@@ -55,8 +55,9 @@ Do not prompt for repo, project, field, or column names. These are fixed.
 The pass/fail bar lives in `.agents/workflow-criteria/REFINEMENT_CRITERIA.md`.
 
 Read that file at the start of every run. Do not restate, summarize, or fork the
-criteria inside this skill. It also defines label semantics, comment markers,
-staleness, and rejection loop protection, all of which this skill depends on.
+criteria inside this skill. It also defines column ownership, label semantics,
+comment markers, staleness, and rejection loop protection, all of which this
+skill depends on.
 
 ## Runtime discovery (required)
 
@@ -71,27 +72,37 @@ Resolve IDs dynamically with `gh` each run:
     - `gh project field-list <projectNumber> --owner benmvp --format json`
     - Capture:
       - `statusFieldId` for field `Status`
-      - `planningOptionId` for option `Planning`
       - `backlogOptionId` for option `Backlog`
+      - `readyForPlanningOptionId` for option `Ready for Planning`
 3. Fail fast if any required project/field/option name is missing.
+
+Resolve option IDs by name every run. They are not stable; editing the `Status`
+field's options regenerates them.
 
 ## Invocation modes
 
-- **Sweep (default):** audit every `Planning` item.
-- **Single item:** given an issue number, audit only that issue. Still verify it
-  is actually in `Planning`; if not, stop and report its real status.
+- **Sweep (default):** audit everything matching [Selection](#selection).
+- **Single item:** given an issue number, audit only that issue. Verify it is in
+  `Backlog` or `Ready for Planning`; if it is anywhere else, stop and report its
+  real status.
 
 ## Selection
 
-In sweep mode, process a `Planning` item when either is true:
+In sweep mode, process an item when either is true:
 
-- It does not have `validated-refinement`.
-- It has `validated-refinement` but is **stale** per the staleness rule in the
-  criteria file.
+- `Status=Backlog`, it has `agent-refined`, and it does not have
+  `validated-refinement`. This is the normal promotion path.
+- `Status=Ready for Planning` and it is **stale** per the staleness rule in the
+  criteria file. This is the regression path: something changed after the item
+  was certified.
+
+Always skip items labeled `parked`, in every mode, and note them as skipped.
+Never add or remove `parked`.
 
 Skip everything else. Re-validating unchanged items produces duplicate comments.
 
-In single-item mode, always process, even if already validated.
+In single-item mode, always process, even if already validated, and even without
+`agent-refined`. That is how a hand-written issue gets promoted.
 
 Only process issue-backed items in `benmvp/tools-app`. Skip draft items and
 issues from other repositories, and note them in the summary.
@@ -100,7 +111,7 @@ issues from other repositories, and note them in the summary.
 
 1. Read `.agents/workflow-criteria/REFINEMENT_CRITERIA.md`.
 2. Discover project and field/option IDs.
-3. Query `Planning` items and apply the selection rules above.
+3. Query items and apply the selection rules above.
 4. For each selected issue, gather input:
     - Issue title, body, labels, and `Priority` field value.
     - `createdAt` and `lastEditedAt` via GraphQL.
@@ -145,7 +156,8 @@ All criteria met and no external blocker:
 1. Post the pass comment from `VALIDATION_REPORT_TEMPLATE.md`, starting with
   `<!-- agent:validation-pass -->`.
 2. Add `validated-refinement` and `agent-validated-refinement`.
-3. Leave `Status` as `Planning`. Leave `Priority` untouched.
+3. Set `Status` to `Ready for Planning`. If the item is already there (regression
+  path), leave it. Leave `Priority` untouched.
 
 ### Fail
 
@@ -157,7 +169,10 @@ Any criterion unmet, and the rejection count is below 3:
 2. Name every failed criterion, the specific gap, and what would resolve it.
   "Scope is unclear" is not actionable; "scope does not say whether existing
   issues get backfilled" is.
-3. Set `Status` to `Backlog`.
+3. Set `Status`:
+    - Already in `Backlog`: **change nothing**. Failure is not a move, and the
+      item is already in the column where rework happens.
+    - In `Ready for Planning` (regression path): demote to `Backlog`.
 4. Remove `validated-refinement` if present.
 5. **Never** remove provenance labels. `agent-refined` stays, because the agent
   did in fact refine it. Whether the item needs re-refinement is derived from
@@ -165,13 +180,17 @@ Any criterion unmet, and the rejection count is below 3:
 
 ### Circuit breaker
 
-If this would be the **third** rejection, do not demote:
+If this would be the **third** rejection:
 
 1. Post the fail comment noting the circuit breaker tripped.
 2. Apply `blocked`.
-3. Leave the item in `Planning`.
+3. Leave the item in `Backlog`, and demote it there if it was in
+  `Ready for Planning`.
 4. Escalate in the run summary: the remaining gaps need human input, and further
   agent refinement will not resolve them.
+
+The `blocked` label is what stops `/backlog-refinement` from looping on it, since
+no amount of further refinement will close the gaps.
 
 ### External blocker
 
@@ -179,17 +198,19 @@ Criteria are met but an unresolved external dependency exists:
 
 1. Post the comment starting with `<!-- agent:validation-blocked -->`, naming the
   blocker and who or what must resolve it.
-2. Apply `blocked`.
-3. Leave the item in `Planning`.
-4. Withhold `validated-refinement`, so the speccing skill does not pick it up.
+2. Add `validated-refinement` and `agent-validated-refinement`. The refinement is
+  genuinely valid; only the work is waiting.
+3. Apply `blocked`.
+4. Set `Status` to `Ready for Planning`, exactly as a normal pass.
 
-Do not demote. The item is well-defined; it is waiting, not underspecified.
+Downstream stages skip it via `-label:blocked`. Do not withhold the gate label to
+achieve that; gate labels answer the quality question only.
 
-## Manually-moved items
+## Items without a Planning Brief
 
-An item moved by hand has no Planning Brief. Evaluate the issue body and comments
-against the same criteria; a well-written issue can pass without ever having been
-agent-refined.
+An issue written by hand and validated in single-item mode has no Planning Brief.
+Evaluate the issue body and comments against the same criteria; a well-written
+issue can pass without ever having been agent-refined.
 
 When such an item passes, the pass comment must include a brief-shaped summary so
 downstream consumers get the same structure regardless of how the item arrived.
@@ -203,7 +224,6 @@ The summary is subject to a hard rule:
 - **Every field must cite its source**, for example `issue body`,
   `comment by @benmvp`. A field that cannot be cited must not be written; its
   absence is a gap, and the item fails.
-
 ## Report template
 
 Follow `.agents/skills/refinement-validation/VALIDATION_REPORT_TEMPLATE.md`.
@@ -240,7 +260,7 @@ GH_PROMPT_DISABLED=1 GH_PAGER=cat PAGER=cat gh issue comment <issue-number> \
 Label changes:
 
 ```sh
-# Pass
+# Pass or external blocker
 gh issue edit <issue-number> --repo benmvp/tools-app \
   --add-label validated-refinement,agent-validated-refinement
 
@@ -252,7 +272,15 @@ gh issue edit <issue-number> --repo benmvp/tools-app \
 gh issue edit <issue-number> --repo benmvp/tools-app --add-label blocked
 ```
 
-Demote `Planning` -> `Backlog`:
+Promote `Backlog` -> `Ready for Planning`:
+
+```sh
+gh project item-edit --id <item-id> --project-id <project-id> \
+  --field-id <status-field-id> \
+  --single-select-option-id <ready-for-planning-option-id>
+```
+
+Demote `Ready for Planning` -> `Backlog` (regression path only):
 
 ```sh
 gh project item-edit --id <item-id> --project-id <project-id> \
@@ -264,20 +292,22 @@ Markdown tables and HTML markers that are awkward to escape inline.
 
 ## Edge cases
 
-- **No `Planning` items:** return a no-op summary.
-- **All `Planning` items already validated and fresh:** return a no-op summary
-  listing what was skipped and why.
+- **Nothing selected:** return a no-op summary listing what was skipped and why.
 - **Draft project items:** skip; never comment or label.
 - **Issues from other repositories:** skip; note in the summary.
-- **Single-item mode on an issue not in `Planning`:** stop, report actual status,
-  mutate nothing.
+- **`parked` item:** skip in every mode, including single-item mode. Report it as
+  skipped and state that a human must remove `parked` first.
+- **Single-item mode on an issue outside `Backlog` or `Ready for Planning`:**
+  stop, report actual status, mutate nothing.
+- **Item in `Backlog` without `agent-refined`:** not selected in sweep mode. In
+  single-item mode, evaluate it normally as an item with no Planning Brief.
 - **Issue already has `blocked` and the blocker is now resolved:** remove
   `blocked` and continue normal evaluation.
 - **Missing project/field/option by name:** stop and report exactly which name
   could not be resolved.
 - **Missing project write access:** stop and report the permission error.
-- **Item in `Planning` with neither a brief nor a substantive body:** normal
-  failure path. Cite which criteria have no supporting information at all.
+- **Item with neither a brief nor a substantive body:** normal failure path. Cite
+  which criteria have no supporting information at all.
 - **Unmarked Planning Brief:** briefs written before the marker convention have
   no `<!-- agent:planning-brief -->` line. Fall back to matching a comment whose
   first heading is `Planning Brief`, evaluate it normally, and note the missing
@@ -287,10 +317,13 @@ Markdown tables and HTML markers that are awkward to escape inline.
 
 Return a compact report containing:
 
-- Total `Planning` items reviewed, and how many were skipped (with reasons).
+- Total items reviewed, and how many were skipped (with reasons, including
+  `parked`).
 - Per issue: pass / fail / blocked, and the per-criterion verdicts.
 - Codebase verification findings, especially hallucinated or contradicted claims.
-- Items demoted to `Backlog`.
+- Items promoted to `Ready for Planning`.
+- Items left in `Backlog` after failing, and items demoted from
+  `Ready for Planning`.
 - Items where the circuit breaker tripped and human input is required.
 - Labels added or removed, per issue.
 - Items validated from body alone, with no Planning Brief.

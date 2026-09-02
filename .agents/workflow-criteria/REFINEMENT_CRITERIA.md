@@ -1,33 +1,67 @@
 # Refinement Criteria
 
-Shared contract for the `Backlog` -> `Planning` gate in the `AI Harness` project
-for `benmvp/tools-app`.
+Shared contract for the `Backlog` -> `Ready for Planning` gate in the `AI Harness`
+project for `benmvp/tools-app`.
 
 Two skills reference this file:
 
-- `.agents/skills/backlog-refinement/SKILL.md` uses it to decide what to promote.
-- `.agents/skills/refinement-validation/SKILL.md` uses it to audit what is
-  already in `Planning`.
+- `.agents/skills/backlog-refinement/SKILL.md` uses it to decide when an item's
+  refinement is complete.
+- `.agents/skills/refinement-validation/SKILL.md` uses it to decide what gets
+  promoted out of `Backlog`.
 
 Neither skill may restate or fork these criteria. Change them here only.
+
+## Column ownership
+
+The board alternates between **active** columns, where work and rework happen,
+and **readiness** columns, which hold certified work that nobody has started.
+
+One rule governs every forward transition:
+
+> **Validators promote. Producers claim. Failure moves nothing.**
+
+| Transition | Who | Kind |
+| --- | --- | --- |
+| `Backlog` -> `Ready for Planning` | `refinement-validation` | promotion |
+| `Ready for Planning` -> `Planning` | spec skill | claim |
+| `Planning` -> `Ready for Development` | spec-validation skill | promotion |
+| `Ready for Development` -> `In Development` | developer or implementation skill | claim |
+
+Consequences that all stages depend on:
+
+- A readiness column is entered **only** by a validator, so its contents are
+  always certified. A producer never moves an item into one.
+- A producer moves an item only to **claim** it out of a readiness column into
+  the next active column. That claim is what prevents two runs picking up the
+  same item.
+- **Failure is not a move.** A rejected item stays in the active column it was
+  already in, without its gate label. It is already in the right place, because
+  that column is where rework happens.
+- The one exception is regression: an item already sitting in a readiness column
+  that later fails re-validation is demoted back to the preceding active column.
+
+`Backlog` is the active column for refinement. There is no readiness column
+before it, because refinement is the first stage.
 
 ## Criteria
 
 Each criterion has a stable **name**. Always refer to criteria by name, never by
 position. Numbering shifts as criteria are added or reordered; names do not.
 
-An issue's refinement is sufficient for `Planning` when all of the following are
-true:
+An issue's refinement is sufficient for `Ready for Planning` when all of the
+following are true:
 
 ### Scope clarity
 
 Problem, outcome, and scope are unambiguous. A reader can state what is broken or
 missing, what "done" looks like, and what is explicitly out of scope.
 
-### App ownership
+### Area ownership
 
-Exactly one of `codemata`, `moni`, or `convertly` is applied, or the issue
-explicitly declares cross-app/platform ownership with no single owner.
+Exactly one area label (`codemata`, `moni`, `convertly`, `skills`, or `infra`) is
+applied, or the issue explicitly declares cross-cutting ownership with no single
+owner.
 
 ### De-risk step
 
@@ -64,19 +98,35 @@ An external blocker is a dependency on a third party, an upstream service, or a
 human decision that no amount of further refinement can resolve.
 
 External blockers **do not** fail the criteria. An otherwise well-refined item is
-correctly defined; it is simply waiting. A blocked but well-defined item belongs
-in `Planning`, regardless of which stage discovers the blocker:
+correctly defined; it is simply waiting. Such an item is promoted normally:
 
-- `Status` is `Planning`. Refinement promotes such an item as usual; validation
-  leaves it where it is.
-- Apply the `blocked` label.
-- Withhold `validated-refinement` so downstream skills do not pick it up.
+- It is promoted to `Ready for Planning` like any other passing item.
+- It receives `validated-refinement`, because its refinement genuinely is valid.
+- It also receives the `blocked` label.
+
+Downstream stages exclude it with `-label:blocked`, not by withholding the gate
+label. Quality and blocking are separate axes, and a gate label must only ever
+answer the quality question.
 
 Never hold a well-defined item in `Backlog` because it is blocked. `Backlog`
-means underspecified, and demoting a blocked item loses the refinement work.
+means underspecified, and holding a blocked item there loses the refinement work.
 
 Do not use `blocked` for underspecified items. An underspecified item belongs in
 `Backlog`, which is a column problem, not a label problem.
+
+## Parked items
+
+`parked` marks an item that a human has deliberately excluded from automated
+processing. It is the way to capture a raw idea in `Backlog` without any agent
+stage picking it up.
+
+Every stage adds `-label:parked` to its selection query and reports parked items
+as skipped. No stage ever adds or removes `parked`; only a human does. Removing
+it is the explicit signal that the item is ready to be looked at.
+
+`parked` is not `blocked`. A blocked item is well-defined and waiting on someone
+else, and it keeps flowing through the stages. A parked item is waiting on its
+author and does not flow at all.
 
 ## Label semantics
 
@@ -85,27 +135,42 @@ Labels fall on five independent axes. A label answers exactly one question.
 | Axis | Question | Removable | Labels |
 | --- | --- | --- | --- |
 | Type | What kind of work is this? | Reclassify only | `bug`, `enhancement`, `documentation`, `question` |
-| Area | What part of the repo? | Reclassify only | `codemata`, `moni`, `convertly`, `skills` |
+| Area | What part of the repo? | Reclassify only | `codemata`, `moni`, `convertly`, `skills`, `infra` |
 | Gate state | Which quality bars has it passed? | Yes | `validated-refinement`, `validated-spec` |
-| Blocking state | Is it stuck on something external? | Yes | `blocked` |
+| Holding state | Is progression held, and by what? | Yes | `blocked`, `parked` |
 | Provenance | Who did each stage? | **Never** | `agent-refined`, `agent-validated-refinement`, `agent-specced`, `agent-validated-spec` |
 
 Rules:
 
 - **Provenance labels are append-only.** They record history. Never remove one,
   including when demoting an item.
-- **Only state labels are removed.** Demotion removes `validated-refinement`.
+- **Only state labels are removed.** A failed validation removes
+  `validated-refinement`.
+- **`parked` is human-owned.** No stage adds or removes it.
 - Whether an item needs (re-)refinement is derived from state, not from
   stripping provenance:
   `Status = Backlog AND no validated-refinement` means it needs refinement.
 
 ### Consumer queries
 
+Every stage additionally excludes `parked`.
+
 ```text
-backlog-refinement    -> Status=Backlog  AND -label:validated-refinement
-refinement-validation -> Status=Planning AND (-label:validated-refinement OR stale)
-spec skill (future)   -> Status=Planning AND label:validated-refinement AND -label:validated-spec
-next work item        -> Status=Planning AND label:validated-spec AND -label:blocked
+backlog-refinement    -> Status=Backlog AND -label:validated-refinement
+refinement-validation -> (Status=Backlog AND label:agent-refined AND -label:validated-refinement)
+                         OR (Status="Ready for Planning" AND stale)
+spec skill            -> Status="Ready for Planning" AND label:validated-refinement AND -label:blocked
+spec validation       -> (Status=Planning AND label:agent-specced AND -label:validated-spec)
+                         OR (Status="Ready for Development" AND stale)
+next work item        -> Status="Ready for Development" AND label:validated-spec AND -label:blocked
+```
+
+Because `Backlog` holds both raw and refined-pending-validation items, the labels
+are what separate them:
+
+```text
+never refined       -> Status=Backlog AND -label:agent-refined
+awaiting validation -> Status=Backlog AND label:agent-refined AND -label:validated-refinement
 ```
 
 ## Comment markers
@@ -118,7 +183,7 @@ locate it without parsing prose. Markers are invisible in rendered Markdown.
 | `<!-- agent:planning-brief -->` | `backlog-refinement` | Structured Planning Brief |
 | `<!-- agent:validation-pass -->` | `refinement-validation` | Refinement passed the criteria |
 | `<!-- agent:validation-fail round=N -->` | `refinement-validation` | Refinement failed; `N` is the 1-based rejection count |
-| `<!-- agent:validation-blocked -->` | `refinement-validation` | External blocker found; item held in `Planning` |
+| `<!-- agent:validation-blocked -->` | `refinement-validation` | External blocker found; item promoted and labeled `blocked` |
 | `<!-- agent:followup-proposal -->` | any stage | Proposed follow-up issue; see below |
 
 Never match on comment prose. Wording changes; markers do not.
@@ -155,7 +220,7 @@ comment.
 - **Title:**
 - **Why:** what in the current issue creates this work
 - **Type:** `bug` / `enhancement` / `documentation` / `question`
-- **App:** `codemata` / `moni` / `convertly` / cross-app
+- **Area:** `codemata` / `moni` / `convertly` / `skills` / `infra` / cross-cutting
 - **Materialized as:** _(issue number, filled in when created)_
 ```
 
@@ -202,11 +267,11 @@ GH_PROMPT_DISABLED=1 GH_PAGER=cat PAGER=cat gh api graphql -f query='
 To guarantee the refine/reject cycle terminates:
 
 1. `backlog-refinement` must read the latest `<!-- agent:validation-fail -->`
-  comment and explicitly address every gap it cites. It may not re-promote an
-  item while any cited gap is unaddressed.
+  comment and explicitly address every gap it cites. It may not declare an item
+  ready while any cited gap is unaddressed.
 2. `refinement-validation` counts existing `validation-fail` markers. On the
-  third rejection it stops demoting: it applies `blocked`, leaves the item in
-  `Planning`, and escalates for human input.
+  third rejection it stops rejecting quietly: it applies `blocked`, leaves the
+  item in `Backlog`, and escalates for human input.
 
 ## Comment formatting rules
 

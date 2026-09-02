@@ -28,7 +28,7 @@ The comment must start with this marker on its first line, so
 
 ## Constraints
 
-- **App ownership (codemata/moni/convertly or cross-app with no single app label):**
+- **Area ownership (codemata/moni/convertly/skills/infra, or cross-cutting with no single area label):**
 - **Technical or platform constraints:**
 - **Dependency constraints:**
 
@@ -72,7 +72,7 @@ Refer to them by name, never by position.
   - **Author intent honored:** Yes/No. Scope follows the issue body, and any
     disagreement is recorded as an Open Question rather than a rewritten scope.
     This is part of Scope clarity, not a separate criterion.
-- **App ownership:** Yes/No
+- **Area ownership:** Yes/No
 - **De-risk step:** Yes/No
 - **Priority rationale:** Yes/No
 - **Codebase verification:** Yes/No
@@ -110,7 +110,7 @@ Repeat the block per follow-up.
 - **Title:**
 - **Why:**
 - **Type:**
-- **App:**
+- **Area:**
 - **Materialized as:**
 
 ## Ready-for-spec details (only when relevant)

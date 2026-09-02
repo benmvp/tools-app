@@ -18,14 +18,15 @@ shifts as criteria change; names do not.
 <!-- agent:validation-pass -->
 ## Refinement validated
 
-This issue meets the refinement criteria for `Planning`.
+This issue meets the refinement criteria and has been promoted to
+`Ready for Planning`.
 
 ### Criteria
 
 | Criterion | Verdict | Evidence |
 | --- | --- | --- |
 | Scope clarity | Pass | |
-| App ownership | Pass | |
+| Area ownership | Pass | |
 | De-risk step | Pass | |
 | Priority rationale | Pass | |
 | Codebase verification | Pass | |
@@ -38,16 +39,19 @@ This issue meets the refinement criteria for `Planning`.
 
 ### Actions taken
 
-- **Status:** unchanged (`Planning`)
+- **Status:** `Backlog` -> `Ready for Planning`
 - **Labels added:** `validated-refinement`, `agent-validated-refinement`
 ```
 
 Evidence must point at something real: a section of the issue body, a specific
 comment, or a file in the repo.
 
+When re-validating an item already in `Ready for Planning`, change the status
+line to `unchanged (Ready for Planning)`.
+
 ---
 
-## Pass comment, manually-moved item
+## Pass comment, item with no Planning Brief
 
 Same as above, plus the section below. Use only when there is no
 `<!-- agent:planning-brief -->` comment on the issue.
@@ -65,7 +69,7 @@ validated. This restates existing information only; nothing here is new.
 - **Desired outcome:** ... _(source: issue body)_
 - **In scope:** ... _(source: comment by @benmvp)_
 - **Out of scope:** ... _(source: comment by @benmvp)_
-- **App ownership:** ... _(source: `codemata` label)_
+- **Area ownership:** ... _(source: `codemata` label)_
 - **Known unknowns and de-risk step:** ... _(source: issue body)_
 - **Priority rationale:** ... _(source: `Priority` field, comment by @benmvp)_
 ```
@@ -76,10 +80,10 @@ validated. This restates existing information only; nothing here is new.
 
 ```markdown
 <!-- agent:validation-fail round=N -->
-## Refinement not yet sufficient for Planning
+## Refinement not yet sufficient for promotion
 
-This issue does not meet the refinement criteria, so it has been moved back to
-`Backlog`. Rejection **N** of 3.
+This issue does not meet the refinement criteria, so it stays in `Backlog`.
+Rejection **N** of 3.
 
 ### Failed criteria
 
@@ -101,14 +105,14 @@ This issue does not meet the refinement criteria, so it has been moved back to
 
 ### Actions taken
 
-- **Status:** `Planning` -> `Backlog`
+- **Status:** unchanged (`Backlog`)
 - **Labels removed:** `validated-refinement`
 - **Provenance labels:** unchanged
 
 ### Next step
 
 Run `/backlog-refinement`. It must address every gap above before this issue can
-return to `Planning`.
+be promoted to `Ready for Planning`.
 ```
 
 Gaps must be specific and actionable. "Scope is unclear" tells nobody anything;
@@ -117,20 +121,25 @@ does.
 
 Omit the "Criteria met" table when nothing passed.
 
+On the regression path, where a stale item in `Ready for Planning` fails
+re-validation, change the status line to `Ready for Planning` -> `Backlog`.
+
+Omit the "Criteria met" table when nothing passed.
+
 ---
 
 ## Fail comment, circuit breaker tripped
 
-Use on the third rejection. The item stays in `Planning` and is escalated instead
-of being demoted again.
+Use on the third rejection. The item stays in `Backlog` and is escalated for
+human input instead of being refined again.
 
 ```markdown
 <!-- agent:validation-fail round=3 -->
 ## Refinement blocked after 3 rejections
 
 This issue has now failed validation three times. Further agent refinement is
-unlikely to resolve the remaining gaps, so it is being held in `Planning` and
-escalated rather than demoted again.
+unlikely to resolve the remaining gaps, so it is being escalated rather than
+refined again.
 
 ### Unresolved gaps
 
@@ -145,7 +154,7 @@ escalated rather than demoted again.
 
 ### Actions taken
 
-- **Status:** unchanged (`Planning`)
+- **Status:** unchanged (`Backlog`)
 - **Labels added:** `blocked`
 
 ### Next step
@@ -159,15 +168,15 @@ Human input is required on the gaps above. Once answered in a comment, re-run
 ## External blocker comment
 
 Criteria are met, but an unresolved external dependency exists. The item is
-well-defined and waiting, not underspecified, so it stays in `Planning`.
+well-defined and waiting, so it is promoted normally and marked `blocked`.
 
 ```markdown
 <!-- agent:validation-blocked -->
 ## Refinement valid, blocked externally
 
-This issue meets the refinement criteria, but an external blocker prevents it
-from progressing. It stays in `Planning` and has not been labeled
-`validated-refinement`, so downstream speccing will not pick it up.
+This issue meets the refinement criteria and has been promoted to
+`Ready for Planning`. An external blocker prevents work from starting, so it is
+labeled `blocked` and downstream speccing will skip it until that clears.
 
 ### Blocker
 
@@ -183,11 +192,12 @@ from progressing. It stays in `Planning` and has not been labeled
 
 ### Actions taken
 
-- **Status:** unchanged (`Planning`)
-- **Labels added:** `blocked`
-- **`validated-refinement`:** withheld until the blocker clears
+- **Status:** `Backlog` -> `Ready for Planning`
+- **Labels added:** `validated-refinement`, `agent-validated-refinement`,
+  `blocked`
 
 ### Next step
 
-Resolve the blocker, then re-run `/refinement-validation` on this issue.
+Resolve the blocker and remove `blocked`, then the speccing skill can pick this
+up.
 ```
