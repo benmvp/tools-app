@@ -90,14 +90,23 @@ field's options regenerates them.
 
 In sweep mode, process an item when either is true:
 
-- `Status=Backlog`, it has `agent-refined`, and it does not have
-  `validated-refinement`. This is the normal promotion path.
+- `Status=Backlog`, it has `agent-refined`, it does not have
+  `validated-refinement`, and it has fewer than 3
+  `<!-- agent:validation-fail -->` markers. This is the normal promotion path.
 - `Status=Ready for Planning` and it is **stale** per the staleness rule in the
   criteria file. This is the regression path: something changed after the item
   was certified.
 
 Always skip items labeled `parked`, in every mode, and note them as skipped.
 Never add or remove `parked`.
+
+An item that already has 3 rejections has tripped the circuit breaker and is
+awaiting human input. Skipping it in sweep mode is what stops the breaker from
+posting a fourth rejection. Use single-item mode to re-check it once a human has
+responded.
+
+Unlike the producer stages, this skill does **not** exclude `blocked`. It is the
+stage that clears that label once a blocker resolves.
 
 Skip everything else. Re-validating unchanged items produces duplicate comments.
 
@@ -189,8 +198,9 @@ If this would be the **third** rejection:
 4. Escalate in the run summary: the remaining gaps need human input, and further
   agent refinement will not resolve them.
 
-The `blocked` label is what stops `/backlog-refinement` from looping on it, since
-no amount of further refinement will close the gaps.
+The `blocked` label keeps `/backlog-refinement` from looping on the item, and the
+rejection count keeps this skill from re-rejecting it. Both are required; the
+label alone would not stop this skill's own sweep.
 
 ### External blocker
 
@@ -301,6 +311,8 @@ Markdown tables and HTML markers that are awkward to escape inline.
   stop, report actual status, mutate nothing.
 - **Item in `Backlog` without `agent-refined`:** not selected in sweep mode. In
   single-item mode, evaluate it normally as an item with no Planning Brief.
+- **Item with 3 or more rejections:** not selected in sweep mode. In single-item
+  mode, evaluate it normally; this is how a human-answered gap gets re-checked.
 - **Issue already has `blocked` and the blocker is now resolved:** remove
   `blocked` and continue normal evaluation.
 - **Missing project/field/option by name:** stop and report exactly which name

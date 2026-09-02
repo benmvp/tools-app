@@ -153,17 +153,36 @@ Rules:
 
 ### Consumer queries
 
-Every stage additionally excludes `parked`.
+Every stage excludes `parked`, and every producer stage also excludes `blocked`.
+Both are shown explicitly below, because a stage that only excludes one of them
+will loop.
 
 ```text
 backlog-refinement    -> Status=Backlog AND -label:validated-refinement
-refinement-validation -> (Status=Backlog AND label:agent-refined AND -label:validated-refinement)
-                         OR (Status="Ready for Planning" AND stale)
-spec skill            -> Status="Ready for Planning" AND label:validated-refinement AND -label:blocked
-spec validation       -> (Status=Planning AND label:agent-specced AND -label:validated-spec)
-                         OR (Status="Ready for Development" AND stale)
-next work item        -> Status="Ready for Development" AND label:validated-spec AND -label:blocked
+                         AND -label:blocked AND -label:parked
+refinement-validation -> -label:parked AND (
+                           (Status=Backlog AND label:agent-refined
+                            AND -label:validated-refinement AND rejectionCount<3)
+                           OR (Status="Ready for Planning" AND stale))
+spec skill            -> Status="Ready for Planning" AND label:validated-refinement
+                         AND -label:blocked AND -label:parked
+spec validation       -> -label:parked AND (
+                           (Status=Planning AND label:agent-specced
+                            AND -label:validated-spec)
+                           OR (Status="Ready for Development" AND stale))
+next work item        -> Status="Ready for Development" AND label:validated-spec
+                         AND -label:blocked AND -label:parked
 ```
+
+Producers exclude `blocked` because neither kind of blocked item can be advanced
+by producing more content: an externally blocked item is already sufficiently
+refined and is waiting on someone else, and a circuit-breaker item needs a human
+decision. Validators do **not** exclude `blocked`, because they are what clears
+it once the blocker resolves.
+
+`rejectionCount` is the number of `<!-- agent:validation-fail -->` markers on the
+issue. Excluding items at 3 is what makes the circuit breaker terminal instead of
+merely advisory.
 
 Because `Backlog` holds both raw and refined-pending-validation items, the labels
 are what separate them:
@@ -272,6 +291,9 @@ To guarantee the refine/reject cycle terminates:
 2. `refinement-validation` counts existing `validation-fail` markers. On the
   third rejection it stops rejecting quietly: it applies `blocked`, leaves the
   item in `Backlog`, and escalates for human input.
+3. Once the count reaches 3, both stages skip the item entirely in sweep mode,
+  via `-label:blocked` and `rejectionCount<3` respectively. Without that, the
+  next sweep would simply post a fourth rejection.
 
 ## Comment formatting rules
 

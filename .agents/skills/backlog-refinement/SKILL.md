@@ -73,9 +73,9 @@ name for filtering.
 
 1. Read `.agents/workflow-criteria/REFINEMENT_CRITERIA.md`.
 2. Discover project and field/option IDs from fixed names.
-3. Query `AI Harness` items in `Status=Backlog` that have neither
-  `validated-refinement` nor `parked`, then only process items whose linked issue
-  belongs to `benmvp/tools-app`.
+3. Query `AI Harness` items in `Status=Backlog` that have none of
+  `validated-refinement`, `blocked`, or `parked`, then only process items whose
+  linked issue belongs to `benmvp/tools-app`.
 4. Skip draft items for labeling/commenting; only mutate issue-backed items.
 5. Read the full comment history for each item, oldest to newest, including any
   prior Planning Brief and validation comments. See
@@ -288,10 +288,15 @@ comment. Treat cross-app ownership as no single area label.
 - Mixed item types (drafts and issues): only label/comment on issue-backed items.
 - `parked` item: skip entirely. Do not comment, label, or set `Priority`. List it
   as skipped in the summary. Never add or remove `parked`.
+- `blocked` item: skip entirely, and list it as skipped. Refinement cannot
+  advance either kind of blocked item. An externally blocked item is already
+  refined and is waiting on someone else; a circuit-breaker item needs a human
+  decision. Only `/refinement-validation` clears `blocked`.
 - Criteria failed: record the unmet criteria in the Planning Brief. The item
   stays in `Backlog`, which is where it already is. No `blocked` label.
 - External blocker found: apply `blocked` and record the criteria as met if they
-  otherwise are. Promotion is still the validator's call.
+  otherwise are. Promotion is still the validator's call, and this item is now
+  out of scope for later refinement sweeps.
 - Item previously rejected by `/refinement-validation`: address every cited gap
   before declaring the criteria met; if a gap needs human input, record the
   criteria as unmet.
@@ -309,7 +314,7 @@ Return a compact report containing:
 - Area labels applied (`codemata`, `moni`, `convertly`, `skills`, `infra`) or why
   none were added.
 - Blocked labels applied for external blockers (or why not).
-- Parked items skipped.
+- Parked and blocked items skipped.
 - Items carrying prior validation rejections, and how each cited gap was
   addressed.
 - Follow-up proposals recorded, and that none were materialized as issues.

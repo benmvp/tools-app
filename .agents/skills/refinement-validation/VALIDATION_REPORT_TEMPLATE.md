@@ -124,8 +124,6 @@ Omit the "Criteria met" table when nothing passed.
 On the regression path, where a stale item in `Ready for Planning` fails
 re-validation, change the status line to `Ready for Planning` -> `Backlog`.
 
-Omit the "Criteria met" table when nothing passed.
-
 ---
 
 ## Fail comment, circuit breaker tripped
