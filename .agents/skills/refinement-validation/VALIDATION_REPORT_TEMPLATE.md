@@ -161,6 +161,10 @@ Human input is required on the gaps above. Once answered in a comment, re-run
 `/refinement-validation` on this issue.
 ```
 
+On the regression path, where a stale item in `Ready for Planning` reaches its
+third rejection, it is demoted along with being escalated. Change the status line
+to `Ready for Planning` -> `Backlog`.
+
 ---
 
 ## External blocker comment
@@ -199,3 +203,8 @@ labeled `blocked` and downstream speccing will skip it until that clears.
 Resolve the blocker and remove `blocked`, then the speccing skill can pick this
 up.
 ```
+
+On the regression path, where a stale item already in `Ready for Planning` still
+meets the criteria and is still blocked, nothing moves. Change the status line to
+`unchanged (Ready for Planning)` and change "has been promoted to" in the opening
+sentence to "remains in".
