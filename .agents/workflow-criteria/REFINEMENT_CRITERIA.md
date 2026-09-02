@@ -180,9 +180,11 @@ refined and is waiting on someone else, and a circuit-breaker item needs a human
 decision. Validators do **not** exclude `blocked`, because they are what clears
 it once the blocker resolves.
 
-`rejectionCount` is the number of `<!-- agent:validation-fail -->` markers on the
-issue. Excluding items at 3 is what makes the circuit breaker terminal instead of
-merely advisory.
+`rejectionCount` is the number of comments whose marker begins with
+`<!-- agent:validation-fail` on the issue, counted by prefix as described in
+[Matching markers that carry attributes](#matching-markers-that-carry-attributes).
+Excluding items at 3 is what makes the circuit breaker terminal instead of merely
+advisory.
 
 Because `Backlog` holds both raw and refined-pending-validation items, the labels
 are what separate them:
@@ -206,6 +208,25 @@ locate it without parsing prose. Markers are invisible in rendered Markdown.
 | `<!-- agent:followup-proposal -->` | any stage | Proposed follow-up issue; see below |
 
 Never match on comment prose. Wording changes; markers do not.
+
+### Matching markers that carry attributes
+
+`<!-- agent:validation-fail round=N -->` is the only marker with a variable part.
+`N` is a placeholder for a digit, so **no comment ever contains the literal text
+`round=N`**.
+
+Match it by prefix:
+
+```text
+<!-- agent:validation-fail
+```
+
+Matching the full literal, with either `round=N` or a specific number, silently
+finds nothing or finds only one round. Since the rejection count drives the
+circuit breaker, a wrong match here means the breaker never trips.
+
+Where this file and the skills refer to "`validation-fail` markers" in prose,
+they mean every comment matching that prefix, regardless of round number.
 
 ## Follow-up proposals
 
@@ -285,12 +306,12 @@ GH_PROMPT_DISABLED=1 GH_PAGER=cat PAGER=cat gh api graphql -f query='
 
 To guarantee the refine/reject cycle terminates:
 
-1. `backlog-refinement` must read the latest `<!-- agent:validation-fail -->`
-  comment and explicitly address every gap it cites. It may not declare an item
-  ready while any cited gap is unaddressed.
-2. `refinement-validation` counts existing `validation-fail` markers. On the
-  third rejection it stops rejecting quietly: it applies `blocked`, leaves the
-  item in `Backlog`, and escalates for human input.
+1. `backlog-refinement` must read the latest comment whose marker begins with
+  `<!-- agent:validation-fail` and explicitly address every gap it cites. It may
+  not declare an item ready while any cited gap is unaddressed.
+2. `refinement-validation` counts existing `validation-fail` markers by prefix.
+  On the third rejection it stops rejecting quietly: it applies `blocked`, leaves
+  the item in `Backlog`, and escalates for human input.
 3. Once the count reaches 3, both stages skip the item entirely in sweep mode,
   via `-label:blocked` and `rejectionCount<3` respectively. Without that, the
   next sweep would simply post a fourth rejection.

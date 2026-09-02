@@ -110,7 +110,7 @@ signal input available.
 Use the HTML markers defined in the criteria file to locate machine-authored
 comments. Never match on comment prose; wording changes, markers do not.
 
-When a `<!-- agent:validation-fail -->` comment exists:
+When a comment whose marker begins with `<!-- agent:validation-fail` exists:
 
 1. Take the most recent one and treat every gap it cites as a required input.
 2. Address each gap explicitly in the new Planning Brief.

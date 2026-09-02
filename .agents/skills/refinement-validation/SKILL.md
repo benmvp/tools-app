@@ -91,8 +91,8 @@ field's options regenerates them.
 In sweep mode, process an item when either is true:
 
 - `Status=Backlog`, it has `agent-refined`, it does not have
-  `validated-refinement`, and it has fewer than 3
-  `<!-- agent:validation-fail -->` markers. This is the normal promotion path.
+  `validated-refinement`, and it has fewer than 3 comments whose marker begins
+  with `<!-- agent:validation-fail`. This is the normal promotion path.
 - `Status=Ready for Planning` and it is **stale** per the staleness rule in the
   criteria file. This is the regression path: something changed after the item
   was certified.
@@ -126,7 +126,9 @@ issues from other repositories, and note them in the summary.
     - `createdAt` and `lastEditedAt` via GraphQL.
     - Full comment history, oldest to newest.
     - The latest `<!-- agent:planning-brief -->` comment, if any.
-    - All `<!-- agent:validation-fail -->` markers, to get the rejection count.
+    - Every comment whose marker begins with `<!-- agent:validation-fail`, to get
+      the rejection count. Match by prefix; the marker carries a `round=`
+      attribute, so no comment contains a fixed literal.
 5. Run [codebase verification](#codebase-verification).
 6. Evaluate every criterion, recording a verdict and the evidence behind it.
   Refer to criteria by name, never by position.
