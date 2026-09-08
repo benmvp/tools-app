@@ -81,28 +81,47 @@ Do not exclude `blocked` here. The validator is what clears the blocker when the
 
 When all criteria pass:
 
-1. Post the pass review comment using the template in `VALIDATION_REPORT_TEMPLATE.md`.
-2. Add `validated-spec` and `agent-validated-spec`.
-3. Set `Status` to `Ready for Development`.
-4. Keep `Priority` unchanged.
+1. Post the pass review comment on the draft PR using the template in `VALIDATION_REPORT_TEMPLATE.md`.
+2. Post a confirmation comment on the issue:
+   ```markdown
+   <!-- agent:spec-validation-pass pr=<pr-number> -->
+   ## Spec validated
+
+   - **Draft PR:** #<pr-number>
+   - **Verdict:** Pass
+   - **Status:** Promoted to `Ready for Development`
+   ```
+3. Add `validated-spec` and `agent-validated-spec` to the issue.
+4. Set `Status` to `Ready for Development`.
+5. Keep `Priority` unchanged.
 
 ### Fail
 
 Any criterion unmet below the threshold:
 
-1. Post a fail review comment starting with `<!-- agent:spec-validation-fail round=N -->`.
+1. Post a fail review comment on the draft PR starting with `<!-- agent:spec-validation-fail round=N -->`.
 2. Name every failed criterion and what would resolve it.
-3. Leave the item in `Planning`.
-4. Remove `validated-spec` if present.
-5. Never remove provenance labels.
+3. Post a brief note on the issue:
+   ```markdown
+   <!-- agent:spec-validation-fail pr=<pr-number> round=N -->
+   ## Spec validation failed (Round N)
+
+   - **Draft PR:** #<pr-number>
+   - **Verdict:** Fail
+   - **Status:** Remains in `Planning` for rework. See PR review comments for details.
+   ```
+4. Leave the item in `Planning`.
+5. Remove `validated-spec` if present.
+6. Never remove provenance labels.
 
 ### Circuit breaker
 
 If this would be the second rejection:
 
-1. Post the fail review comment noting the circuit breaker tripped.
-2. Apply `blocked`.
-3. Leave the item in `Planning` and escalate for human input.
+1. Post the fail review comment on the draft PR noting the circuit breaker tripped.
+2. Post an escalation comment on the issue with `<!-- agent:spec-validation-blocked -->`.
+3. Apply `blocked`.
+4. Leave the item in `Planning` and escalate for human input.
 
 Only comments whose marker begins with `<!-- agent:spec-validation-fail` count toward the circuit breaker. Ordinary PR review comments or non-machine review feedback do not.
 
@@ -110,7 +129,7 @@ Only comments whose marker begins with `<!-- agent:spec-validation-fail` count t
 
 Criteria are met but a dependency on a human or external system remains unresolved:
 
-1. Post `<!-- agent:spec-validation-blocked -->`.
+1. Post `<!-- agent:spec-validation-blocked -->` on the PR and the issue.
 2. Add `validated-spec` and `agent-validated-spec`.
 3. Apply `blocked`.
 4. Set `Status` to `Ready for Development`.

@@ -129,13 +129,24 @@ Every machine-authored comment starts with an HTML marker so other skills can lo
 
 | Marker | Author | Meaning |
 | --- | --- | --- |
-| `<!-- agent:spec-pr -->` | `spec` | Draft PR metadata and link back to the issue |
+| `<!-- agent:spec-pr issue=N -->` | `spec` | Draft PR metadata and link back to the issue |
+| `<!-- agent:spec-created pr=N -->` | `spec` | Official issue comment linking draft PR and spec artifact |
 | `<!-- agent:spec-open-question -->` | `spec` | Human answer needed to resolve scope uncertainty |
 | `<!-- agent:spec-validation-pass -->` | `spec-validation` | Spec passed and item is ready for `Ready for Development` |
 | `<!-- agent:spec-validation-fail round=N -->` | `spec-validation` | Spec failed; `N` is the 1-based rejection count |
 | `<!-- agent:spec-validation-blocked -->` | `spec-validation` | External blocker found; item promoted or held while waiting |
 
 Never match on comment prose.
+
+## Ephemeral spec lifecycle
+
+Spec files created under `.agents/plans/` are temporary planning artifacts for review and validation during the `Planning` stage.
+
+Rules:
+1. **Never merge plans into main:** The implementation agent/developer must delete the `.agents/plans/<issue-number>-<slug>.md` file in the same PR before it is merged into `main`.
+2. **PR description evolution:**
+   - In `Planning`: PR description serves as the spec review header (`<!-- agent:spec-pr issue=N -->`, `Refs #N`, link to spec plan).
+   - In `Development` / `Code Review`: The developer updates the PR description with the actual changes implemented, testing evidence, changes `Refs #N` to `Closes #N` or `Fixes #N`, and marks the PR ready for review.
 
 ## Staleness
 

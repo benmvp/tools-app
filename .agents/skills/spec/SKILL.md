@@ -69,10 +69,12 @@ If multiple items qualify, pick the one with the highest `Priority` value, then 
 The producer must map the issue to a single draft PR for that issue:
 
 - find the issue-backed project item by `Status="Ready for Planning"`
-- create or reuse the branch `<type>/<issue-number>-<slug>`
+- ensure the local base is fresh from `origin/main` before creating the branch (`git fetch origin main && git checkout -b <type>/<issue-number>-<slug> origin/main`)
 - create the draft PR and link it back to the issue in the PR body
-- include `Refs #<issue-number>` rather than a closing keyword
-- include `<!-- agent:spec-pr issue=<number> -->` in the PR body
+- include `Refs #<issue-number>` rather than a closing keyword during the planning stage
+- include `<!-- agent:spec-pr issue=<number> -->` at the top of the PR body
+- post an official linkage comment on the issue noting the draft PR and spec artifact
+- apply relevant area and type labels from the issue to the draft PR
 
 The issue remains the canonical tracker. The PR is the review artifact for the spec.
 
@@ -81,14 +83,26 @@ The issue remains the canonical tracker. The PR is the review artifact for the s
 1. Read `.agents/workflow-criteria/SPEC_CRITERIA.md`.
 2. Discover the project and field IDs.
 3. Select the highest-priority eligible issue-backed item.
-4. Create or reuse the issue-linked branch name: `<type>/<issue-number>-<slug>`.
+4. Fetch `origin/main` and create or reuse the issue-linked branch: `<type>/<issue-number>-<slug>`.
 5. Create the ephemeral spec file under `.agents/plans/`.
-6. Create the draft PR and add the issue reference in the PR body.
-7. Read issue comments and PR review comments before reworking the spec.
-8. Post an issue comment when the spec requires human answer on scope, not for routine review chatter.
-9. Move the project item from `Ready for Planning` to `Planning` only after the PR exists.
-10. Push the spec commit with `[skip ci]` to avoid CI during the planning phase.
-11. Return a compact summary.
+6. Push the spec commit with `[skip ci]` to avoid unnecessary CI during planning.
+7. Create the draft PR with matching type prefix (e.g., `chore: ...` for `chore/` branch, `feat: ...` for `feat/` branch) and link the spec file in the PR body.
+8. Add labels matching the issue's type and area to the draft PR.
+9. Post an issue comment notifying that the draft PR was created:
+   ```markdown
+   <!-- agent:spec-created pr=<pr-number> -->
+   ## Spec created & draft PR opened
+
+   - **Draft PR:** #<pr-number>
+   - **Branch:** `<branch-name>`
+   - **Spec Artifact:** [.agents/plans/<issue-number>-<slug>.md](.agents/plans/<issue-number>-<slug>.md)
+   - **Status:** Moved to `Planning` for validation review.
+   ```
+10. Read issue comments and PR review comments before reworking the spec.
+11. Post an issue comment when the spec requires human answer on scope, not for routine review chatter.
+12. Move the project item from `Ready for Planning` to `Planning` only after the PR and issue comment exist.
+13. Add `agent-specced` label to the issue.
+14. Return a compact summary.
 
 ## File layout
 
@@ -117,17 +131,32 @@ The spec must include:
 - doc/knowledge-base tasks
 - open questions or blocker notes
 
-## PR conventions
+## PR conventions and lifecycle
 
 - Use a draft PR from the selected issue's branch.
-- PR title should reflect the eventual implementation, e.g. `feat: add regex tester tool`.
-- PR body should include:
-  - issue reference (`Refs #<number>`)
-  - link to the spec file
-  - plan stage note
-  - initial summary placeholder
-- Use `<!-- agent:spec-pr -->` at the top of the PR body so later skills can find it reliably.
-- Do not use a closing keyword such as `Closes #<number>` while the issue is still in `Planning`.
+- PR title prefix must match the branch type (e.g., `chore: remove iphone 13 e2e tests` for `chore/44-remove-iphone-13-e2e-tests`).
+- Apply relevant type and area labels from the issue to the PR.
+- PR body structure for Planning stage:
+  ```markdown
+  <!-- agent:spec-pr issue=<number> -->
+
+  ## Plan stage
+
+  Refs #<number>
+
+  Spec: [.agents/plans/<issue-number>-<slug>.md](.agents/plans/<issue-number>-<slug>.md)
+
+  ## Initial summary
+
+  <1-2 sentence overview of proposed approach>
+  ```
+- Avoid redundant adjacent issue citations in the PR body.
+- Do not use closing keywords such as `Closes #<number>` while the issue is still in `Planning`.
+
+### PR Lifecycle across stages:
+1. **Planning Stage (`/spec`):** PR is draft, containing only the spec file in `.agents/plans/` and referencing the issue with `Refs #<number>`.
+2. **Development Stage:** The developer or implementation skill writes code, adds unit/integration tests, removes draft status, updates the PR title and description with the full implementation details, and uses `Closes #<number>` / `Fixes #<number>`.
+3. **Pre-Merge Cleanup:** Before the implementation PR is merged, the temporary `.agents/plans/<issue-number>-<slug>.md` file **must be deleted** so ephemeral planning artifacts are not merged into `main`.
 
 ## Open question handling
 
