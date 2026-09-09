@@ -118,7 +118,7 @@ spec producer         -> Status="Ready for Planning" AND label:validated-refinem
 spec validation      -> -label:parked AND -label:blocked AND (
                            (Status=Planning AND label:agent-specced
                             AND -label:validated-spec)
-                           OR (Status="Ready for Development" AND stale))
+                           OR (Status="Ready for Development" AND stale-spec))
 next work item        -> Status="Ready for Development" AND label:validated-spec
                          AND -label:blocked AND -label:parked
 ```
@@ -151,6 +151,8 @@ Rules:
 ## Staleness
 
 A `validated-spec` label goes stale when the underlying spec or issue context changes after validation.
+
+`stale-spec` is a derived predicate evaluated from the staleness rules below; it is not a GitHub label or literal query filter.
 
 A validated item is stale when either is true:
 

@@ -56,7 +56,7 @@ Resolve IDs dynamically with `gh` each run:
 In sweep mode, process an item when either is true:
 
 - `Status=Planning` and it has `agent-specced` and no `validated-spec`
-- `Status="Ready for Development"` and it is stale
+- `Status="Ready for Development"` and it is `stale-spec` according to the staleness rules in `SPEC_CRITERIA.md`
 
 This skill must work from issue-backed project items only. It does not infer work from PRs or branch names. Always skip non-issue or draft items and note them as skipped.
 
@@ -84,7 +84,7 @@ When all criteria pass:
 1. Post the pass review comment on the draft PR using the template in `VALIDATION_REPORT_TEMPLATE.md`.
 2. Post a confirmation comment on the issue:
    ```markdown
-   <!-- agent:spec-validation-pass pr=<pr-number> -->
+   <!-- agent:spec-validation-pass -->
    ## Spec validated
 
    - **Draft PR:** #<pr-number>
@@ -103,7 +103,7 @@ Any criterion unmet below the threshold:
 2. Name every failed criterion and what would resolve it.
 3. Post a brief note on the issue:
    ```markdown
-   <!-- agent:spec-validation-fail pr=<pr-number> round=N -->
+   <!-- agent:spec-validation-fail round=N -->
    ## Spec validation failed (Round N)
 
    - **Draft PR:** #<pr-number>
