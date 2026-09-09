@@ -135,6 +135,7 @@ Every machine-authored comment starts with an HTML marker so other skills can lo
 | `<!-- agent:spec-validation-pass -->` | `spec-validation` | Spec passed and item is ready for `Ready for Development` |
 | `<!-- agent:spec-validation-fail round=N -->` | `spec-validation` | Spec failed; `N` is the 1-based rejection count |
 | `<!-- agent:spec-validation-blocked -->` | `spec-validation` | External blocker found; item promoted or held while waiting |
+| `<!-- agent:spec-validation-circuit-breaker -->` | `spec-validation` | Rejection threshold reached; human input is required before rework continues |
 
 Never match on comment prose.
 

@@ -15,7 +15,7 @@ This skill owns the `Planning` -> `Ready for Development` transition. Nothing el
 
 - After `/spec` has written a draft spec and opened a reviewable PR.
 - On a specific issue in `Planning` that needs validation.
-- When a spec is being reworked after a failed pass.
+- When a spec is being reworked after failed validation.
 
 ## Mandate: validation only
 
@@ -119,7 +119,7 @@ Any criterion unmet below the threshold:
 If this would be the second rejection:
 
 1. Post the fail review comment on the draft PR noting the circuit breaker tripped.
-2. Post an escalation comment on the issue with `<!-- agent:spec-validation-blocked -->`.
+2. Post an escalation comment on the issue with `<!-- agent:spec-validation-circuit-breaker -->`.
 3. Apply `blocked`.
 4. Leave the item in `Planning` and escalate for human input.
 

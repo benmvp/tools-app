@@ -1,8 +1,8 @@
 # Spec Validation Report
 
-Start every posted report with exactly one outcome marker: `<!-- agent:spec-validation-pass -->`, `<!-- agent:spec-validation-fail round=N -->`, or `<!-- agent:spec-validation-blocked -->`.
+Start every posted report with exactly one outcome marker: `<!-- agent:spec-validation-pass -->`, `<!-- agent:spec-validation-fail round=N -->`, or `<!-- agent:spec-validation-blocked -->`. Circuit-breaker escalations use `<!-- agent:spec-validation-circuit-breaker -->` instead of an outcome marker.
 
-Use this template for pass/fail review comments on the draft PR.
+Use this template for pass, fail, or blocked review comments on the draft PR.
 
 ## Decision
 
