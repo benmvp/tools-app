@@ -48,7 +48,8 @@ Resolve project and field IDs dynamically with `gh` each run:
 1. Resolve the project by title.
 2. Resolve the field IDs for `Status`.
 3. Resolve option IDs for `Ready for Planning` and `Planning`.
-4. Fail fast if a required project/field/option name is missing.
+4. Resolve the field ID and option values for `Priority` so eligible issues can be ordered deterministically.
+5. Fail fast if a required project, field, or option name is missing.
 
 ## Selection
 
