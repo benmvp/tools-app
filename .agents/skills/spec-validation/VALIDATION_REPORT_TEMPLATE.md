@@ -29,6 +29,3 @@ Use this template for pass/fail review comments on the draft PR.
 - **Fixes needed:**
 - **Human decision needed:**
 - **Next action:**
-
-
-
