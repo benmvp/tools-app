@@ -62,7 +62,7 @@ This skill must work from issue-backed project items only. It does not infer wor
 
 Always skip items labeled `parked` and note them as skipped.
 
-Do not exclude `blocked` here. The validator is what clears the blocker when the issue is ready.
+Exclude `blocked` items from sweep selection. A human may clear the label after resolving an external dependency; the validator then re-evaluates the item before it proceeds.
 
 ## Workflow
 

@@ -1,5 +1,7 @@
 # Spec Validation Report
 
+Start every posted report with exactly one outcome marker: `<!-- agent:spec-validation-pass -->`, `<!-- agent:spec-validation-fail round=N -->`, or `<!-- agent:spec-validation-blocked -->`.
+
 Use this template for pass/fail review comments on the draft PR.
 
 ## Decision
@@ -28,6 +30,5 @@ Use this template for pass/fail review comments on the draft PR.
 - **Human decision needed:**
 - **Next action:**
 
-<!-- agent:spec-validation-pass -->
-<!-- agent:spec-validation-fail round=1 -->
-<!-- agent:spec-validation-blocked -->
+
+

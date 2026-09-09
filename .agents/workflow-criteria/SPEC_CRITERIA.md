@@ -74,7 +74,7 @@ When a blocker is resolved, the validator removes the `blocked` label and re-run
 
 A human may also clear `blocked` after resolving the external dependency or completing the external action themselves. This is an explicit human override for work that cannot be reliably verified by an agent, but the final gate remains validator-owned. In that case the human posts a note on the issue, removes `blocked`, and the validator re-checks the spec before continuing.
 
-This is not a producer action. The validator is the only stage allowed to clear a blocker because it is the only stage that can judge whether the dependency has been resolved and whether the spec still satisfies the gate.
+This is not a producer action. A human may clear `blocked` after resolving the external dependency, but only the validator may confirm that the dependency is resolved and that the spec still satisfies the gate before promotion or continued processing.
 
 Resolution flow:
 
@@ -115,7 +115,7 @@ Rules:
 ```text
 spec producer         -> Status="Ready for Planning" AND label:validated-refinement
                          AND -label:blocked AND -label:parked
-spec validation      -> -label:parked AND (
+spec validation      -> -label:parked AND -label:blocked AND (
                            (Status=Planning AND label:agent-specced
                             AND -label:validated-spec)
                            OR (Status="Ready for Development" AND stale))
