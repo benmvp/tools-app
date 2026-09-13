@@ -141,13 +141,16 @@ Never match on comment prose.
 
 ## Ephemeral spec lifecycle
 
-Spec files created under `.agents/plans/` are temporary planning artifacts for review and validation during the `Planning` stage.
+Spec files created under `.agents/plans/` are temporary planning artifacts for
+review during `Planning`, but their full lifecycle (when they must stay
+current, when they may finally be deleted, and who deletes them) is a
+development-stage concern, not a spec-quality one. See
+`.agents/workflow-criteria/DEVELOPMENT_CRITERIA.md#ephemeral-spec-lifecycle`
+for the canonical rules.
 
-Rules:
-1. **Never merge plans into main:** The implementation agent/developer must delete the `.agents/plans/<issue-number>-<slug>.md` file in the same PR before it is merged into `main`.
-2. **PR description evolution:**
-   - In `Planning`: PR description serves as the spec review header (`<!-- agent:spec-pr issue=N -->`, `Refs #N`, link to spec plan).
-   - In `Development` / `Code Review`: The developer updates the PR description with the actual changes implemented, testing evidence, changes `Refs #N` to `Closes #N` or `Fixes #N`, and marks the PR ready for review.
+PR description evolution:
+- In `Planning`: PR description serves as the spec review header (`<!-- agent:spec-pr issue=N -->`, `Refs #N`, link to spec plan).
+- In `Development` / `Code Review`: The developer updates the PR description with the actual changes implemented, testing evidence, changes `Refs #N` to `Closes #N` or `Fixes #N`, and marks the PR ready for review.
 
 ## Staleness
 
