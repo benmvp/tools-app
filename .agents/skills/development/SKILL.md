@@ -63,7 +63,8 @@ Process a single issue-backed item in `benmvp/tools-app` when either:
     `blocked` and `parked` are absent.
 - `Status="In Development"`, `implementation-pending` is true according to
     `DEVELOPMENT_CRITERIA.md`, both `blocked` and `parked` are absent, and the
-    rejection threshold has not been reached.
+    rejection threshold has not been reached and no active development lease
+    exists.
 
 This skill must work from issue-backed project items only. If multiple items
 qualify, pick the one with the highest `Priority` value, then the oldest
@@ -74,15 +75,23 @@ qualify, pick the one with the highest `Priority` value, then the oldest
 1. Read `.agents/workflow-criteria/DEVELOPMENT_CRITERIA.md`.
 2. Discover the project and field IDs.
 3. Select the highest-priority eligible issue-backed item.
-4. Check out the issue's existing branch (created by `/spec`) and pull the
-    linked PR; do not create a new branch or a new PR. The PR may already be
-    ready for review after a prior implementation pass; do not require it to be
-    a draft or change its draft state during rework.
-5. Read the spec file at `.agents/plans/<issue-number>-<slug>.md`, the issue,
-   and all issue/PR comments for context.
-6. Set `Status` to `In Development`.
-7. Post an issue comment starting with
-    `<!-- agent:development-started issue=N -->` to mark this claim or resume.
+4. Read the spec file at `.agents/plans/<issue-number>-<slug>.md`, the issue,
+   and all issue/PR comments for context. Skip the item if another run has an
+   unexpired development lease.
+5. Generate a unique run ID and post
+   `<!-- agent:development-started issue=N run=ID -->` before changing project
+   status or touching the branch. Reread issue comments and proceed only if
+   this run ID is still the latest lease owner.
+6. Set `Status` to `In Development` and check out the issue's existing branch
+    (created by `/spec`); do not create a new branch or a new PR. The linked PR
+    may already be ready for review after a prior implementation pass; do not
+    require it to be a draft or change its draft state during rework.
+7. Renew the lease with
+    `<!-- agent:development-lease-renewed issue=N run=ID -->` before each
+    implementation phase and long-running check. Confirm this run still owns
+    the latest lease before modifying the branch and before publishing changes.
+    If another run supersedes it, stop without committing, pushing, or posting
+    readiness.
 8. Implement each phase in the spec's implementation plan, in order.
 9. If the actual implementation must diverge from the spec (a scope, behavior,
    or approach change), update the spec file to reflect reality as you go. If
@@ -93,20 +102,30 @@ qualify, pick the one with the highest `Priority` value, then the oldest
 10. Add or update tests per the spec's verification plan.
 11. Run `/living-docs-contract` for any app whose behavior changed, updating
     Current State and Architecture Contracts docs with evidence links.
-12. Run `/check-repo` (`pnpm format`, `pnpm lint -- --write`,
+12. Run `/check-repo` (`pnpm format`, `pnpm lint`,
     `pnpm type-check`) once, after all edits are made.
-13. Update the PR: remove draft status if it is still a draft, rewrite the
+13. Commit and push all implementation, test, documentation, and spec changes
+    after the checks pass. Use `gh stack push` for a stack-managed branch;
+    otherwise push the linked branch using the repository workflow. Verify the
+    PR's remote head includes the commit. If no new commit is needed, still
+    verify that the intended changes are already present on the remote branch.
+14. Update the PR: remove draft status if it is still a draft, rewrite the
     description with the real implementation summary and testing evidence, and
     change `Refs #N` to `Closes #N` / `Fixes #N`.
-14. Do not delete the spec file. It must remain accurate and present for
+15. Do not delete the spec file. It must remain accurate and present for
     `/development-validation` and the future Code Review stage.
-15. Add the `agent-developed` label to the issue.
-16. Post a completion comment with the marker
-    `<!-- agent:development-ready issue=N -->` and a short note that the PR is
-    ready for validation. Post this after each initial implementation or rework
-    pass; it is the validator's signal that work completed after the latest
-    failure.
-17. Return a compact summary.
+16. Add the `agent-developed` label to the issue.
+17. Post a completion comment with the marker
+    `<!-- agent:development-ready issue=N run=ID -->` and a short note that the
+    PR is ready for validation. Post this after each initial implementation or
+    rework pass; it is the validator's signal that work completed after the
+    latest failure. The implementation must already be committed and pushed.
+18. Post `<!-- agent:development-released issue=N run=ID -->` to release this
+    run's lease. Validators wait for this marker before selecting the item.
+19. On an orderly early exit before readiness, post the release marker without
+    a `development-ready` marker, only if this run still owns the lease, so the
+    item can be resumed. A crashed run is released by lease expiration.
+20. Return a compact summary.
 
 ## Handling prior rejections
 

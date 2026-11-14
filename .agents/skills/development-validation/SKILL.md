@@ -64,8 +64,10 @@ Resolve IDs dynamically with `gh` each run:
 In sweep mode, process an item when either is true:
 
 - `Status="In Development"` and it has `agent-developed` and no
-   `validated-development`, with a `development-ready` marker newer than each
-   latest `development-started` and validation-fail marker that exists.
+   `validated-development`, with a `development-ready` marker for the latest
+   run newer than its latest start/renewal and validation-fail markers, a
+   matching release marker newer than its readiness marker, and no active
+   development lease.
 - `Status="Code Review"` and it is `stale-development` according to the
   staleness rules in `DEVELOPMENT_CRITERIA.md`
 
@@ -121,7 +123,10 @@ Any criterion unmet below the threshold:
 1. Post a fail review comment on the PR starting with
    `<!-- agent:development-validation-fail round=N -->`.
 2. Name every failed criterion and what would resolve it.
-3. Post a brief note on the issue:
+3. Set `Status` to `In Development`. This is a no-op for initial validation and
+   returns a stale item from `Code Review` to the rework column.
+4. Remove `validated-development` if present.
+5. Post a brief note on the issue after the project state updates:
    ```markdown
    <!-- agent:development-validation-fail round=N -->
    ## Implementation validation failed (Round N)
@@ -130,9 +135,6 @@ Any criterion unmet below the threshold:
    - **Verdict:** Fail
    - **Status:** Returned to `In Development` for rework. See PR review comments for details.
    ```
-4. Set `Status` to `In Development`. This is a no-op for initial validation and
-   returns a stale item from `Code Review` to the rework column.
-5. Remove `validated-development` if present.
 6. Never remove provenance labels.
 
 ### Circuit breaker
@@ -140,12 +142,15 @@ Any criterion unmet below the threshold:
 If this would be the second rejection:
 
 1. Post the fail review comment on the PR noting the circuit breaker tripped.
-2. Post an escalation comment on the issue with
-   `<!-- agent:development-validation-circuit-breaker -->`.
-3. Remove `validated-development` if present.
-4. Set `Status` to `In Development`, including when the item failed stale
+2. Remove `validated-development` if present.
+3. Set `Status` to `In Development`, including when the item failed stale
    re-validation from `Code Review`.
-5. Apply `blocked` and escalate for human input.
+4. Apply `blocked`.
+5. Post one issue comment after the project state updates, beginning with
+   `<!-- agent:development-validation-fail round=2 -->` and also containing
+   `<!-- agent:development-validation-circuit-breaker -->`, so the second
+   rejection is counted and the escalation remains identifiable.
+6. Escalate for human input.
 
 Only comments whose marker begins with `<!-- agent:development-validation-fail`
 count toward the circuit breaker.

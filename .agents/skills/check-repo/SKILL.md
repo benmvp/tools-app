@@ -7,10 +7,10 @@ description:
 # Check Repository
 
 After you are done with **all** file edits for the current task, run these
-commands once so only changed to format, lint-fix, and type-check the repo. They may affect files beyond those that you have directly edited since they are project-wide. Do not run between individual file edits.
+commands once so only changed to format, lint, and type-check the repo. They may affect files beyond those that you have directly edited since they are project-wide. Do not run between individual file edits.
 
 1. **Format:** `pnpm format`
-2. **Lint:** `pnpm lint -- --write`
+2. **Lint:** `pnpm lint`
 3. **Type check:** `pnpm type-check`
 
 ## When to skip

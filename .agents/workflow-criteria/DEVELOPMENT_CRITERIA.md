@@ -144,26 +144,49 @@ Rules:
 
 ```text
 development            -> -label:blocked AND -label:parked AND (
-               (Status="Ready for Development" AND label:validated-spec)
-               OR (Status="In Development" AND implementation-pending
-                 AND rejectionCount<2))
-development-validation -> -label:parked AND -label:blocked AND (
-               (Status="In Development" AND label:agent-developed
-               AND -label:validated-development AND development-ready)
-               OR (Status="Code Review" AND stale-development))
+                           (Status="Ready for Development" AND label:validated-spec)
+                           OR (Status="In Development" AND implementation-pending
+                               AND rejectionCount<2 AND NOT active-development-lease))
+development-validation -> -label:parked AND -label:blocked
+                           AND NOT active-development-lease AND (
+                           (Status="In Development" AND label:agent-developed
+                            AND -label:validated-development AND development-ready
+                            AND development-released)
+                           OR (Status="Code Review" AND stale-development))
 next work item          -> Status="Code Review" AND label:validated-development
-                           AND -label:blocked AND -label:parked
+                           AND -label:blocked AND -label:parked AND NOT stale-development
 ```
 
-`implementation-pending` is true when the latest `development-started` marker
-or the latest `development-validation-fail` marker is newer than the latest
-`development-ready` marker. `development-ready` is true when a marker exists
-and is newer than each latest `development-started` and
-`development-validation-fail` marker that exists. Compare issue-comment
-timestamps; a validation-fail marker is the issue comment, not the PR review
-comment. This lets producers resume interrupted work or perform requested
-rework, while preventing validation from rejecting the same unchanged
-implementation or running during active rework.
+`implementation-pending` is true when the latest run ID has no matching
+`development-ready` marker newer than its latest start/renewal, or an existing
+`development-validation-fail` marker is newer than that ready marker.
+`development-ready` is true only when its run ID matches the latest
+`development-started` marker and the ready marker is newer than the latest
+start, lease renewal, and validation-fail markers that exist. A
+`development-released` marker is valid only when it matches the latest run ID
+and is newer than that run's latest start, renewal, and readiness markers.
+Compare issue-comment timestamps; a validation-fail marker is the issue
+comment, not the PR review comment. This lets producers resume interrupted
+work or perform requested rework, while preventing validation from accepting a
+completion posted by a superseded run.
+
+`active-development-lease` is true when the latest `development-started` or
+`development-lease-renewed` comment identifies a run that has no later
+`development-released` comment for that run and the latest claim/renewal is less
+than two hours old. Only the latest unexpired run ID owns the lease. A producer
+posts its unique claim before changing project status or touching the branch,
+then rereads issue comments and proceeds only if its run ID is still the latest
+owner. It renews the lease before each implementation phase and long-running
+check, and verifies ownership again before committing or pushing. If another
+run supersedes it, it stops without publishing or posting readiness. It posts a
+release marker after successful completion, or before an orderly early exit;
+an interrupted run becomes resumable after its lease expires.
+
+Both producers and validators exclude an active lease. The validator also
+requires a `development-released` marker for the latest run ID, newer than that
+run's latest start/renewal and readiness markers. This keeps validation from
+racing a producer that has already posted readiness but is still finishing its
+handoff.
 
 ## Comment markers
 
@@ -172,8 +195,10 @@ locate it without parsing prose.
 
 | Marker | Author | Meaning |
 | --- | --- | --- |
-| `<!-- agent:development-started issue=N -->` | `development` | Notes the implementation branch/PR was claimed or work resumed |
-| `<!-- agent:development-ready issue=N -->` | `development` | Records a completed implementation pass ready for validation |
+| `<!-- agent:development-started issue=N run=ID -->` | `development` | Claims or resumes implementation under a unique run ID |
+| `<!-- agent:development-lease-renewed issue=N run=ID -->` | `development` | Renews the active implementation run lease |
+| `<!-- agent:development-ready issue=N run=ID -->` | `development` | Records a completed implementation pass ready for validation |
+| `<!-- agent:development-released issue=N run=ID -->` | `development` | Releases the run lease after handoff or an orderly early exit |
 | `<!-- agent:development-deviation -->` | `development` | A material deviation from the spec, recorded for the issue author |
 | `<!-- agent:development-validation-pass -->` | `development-validation` | Implementation passed and item is ready for `Code Review` |
 | `<!-- agent:development-validation-fail round=N -->` | `development-validation` | Implementation failed; `N` is the 1-based rejection count |
@@ -230,6 +255,10 @@ below; it is not a GitHub label or literal query filter.
 
 A validated item is stale when either is true:
 
+- The item has `validated-development` but no
+  `<!-- agent:development-validation-pass -->` comment exists. This includes
+  items promoted while an external blocker remains unresolved; after `blocked`
+  is cleared, the validator must re-check them.
 - The spec file has changed since the latest
   `<!-- agent:development-validation-pass -->` comment.
 - The PR has new code or docs commits since the latest
@@ -251,8 +280,11 @@ To guarantee the develop/reject cycle terminates:
    marker begins with `<!-- agent:development-validation-fail` count toward the
   breaker. `rejectionCount` is the number of matching issue comments. Routine
   review comments or non-machine comments do not count.
-4. On the second rejection it removes `validated-development`, sets `Status` to
-  `In Development`, applies `blocked`, and escalates for human input.
+4. On the second rejection it posts an issue comment beginning with
+  `<!-- agent:development-validation-fail round=2 -->` and also containing
+  `<!-- agent:development-validation-circuit-breaker -->`. It removes
+  `validated-development`, sets `Status` to `In Development`, applies
+  `blocked`, and escalates for human input.
 5. Once the count reaches 2, both stages skip the item entirely in sweep mode,
   via `-label:blocked` and the rejection threshold.
 
