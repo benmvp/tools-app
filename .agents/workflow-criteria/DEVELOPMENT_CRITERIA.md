@@ -37,7 +37,9 @@ Consequences that all stages depend on:
 - Failure is not a move. A rejected implementation remains in `In Development`,
   where rework happens.
 - A regression is when a valid item in `Code Review` later fails re-validation
-  and is moved back to `In Development`.
+  and is moved back to `In Development`; the validator also removes
+  `validated-development` so the item cannot appear ready while rework is
+  pending.
 
 ## Criteria
 
@@ -134,21 +136,34 @@ Rules:
 - Only state labels are removed. A failed validation removes
   `validated-development`.
 - `parked` is human-owned. No stage adds or removes it.
-- `Status = "In Development" AND no validated-development` means the
-  implementation is awaiting validation.
+- `Status = "In Development" AND no validated-development` means the item is
+  either awaiting its first validation, awaiting rework, or actively being
+  worked. Comment markers distinguish these states.
 
 ### Consumer queries
 
 ```text
-development            -> Status="Ready for Development" AND label:validated-spec
-                           AND -label:blocked AND -label:parked
+development            -> -label:blocked AND -label:parked AND (
+               (Status="Ready for Development" AND label:validated-spec)
+               OR (Status="In Development" AND implementation-pending
+                 AND rejectionCount<2))
 development-validation -> -label:parked AND -label:blocked AND (
-                             (Status="In Development" AND label:agent-developed
-                              AND -label:validated-development)
-                             OR (Status="Code Review" AND stale-development))
+               (Status="In Development" AND label:agent-developed
+               AND -label:validated-development AND development-ready)
+               OR (Status="Code Review" AND stale-development))
 next work item          -> Status="Code Review" AND label:validated-development
                            AND -label:blocked AND -label:parked
 ```
+
+`implementation-pending` is true when the latest `development-started` marker
+or the latest `development-validation-fail` marker is newer than the latest
+`development-ready` marker. `development-ready` is true when a marker exists
+and is newer than each latest `development-started` and
+`development-validation-fail` marker that exists. Compare issue-comment
+timestamps; a validation-fail marker is the issue comment, not the PR review
+comment. This lets producers resume interrupted work or perform requested
+rework, while preventing validation from rejecting the same unchanged
+implementation or running during active rework.
 
 ## Comment markers
 
@@ -157,7 +172,8 @@ locate it without parsing prose.
 
 | Marker | Author | Meaning |
 | --- | --- | --- |
-| `<!-- agent:development-started issue=N -->` | `development` | Notes the implementation branch/PR was claimed and work began |
+| `<!-- agent:development-started issue=N -->` | `development` | Notes the implementation branch/PR was claimed or work resumed |
+| `<!-- agent:development-ready issue=N -->` | `development` | Records a completed implementation pass ready for validation |
 | `<!-- agent:development-deviation -->` | `development` | A material deviation from the spec, recorded for the issue author |
 | `<!-- agent:development-validation-pass -->` | `development-validation` | Implementation passed and item is ready for `Code Review` |
 | `<!-- agent:development-validation-fail round=N -->` | `development-validation` | Implementation failed; `N` is the 1-based rejection count |
@@ -228,13 +244,17 @@ To guarantee the develop/reject cycle terminates:
 1. `development` must read the latest issue comment whose marker begins with
    `<!-- agent:development-validation-fail` and explicitly address every cited
    gap.
-2. `development-validation` counts rejections by prefix. Only comments whose
+2. `development` posts a new `development-ready` marker only after completing
+  the requested rework and updating the PR. Validation must not select the
+  item again until that marker is newer than the latest failure marker.
+3. `development-validation` counts rejections by prefix. Only comments whose
    marker begins with `<!-- agent:development-validation-fail` count toward the
-   breaker. Routine review comments or non-machine comments do not count.
-3. On the second rejection it stops rejecting and applies `blocked`, leaving the
-   item in `In Development` and escalating for human input.
-4. Once the count reaches 2, both stages skip the item entirely in sweep mode,
-   via `-label:blocked` and the rejection threshold.
+  breaker. `rejectionCount` is the number of matching issue comments. Routine
+  review comments or non-machine comments do not count.
+4. On the second rejection it removes `validated-development`, sets `Status` to
+  `In Development`, applies `blocked`, and escalates for human input.
+5. Once the count reaches 2, both stages skip the item entirely in sweep mode,
+  via `-label:blocked` and the rejection threshold.
 
 ## Comment formatting rules
 

@@ -57,13 +57,13 @@ Resolve project and field IDs dynamically with `gh` each run:
 
 ## Selection
 
-Process a single item when:
+Process a single issue-backed item in `benmvp/tools-app` when either:
 
-- `Status="Ready for Development"`
-- issue is in `benmvp/tools-app`
-- label `validated-spec` is present
-- `blocked` is absent
-- `parked` is absent
+- `Status="Ready for Development"`, `validated-spec` is present, and both
+    `blocked` and `parked` are absent.
+- `Status="In Development"`, `implementation-pending` is true according to
+    `DEVELOPMENT_CRITERIA.md`, both `blocked` and `parked` are absent, and the
+    rejection threshold has not been reached.
 
 This skill must work from issue-backed project items only. If multiple items
 qualify, pick the one with the highest `Priority` value, then the oldest
@@ -75,32 +75,38 @@ qualify, pick the one with the highest `Priority` value, then the oldest
 2. Discover the project and field IDs.
 3. Select the highest-priority eligible issue-backed item.
 4. Check out the issue's existing branch (created by `/spec`) and pull the
-   linked draft PR; do not create a new branch or a new PR.
+    linked PR; do not create a new branch or a new PR. The PR may already be
+    ready for review after a prior implementation pass; do not require it to be
+    a draft or change its draft state during rework.
 5. Read the spec file at `.agents/plans/<issue-number>-<slug>.md`, the issue,
    and all issue/PR comments for context.
 6. Set `Status` to `In Development`.
-7. Implement each phase in the spec's implementation plan, in order.
-8. If the actual implementation must diverge from the spec (a scope, behavior,
+7. Post an issue comment starting with
+    `<!-- agent:development-started issue=N -->` to mark this claim or resume.
+8. Implement each phase in the spec's implementation plan, in order.
+9. If the actual implementation must diverge from the spec (a scope, behavior,
    or approach change), update the spec file to reflect reality as you go. If
    the deviation is material (changes what the issue author should expect),
    also post an issue comment starting with
    `<!-- agent:development-deviation -->` explaining what changed and why.
    Trivial implementation-detail changes do not need an issue comment.
-9. Add or update tests per the spec's verification plan.
-10. Run `/living-docs-contract` for any app whose behavior changed, updating
+10. Add or update tests per the spec's verification plan.
+11. Run `/living-docs-contract` for any app whose behavior changed, updating
     Current State and Architecture Contracts docs with evidence links.
-11. Run `/check-repo` (`pnpm format`, `pnpm lint -- --write`,
+12. Run `/check-repo` (`pnpm format`, `pnpm lint -- --write`,
     `pnpm type-check`) once, after all edits are made.
-12. Update the PR: remove draft status, rewrite the description with the real
-    implementation summary and testing evidence, and change `Refs #N` to
-    `Closes #N` / `Fixes #N`.
-13. Do not delete the spec file. It must remain accurate and present for
+13. Update the PR: remove draft status if it is still a draft, rewrite the
+    description with the real implementation summary and testing evidence, and
+    change `Refs #N` to `Closes #N` / `Fixes #N`.
+14. Do not delete the spec file. It must remain accurate and present for
     `/development-validation` and the future Code Review stage.
-14. Add the `agent-developed` label to the issue.
-15. Post a short issue comment noting the PR is ready for validation, using
-    `<!-- agent:development-started issue=N -->` only if this is the first time
-    work started on the item (skip it on rework passes).
-16. Return a compact summary.
+15. Add the `agent-developed` label to the issue.
+16. Post a completion comment with the marker
+    `<!-- agent:development-ready issue=N -->` and a short note that the PR is
+    ready for validation. Post this after each initial implementation or rework
+    pass; it is the validator's signal that work completed after the latest
+    failure.
+17. Return a compact summary.
 
 ## Handling prior rejections
 

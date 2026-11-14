@@ -64,7 +64,8 @@ Resolve IDs dynamically with `gh` each run:
 In sweep mode, process an item when either is true:
 
 - `Status="In Development"` and it has `agent-developed` and no
-  `validated-development`
+   `validated-development`, with a `development-ready` marker newer than each
+   latest `development-started` and validation-fail marker that exists.
 - `Status="Code Review"` and it is `stale-development` according to the
   staleness rules in `DEVELOPMENT_CRITERIA.md`
 
@@ -127,9 +128,10 @@ Any criterion unmet below the threshold:
 
    - **PR:** #<pr-number>
    - **Verdict:** Fail
-   - **Status:** Remains in `In Development` for rework. See PR review comments for details.
+   - **Status:** Returned to `In Development` for rework. See PR review comments for details.
    ```
-4. Leave the item in `In Development`.
+4. Set `Status` to `In Development`. This is a no-op for initial validation and
+   returns a stale item from `Code Review` to the rework column.
 5. Remove `validated-development` if present.
 6. Never remove provenance labels.
 
@@ -140,8 +142,10 @@ If this would be the second rejection:
 1. Post the fail review comment on the PR noting the circuit breaker tripped.
 2. Post an escalation comment on the issue with
    `<!-- agent:development-validation-circuit-breaker -->`.
-3. Apply `blocked`.
-4. Leave the item in `In Development` and escalate for human input.
+3. Remove `validated-development` if present.
+4. Set `Status` to `In Development`, including when the item failed stale
+   re-validation from `Code Review`.
+5. Apply `blocked` and escalate for human input.
 
 Only comments whose marker begins with `<!-- agent:development-validation-fail`
 count toward the circuit breaker.
