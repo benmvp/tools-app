@@ -136,7 +136,7 @@ jobs:
   # Stage 3: E2E, A11y, and Lighthouse (needs build)
   e2e:
     needs: [build]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout code

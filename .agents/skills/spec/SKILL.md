@@ -157,7 +157,7 @@ The spec must include:
 ### PR Lifecycle across stages:
 1. **Planning Stage (`/spec`):** PR is draft, containing only the spec file in `.agents/plans/` and referencing the issue with `Refs #<number>`.
 2. **Development Stage:** The developer or implementation skill writes code, adds unit/integration tests, removes draft status, updates the PR title and description with the full implementation details, and uses `Closes #<number>` / `Fixes #<number>`.
-3. **Pre-Merge Cleanup:** Before the implementation PR is merged, the temporary `.agents/plans/<issue-number>-<slug>.md` file **must be deleted** so ephemeral planning artifacts are not merged into `main`.
+3. **Pre-Merge Cleanup:** The spec file's deletion timing and ownership are defined in `.agents/workflow-criteria/DEVELOPMENT_CRITERIA.md#ephemeral-spec-lifecycle`, not here — it is not deleted during `/spec` or by this skill.
 
 ## Open question handling
 
