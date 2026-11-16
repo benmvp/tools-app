@@ -90,6 +90,14 @@ it("formats with 2-space indentation", async () => {
 
 ### E2E Tests
 
+Both apps use Playwright 1.65.1 or newer to support Ubuntu 26.04 on GitHub Actions
+`ubuntu-latest` runners. After upgrading Playwright, install its matching browser
+binaries and system dependencies from the app directory:
+
+```bash
+pnpm exec playwright install --with-deps
+```
+
 E2E tests run against a **production build** (not dev server) on **localhost:3333**:
 
 ```bash
